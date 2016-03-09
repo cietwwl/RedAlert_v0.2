@@ -1,0 +1,92 @@
+package com.youxigu.dynasty2.map.domain;
+
+import com.manu.core.ServiceLocator;
+import com.youxigu.dynasty2.map.service.IMapService;
+
+/**
+ * 郡定义
+ * 
+ * @author Administrator
+ * 
+ */
+public class State implements java.io.Serializable {
+	public static final int STATUS_CLOSE = 0; // 未开放
+	public static final int STATUS_OPEN = 1; // 已开放
+	public static final int STATUS_FULL = 2; // 已满
+
+	private int stateId;//郡id
+	private int countryId;//国家id
+	private String stateName;//郡名
+	private int status;//状态-见上
+	private int level;// 等级
+
+	private Country parent;// 所属国家
+
+	public int getStateId() {
+		return stateId;
+	}
+
+	public void setStateId(int stateId) {
+		this.stateId = stateId;
+	}
+
+	public int getCountryId() {
+		return countryId;
+	}
+
+	public void setCountryId(int countryId) {
+		this.countryId = countryId;
+	}
+
+	public String getStateName() {
+		return stateName;
+	}
+
+	public void setStateName(String stateName) {
+		this.stateName = stateName;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	public String getCountryName() {
+		IMapService mapService = (IMapService)ServiceLocator.getSpringBean("mapService");
+		Country cty = mapService.getCountryById(countryId);
+		if (cty != null)
+			return cty.getCountryName();
+		else
+			return "错误的国家";
+	}
+
+	public Country getParent() {
+		return parent;
+	}
+
+	public void setParent(Country parent) {
+		this.parent = parent;
+	}
+
+	// /**
+	// * 点是否在郡内
+	// * @param posX
+	// * @param posY
+	// * @return
+	// */
+	// public boolean isInState(int posX,int posY){
+	// return (posX>=minPosX && posY>=minPosY && posX<=maxPosX &&
+	// posY<=maxPosY);
+	// }
+}

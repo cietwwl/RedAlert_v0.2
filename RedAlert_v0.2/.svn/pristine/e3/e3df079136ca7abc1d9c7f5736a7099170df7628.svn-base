@@ -1,0 +1,80 @@
+package dynasty;
+
+option java_package = "com.youxigu.dynasty2.chat.proto";
+option java_outer_classname = "CommonHead";
+
+//响应头文件，请求时不需要，只需要有cmd，发生异常时cmd=1，消息内容如下
+message ResponseHead{
+   required int32 cmd = 1;//返回的命令号
+   optional int32 errCode = 2;//状态码 <0位异常 =0为正常请求成功
+   optional string err = 3;//错误的内容
+   optional int32 requestCmd = 4;//请求的命令号
+}
+
+//同步请求标志,后台测试使用
+message SyncStat{
+   required int64 id = 1;
+   required int32 stat = 2;
+}
+
+//100000心跳请求
+message KeepAliveRequest{
+   required int32 cmd = 1[default=100000];
+}
+
+//100001心跳响应
+message KeepAliveResponse{
+   required int32 cmd = 1[default=100001];
+}
+
+//物品信息
+message ItemInfo{
+   optional int32 entId = 1;//物品id
+   optional int32 num = 2;//数量
+}
+
+//掉落包道具的描述
+message DroppackInfo{
+   optional int32 entId = 1;//实体id
+   optional string name = 2;//名称
+   optional int32 minNum = 3;//最小数量
+   optional int32 maxNum = 4;//最大数量
+}
+	
+//运营礼包信息
+message OnlinePack{
+   optional int32 entId = 1;//物品id
+   optional string name = 2;//名称
+   optional string desc = 3;//描述
+   optional int32 color = 4;//颜色品质
+   optional string icon = 5;//图片
+   optional int32 sumAble = 6;//可否堆叠 0:否 1:可以 下同
+   optional int32 throwAble = 7;//可否丢弃
+   optional int32 useAble = 8;//可否使用 0:（使用和批量使用都不可以） 1：（使用和批量使用都可以） 2：不能批量使用
+   optional int32 type = 9;//类型 6:装备 7:宝物
+   optional int32 childType = 10;//子类型 0:无 默认
+   repeated DroppackInfo items = 11;//掉落的内容
+   optional int32 stackNum = 12;//可堆叠数量上限
+   optional int32 exchangeId = 13;//兑换物品表的id
+}
+//属性值
+message AttrProperty{
+   optional string propName = 1;//属性名称
+   optional int32 value = 2;//属性值
+   optional int32 addValue = 3;//升级或者其他 公式里面计算增加的值
+   optional bool abs = 4;//true ,value是绝对值,false,value是百分比
+}
+
+//单个装备信息
+message EquipInfo{
+   optional int64 treasuryId = 1;//装备的数据库id
+   repeated AttrProperty buildAttr = 2;//装备的打造属性
+   repeated AttrProperty specialAttr = 3;//装备的特殊属性
+}
+
+
+//性别
+enum SexType {
+    WOMAN = 0;//女性
+    MAN = 1;//男性
+}

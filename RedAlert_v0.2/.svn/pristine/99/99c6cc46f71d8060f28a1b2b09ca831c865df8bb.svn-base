@@ -1,0 +1,146 @@
+package com.youxigu.dynasty2.armyout.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.youxigu.dynasty2.armyout.dao.IArmyoutDao;
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+import com.youxigu.dynasty2.armyout.service.IArmyoutService;
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.map.service.IMapService;
+import com.youxigu.dynasty2.map.service.impl.ThreadLocalMapCellCache;
+import com.youxigu.dynasty2.util.BaseException;
+
+public class ArmyoutService implements IArmyoutService {
+	public static final Logger log = LoggerFactory
+			.getLogger(ArmyoutService.class);
+
+	private Map<Long, Armyout> ARMYOUTS = new ConcurrentHashMap<Long, Armyout>();
+	private IArmyoutDao armyoutDao;
+	private IMapService mapService;
+
+	public void setArmyoutDao(IArmyoutDao armyoutDao) {
+		this.armyoutDao = armyoutDao;
+	}
+
+	public void setMapService(IMapService mapService) {
+		this.mapService = mapService;
+	}
+
+	@Override
+	public void initService(Map<Integer, MapCell> ALL_CELLS) {
+		if (ARMYOUTS != null) {
+			ARMYOUTS.clear();
+		}
+		List<Armyout> list = armyoutDao.listArmyouts();
+		if (list != null && list.size() > 0) {
+			List<MapCell> cells = new ArrayList<MapCell>();
+			for (Armyout armyout : list) {
+				ARMYOUTS.put(armyout.getId(), armyout);
+				
+				cells.clear();
+				MapCell mapCell = ALL_CELLS.get(armyout.getFromCellId());
+				if (mapCell != null) {
+					cells.add(mapCell);
+				}
+				mapCell = ALL_CELLS.get(armyout.getToCellId());
+				if (mapCell != null) {
+					cells.add(mapCell);
+				}
+				this._addArmyoutToCell(cells, armyout);
+			}
+		}
+	}
+
+	private void _addArmyoutToCell(List<MapCell> cells, Armyout armyout) {
+		if(cells != null && cells.size() >0){
+			for (MapCell mapCell : cells) {
+				if (mapCell != null) {
+					mapCell.addArmyout(armyout);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void addArmyoutToCell(List<Integer> cellIds, Armyout armyout) {
+		List<MapCell> cells = null;
+		try {
+			cells = mapService.getMapCellForWrite(cellIds);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this._addArmyoutToCell(cells, armyout);
+	}
+
+	@Override
+	public Armyout getArmyoutCache(long armyoutId) {
+		return ARMYOUTS.get(armyoutId);
+	}
+
+	@Override
+	public void addArmyoutCache(Armyout armyout) {
+		ARMYOUTS.put(armyout.getId(), armyout);
+	}
+
+	@Override
+	public void removeArmyoutCache(Armyout armyout) {
+		ARMYOUTS.remove(armyout.getId());
+	}
+
+	@Override
+	public Armyout getArmyoutForRead(long armyoutId) {
+		Armyout armyout = ARMYOUTS.get(armyoutId);
+		if (armyout == null) {
+			throw new BaseException("指定的armyout不存在：" + armyoutId);
+		}
+		if (log.isDebugEnabled()) {
+			log.debug("get Armyout({}) for read", armyoutId);
+		}
+		// 复制一个对象并返回，避免错误修改缓存中的对象。
+		return armyout.clone();
+	}
+
+	@Override
+	public Armyout getArmyoutForWrite(long armyoutId) {
+		if (!ThreadLocalMapCellCache.isInTrans()) {
+			throw new BaseException("只有在事务中才能修改Armyout");
+		}
+
+		Armyout armyout = null;
+		Object obj = ThreadLocalMapCellCache
+				.getObject(Armyout.getCacheKey(armyoutId));
+		if (obj != null) {
+			return (Armyout) obj;
+		}
+
+		armyout = ARMYOUTS.get(armyoutId);
+		if (armyout == null) {
+			throw new BaseException("指定的armyout不存在：" + armyoutId);
+		}
+		// 复制一个对象并返回，避免错误修改缓存中的对象。
+		return armyout.clone();
+	}
+
+	@Override
+	public void updateArmyout(Armyout armyout) {
+		ThreadLocalMapCellCache.addData(ThreadLocalMapCellCache.UPDATE,
+				armyout.getKey(), armyout);
+	}
+
+	@Override
+	public void createArmyOut(Armyout armyout) {
+		armyoutDao.createArmyOut(armyout);
+	}
+
+	@Override
+	public void deleteArmyOut(Armyout armyout) {
+		armyoutDao.deleteArmyOut(armyout);
+	}
+}

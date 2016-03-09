@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+	
+<ResourceBuy entId="1020001" itemName="1000铁矿石" iconPath="1000kuangshi" childType="2" />
+<ResourceBuy entId="1020002" itemName="10000铁矿石" iconPath="10000kuangshi" childType="2" />
+<ResourceBuy entId="1020003" itemName="50000铁矿石" iconPath="50000kuangshi" childType="2" />
+<ResourceBuy entId="1020004" itemName="10万铁矿石" iconPath="100000kuangshi" childType="2" />
+<ResourceBuy entId="1020011" itemName="1000石油" iconPath="1000kuangshi" childType="3" />
+<ResourceBuy entId="1020012" itemName="10000石油" iconPath="10000kuangshi" childType="3" />
+<ResourceBuy entId="1020013" itemName="50000石油" iconPath="50000kuangshi" childType="3" />
+<ResourceBuy entId="1020014" itemName="10万石油" iconPath="100000kuangshi" childType="3" />
+<ResourceBuy entId="1020021" itemName="1000铀矿石" iconPath="1000kuangshi" childType="4" />
+<ResourceBuy entId="1020022" itemName="10000铀矿石" iconPath="10000kuangshi" childType="4" />
+<ResourceBuy entId="1020023" itemName="50000铀矿石" iconPath="50000kuangshi" childType="4" />
+<ResourceBuy entId="1020024" itemName="10万铀矿石" iconPath="100000kuangshi" childType="4" />
+<ResourceBuy entId="1020031" itemName="1000黄金" iconPath="1000kuangshi" childType="1" />
+<ResourceBuy entId="1020032" itemName="10000黄金" iconPath="10000kuangshi" childType="1" />
+<ResourceBuy entId="1020033" itemName="50000黄金" iconPath="50000kuangshi" childType="1" />
+<ResourceBuy entId="1020034" itemName="10万黄金" iconPath="100000kuangshi" childType="1" />
+
+
+
+</dataset>

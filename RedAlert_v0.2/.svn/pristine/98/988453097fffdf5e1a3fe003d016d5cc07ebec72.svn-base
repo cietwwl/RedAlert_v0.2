@@ -1,0 +1,181 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+
+	<bean id="wolf_jobService" class="com.youxigu.wolf.node.job.service.JobService" init-method="start" destroy-method="destory">
+		<!--<property name="poolSize" value="32"/>-->
+		<property name="jobDao">
+			<bean class="com.youxigu.wolf.node.job.dao.JobDao" >
+				<property name="sqlMapClientTemplate"><ref bean="sqlMapClientTemplate" /></property>
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- 特殊事件任务/世界任务 -->
+	<bean id="wolf_worldMissionService" class="com.youxigu.dynasty2.mission.service.impl.WorldMissionService" init-method="init" destroy-method="destory">
+        <property name="worldMissionDao"><ref bean="worldMissionDao" /></property>
+        <property name="missionService"><ref bean="missionService" /></property>
+        <property name="threadNum" value="10"/>
+        <property name="messageService"><ref bean="messageService" /></property>
+        <property name="logService"><ref bean="logService" /></property>
+    </bean>
+
+	<bean id="mailServerAction" class="com.youxigu.dynasty2.mail.web.MailServerAction">
+        <property name="entityService" ref="entityService"/>
+        <property name="userService" ref="userService"/>
+        <property name="mailMessageService" ref="mailMessageService"/>
+    </bean>
+
+    <bean id="mailTaskDispatcher" class="com.youxigu.dynasty2.mail.service.impl.MailTaskDispatcher" init-method="init" destroy-method="destory">
+        <property name="messageService" ref="messageService"/>
+    </bean>
+
+<!--	<bean id="guildChargeBackService" class="com.youxigu.dynasty2.backend.guild.service.GuildChargeBackService" destroy-method="destory">-->
+<!--	</bean>-->
+
+	<bean id="initSystemJobService" class="com.youxigu.dynasty2.backend.job.service.InitSystemJobService" init-method="init" destroy-method="destory">
+		<property name="jobService"><ref bean="wolf_jobService" /></property>
+        <property name="systemJobs">
+        	<list>
+          		    <bean class="com.youxigu.wolf.node.job.Job">
+	                    <property name="jobGroupName" value="Sys"/>
+	                    <property name="jobIdInGroup" value="operateactivityJob"/>
+	                    <property name="serviceName" value="operateActivityService"/>
+	                    <property name="methodName" value="doStartActivitys"/>
+	                    <property name="jobType" value="0"/>
+	                    <property name="runOnServer" value="0"/>
+	                    <property name="runOnStart" value="1"/>
+                    </bean>
+                  
+                    <!--每天凌晨2:30删除过期邮件-->
+                    <bean class="com.youxigu.wolf.node.job.Job">
+                      <property name="jobGroupName" value="Sys"/>
+                      <property name="jobIdInGroup" value="mailDel"/><!-- 必须唯一 -->
+                      <property name="serviceName" value="mailMessageService"/><!-- dynasty's spring中配置的beanId -->
+                      <property name="methodName" value="cleanMessage"/><!-- dynasty's spring中配置的bean的method name -->
+                      <property name="jobType" value="0"/><!-- =0内存job ,这里永远都是0 -->
+                      <property name="repeatRunRule" value="0 30 2 * * ?"/><!-- 每天凌晨0：30执行 -->
+                      <property name="runOnServer" value="0"/><!-- 1=在jobserver端运行 0=在gameserver运行，default=0 -->
+                      <property name="runOnStart" value="1"/><!-- 系统启动时运行一次 -->
+                    </bean>
+                    
+                    <!--每天凌晨3:30删除过期战斗-->
+                    <bean class="com.youxigu.wolf.node.job.Job">
+                      <property name="jobGroupName" value="Sys"/>
+                      <property name="jobIdInGroup" value="combatDel"/><!-- 必须唯一 -->
+                      <property name="serviceName" value="combatService"/><!-- dynasty's spring中配置的beanId -->
+                      <property name="methodName" value="cleanCombat"/><!-- dynasty's spring中配置的bean的method name -->
+                      <property name="jobType" value="0"/><!-- =0内存job ,这里永远都是0 -->
+                      <property name="repeatRunRule" value="0 30 3 * * ?"/><!-- 每天凌晨0：30执行 -->
+                      <property name="runOnServer" value="0"/><!-- 1=在jobserver端运行 0=在gameserver运行，default=0 -->
+                      <property name="runOnStart" value="1"/><!-- 系统启动时运行一次 -->
+                    </bean>
+                    
+                    <!--每天凌晨3点自动抓取运营管理系统的本区名称及跨区server配置-->
+                    <bean class="com.youxigu.wolf.node.job.Job">
+                        <property name="jobGroupName" value="Sys"/>
+                        <property name="jobIdInGroup" value="serverInfo"/>
+                        <property name="serviceName" value="commonService"/>
+                        <property name="methodName" value="syncServerInfo"/>
+                        <property name="jobType" value="0"/>
+                        <property name="repeatRunRule" value="0 0 3 * * ?"/>
+                        <property name="runOnServer" value="1"/>
+                        <property name="runOnStart" value="0"/>
+                    </bean>
+
+                    <!-- 每天凌晨5:00删除过期好友申请 -->
+                    <bean class="com.youxigu.wolf.node.job.Job">
+                      <property name="jobGroupName" value="Sys"/>
+                      <property name="jobIdInGroup" value="friAppDel"/><!--必须唯一-->
+                      <property name="serviceName" value="friendService"/><!--dynasty's spring中配置的beanId-->
+                      <property name="methodName" value="cleanFriApp"/><!--dynasty's spring中配置的bean的method name-->
+                      <property name="jobType" value="0"/><!--=0内存job ,这里永远都是0-->
+                      <property name="repeatRunRule" value="0 0 5 * * ?"/><!--每天凌晨0：30执行-->
+                      <property name="runOnServer" value="0"/><!--1=在jobserver端运行 0=在gameserver运行，default=0-->
+                      <property name="runOnStart" value="1"/><!--系统启动时运行一次-->
+                    </bean>
+
+				<!-- 每5分钟执行一次寻找最小国家id的job -->
+<!--      				 <bean class="com.youxigu.wolf.node.job.Job">-->
+<!--                      <property name="jobGroupName" value="Sys"/>-->
+<!--                      <property name="jobIdInGroup" value="excuteMinCountryJob"/>必须唯一-->
+<!--                      <property name="serviceName" value="rankService"/>dynasty's spring中配置的beanId-->
+<!--                      <property name="methodName" value="excuteMinCountryJob"/>dynasty's spring中配置的bean的method name-->
+<!--                      <property name="jobType" value="0"/>=0内存job ,这里永远都是0-->
+<!--                      <property name="repeatRunRule" value="0 0/5 * * * ?"/>每天凌晨0：30执行-->
+<!--                      <property name="runOnServer" value="0"/>1=在jobserver端运行 0=在gameserver运行，default=0-->
+<!--                      <property name="runOnStart" value="1"/>系统启动时运行一次-->
+<!--                    </bean>-->
+
+          
+
+
+
+
+			    <!-- 每天 凌晨 2:50 自动变更长期不在线的盟主  -->
+
+<!--					<bean class="com.youxigu.wolf.node.job.Job">-->
+<!--						<property name="jobGroupName" value="Sys"/>-->
+<!--						<property name="jobIdInGroup" value="autoChangeGuildLeader"/>-->
+<!--						<property name="serviceName" value="guildService"/>-->
+<!--						<property name="methodName" value="execAutoChangeGuildLeader"/>-->
+<!--						<property name="repeatRunRule" value="0 50 2 * * ?"/>-->
+<!--						<property name="jobType" value="0"/>-->
+<!--						<property name="runOnServer" value="1"/>-->
+<!--						<property name="runOnStart" value="0"/>-->
+<!--					</bean>-->
+
+
+				<!--每天凌晨0:05,12:05执行排行计算-->
+<!--				  <bean class="com.youxigu.wolf.node.job.Job"> 每天凌晨0：10执行 -->
+<!--					<property name="jobGroupName" value="Sys"/>-->
+<!--					<property name="jobIdInGroup" value="initRank"/>-->
+<!--					<property name="serviceName" value="rankService"/>-->
+<!--					<property name="methodName" value="refreshRank"/>-->
+<!--					<property name="jobType" value="0"/>=0内存job ,这里永远都是0-->
+<!--					<property name="repeatRunRule" value="0 05 0,12 * * ?"/>每天凌晨0：10执行-->
+<!--					<property name="runOnServer" value="0"/>1=在jobserver端运行 0=在gameserver运行，default=0-->
+<!--					<property name="runOnStart" value="1"/>系统启动时运行一次-->
+<!--				  </bean>-->
+
+                   <!-- 每天凌晨0:20执行联盟每天的维护费用的扣除, -->
+				   <!-- 目前维护费用代码已经注释掉,保留这个JOB就是为了检查下联盟人数-->
+				   
+<!--                  <bean class="com.youxigu.wolf.node.job.Job">-->
+<!--						<property name="jobGroupName" value="Sys"/>-->
+<!--						<property name="jobIdInGroup" value="guildDailyChargeBack"/>-->
+<!--						<property name="serviceName" value="guildChargeBackService"/>-->
+<!--						<property name="methodName" value="startChargeBack"/>-->
+<!--						<property name="jobType" value="0"/>-->
+<!--						<property name="repeatRunRule" value="0 20 0 * * ?"/>-->
+<!--						<property name="runOnServer" value="1"/>-->
+<!--						<property name="runOnStart" value="0"/>-->
+<!--					</bean>-->
+				
+        	</list>
+        </property>
+	
+	</bean>
+<!--	<bean id="towerRankRemoteService" class="com.youxigu.dynasty2.rank.service.impl.TowerRankRemoteService" init-method="init">-->
+<!--		<property name="rankDao"><ref bean="rankDao" /></property>-->
+<!--		<property name="userService"><ref bean="userService" /></property>-->
+<!--	</bean>-->
+	
+<!--	<bean id="wolf_TimerShopService" class="com.youxigu.dynasty2.timerShop.service.impl.TimerShopService" init-method="init">-->
+<!--     	<property name="userService"><ref bean="userService" /></property>-->
+<!--     	<property name="commonService"><ref bean="commonService" /></property>-->
+<!--     	<property name="treasuryService"><ref bean="treasuryService" /></property>-->
+<!--     	<property name="timerShopDao"><ref bean="timerShopDao" /></property>-->
+<!--     	<property name="accountService"><ref bean="accountService" /></property>-->
+<!--     	<property name="logService"><ref bean="logService" /></property>-->
+<!--     	<property name="messageService"><ref bean="messageService" /></property>-->
+<!--     	<property name="entityService"><ref bean="entityService" /></property>-->
+<!--    </bean>-->
+</beans>
+

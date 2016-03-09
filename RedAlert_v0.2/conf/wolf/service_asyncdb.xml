@@ -1,0 +1,32 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+
+
+
+
+	<!--======================wolf提供的其他服务========================================-->
+	
+	 <bean id="asyncDBService" class="com.youxigu.dynasty2.asyncdb.service.impl.AsyncDBServiceEx" init-method="init">
+		<property name="sqlMapClientTemplate" ref="sqlMapClientTemplate" />
+		<property name="period" value="5000" /><!-- 更新时间间隔，默认180000毫秒-->
+	 </bean>
+	
+<!--
+	 <bean id="asyncDBService" class="com.youxigu.dynasty2.asyncdb.service.impl.AsyncDBService" init-method="init">
+		<property name="sqlMapClientTemplate" ref="sqlMapClientTemplate" />
+	 </bean>
+-->
+	<!--
+	 <bean id="asyncDBService" class="com.youxigu.dynasty2.asyncdb.service.impl.AsyncPersistenceDBService" init-method="init">
+		<property name="sqlMapClientTemplate" ref="sqlMapClientTemplate" />
+	 </bean>
+	 -->
+</beans>
+

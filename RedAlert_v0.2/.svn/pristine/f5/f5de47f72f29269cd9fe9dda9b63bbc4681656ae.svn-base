@@ -1,0 +1,141 @@
+package dynasty;
+import "Common.proto";
+
+option java_package = "com.youxigu.dynasty2.risk.proto";
+option java_outer_classname = "RiskMsg";
+//星级奖励类型
+enum StarType {
+    STAR_1 = 0;//10星
+    STAR_2 = 1;//20星
+    STAR_3 = 2;//30星
+}
+
+//单个关卡信息
+message RiskSceneInfo{
+   optional int32 id = 1;//关卡id
+   optional int32 star = 2;//获得星数
+   optional int32 joinNum = 3;//本日已经通关该小关卡的次数
+   optional int32 failNum = 4;//本日已经失败的次数
+   optional int32 restNum = 5;//本日已经重置次数
+   optional bool  firstBonus = 6;//是否已经领取首通奖励 true已经领取
+}
+
+//单个章节信息
+message RiskInfo{
+   optional int32 id = 1;//章节id
+   repeated RiskSceneInfo infos = 2;//包含的所有关卡 集合数据
+   optional int32 sumStar = 3;//累计获得星
+   optional bool pass = 4;//true表示这个章节已经通过
+   optional int32  starBonus = 5;//是否已经领取星级奖励用位表示，0位表示10心奖励,1位表示20星奖励,2位表示30心奖励
+}
+
+
+//54001获取某个章节下的信息
+message Request54001Define{
+   optional int32 cmd = 1;
+   optional int32 id = 2;//章节id
+}
+//54002 获取某个章节下的信息返回
+message Response54001Define{
+   optional ResponseHead responseHead = 1;
+   optional RiskInfo info = 2;//信息返回
+}
+
+
+//54003挑战关卡
+message Request54003Define{
+   optional int32 cmd = 1;
+   optional int32 id = 2;//关卡id
+}
+//54004 挑战关卡信息返回
+message Response54003Define{
+   optional ResponseHead responseHead = 1;
+   optional RiskSceneInfo info = 2;//小关卡信息
+   optional bool win = 3;//true表示赢 
+   optional string combatId = 4;//战报id
+   optional int32 userExp = 5;//获得的君主经验
+   repeated ItemInfo items = 6;//掉落的物品信息集合
+}
+
+//54005扫荡关卡
+message Request54005Define{
+   optional int32 cmd = 1;
+   repeated int32 id = 2;//关卡id 集合
+   optional int32 num = 3;//扫荡次数 1或10
+}
+
+//扫荡信息返回
+message QuickRiskInfo{
+   optional int32 userExp = 2;//获得的君主经验
+   repeated ItemInfo items = 3;//掉落的物品信息集合
+}
+
+//54006扫荡关卡返回
+message Response54005Define{
+   optional ResponseHead responseHead = 1;
+   repeated QuickRiskInfo qinfos = 2;//奖励信息集合 安装扫荡次数，如果是10次着集合有10条记录
+   repeated RiskSceneInfo rinfos = 3;//小关卡 集信息
+}
+
+
+//54007领取星级级奖励
+message Request54007Define{
+   optional int32 cmd = 1;
+   optional int32 id = 2;//章节id
+   optional StarType starType = 3;//领取几星奖励
+}
+
+//54008领取星级级奖励返回
+message Response54007Define{
+   optional ResponseHead responseHead = 1;
+   optional int32 id = 2;//章节id
+   optional StarType starType = 3;//领取几星奖励
+}
+
+
+//54009领取首通奖励
+message Request54009Define{
+   optional int32 cmd = 1;
+   optional int32 id = 2;//关卡id
+}
+
+//54010领取首通奖励返回
+message Response54009Define{
+   optional ResponseHead responseHead = 1;
+   optional int32 id = 2;//关卡id
+}
+
+//54011重置次数
+message Request54011Define{
+   optional int32 cmd = 1;
+   optional int32 id = 2;//关卡id
+}
+
+//54012重置次数返回
+message Response54011Define{
+   optional ResponseHead responseHead = 1;
+   optional int32 id = 2;//关卡id
+   optional int32 restNum = 5;//本日已经重置次数
+}
+
+enum RiskType {
+	DEFAULT = 0;//默认
+    NORMAL = 1;//普通关卡
+    ELITE = 2;//精英关卡
+}
+
+//54013获取当前已打的章节
+message Request54013Define{
+   optional int32 cmd = 1;
+   optional RiskType type = 2;//
+}
+
+
+//54014获取当前已打的章节返回
+message Response54013Define{
+   optional ResponseHead responseHead = 1;
+   optional RiskType type = 2;//
+   repeated int32 ids = 3;//已经挑战的章节集合有序的 空集合表示玩家一次都没挑战过
+   repeated bool passs = 4;//表示对应的关卡是否已经通关 true
+   repeated int32 stars = 5;//表示对应的关卡的星
+}

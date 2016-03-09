@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+        "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+    <typeAlias alias="resCas" type="com.youxigu.dynasty2.map.domain.ResCas"/>
+
+    <select id="getAllResCas" resultClass="resCas" resultIsList="true">
+        SELECT * FROM rescas
+    </select>
+
+    <select id="getResCasListByCasType" parameterClass="int" resultClass="resCas" resultIsList="true">
+        SELECT * FROM rescas where castype=#castype#
+    </select>
+
+     <select id="getResCasById" parameterClass="int" resultClass="resCas">
+        SELECT * FROM rescas where id=#id#
+    </select>
+
+    <!-- 动态资源点 -->
+    <typeAlias alias="dynResCas" type="com.youxigu.dynasty2.map.domain.DynResCas"/>
+    <cacheModel type="MEMCACHED" id="cache_dynResCas" serialize="false" readOnly="false">
+<!--
+        <flushOnExecute statement="createDynResCas">
+            <flushModel flushstatement="dynResCas" flushMode="insert" flushpara="mapCellId"/>
+        </flushOnExecute>
+-->
+
+        <flushOnExecute statement="updateDynResCas">
+            <flushModel flushstatement="dynResCas" flushMode="update" flushpara="mapCellId"/>
+        </flushOnExecute>
+
+        <flushOnExecute statement="deleteDynResCas">
+            <flushModel flushstatement="dynResCas" flushMode="delete" flushpara="mapCellId"/>
+        </flushOnExecute>
+        <property name="class" value="dynResCas"/>
+        <property name="pk" value="mapCellId"/>
+    </cacheModel>
+
+    <select id="getDynResCasOfState" parameterClass="int" resultClass="dynResCas"><!--no cache-->
+        select * from dynrescas where stateid=#stateId#
+    </select>
+
+    <select id="getDynResCas" cacheModel="cache_dynResCas" parameterClass="int" resultClass="dynResCas" cacheOnlyObject="true">
+        select * from dynrescas where mapcellid=#mapCellId#
+    </select>
+
+    <insert id="createDynResCas" parameterClass="dynResCas" >
+        insert into dynrescas (mapcellid, stateid, rescasid, userid, occupytime, expiretime, castype, caslevel,
+        npcid, mirrortroop, mirrorsettime, mirrorexpiretime, cashp, mianzhanexpiretime) values
+        (#mapCellId#, #stateId#, #resCasId#, #userId#, #occupyTime#, #expireTime#, #casType#, #casLevel#,
+        #npcId#, #mirrorTroop#, #mirrorSetTime#, #mirrorExpireTime#, #casHp#, #mianzhanExpireTime#)
+    </insert>
+
+    <update id="updateDynResCas" parameterClass="dynResCas" asyncUpdate="1">
+        update dynrescas set stateid=#stateId#, rescasid=#resCasId#, userid=#userId#, occupytime=#occupyTime#, expiretime=#expireTime#,
+        castype=#casType#, caslevel=#casLevel#, npcid=#npcId#, mirrortroop=#mirrorTroop#,
+        mirrorsettime=#mirrorSetTime#, mirrorexpiretime=#mirrorExpireTime#, cashp=#casHp#,
+        mianzhanexpiretime=#mianzhanExpireTime#
+        where mapcellid=#mapCellId#
+    </update>
+
+    <delete id="deleteDynResCas" parameterClass="int">
+        delete from dynrescas where mapcellid=#mapCellId#
+    </delete>
+
+    <!-- 用户占领资源点 -->
+    <typeAlias alias="userResCas" type="com.youxigu.dynasty2.map.domain.UserResCas"/>
+    <cacheModel type="MEMCACHED" id="cache_userResCas" serialize="false" readOnly="false">
+        <flushOnExecute statement="createUserResCas">
+            <flushModel flushstatement="userResCas" flushMode="insert" flushpara="mapCellId"/>
+        </flushOnExecute>
+
+        <flushOnExecute statement="updateUserResCas">
+            <flushModel flushstatement="userResCas" flushMode="update" flushpara="mapCellId"/>
+        </flushOnExecute>
+
+        <flushOnExecute statement="deleteUserResCas">
+            <flushModel flushstatement="userResCas" flushMode="delete" flushpara="mapCellId"/>
+        </flushOnExecute>
+        <property name="class" value="userResCas"/>
+        <property name="pk" value="mapCellId"/>
+    </cacheModel>
+
+    <select id="getUserResCas" cacheModel="cache_userResCas" parameterClass="int" resultClass="userResCas">
+        select * from userrescas where mapcellid=#mapCellId#
+    </select>
+
+    <insert id="createUserResCas" parameterClass="userResCas" >
+        insert into userrescas (mapcellid, rescasid, userid, occupytime, expiretime,
+        mirrortroop, mirrorsettime, mirrorexpiretime, cashp, mianzhanexpiretime) values
+        (#mapCellId#, #resCasId#, #userId#, #occupyTime#, #expireTime#,
+        #mirrorTroop#, #mirrorSetTime#, #mirrorExpireTime#, #casHp#, #mianzhanExpireTime#)
+    </insert>
+
+    <update id="updateUserResCas" parameterClass="userResCas" asyncUpdate="1">
+        update userrescas set rescasid=#resCasId#, userid=#userId#, occupytime=#occupyTime#,
+        expiretime=#expireTime#, mirrortroop=#mirrorTroop#, mirrorsettime=#mirrorSetTime#,
+        mirrorexpiretime=#mirrorExpireTime#, cashp=#casHp#, mianzhanexpiretime=#mianzhanExpireTime#
+        where mapcellid=#mapCellId#
+    </update>
+
+    <delete id="deleteUserResCas" parameterClass="int">
+        delete from userrescas where mapcellid=#mapCellId#
+    </delete>
+    
+    <!-- 联盟占领资源点 -->
+    <typeAlias alias="guildResCas" type="com.youxigu.dynasty2.map.domain.GuildResCas"/>
+    <cacheModel type="MEMCACHED" id="cache_guildResCas" serialize="false" readOnly="false">
+        <flushOnExecute statement="createGuildResCas">
+            <flushModel flushstatement="guildResCas" flushMode="insert" flushpara="mapCellId"/>
+            <flushModel flushstatement="getGuildResCasByResCasId" flushMode="insert" flushpara="resCasId"/>
+        </flushOnExecute>
+
+        <flushOnExecute statement="updateGuildResCas">
+            <flushModel flushstatement="guildResCas" flushMode="update" flushpara="mapCellId"/>
+        </flushOnExecute>
+        <property name="class" value="guildResCas"/>
+        <property name="pk" value="mapCellId"/>
+    </cacheModel>
+
+    <select id="getGuildResCasByMapCellId" cacheModel="cache_guildResCas" parameterClass="int" resultClass="guildResCas">
+        select * from guildrescas where mapcellid=#mapCellId#
+    </select>
+
+    <select id="getGuildResCasByResCasId" cacheModel="cache_guildResCas" parameterClass="int" resultClass="guildResCas">
+        select * from guildrescas where rescasid=#resCasId#
+    </select>
+
+    <insert id="createGuildResCas" parameterClass="guildResCas" >
+        insert into guildrescas (mapcellid, rescasid, currentguildid, currentguildname,
+        firstguildid, firstguildname, occupytime, cashp) values
+        (#mapCellId#, #resCasId#, #currentGuildId#, #currentGuildName#, #firstGuildId#,
+        #firstGuildName#, #occupyTime#, #casHp#)
+    </insert>
+
+    <update id="updateGuildResCas" parameterClass="guildResCas" asyncUpdate="1">
+        update guildrescas set rescasid=#resCasId#, currentguildid=#currentGuildId#,
+        currentguildname=#currentGuildName#, firstguildid=#firstGuildId#,
+        firstguildname=#firstGuildName#, occupytime=#occupyTime#, cashp=#casHp#
+        where mapcellid=#mapCellId#
+    </update>
+
+    <!-- 联盟占领资源点 -->
+    <typeAlias alias="countryResCas" type="com.youxigu.dynasty2.map.domain.CountryResCas"/>
+    <cacheModel type="MEMCACHED" id="cache_countryResCas" serialize="false" readOnly="false">
+        <flushOnExecute statement="createCountryResCas">
+            <flushModel flushstatement="countryResCas" flushMode="insert" flushpara="mapCellId"/>
+            <flushModel flushstatement="getCountryResCasByResCasId" flushMode="insert" flushpara="resCasId"/>
+        </flushOnExecute>
+
+        <flushOnExecute statement="updateCountryResCas">
+            <flushModel flushstatement="countryResCas" flushMode="update" flushpara="mapCellId"/>
+        </flushOnExecute>
+
+        <property name="class" value="countryResCas"/>
+        <property name="pk" value="mapCellId"/>
+    </cacheModel>
+
+    <select id="getCountryResCasByMapCellId" cacheModel="cache_countryResCas" parameterClass="int" resultClass="countryResCas">
+        select * from countryrescas where mapcellid=#mapCellId#
+    </select>
+
+    <select id="getCountryResCasByResCasId" cacheModel="cache_countryResCas" parameterClass="int" resultClass="countryResCas">
+        select * from countryrescas where rescasid=#resCasId#
+    </select>
+
+    <insert id="createCountryResCas" parameterClass="countryResCas" >
+        insert into countryrescas (mapcellid, rescasid, currentcountryid, currentcountryname,
+        currentguildid, currentguildname, firstguildid, firstguildname, occupytime, cashp) values
+        (#mapCellId#, #resCasId#, #currentCountryId#, currentCountryName, #currentGuildId#, currentGuildName,
+        #firstGuildId#, #firstGuildName#, #occupyTime#, #casHp#)
+    </insert>
+
+    <update id="updateCountryResCas" parameterClass="countryResCas" asyncUpdate="1">
+        update countryrescas set rescasid=#resCasId#, currentcountryid=#currentCountryId#,
+        currentcountryname=#currentCountryName#,  currentguildid=#currentGuildId#,
+        currentguildname=#currentGuildName#, firstguildid=#firstGuildId#,
+        firstguildname=#firstGuildName#, occupytime=#occupyTime#, cashp=#casHp#
+        where mapcellid=#mapCellId#
+    </update>
+
+    <typeAlias alias="dynResCasRule" type="com.youxigu.dynasty2.map.domain.DynResCasRule"/>
+    <select id="getDynResCasRules" resultClass="dynResCasRule">
+        select * from dynrescasrule
+    </select>
+
+</sqlMap>

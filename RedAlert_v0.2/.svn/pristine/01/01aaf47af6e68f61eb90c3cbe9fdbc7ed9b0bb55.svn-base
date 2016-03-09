@@ -1,0 +1,222 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+
+	
+	<bean id="combatDao" class="com.youxigu.dynasty2.combat.dao.impl.CombatDao" >
+		<property name="sqlMapClientTemplate"><ref bean="sqlMapClientTemplate" /></property>
+	</bean>
+
+	<bean id="playerCombatTeamService" class="com.youxigu.dynasty2.combat.service.impl.PlayerCombatTeamService" >
+		<property name="userService"><ref bean="userService" /></property>
+		<property name="castleService"><ref bean="castleService" /></property>
+		<property name="troopService"><ref bean="troopService" /></property>
+		<property name="heroService"><ref bean="heroService" /></property>
+		<property name="mapService"><ref bean="mapService" /></property>
+	</bean>
+
+	<bean id="npcCombatTeamService" class="com.youxigu.dynasty2.combat.service.impl.NPCCombatTeamService" >
+		<property name="npcService"><ref bean="npcService" /></property>
+	</bean>
+	
+	<bean id="defaultAfterCombatService" class="com.youxigu.dynasty2.combat.service.impl.DefaultAfterCombatService" >
+		<property name="combatService"><ref bean="combatService" /></property>
+		<property name="combatDao"><ref bean="combatDao" /></property>
+		<property name="userEffectService"><ref bean="userEffectService" /></property>
+		<property name="userService"><ref bean="userService" /></property>
+		<property name="heroService"><ref bean="heroService" /></property>
+		<property name="castleService"><ref bean="castleService" /></property>
+		<property name="messageService"><ref bean="messageService" /></property>
+		<property name="castleEffectService"><ref bean="castleEffectService" /></property>
+		<property name="userAchieveService"><ref bean="userAchieveService" /></property>
+		<property name="commonService"><ref bean="commonService" /></property>
+		<property name="accountService"><ref bean="accountService" /></property>
+	</bean>
+	
+	<bean id="pveAfterCombatService" class="com.youxigu.dynasty2.combat.service.impl.PVEAfterCombatService" parent="defaultAfterCombatService" >
+		<property name="entityService"><ref bean="entityService" /></property>
+		<property name="npcService"><ref bean="npcService" /></property>
+		<property name="missionService"><ref bean="missionService" /></property>
+	</bean>
+	
+	<bean id="evpAfterCombatService" class="com.youxigu.dynasty2.combat.service.impl.EVPAfterCombatService" parent="pveAfterCombatService">
+		<property name="entityService"><ref bean="entityService" /></property>
+		<property name="npcService"><ref bean="npcService" /></property>
+	</bean>
+
+	<bean id="combatEngine" class="com.youxigu.dynasty2.combat.service.impl.CombatEngine" init-method="init">
+		<property name="combatDao"><ref bean="combatDao" /></property>
+	</bean>
+	
+	<bean id="combatService" class="com.youxigu.dynasty2.combat.service.impl.CombatService">
+		<property name="cacheSeconds" value="${cacheSeconds:3600}" />
+		<property name="combatDao"><ref bean="combatDao" /></property>
+		<property name="combatEngine"><ref bean="combatEngine" /></property>
+		<property name="armyoutService"><ref bean="armyoutService" /></property>
+		<property name="teamFactorys">
+			<map>
+				<entry key="1">
+					<ref bean="playerCombatTeamService" />
+				</entry><!--玩家军队 -->
+				<entry key="2">
+					<ref bean="npcCombatTeamService" />
+				</entry><!--npc军队 -->
+			</map>
+		</property>
+		<property name="atferCombatFactorys">
+              <map>
+                  <entry key="10"><ref bean="defaultAfterCombatService"/></entry><!--PVP讨伐-->
+                  <entry key="11"><ref bean="pveAfterCombatService"/></entry><!--PVE讨伐-->
+                  <entry key="12"><ref bean="evpAfterCombatService"/></entry><!--PVE讨伐-->
+              </map>
+        </property>
+	</bean>
+	
+
+<!--skill-->
+	<!--effect limit-->
+	<bean id="forbidWallLimit" class="com.youxigu.dynasty2.combat.skill.cheak.effect.ForbidWallLimit"/>
+	<bean id="unitHpGreaterThanLimit" class="com.youxigu.dynasty2.combat.skill.cheak.effect.UnitHpGreaterThanLimit"/>
+	<bean id="unitHpLessThanLimit" class="com.youxigu.dynasty2.combat.skill.cheak.effect.UnitHpLessThanLimit"/>
+	<bean id="targetUnderBuffLimit" class="com.youxigu.dynasty2.combat.skill.cheak.effect.TargetUnderBuffLimit"/>
+    <bean id="weightLimit" class="com.youxigu.dynasty2.combat.skill.cheak.effect.WeightLimit"/>
+    <bean id="thePartyUnderBuffLimit" class="com.youxigu.dynasty2.combat.skill.cheak.effect.ThePartyUnderBuffLimit"/>
+    <bean id="theEnemyUnderBuffLimit" class="com.youxigu.dynasty2.combat.skill.cheak.effect.TheEnemyUnderBuffLimit"/>
+  
+    <!--skill limit-->
+    <bean id="punchLimit" class="com.youxigu.dynasty2.combat.skill.cheak.skill.PunchLimit"/>
+    <bean id="roundGreateThanLimit" class="com.youxigu.dynasty2.combat.skill.cheak.skill.RoundGreateThanLimit"/>
+    <bean id="roundLessThanLimit" class="com.youxigu.dynasty2.combat.skill.cheak.skill.RoundLessThanLimit"/>
+    <bean id="skillMaxFiredNumLimit" class="com.youxigu.dynasty2.combat.skill.cheak.skill.SkillMaxFiredNumLimit"/>
+    <bean id="unitArmyNumGreaterThanLimit" class="com.youxigu.dynasty2.combat.skill.cheak.skill.UnitArmyNumGreaterThanLimit"/>
+    <bean id="unitArmyNumLessThanLimit" class="com.youxigu.dynasty2.combat.skill.cheak.skill.UnitArmyNumLessThanLimit"/>
+    <bean id="unitMoraleGreaterThanLimit" class="com.youxigu.dynasty2.combat.skill.cheak.skill.UnitMoraleGreaterThanLimit"/>
+    <bean id="unitMoraleLessThanLimit" class="com.youxigu.dynasty2.combat.skill.cheak.skill.UnitMoraleLessThanLimit"/>
+    <bean id="unitLeaderLimit" class="com.youxigu.dynasty2.combat.skill.cheak.skill.UnitLeaderLimit"/>
+	
+  
+    <!--target searcher-->
+	<bean id="targetSearch1" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch1"/>
+	<bean id="targetSearch2" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch2"/>
+	<bean id="targetSearch3" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch3"/>
+	<bean id="targetSearch4" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch4"/>
+	<bean id="targetSearch5" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch5"/>
+	<bean id="targetSearch6" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch6"/>
+	<bean id="targetSearch7" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch7"/>
+	<bean id="targetSearch8" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch8"/>
+	<bean id="targetSearch9" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch9"/>
+	<bean id="targetSearch10" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch10"/>
+	<bean id="targetSearch11" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch11"/>
+	<bean id="targetSearch12" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch12"/>
+	<bean id="targetSearch13" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch13"/>
+	<bean id="targetSearch14" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch14"/>
+    <bean id="targetSearch15" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch15"/>
+    <bean id="targetSearch16" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch16"/>
+    <bean id="targetSearch17" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch17"/>
+    <bean id="targetSearch18" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch18"/>
+    <bean id="targetSearch19" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch19"/>
+    <bean id="targetSearch20" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch20"/>
+    <bean id="targetSearch21" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch21"/>
+    <bean id="targetSearch22" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch22"/>
+    <bean id="targetSearch23" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch23"/>
+    <bean id="targetSearch24" class="com.youxigu.dynasty2.combat.skill.target.TargetSearch24"/>
+
+	<!--render-->
+    <bean id="addArmyNumDotRender" class="com.youxigu.dynasty2.combat.skill.render.AddArmyNumDotRender"/>
+    <bean id="attackRender" class="com.youxigu.dynasty2.combat.skill.render.AttackRender"/>
+    <bean id="bufRender" class="com.youxigu.dynasty2.combat.skill.render.BufRender"/>
+    <bean id="controlBufRender" class="com.youxigu.dynasty2.combat.skill.render.ControlBufRender"/>
+    <bean id="clearConfRender" class="com.youxigu.dynasty2.combat.skill.render.ClearConfRender"/>
+    <bean id="defaultSkillEffectRender" class="com.youxigu.dynasty2.combat.skill.render.DefaultSkillEffectRender"/>
+    <bean id="lostArmyNumDotRender" class="com.youxigu.dynasty2.combat.skill.render.LostArmyNumDotRender"/>
+	<bean id="moraleRender" class="com.youxigu.dynasty2.combat.skill.render.MoraleRender"/>
+    <bean id="togetherAttackRender" class="com.youxigu.dynasty2.combat.skill.render.TogetherAttackRender"/>
+    <bean id="storyRender" class="com.youxigu.dynasty2.combat.skill.render.StoryRender"/>
+
+  <bean id="skillEffectFactory" class="com.youxigu.dynasty2.combat.skill.SkillEffectFactory">
+        <property name="searchers">
+              <map>
+				  <!--按技能的Target ，配置技能的目标的搜索器-->
+                  <entry key="1"><ref bean="targetSearch1"/></entry>
+                  <entry key="2"><ref bean="targetSearch2"/></entry>
+                  <entry key="3"><ref bean="targetSearch3"/></entry>
+                  <entry key="4"><ref bean="targetSearch4"/></entry>
+                  <entry key="5"><ref bean="targetSearch5"/></entry>
+                  <entry key="6"><ref bean="targetSearch6"/></entry>
+                  <entry key="7"><ref bean="targetSearch7"/></entry>
+                  <entry key="8"><ref bean="targetSearch8"/></entry>
+                  <entry key="9"><ref bean="targetSearch9"/></entry>
+                  <entry key="10"><ref bean="targetSearch10"/></entry>
+                  <entry key="11"><ref bean="targetSearch11"/></entry>
+                  <entry key="12"><ref bean="targetSearch12"/></entry>
+                  <entry key="13"><ref bean="targetSearch13"/></entry>
+                  <entry key="14"><ref bean="targetSearch14"/></entry>
+                  <entry key="15"><ref bean="targetSearch15"/></entry>
+                  <entry key="16"><ref bean="targetSearch16"/></entry>
+                  <entry key="17"><ref bean="targetSearch17"/></entry>
+                  <entry key="18"><ref bean="targetSearch18"/></entry>
+                  <entry key="19"><ref bean="targetSearch19"/></entry>
+                  <entry key="20"><ref bean="targetSearch20"/></entry>
+                  <entry key="21"><ref bean="targetSearch21"/></entry>
+                  <entry key="22"><ref bean="targetSearch22"/></entry>
+                  <entry key="23"><ref bean="targetSearch23"/></entry>
+                  <entry key="24"><ref bean="targetSearch24"/></entry>
+              </map>
+        </property>
+
+        <property name="renders">
+              <map>
+                  <entry key="0"><ref bean="defaultSkillEffectRender"/></entry>
+                  <entry key="1"><ref bean="controlBufRender"/></entry>
+                  <entry key="2"><ref bean="bufRender"/></entry>
+                  <entry key="DOT_ADD_SHIELD"><ref bean="addArmyNumDotRender"/></entry>
+                  <entry key="DOT_LOST_ARMY"><ref bean="lostArmyNumDotRender"/></entry>
+                  <entry key="EFF_NORMAL_ATTACK"><ref bean="attackRender"/></entry>
+                  <entry key="EFF_CLEAR"><ref bean="clearConfRender"/></entry>
+                  <entry key="EFF_MORALE"><ref bean="moraleRender"/></entry>
+                  <entry key="EFF_TOGETHER_ATTACK"><ref bean="togetherAttackRender"/></entry>
+                  <entry key="EFF_STORY"><ref bean="storyRender"/></entry>
+              </map>
+        </property>
+
+        <property name="limits">
+              <map>
+                  <entry key="S_PUNCH"><ref bean="punchLimit"/></entry>
+                  <entry key="S_ROUND_G"><ref bean="roundGreateThanLimit"/></entry>                
+                  <entry key="S_ROUND_L"><ref bean="roundLessThanLimit"/></entry>                
+                  <entry key="S_COUNT_M"><ref bean="skillMaxFiredNumLimit"/></entry>                
+                  <entry key="S_ARMY_G"><ref bean="unitArmyNumGreaterThanLimit"/></entry>                
+                  <entry key="S_ARMY_L"><ref bean="unitArmyNumLessThanLimit"/></entry>                
+				  <entry key="S_Morale_G"><ref bean="unitMoraleGreaterThanLimit"/></entry> 
+                  <entry key="S_Morale_L"><ref bean="unitMoraleLessThanLimit"/></entry>
+                  <entry key="S_LEADER"><ref bean="unitLeaderLimit"/></entry>
+                  
+              </map>
+        </property>
+        
+        <property name="effectlimits">
+              <map>
+                  <entry key="E_FORBID_WALLL"><ref bean="forbidWallLimit"/></entry>
+                  <entry key="E_HP_G"><ref bean="unitHpGreaterThanLimit"/></entry>                
+                  <entry key="E_HP_L"><ref bean="unitHpLessThanLimit"/></entry>                
+                  <entry key="E_UNDER_BUFF"><ref bean="targetUnderBuffLimit"/></entry>                
+                  <entry key="E_WEIGHT"><ref bean="weightLimit"/></entry>
+                  <entry key="E_PARTY_UNDER_BUFF"><ref bean="thePartyUnderBuffLimit"/></entry>
+                  <entry key="E_ENEMY_UNDER_BUFF"><ref bean="theEnemyUnderBuffLimit"/></entry>
+              </map>
+        </property>
+
+  </bean>
+
+  <bean id="combatAction" class="com.youxigu.dynasty2.combat.web.CombatAction">
+      <property name="combatService"><ref bean="combatService" /></property>
+  </bean>
+  
+</beans>
+

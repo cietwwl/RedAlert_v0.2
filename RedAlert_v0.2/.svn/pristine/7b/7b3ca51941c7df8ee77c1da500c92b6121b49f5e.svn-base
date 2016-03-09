@@ -1,0 +1,73 @@
+package com.youxigu.dynasty2.armyout.service;
+
+import java.util.List;
+import java.util.Map;
+
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+import com.youxigu.dynasty2.map.domain.MapCell;
+
+/**
+ * 出征
+ * 
+ * @author LK
+ * @date 2016年2月25日
+ */
+public interface IArmyoutService {
+	/**
+	 * 初始化service
+	 * 同步mapService调用
+	 */
+	void initService(Map<Integer, MapCell> ALL_CELLS);
+
+	/**
+	 * 出征初始化到坐标下
+	 * 
+	 * @param cellIds
+	 * @param armyout
+	 */
+	void addArmyoutToCell(List<Integer> cellIds, Armyout armyout);
+
+	/**
+	 * 取得内部存储的原始Armyout,仅供特殊情况需要取得原始Armyout时使用，一般不应调用这个方法
+	 * -专为事务提交时同步缓存使用
+	 * @param armyoutId
+	 * @return
+	 */
+	Armyout getArmyoutCache(long armyoutId);
+
+	/**
+	 * 添加armyout缓存-专为事务提交时同步缓存使用
+	 * 
+	 * @param armyout
+	 */
+	void addArmyoutCache(Armyout armyout);
+
+	/**
+	 * 删除armyout缓存-专为事务提交时同步缓存使用
+	 * 
+	 * @param armyout
+	 */
+	void removeArmyoutCache(Armyout armyout);
+
+	/**
+	 * 取得armyout
+	 * 
+	 * @param armyoutId
+	 * @return
+	 */
+	Armyout getArmyoutForRead(long armyoutId);
+
+	/**
+	 * 取得armyout
+	 * 
+	 * @param armyoutId
+	 * @return
+	 */
+	Armyout getArmyoutForWrite(long armyoutId);
+
+	void createArmyOut(Armyout armyout);
+
+	void updateArmyout(Armyout armyout);
+
+	void deleteArmyOut(Armyout armyout);
+}

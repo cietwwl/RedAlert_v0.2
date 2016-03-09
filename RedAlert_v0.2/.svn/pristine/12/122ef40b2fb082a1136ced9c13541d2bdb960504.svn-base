@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+    <typeAlias alias="mapCell" type="com.youxigu.dynasty2.map.domain.MapCell"/>
+	<select id="getMapCellsByStateId" resultClass="mapCell" shardingParams='[{"paramExpr":"stateId","tableName":"mapcell"}]'>
+		SELECT * FROM mapcell WHERE stateId = #stateId# 
+	</select>
+
+	<update id="updateMapCell" parameterClass="mapCell" shardingParams='[{"paramExpr":"stateId","tableName":"mapcell"}]'>
+		UPDATE mapcell SET casId = #casId#,castType=#castType#,userId=#userId#,guildId=#guildId# WHERE id=#id#
+	</update>
+
+    <typeAlias alias="country" type="com.youxigu.dynasty2.map.domain.Country"/>
+	<select id="listAllCountry" resultClass="country">
+		SELECT * FROM country
+	</select>
+    
+    <typeAlias alias="state" type="com.youxigu.dynasty2.map.domain.State"/>
+	<select id="getStatesByCountryId" resultClass="state">
+		SELECT * FROM state where countryId=#countryId#
+	</select>
+	
+	<typeAlias alias="countryCharacter" type="com.youxigu.dynasty2.map.domain.CountryCharacter"/>
+    <select id="listAllCountryCharacters" resultClass="countryCharacter">
+		SELECT * FROM countrycharacter
+	</select>
+</sqlMap>

@@ -1,0 +1,20 @@
+package com.youxigu.dynasty2.map.service;
+
+import com.youxigu.dynasty2.map.domain.MapCell;
+
+/*
+ * 地图数据异步处理接口
+ */
+public interface IAsyUpdateMapService {
+	/**
+	 * 初始化service
+	 */
+	void initService();
+
+	/**
+	 * 异步更新坐标点
+	 * 
+	 * @param mapCell
+	 */
+	void updateCityCell(MapCell mapCell);
+}

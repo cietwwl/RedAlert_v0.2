@@ -1,0 +1,74 @@
+package com.youxigu.dynasty2.map.service.impl;
+
+import java.util.List;
+
+import org.shardbatis.spring.jdbc.transaction.DefaultTransactionListener;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.DefaultTransactionStatus;
+
+import com.manu.core.ServiceLocator;
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.map.service.IAsyUpdateMapService;
+import com.youxigu.dynasty2.map.service.IMapService;
+
+/**
+ * 坐标点更新事务回滚机制
+ * 
+ * @author LK
+ * @date 2016年2月18日
+ */
+public class MapCellTransactionListener extends DefaultTransactionListener {
+
+	@Override
+	public void doBeginAfter(Object transaction,
+			TransactionDefinition definition) {
+		ThreadLocalMapCellCache.setInTrans(true);
+	}
+
+	@Override
+	public void doCommitAfter(DefaultTransactionStatus status) {
+		ThreadLocalMapCellCache.setInTrans(false);
+		List<MapCell> messages = null;
+		try {
+			messages = ThreadLocalMapCellCache.getData();
+			if (messages != null) {
+				IAsyUpdateMapService asyUpdateMapService = (IAsyUpdateMapService) ServiceLocator
+						.getSpringBean("asyUpdateMapService");
+
+				IMapService mapService = (IMapService) ServiceLocator
+						.getSpringBean("mapService");
+				for (MapCell mapCell : messages) {
+					asyUpdateMapService.updateCityCell(mapCell);
+					MapCell cellCache = mapService.getMapCell(mapCell.getId());
+					if (cellCache != null) {
+						cellCache.clone(mapCell);
+					}
+				}
+			}
+		} catch (Exception e) {
+			// 吃掉消息发送异常
+			e.printStackTrace();
+		} finally {
+			if (messages != null) {
+				for (MapCell mapCell : messages) {
+					mapCell.unlock();
+				}
+			}
+			ThreadLocalMapCellCache.clean();
+			// EventMessageFilter.clear();
+		}
+
+	}
+
+	@Override
+	public void doRollbackAfter(DefaultTransactionStatus status) {
+		List<MapCell> messages = ThreadLocalMapCellCache.getData();
+		if (messages != null) {
+			for (MapCell mapCell : messages) {
+				mapCell.unlock();
+			}
+		}
+		ThreadLocalMapCellCache.clean();
+	}
+
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+	<typeAlias alias="npcHero" type="com.youxigu.dynasty2.npc.domain.NPCHero"/>
+	<typeAlias alias="npcDefine" type="com.youxigu.dynasty2.npc.domain.NPCDefine"/>
+
+	<select id="getNPCHeros" resultClass="npcHero"> 
+		select * from npchero
+	</select>
+
+	<select id="getNPCDefines" resultClass="npcDefine"> 
+		select * from npcdefine
+	</select>
+</sqlMap>

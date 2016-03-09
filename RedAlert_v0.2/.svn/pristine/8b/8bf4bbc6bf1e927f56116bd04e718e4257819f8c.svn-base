@@ -1,0 +1,13 @@
+delete from idgen;
+INSERT IGNORE INTO idgen values('ACCOUNT',100,1);
+INSERT IGNORE INTO idgen values('USER',100,1);
+INSERT IGNORE INTO idgen values('CASTLE',100,1);
+INSERT IGNORE INTO idgen values('HERO',100,1);
+INSERT IGNORE INTO idgen values('CLAN',100,1);
+INSERT IGNORE INTO idgen values('TREASURY',100,1);
+INSERT IGNORE INTO idgen values('TROOP',100,1);
+INSERT IGNORE INTO idgen values('GUILD',100,1);
+INSERT IGNORE INTO idgen values('ADVISER',100,1);
+INSERT IGNORE INTO idgen values('ARMYOUT',100,1);
+INSERT IGNORE INTO idgen values('TROOPGRID',100,1);
+

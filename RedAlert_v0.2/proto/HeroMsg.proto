@@ -1,0 +1,590 @@
+package dynasty;
+import "Common.proto";
+
+option java_package = "com.youxigu.dynasty2.hero.proto";
+option java_outer_classname = "HeroMsg";
+
+//武将属性信息
+message HeroAttrInfo{
+   optional int32 magicAttack = 1;// 法术攻击
+   optional int32 physicalAttack = 2;// 物理攻击
+   optional int32 magicDefend = 3;// 法术防御
+   optional int32 physicalDefend = 4;// 物理防御
+   optional int32 hit = 5;// 命中
+   optional int32 dodge = 6;// 闪避
+   optional int32 critDec = 7;// 免暴率
+   optional int32 critAdd = 8;// 暴击率
+   optional int32 critDamageAdd = 9;// 暴击伤害
+   optional int32 critDamageDec = 10;// 暴击伤害减免
+   optional int32 damageAdd = 11;// 最终伤害加成
+   optional int32 damageDec = 12;// 最终伤害减免
+   optional int32 hp = 13;// 血量上限最终值
+   optional int32 damage = 14;// 固定伤害
+   optional int32 shield = 15;// 固定减免
+   optional int32 initMorale = 16;// 士气
+   optional int32 curHp = 17;// 当前血量
+}
+
+//单个武将信息
+message HeroInfo{
+   optional int64 heroId = 1;//武将id
+   optional int32 level = 2;//武将等级
+   optional int32 exp=3;//武将经验
+   optional int32 growing = 4;//成长值
+   optional int32 sysEntid = 5;//模板id
+   optional HeroAttrInfo attrInfo = 6;//属性集合
+   optional int32 skillId1 = 7;// 普通攻击技能
+   optional int32 skillId2 = 8;// 合击技能
+   optional int32 skillId3 = 9;// 士气技能
+   optional int32 skillId4 = 10;// 飞机技能
+   optional int32 skillId5 = 11;// 被动技能1
+   optional int32 skillId6 = 12;// 被动技能2
+   optional int32 power = 13;// 武将战力
+   optional int64 troopId = 14;//武将所属的军团id.没有则为0
+   optional int64 troopGridId = 15;// 武将所属的格子id 0表示没有放入军团
+   optional int32 relifeNum = 16;//进阶进阶,如:0.1.2.3 
+   optional int32 heroStrength = 17;//强化id,如: 0.10001.10002
+   optional string heroFate = 18;//武将情缘 ","隔开
+   optional string equipFate = 19;//装备套装 ","隔开
+   repeated int64 equips = 20;//武将的装备集合6件顺序存放.如果武将没有上阵是没有装备的.客户端记得判断集合
+   optional int32 leader = 21;//1表示为队长.其他不是队长
+   optional bool  mainHero= 22;//true表示君主坦克
+}
+
+//取得所有武将-31021
+message Request31021Define{
+   optional int32 cmd = 1;
+}
+
+//取得所有武将-31022返回信息
+message Response31022Define{
+   optional ResponseHead responseHead = 1;
+   repeated HeroInfo heros=2;//拥有的武将集合
+}
+
+//服务器主动推武将信息-31024
+message Response31024Define{
+   optional ResponseHead responseHead = 1;
+   optional HeroInfo hero=2;//推送的武将信息
+}
+
+//武将升级使用的经验道具
+message ExpItem{
+   required int32 entId = 1;//策划配置的经验道具id
+   required int32 num = 2;//使用的数量
+}
+
+//武将升级-31025
+message Request31025Define{
+   optional int32 cmd = 1;
+   required int64 heroId = 2;//武将id
+   repeated ExpItem expItems = 3;//使用的经验卡道具集合
+}
+
+//武将升级-31026返回
+message Response31026Define{
+   optional ResponseHead responseHead = 1;
+   optional bool succ=2;//true升级成功
+}
+
+//武将进阶-31027
+message Request31027Define{
+   required int32 cmd = 1;
+   required int64 heroId = 2;//武id
+}
+
+//武将进阶-31028返回信息
+message Response31028Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 heroId = 2;//武id
+   optional bool succ = 3;//true进阶成功
+}
+
+//武将强化-31029
+message Request31029Define{
+   required int32 cmd = 1;
+   required int64 heroId = 2;//武id
+}
+
+//武将强化-31030返回信息
+message Response31030Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 heroId = 2;//武id
+   optional bool succ = 3;//true强化成功
+}
+
+
+//武将重生或退役-31031
+message Request31031Define{
+   required int32 cmd = 1;
+   repeated int64 heroIds = 2;//要退役或重生的武将id集合
+   optional bool retire = 3;//true为退役操作 false是重生
+}
+
+//武将重生或退役-31032返回信息
+message Response31032Define{
+   optional ResponseHead responseHead = 1;
+   optional bool succ = 2;
+   optional bool retire = 3;//true为退役操作 false是重生
+   repeated int64 heroIds = 4;//要退役或重生的武将id集合,退役的话前端需要删除退役的武将
+}
+
+//服务器主动推武将属性改变信息。单独刷新武将属性信息-31034
+message Response31034Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 heroId = 2;//武id
+   optional HeroAttrInfo heroAttr=3;//推送的武将属性信息
+}
+
+//坦克的维修信息
+message HeroArmyInfo{
+    optional int64 heroId = 1;//武将的id
+    optional int32 armyNum = 2;//分配的零件数量
+}
+
+//坦克维修-31039
+message Request31039Define{
+   required int32 cmd = 1;
+   repeated HeroArmyInfo heroArmys = 2;//武将的维修信息
+   optional int32 status = 3;//1表示自动维修
+}
+
+//坦克维修-31040返回信息
+message Response31040Define{
+   optional ResponseHead responseHead = 1;
+   optional bool succ  = 2;//true表示维修成功
+   optional int32 armyNum = 3;//当前未分配的零件
+}
+
+//坦克一键维修-31041
+message Request31041Define{
+   required int32 cmd = 1;
+   optional int32 status = 2;//1表示自动维修
+}
+
+//坦克一键维修-31042返回信息
+message Response31042Define{
+   optional ResponseHead responseHead = 1;
+   optional bool succ  = 2;//true表示维修成功
+   optional int32 armyNum = 3;//当前未分配的零件
+}
+
+//属性的效果值,下面是效果key
+//法术攻击 H_MAGICATTACK;
+//物理攻击 H_PHYSICALATTACK;
+//法术防御 H_MAGICDEFEND;
+//物理防御 H_PHYSICALDEFEND;
+//命中 H_Hit;
+//闪避 H_DODGE;
+//免爆率 H_CRITDEC;
+//暴击率 H_CRITADD;
+//暴击伤害 H_CRITDAMAGE;
+//暴击伤害减免 H_CRITDAMAGE_DEC;
+//伤害千分比加成 H_DAMAGE_PER;
+//伤害千分比减免 H_SHIELD_PER;
+//血量上限 H_INIT_HP;
+//固定伤害abs H_DAMAGE;
+//固定伤害减免abs H_SHIELD;
+// 士气 H_MORALE;
+message EffectValue{
+   optional string key = 1;//属性的字符串key
+   optional int32 absValue = 2;//绝对值
+   optional int32 perValue = 3;//百分百值
+   optional bool isPercent = 4;//true表示是百分比
+}
+
+//获取坦克的原始属性(客户端通过原始属性自己来计算属性)-31043
+message Request31043Define{
+   required int32 cmd = 1;
+   optional int64 heroId = 2;//坦克的id
+}
+
+//获取坦克的原始属性-31044返回信息
+message Response31044Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 heroId = 2;//坦克的id
+   repeated EffectValue effects  = 3;//武将的属性集合
+}
+
+
+
+/////////////////////////////////////////////武将装备开始////////////////////////////////////////////////
+
+//换装备-33111
+message Request33111Define{
+   required int32 cmd = 1;
+   required int64 heroId = 2;//武id
+   required int64 treasuryId = 3;//背包的物品数据库id 小于0表示一键换装
+}
+
+//换装备-33112返回信息
+message Response33112Define{
+   optional ResponseHead responseHead = 1;
+   optional bool succ = 2;//true表示成功
+   optional int64 heroId = 3;//武id
+}
+
+//脱装备-33113
+message Request33113Define{
+   required int32 cmd = 1;
+   required int64 heroId = 2;//武id
+   required int64 treasuryId = 3;//背包的物品数据库id 小于0表示一键脱装
+}
+
+//脱装备-33114
+message Response33114Define{
+   optional ResponseHead responseHead = 1;
+   optional HeroInfo info = 2;//武将集合
+}
+
+
+//装备强化 33115
+message Request33115Define{
+   required int32 cmd = 1;
+   required int64 tId = 2;//物品的数据库id
+   required int32 num = 3;//强化次数1，10，表示强化1次或10次不传默认强化1次
+}
+
+//装备强化 33116返回
+message Response33116Define{
+   optional ResponseHead responseHead = 1;
+   optional bool succ = 2;//true成功
+   optional string desc = 3;//描述信息
+}
+
+//装备合成 33117
+message Request33117Define{
+   required int32 cmd = 1;
+   required int32 entId = 2;//合成的道具id
+}
+
+//装备合成 33118返回
+message Response33118Define{
+   optional ResponseHead responseHead = 1;
+   optional bool succ = 2;//true成功
+}
+
+//装备分解 33119
+message Request33119Define{
+   required int32 cmd = 1;
+   repeated int64 tIds = 2;//分解的装备id集合 这是数据库id
+}
+
+//装备分解33120返回
+message Response33120Define{
+   optional ResponseHead responseHead = 1;
+   optional bool succ = 2;//true成功
+}
+
+//装备回炉 33121
+message Request33121Define{
+   required int32 cmd = 1;
+   repeated int64 tIds = 2;//回炉的装备id集合 这是数据库id
+}
+
+//装备回炉33122返回
+message Response33122Define{
+   optional ResponseHead responseHead = 1;
+   optional bool succ = 2;//true成功
+}
+
+//装备加锁 33123
+message Request33123Define{
+   required int32 cmd = 1;
+   optional int64 tId = 2;//装备id 这是数据库id
+   optional bool lock = 3;//true表示锁定，false表示解锁
+   
+}
+
+//装备加锁33124返回
+message Response33124Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 tId = 2;//装备id 这是数据库id
+   optional bool succ = 3;//true成功
+   optional bool lock = 4;//true表示锁定，false表示未锁
+}
+
+//装备生产 33125
+message Request33125Define{
+   required int32 cmd = 1;
+   optional int32 entId = 2;//物品策划配数id
+}
+
+//装备生产 33126返回
+message Response33126Define{
+   optional ResponseHead responseHead = 1;
+   optional int32 entId = 2;//物品策划配数id
+   optional bool succ = 3;//true成功
+   optional EquipInfo info = 4;//生产的属性信息
+}
+
+//33127获取装备的碎片和图纸信息(请求一次后客户端自行缓存.改变服务器主动推送)
+message Request33127Define{
+   optional int32 cmd = 1;
+}
+
+//单个装备图纸和碎片信息
+message EquipCardAndDebris{
+   optional int32 entId = 1;//策划配数的物品id
+   optional int32 num = 2;//数量
+}
+
+//33128 获取装备的碎片和图纸信息返回信息
+message Response33127Define{
+   optional ResponseHead responseHead = 1;
+   repeated EquipCardAndDebris debris=2;//所有装备碎片信息
+   repeated EquipCardAndDebris cards=3;//所有装备图纸信息
+}
+
+//33130 服务器主动推送的装备的碎片和图纸信息(如果推送的物品数量为0时客户端记得删除显示的数据)
+message Response33130Define{
+   optional ResponseHead responseHead = 1;
+   optional EquipCardAndDebris info=2;//图纸或者碎片信息.客户端需要根据item表里面的type来判断
+}
+
+//出售的物品信息
+message SellEquipCardAndDebriInfo{
+   optional int32 entId = 1;//对应的entid
+   optional int32 num = 2;//出售的物品数量
+}
+
+
+//33131 图纸或碎片 出售
+message Request33131Define{
+   optional int32 cmd = 1;
+   repeated SellEquipCardAndDebriInfo infos = 2;//出售的物品集合
+}
+
+//33132 图纸或碎片 出售响应
+message Response33131Define{
+   optional ResponseHead responseHead = 1;
+   repeated SellEquipCardAndDebriInfo infos = 2;//出售的物品集合
+}
+
+/////////////////////////////////////////////武将装备结束////////////////////////////////////////////////
+
+
+
+
+//////////////////////////////////军团 开始//////////////////////////////////////////////////
+
+//单个军团信息
+message TroopInfo{
+   optional int64 troopId = 1;//军团id
+   optional int32 index=2;// 军团顺序 1 2 3 (1表示主力军团)
+   optional string name = 3;//军团名字
+   optional int32 power=4;//军团战斗力
+   repeated int64 troopGridIds=5;//军团上格子id 0表示这个位置没有武将
+   optional int32 status=6;//军团状态  1空闲状态 2出征状态
+   optional int64 freeDttm=7;// 出征的截止时间 毫秒值
+   optional int64 mainHeroId=8;// 君主坦克的id，，只有主力军团有值,其他军团为0
+}
+
+//33001坦克上阵(单个军团的武将上阵，或者两个军团之间的坦克交换格子)
+message Request33001Define{
+   optional int32 cmd = 1;   
+   optional int64 troopId1 = 2;//军团id
+   optional int64 troopGridId1 = 3;//上阵成功武将绑定的格子id 0表示服务器自己计算一个空格子
+   optional int64 troopId2 = 4;//军团id 没有 0表示不是两个军团格子交换
+   optional int64 troopGridId2 = 5;//上阵成功武将绑定的格子id 0表示不是两个军团格子交换
+   optional int64 heroId = 6;//上阵的武将id 上阵时候用
+}
+
+//33002坦克上阵返回信息
+message Response33002Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 troopId1 = 2;//军团id
+   optional int64 troopGridId1 = 3;//上阵成功武将绑定的格子id 0表示服务器自己计算一个空格子
+   optional int32 position1 = 4;//坦克上阵的位置0到5表示6个格子位置
+   
+   optional int64 troopId2 = 5;//军团id 没有 0表示不是两个军团格子交换
+   optional int64 troopGridId2 = 6;//上阵成功武将绑定的格子id 0表示不是两个军团格子交换
+   optional int32 position2 = 7;//坦克上阵的位置0到5表示6个格子位置
+}
+
+//军团列表 33003
+message Request33003Define{
+   optional int32 cmd = 1;
+   optional int64 troopId = 2;//军团id
+}
+
+//军团列表33004返回信息
+message Response33004Define{
+   optional ResponseHead responseHead = 1;
+   repeated TroopInfo troops = 2;//拥有的军团列表
+}
+
+
+//33005获取单个军团信息
+message Request33005Define{
+   optional int32 cmd = 1;
+   optional int64 troopId = 2;//军团id
+}
+
+//33006获取单个军团返回信息
+message Response33006Define{
+   optional ResponseHead responseHead = 1;
+   optional TroopInfo troop = 2;//军团
+}
+
+//33007武将布阵。。单个军团里面的武将进行格子交换
+message Request33007Define{
+   optional int32 cmd = 1;
+   optional int64 troopId = 2;//要交换的武将军团id
+   optional int64 troopGridId1 = 3;//要交换的格子id
+   optional int64 troopGridId2 = 4;//被交换的格子id
+}
+
+//33008武将布阵。。单个军团里面的武将进行格子交换
+message Response33008Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 troopId = 2;//要交换的武将军团id
+   optional int64 troopGridId1 = 3;//要交换的格子id
+   optional int64 troopGridId2 = 4;//被交换的格子id
+}
+
+//33009获取格子里面的信息。。包括武将。。装备等.
+message Request33009Define{
+   optional int32 cmd = 1;
+   optional int64 troopGridId = 2;//格子id
+}
+
+//33010获取格子里面的信息返回信息
+message Response33010Define{
+   optional ResponseHead responseHead = 1;
+   optional HeroInfo info = 2;//武将集合
+   repeated int64 equips = 3;//装备集合
+}
+
+//33011设置队长
+message Request33011Define{
+   optional int32 cmd = 1;
+   optional int64 troopId = 2;//军团id
+   optional int64 heroId = 3;//队长武将id
+}
+
+//33012设置队长返回信息
+message Response33012Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 troopId = 2;//军团id
+   optional int64 heroId = 3;//队长武将id
+}
+
+//33013调整军团格子位置
+message Request33013Define{
+   optional int32 cmd = 1;
+   optional int64 troopId = 2;//军团id
+   repeated int64 troopGridIds = 3;//格子的id 顺序排列没有的为0
+}
+
+//33014调整军团格子位置返回信息
+message Response33014Define{
+   optional ResponseHead responseHead = 1;
+   optional TroopInfo troopInfo = 2;//军团信息
+}
+
+//////////////////////////////////军团 结束//////////////////////////////////////////////////
+
+
+
+
+
+//////////////////////////////////酒馆抽坦克 开始//////////////////////////////////////////////////
+//碎片兑换坦克-31035
+message Request31035Define{
+   required int32 cmd = 1;
+   required int64 heroId = 2;//武将的id
+}
+
+//碎片兑换坦克-31036返回信息
+message Response31036Define{
+   optional ResponseHead responseHead = 1;
+   optional int32 entId = 2;//武将的策划配数表id
+   optional int32 type = 3;//1表示获得坦克 2表示已经拥有坦克，被分解为图纸了
+}
+
+//分解坦克图纸-31037
+message Request31037Define{
+   required int32 cmd = 1;
+   repeated int64 heroIds = 2;//武将的id 这里是一个集合数据
+}
+
+//分解坦克图纸-31038返回信息
+message Response31038Define{
+   optional ResponseHead responseHead = 1;
+   repeated int64 heroIds = 2;//武将的id 表示这些武将id对应的图纸都分解了
+}
+
+//33101进入酒馆
+message Request33101Define{
+   optional int32 cmd = 1;
+}
+
+//单个酒馆信息
+message HeroPubInfo{
+   optional int32 type = 1;//抽奖类型 1,2,3
+   optional int32 num = 2;//已抽总次数
+   optional int32 luck = 3;//-1不支持必紫抽取 0本次必紫 >0还要抽多少次必紫
+   optional int64 cd = 4;//免费冷却CD,（距当前时间还剩的秒数）如果该类型的抽将支持免费，并且没有CD,则本次免费抽将
+   //optional int64 period = 5;//CD的总时间（秒）
+}
+
+//33102 进入酒馆返回信息
+message Response33102Define{
+   optional ResponseHead responseHead = 1;
+   repeated HeroPubInfo pubs=2;//所有的抽奖类型集合
+}
+
+//33103酒馆抽奖
+message Request33103Define{
+   optional int32 cmd = 1;
+   optional int32 type = 2;//抽奖类型 1,2,3
+   optional bool ten = 3;//true表示批量抽奖
+}
+//单个抽奖信息
+message HeroDrawInfo{
+   optional int64 heroId = 1;//所属的武将id
+   optional int32 type = 2;// 1身上的武将 2 在野的武将3武将卡
+   optional ItemInfo item= 3;//掉落的物品
+}
+
+//33104 抽奖返回信息
+message Response33104Define{
+   optional ResponseHead responseHead = 1;
+   optional HeroPubInfo pub=2;//抽奖信息
+   optional bool ten=3;//true表示批量抽奖
+   repeated HeroDrawInfo drops=4;//掉落的物品集合
+}
+
+//33106 服务器主动推送刷新武将卡
+message Response33106Define{
+   optional ResponseHead responseHead = 1;
+   optional ItemInfo info = 2;//
+}
+
+
+//33107获取坦克碎片和坦克图纸信息(请求一次后客户端自行缓存.改变服务器主动推送)
+message Request33107Define{
+   optional int32 cmd = 1;
+}
+
+//单个武将卡和碎片信息
+message HeroCardAndDebris{
+   optional int64 heroId = 1;//武将数据库id
+   optional int32 sysHeroId = 2;//系统武将id
+   optional int32 cardNum = 3;//武将卡数量
+   optional int64 debrisNum = 4;//碎片数量
+}
+
+//33108 获取坦克碎片和坦克图纸信息返回信息
+message Response33108Define{
+   optional ResponseHead responseHead = 1;
+   repeated HeroCardAndDebris cards=2;//所有武将卡和碎片信息
+}
+
+//33110 服务器主动推送的单个武将卡和碎片信息(如果推送的物品数量为0时客户端记得删除显示的数据)
+message Response33110Define{
+   optional ResponseHead responseHead = 1;
+   optional HeroCardAndDebris cards=2;//所有武将卡和碎片信息
+}
+//////////////////////////////////酒馆抽坦克 结束//////////////////////////////////////////////////

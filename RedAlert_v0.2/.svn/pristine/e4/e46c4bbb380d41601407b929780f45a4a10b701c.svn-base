@@ -1,0 +1,957 @@
+package com.youxigu.dynasty2.chat;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.mina.core.session.IoSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.youxigu.dynasty2.chat.proto.ChatMsg.Response10009Define;
+import com.youxigu.dynasty2.chat.proto.CommonHead.ResponseHead;
+import com.youxigu.dynasty2.core.flex.amf.IAMF3Action;
+import com.youxigu.wolf.net.OnlineUserSessionManager;
+import com.youxigu.wolf.net.UserSession;
+
+/**
+ * 聊天系统对外接口的实现类
+ * 
+ * @author Phoeboo
+ * @version 1.0 2011.01.19
+ */
+public class ChatService implements ChatInterface {
+	public static Logger log = LoggerFactory.getLogger(ChatService.class);
+	private boolean chatBack = true;// 是否发送给自己
+
+	private Worker systemMsgWorker;
+	private Worker userMsgWorker;
+
+	private int maxCapacity = 50000;
+	private int oneTimeSend = 100;
+	private boolean shutDown;
+	private ChatChannelManager chatManager;
+
+	/*
+	 * 黑名单
+	 * 
+	 * key = userId value = 时间戳, 黑名单的有效时间 ,毫秒
+	 */
+	private ConcurrentHashMap<Long, Long> gmBlackList = new ConcurrentHashMap<Long, Long>();
+	private ConcurrentHashMap<Long, Long> blackList = new ConcurrentHashMap<Long, Long>();
+
+	public void setMaxCapacity(int maxCapacity) {
+		this.maxCapacity = maxCapacity;
+	}
+
+	public void setOneTimeSend(int oneTimeSend) {
+		this.oneTimeSend = oneTimeSend;
+	}
+
+	public void setChatBack(boolean chatBack) {
+		this.chatBack = chatBack;
+	}
+
+	public void init() {
+		chatManager = ChatChannelManager.getInstance();
+		log.info("聊天线程启动");
+		systemMsgWorker = new Worker("ChatService.userMsg");
+		userMsgWorker = new Worker("ChatService.systemMsg");
+
+		systemMsgWorker.start();
+		userMsgWorker.start();
+	}
+
+	public void destroy() {
+		shutDown = true;
+		// synchronized (systemMsgWorker) {
+		// systemMsgWorker.notifyAll();
+		// }
+		// synchronized (userMsgWorker) {
+		// userMsgWorker.notifyAll();
+		// }
+
+	}
+
+	/**
+	 * 当不能发送消息时，通过系统频道给玩家返回提示信息
+	 */
+	@Override
+	public void echoError(long userId, String error) {
+
+		echoError(userId, error, ChatChannelManager.CHANNEL_SYSTEM, null);
+	}
+
+	@Override
+	// public void echoError(long userId, String error, String channel,
+	// String channelId) {
+	//
+	// Map<String, Object> map = new HashMap<String, Object>(8);
+	// if (channel.equals(ChatChannelManager.CHANNEL_WORLD)
+	// && (channelId != null && channelId.length() > 0)) {
+	// IoSession session = OnlineUserSessionManager
+	// .getIoSessionByUserId(userId);
+	// map.put(IAMF3Action.ACTION_CMD_KEY, IAMF3Action.CMD_CHAT_SEND);
+	// map.put(IAMF3Action.ACTION_ERROR_CODE_KEY,
+	// IAMF3Action.CMD_BUSINESS_ERROR);
+	// map.put(IAMF3Action.ACTION_ERROR_KEY, error);
+	// if (session != null) {
+	// session.write(map);
+	// }
+	// } else {
+	// map.put(IAMF3Action.ACTION_CMD_KEY, IAMF3Action.CMD_CHAT_SEND);
+	// map.put(CHAT_FROMUSERID, 0);
+	// map.put(CHAT_FROMUSERNAME, null);
+	// map.put(CHAT_CHANNEL, channel);
+	// map.put(CHAT_CONTEXT, error);
+	// if (channelId != null) {
+	// map.put(CHAT_CHANNELID, channelId);
+	// }
+	// map.put(IAMF3Action.ACTION_ERROR_CODE_KEY, 0);
+	//
+	// OnlineUserSessionManager.sendMessage(userId, map);
+	// }
+	// }
+
+	public void echoError(long userId, String error, String channel,
+			String channelId) {
+
+		if (channel.equals(ChatChannelManager.CHANNEL_WORLD)
+				&& (channelId != null && channelId.length() > 0)) {
+			IoSession session = OnlineUserSessionManager
+					.getIoSessionByUserId(userId);
+			ResponseHead.Builder headBr = ResponseHead.newBuilder();
+			headBr.setCmd(IAMF3Action.CMD_DEFAULT);
+			headBr.setRequestCmd(IAMF3Action.CMD_CHAT_SEND);
+			headBr.setErrCode(IAMF3Action.CMD_BUSINESS_ERROR);
+			headBr.setErr(error);
+			if (session != null) {
+				session.write(headBr.build());
+			}
+		} else {
+			Response10009Define.Builder br = Response10009Define.newBuilder();
+			ResponseHead.Builder headBr = ResponseHead.newBuilder();
+			headBr.setCmd(IAMF3Action.CMD_CHAT_SEND_RETURN);
+			headBr.setRequestCmd(IAMF3Action.CMD_CHAT_SEND);
+			headBr.setErrCode(0);
+			headBr.setErr("");
+			br.setResponseHead(headBr.build());
+
+			br.setFromUserId(userId);
+			br.setFromUserName("");
+			br.setChannel(channel);
+			br.setContext(error);
+			if (channelId != null) {
+				br.setChannelId(channelId);
+			}
+			OnlineUserSessionManager.sendMessage(userId, br.build());
+		}
+	}
+
+	// 下发单条消息
+	private void sendMessage(ChatMessage chatMessage) {
+		long toUserId = chatMessage.getToUserId();
+		Object obj = chatMessage.getContext();
+		if (obj instanceof String) {
+			// 普通的聊天消息
+			OnlineUserSessionManager.sendMessage(toUserId, chatMessage.build());
+			return;
+		} else if (obj instanceof EventMessage) {
+			EventMessage event = (EventMessage) obj;
+			OnlineUserSessionManager.sendMessage(toUserId, event.build());
+			return;
+		} else if (obj instanceof BroadMessage) {
+			BroadMessage event = (BroadMessage) obj;
+			OnlineUserSessionManager.sendMessage(toUserId, event.build());
+			return;
+		}
+		OnlineUserSessionManager.sendMessage(toUserId, obj);
+
+	}
+
+	// private void sendMessage(ChatMessage chatMessage) {
+	// long toUserId = chatMessage.getToUserId();
+	// if (ChatChannelManager.isEventChannel(chatMessage.getChannelType())) {//
+	// //事件消息前台要求不走聊天协议，改称独立的协议
+	// Object obj = chatMessage.getContext();
+	// if (obj instanceof EventMessage) {
+	// EventMessage event = (EventMessage) obj;
+	// int eventType = event.getEventType();
+	// Map<String, Object> map = null;
+	// if (eventType == 0) { // 正常请求通过消息频道返回.
+	// map = (Map<String, Object>) event.getParams();
+	// } else {
+	// map = new HashMap<String, Object>(3);
+	// map.put(IAMF3Action.ACTION_CMD_KEY, event.getEventType());
+	// map.put("params", event.getParams());
+	// map.put(IAMF3Action.ACTION_ERROR_CODE_KEY, 0);
+	// }
+	// OnlineUserSessionManager.sendMessage(toUserId, map);
+	// return;
+	// }
+	// }
+	//
+	// // 普通消息 已经有cmd的，不用走CMD_CHAT_SEND
+	// Object obj = chatMessage.getContext();
+	// if (obj instanceof Map) {
+	// if (((Map) obj).containsKey(IAMF3Action.ACTION_CMD_KEY)) {
+	// OnlineUserSessionManager.sendMessage(toUserId, obj);
+	// return;
+	// }
+	// }
+	//
+	// Map<String, Object> map = chatMessage.toMap();
+	// if (!map.containsKey(IAMF3Action.ACTION_CMD_KEY)) {
+	// map.put(IAMF3Action.ACTION_CMD_KEY, IAMF3Action.CMD_CHAT_SEND);
+	// map.put(IAMF3Action.ACTION_ERROR_CODE_KEY, 0);
+	// }
+	// OnlineUserSessionManager.sendMessage(toUserId, map);
+	//
+	// }
+
+	/**
+	 * 玩家发送消息（世界，国家，联盟，战场,私聊）
+	 * 
+	 * @param chatMessage
+	 */
+	@Override
+	public void userSendMessage(ChatMessage chatMessage) {
+
+		// 私聊
+		if (chatMessage.getToUserId() > 0) {
+
+			this.sendMessage(chatMessage);
+
+		} else {
+			// 群组消息 -- 世界频道
+			if (chatMessage.getFromUserId() == 0) {
+				systemMsgWorker.offer(chatMessage);
+			} else {
+				userMsgWorker.offer(chatMessage);
+			}
+
+		}
+	}
+
+	/**
+	 * 系统发送消息（个人，全局）
+	 * 
+	 * @param chatMessage
+	 */
+	@Override
+	public void systemSendMessage(ChatMessage chatMessage) {
+		if (log.isDebugEnabled()) {
+			log.debug("adminServer下发系统消息:{}", chatMessage.getContext());
+		}
+		long fromUserId = chatMessage.getFromUserId();
+		if (fromUserId != 0) {
+			ChatUser fromUser = ChatChannelManager.getInstance()
+					.getChatUser(fromUserId);
+			if (fromUser != null) {
+				chatMessage.setFromUser(fromUser);
+			} else {
+				// TODO: 不在线,不显示其他信息
+			}
+		}
+		userSendMessage(chatMessage);
+	}
+
+	/**
+	 * 系统发送多条消息（个人，全局）
+	 * 
+	 * @param List
+	 *            <ChatMessage>
+	 */
+	@Override
+	public void systemSendMessages(List<ChatMessage> list) {
+
+		if (list == null)
+			return;
+		for (ChatMessage chatMessage : list) {
+			this.systemSendMessage(chatMessage);
+		}
+	}
+
+	/**
+	 * 玩家注册所有频道--比如世界，国家，联盟等固定频道 一般在玩家登录时调用
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	@Override
+	public ChatUser register(long userId, String userName, String icon, int sex,
+			int countryId, long guildId, int usrLv, int vip, int title,
+			Object tag) {
+
+		// 测试用的写死联盟ID和家族ID
+		// guildId = 10;
+		// clanId = 10;
+
+		if (log.isDebugEnabled()) {
+			log.debug("用户{}加入聊天系统", userId);
+		}
+
+		ChatUser chatUser = new ChatUser(userId, userName, icon, sex, countryId,
+				guildId, usrLv, vip, title, tag);
+
+		// 注册世界频道
+		chatManager.registerWorld(chatUser);
+
+		// 注册国家频道
+		chatManager.createChatChannel(ChatChannelManager.CHANNEL_COUNTRY,
+				String.valueOf(countryId)).addUser(chatUser);
+
+		// 注册联盟频道
+		if (guildId > 0) {
+			chatManager.createChatChannel(ChatChannelManager.CHANNEL_GUILD,
+					String.valueOf(guildId)).addUser(chatUser);
+		}
+
+		// ChatMessage chatMessage = new ChatMessage(0, 0,
+		// ChatChannelManager.CHANNEL_WORLD,
+		// null, "欢迎" + userName + "上线");
+		// this.sendMessage(chatMessage);
+		return chatUser;
+	}
+
+	@Override
+	public void changeUserNameSexUsrLv(long userId, String name, int sex,
+			int usrLv) {
+		ChatUser chatUser = chatManager.getChatUser(userId);
+
+		if (chatUser == null)
+			return;
+
+		// String oldName = chatUser.getUserName();
+
+		chatManager.removeWorld(chatUser);
+
+		String channelId = String.valueOf(chatUser.getCountryId());
+		ChatChannel channel_c = chatManager
+				.getChatChannel(ChatChannelManager.CHANNEL_COUNTRY, channelId);
+
+		channel_c.removeUser(chatUser);
+
+		chatUser.setUserName(name);
+		chatUser.setSex(sex);
+		chatUser.setUsrLv(usrLv);
+
+		channel_c.addUser(chatUser);
+		chatManager.registerWorld(chatUser);
+
+	}
+
+	@Override
+	public void changeUserCountryIcon(long userId, int country, String icon) {
+		ChatUser chatUser = chatManager.getChatUser(userId);
+
+		if (chatUser == null)
+			return;
+		chatUser.setIcon(icon);
+		int oldCountry = chatUser.getCountryId();
+		if (country == oldCountry) {
+			return;
+		}
+		String channelId = String.valueOf(oldCountry);
+		ChatChannel channel = chatManager
+				.getChatChannel(ChatChannelManager.CHANNEL_COUNTRY, channelId);
+		if (channel != null) {
+			channel.removeUser(chatUser);
+		}
+
+		chatUser.setCountryId(country);
+
+		channelId = String.valueOf(country);
+		channel = chatManager.getChatChannel(ChatChannelManager.CHANNEL_COUNTRY,
+				channelId);
+		if (channel != null) {
+			channel.addUser(chatUser);
+		}
+
+	}
+
+	@Override
+	public void changeUserGuildId(long userId, long guildId) {
+		ChatUser chatUser = chatManager.getChatUser(userId);
+
+		if (chatUser == null)
+			return;
+
+		long oldGuildId = chatUser.getGuildId();
+
+		if (oldGuildId != 0) {
+			String channelId = String.valueOf(oldGuildId);
+			ChatChannel channel = chatManager.getChatChannel(
+					ChatChannelManager.CHANNEL_GUILD, channelId);
+			if (channel != null) {
+				channel.removeUser(chatUser);
+			}
+		}
+
+		chatUser.setGuildId(guildId);
+
+		if (guildId != 0) {
+			String channelId = String.valueOf(guildId);
+			ChatChannel channel = chatManager.getChatChannel(
+					ChatChannelManager.CHANNEL_GUILD, channelId);
+			if (channel != null) {
+				channel.addUser(chatUser);
+			}
+		}
+	}
+
+	@Override
+	public void updateChatUserVip(long userId, int vip) {
+		// 从世界频道获取玩家
+		ChatUser chatUser = chatManager.getChatUser(userId);
+
+		if (chatUser != null) {
+			chatUser.setVip(vip);
+		}
+	}
+
+	@Override
+	public void updateChatUserTitle(long userId, int title) {
+		// 从世界频道获取玩家
+		ChatUser chatUser = chatManager.getChatUser(userId);
+
+		if (chatUser != null) {
+			chatUser.setTitle(title);
+		}
+	}
+
+	/**
+	 * 玩家注销所有频道--比如世界，国家，联盟频道 一般在玩家退出时调用
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	@Override
+	public ChatUser quit(long userId) {
+
+		// 从世界频道获取玩家
+
+		return chatManager.quit(userId);
+	}
+
+	/**
+	 * 创建频道
+	 * 
+	 * @param combatName
+	 * @param combatId
+	 */
+	@Override
+	public void createChannel(String channelType, String channelId,
+			long userId) {
+		ChatChannel channel = chatManager.createChatChannel(channelType,
+				channelId);
+
+		// 从世界频道获取玩家
+		ChatUser chatUser = null;
+		if (userId > 0) {
+			chatUser = chatManager.getChatUser(userId);
+		}
+
+		if (chatUser != null)
+			channel.addUser(chatUser);
+	}
+
+	@Override
+	public void createChannel(String channelType, String channelId) {
+
+		// 从世界频道获取玩家
+		ChatChannel channel = chatManager.createChatChannel(channelType,
+				channelId);
+	}
+
+	// @Override
+	// public void createChannel(String channelType, String channelId,
+	// int maxUsers, boolean removeUserWhenClose) {
+	// ChatChannel channel = chatManager.createChatChannel(channelType,
+	// channelId);
+	// channel.setMaxUsers(maxUsers);
+	// channel.setRemoveUserWhenClose(removeUserWhenClose);
+	// }
+
+	public void removeAllChannelUsers(String channelType, String channelId) {
+		ChatChannel channel = chatManager.getChatChannel(channelType,
+				channelId);
+		if (channel != null) {
+			channel.removeAllUser();
+		}
+	}
+
+	@Override
+	public void deleteChannel(String channelType, String channelId) {
+		chatManager.removeChatChannel(channelType, channelId);
+	}
+
+	/**
+	 * 玩家加入指定类型频道
+	 * 
+	 * @param userId
+	 * @param channelType
+	 * @param channelId
+	 */
+	@Override
+	public void joinChannel(String channelType, String channelId, long userId) {
+
+		// 从世界频道获取玩家
+		ChatUser chatUser = chatManager.getChatUser(userId);
+
+		if (chatUser == null) {
+			return;
+			// throw new BaseException(-90002, "您还没有登录聊天系统，不能加入频道");
+		}
+
+		// 注册指定频道
+		ChatChannel channel = chatManager.getChatChannel(channelType,
+				channelId);
+		// if (channel.isfull()) {
+		// throw new BaseException(-90003, "用户已达最大限制，稍后在试");
+		// }
+		channel.addUser(chatUser);
+	}
+
+	/**
+	 * 退出指定类型频道
+	 * 
+	 * @param userId
+	 * @param channelType
+	 * @param channelId
+	 */
+	@Override
+	public void quitChannel(String channelType, String channelId, long userId) {
+
+		// 从世界频道获取玩家
+		ChatUser chatUser = chatManager.getChatUser(userId);
+
+		if (chatUser == null)
+			return;
+
+		ChatChannel channel = chatManager.getChatChannel(channelType,
+				channelId);
+		if (channel != null) {
+			channel.removeUser(chatUser);
+			if (channelType.equals(ChatChannelManager.CHANNEL_GUILD)) {
+				chatUser.setGuildId(0);
+			}
+		}
+
+	}
+
+	/**
+	 * 得到频道内用户数
+	 * 
+	 * @param channelType
+	 * @param channelId
+	 * @return
+	 */
+	@Override
+	public int getChannelUserNum(String channelType, String channelId) {
+		ChatChannel channel = chatManager.getChatChannel(channelType,
+				channelId);
+		if (channel != null) {
+			return channel.getCurrentUserNum();
+		}
+		return 0;
+
+	}
+
+	/**
+	 * 得到频道内所有用户ID
+	 * 
+	 * @param channelType
+	 * @param channelId
+	 * @return
+	 */
+	@Override
+	public List<Long> getChannelUserIds(String channelType, String channelId) {
+		List<Long> uids = null;
+		ChatChannel channel = chatManager.getChatChannel(channelType,
+				channelId);
+		if (channel != null) {
+			Map<String, ChatUser> map = channel.getUserList();
+			if (map != null && map.size() > 0) {
+				uids = new ArrayList<Long>();
+				Iterator<ChatUser> lit = channel.getUserList().values()
+						.iterator();
+				while (lit.hasNext()) {
+					uids.add(lit.next().getUserId());
+				}
+			}
+		}
+		return uids;
+	}
+
+	@Override
+	public void mergeChannel(String channelType, String fromChannelId,
+			String toChannelId) {
+
+		ChatChannel channel = chatManager.removeChatChannel(channelType,
+				fromChannelId);
+		if (channel != null) {
+			ChatChannel channelTo = chatManager.getChatChannel(channelType,
+					toChannelId);
+			if (channelTo != null) {
+				channelTo.putAllUser(channel.getUserList());
+			}
+		}
+	}
+
+	/**
+	 * 玩家禁言
+	 * 
+	 * @param userName
+	 * @param hour
+	 * @param min
+	 */
+	@Override
+	public void addToBlackList(long userId, long seconds) {
+		addToBlackList(userId, seconds, true);
+	}
+
+	@Override
+	public void addToBlackList(long userId, long seconds, boolean gm) {
+		if (gm) {
+			gmBlackList.put(userId,
+					System.currentTimeMillis() + seconds * 1000L);
+		} else {
+			blackList.put(userId, System.currentTimeMillis() + seconds * 1000L);
+		}
+	}
+
+	/**
+	 * 解除禁言
+	 * 
+	 * @param userName
+	 */
+	@Override
+	public boolean removeFromBlackList(long userId) {
+		return removeFromBlackList(userId, true);
+	}
+
+	@Override
+	public boolean removeFromBlackList(long userId, boolean gm) {
+		if (gm) {
+			return gmBlackList.remove(userId) != null;
+		} else {
+			return blackList.remove(userId) != null;
+		}
+	}
+
+	/**
+	 * >0 ,返回禁言剩余的秒数
+	 */
+	@Override
+	public int isInBlackList(long userId) {
+		Long tmp = blackList.get(userId);
+		if (tmp != null) {
+			int second = (int) (tmp - System.currentTimeMillis()) / 1000;
+			if (second > 0) {
+				return second;
+			} else {
+				// 禁言到期
+				blackList.remove(userId);
+			}
+		}
+		tmp = gmBlackList.get(userId);
+		if (tmp != null) {
+			int second = (int) ((tmp - System.currentTimeMillis()) / 1000L);
+			if (second > 0) {
+				return second;
+			} else {
+				// 禁言到期
+				gmBlackList.remove(userId);
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * gm发送系统消息
+	 * 
+	 * @param channel
+	 *            频道 system 一般系统消息 title 公告
+	 * @param message
+	 *            消息内容
+	 * @param toUserName
+	 *            只有对单个特定玩家时使用 channel 为 system ，其他情况为null
+	 * @param startWeekDay
+	 *            起始的星期数 sun:1 mon :2 sat:7 <=0 每天
+	 * @param endWeekDay
+	 * @param startDayHour
+	 *            起始小时数 0-23
+	 * @param endDayHour
+	 * @param startMin
+	 *            0-59
+	 * @param endMin
+	 * @param repeatNum
+	 *            时间段内 重复次数
+	 * @param order
+	 *            优先级
+	 */
+	@Override
+	public void gmAddSysMessage(String channel, String message,
+			String toUserName, int startWeekDay, int endWeekDay,
+			int startDayHour, int endDayHour, int startMin, int endMin,
+			int repeatNum, int order) {
+
+	}
+
+	class Worker extends Thread {
+		// 这里用哪个Queue更好呢
+		// private BlockingQueue<ChatMessage> queue = new
+		// LinkedBlockingQueue<ChatMessage>(
+		// ChatService.this.maxCapacity);
+
+		private BlockingQueue<ChatMessage> queue = new ArrayBlockingQueue<ChatMessage>(
+				ChatService.this.maxCapacity);
+
+		public Worker(String name) {
+			this.setDaemon(true);
+			this.setName(name);
+		}
+
+		@Override
+		public void run() {
+			List<ChatMessage> datas = new ArrayList<ChatMessage>(
+					oneTimeSend + 1);
+			ChatMessage one = null;
+			while (!ChatService.this.shutDown) {
+
+				try {
+
+					if ((one = queue.poll(60, TimeUnit.SECONDS)) != null) {
+						datas.add(one);
+						queue.drainTo(datas, oneTimeSend);
+					} else {
+						continue;
+					}
+
+					// System.out.println("chat message size:"+datas.size());
+					if (datas.size() > 0) {
+						long time = System.currentTimeMillis();
+						for (ChatMessage chatMessage : datas) {
+
+							try {
+
+								long fromUserId = chatMessage.getFromUserId();
+								if (chatMessage.getToUserId() == -1) {
+									// 特例。退出频道消息
+									ChatService.this.quitChannel(
+											chatMessage.getChannelType(),
+											chatMessage.getChannelId(),
+											fromUserId);
+								} else if (chatMessage.getToUserId() == -2) {
+									// 特例。注销频道
+									ChatService.this.deleteChannel(
+											chatMessage.getChannelType(),
+											chatMessage.getChannelId());
+									if (log.isDebugEnabled()) {
+										log.debug("删除频道:{}.{}",
+												chatMessage.getChannelType(),
+												chatMessage.getChannelId());
+									}
+								} else {
+									Collection<ChatUser> chatUsers = null;
+									if (ChatChannelManager.CHANNEL_WORLD
+											.equalsIgnoreCase(chatMessage
+													.getChannelType())
+											|| ChatChannelManager.CHANNEL_NOTICE
+													.equalsIgnoreCase(
+															chatMessage
+																	.getChannelType())
+											|| ChatChannelManager.CHANNEL_ITEM
+													.equalsIgnoreCase(
+															chatMessage
+																	.getChannelType())
+											|| ChatChannelManager.CHANNEL_SYSTEM
+													.equalsIgnoreCase(
+															chatMessage
+																	.getChannelType())
+											|| ChatChannelManager.CHANNEL_EVENT
+													.equalsIgnoreCase(
+															chatMessage
+																	.getChannelType())) {
+										chatUsers = chatManager
+												.getWorldChannel().values();
+
+										// } else if
+										// (ChatChannelManager.CHANNEL_GUILD_WORLD
+										// .equalsIgnoreCase(chatMessage
+										// .getChannelType())) {//
+										// 世界频道广播给联盟内的所有人
+										// // 取所有联盟用户
+										// ChatChannel chatChannel = chatManager
+										// .getChatChannel(
+										// ChatChannelManager.CHANNEL_GUILD,
+										// chatMessage
+										// .getChannelId());
+										// chatUsers = chatChannel.getUserList()
+										// .values();
+										//
+										// // 发送世界频道消息
+										// chatMessage
+										// .setChannelType(ChatChannelManager.CHANNEL_WORLD);
+										// chatMessage.setChannelId(null);
+									} else {// 群组消息 -- 国家频道 联盟频道 战场频道
+										ChatChannel chatChannel = chatManager
+												.getChatChannel(
+														chatMessage
+																.getChannelType(),
+														chatMessage
+																.getChannelId());
+										chatUsers = chatChannel.getUserList()
+												.values();
+									}
+									String pf = chatMessage.getPf();
+									for (ChatUser chatUser : chatUsers) {
+										long toUserId = chatUser.getUserId();
+										if (!chatBack
+												&& fromUserId == toUserId) {
+											// do nothing
+										} else if (fromUserId == chatUser
+												.getUserId()
+												&& !chatMessage.isChatBack()) {
+											// TODO 不发给自己
+										} else {
+											if (pf != null) {// 平台过滤
+												UserSession us = OnlineUserSessionManager
+														.getUserSessionByUserId(
+																toUserId);
+												String userPf = us.getPfEx();
+												if (userPf != null
+														&& pf.indexOf(
+																userPf) != -1) {
+													chatMessage.setToUserId(
+															toUserId);
+													ChatService.this
+															.sendMessage(
+																	chatMessage);
+												}
+											} else if (OnlineUserSessionManager
+													.isOnline(toUserId)) {
+												// OnlineUserSessionManager.getUserSessionByUserId(userId)
+												chatMessage
+														.setToUserId(toUserId);
+												ChatService.this.sendMessage(
+														chatMessage);
+											}
+										}
+									}
+								}
+
+							} catch (Exception e) {
+								log.error(e.toString(), e);
+							}
+
+						}
+						if (log.isDebugEnabled()) {
+							log.debug("广播{}个消息时间:{}", datas.size(),
+									(System.currentTimeMillis() - time));
+						}
+
+					}
+				} catch (Exception e) {
+					log.error(e.toString(), e);
+				} finally {
+					datas.clear();
+				}
+			}
+			log.info("聊天线程线程{}停止", this.getName());
+		}
+
+		public int size() {
+			return this.queue.size();
+		}
+
+		public boolean offer(ChatMessage data) {
+			if (queue.size() >= maxCapacity - 1) {
+				if (queue.size() >= maxCapacity - 1) {
+					log.error("丢弃消息：消息队列满，消息发送过多过快");
+					queue.clear();
+
+				}
+			}
+			// 不成功则丢弃消息，不等待
+			boolean isSuccess = queue.offer(data);
+			if (!isSuccess) {
+				log.error("消息队列满，消息发送过多过快");
+			}
+			return isSuccess;
+		}
+
+	}
+
+	// @Override
+	// public void resetAllOfficial(Map<Long, UserOfficial> allUserOfficials,
+	// Map<Long, UserOfficial> allCivilOfficials) {
+	//
+	// try {
+	// for (ChatUser chatUser : chatManager.getWorldChannel().values()) {
+	// Long userId = chatUser.getUserId();
+	// int gradeId = 1;
+	// int isOffical = 0;
+	// UserOfficial uo = allUserOfficials.get(userId);
+	// if (uo != null) {
+	// if (allCivilOfficials.containsKey(userId)) {
+	// UserOfficial uoCivil = allCivilOfficials.get(userId);
+	// if (uoCivil != null
+	// && uoCivil.getGradeId() >= uo.getGradeId()
+	// && uoCivil.getCountryId() == uo.getCountryId()) {
+	// uo = uoCivil;
+	// }
+	// }
+	// if (chatUser.getCountryId() == uo.getCountryId()) {
+	// gradeId = uo.getGradeId() + 1;
+	//
+	// if (uo.getIsCivil() != 0) {
+	// isOffical = 1;
+	// } else if (uo.getIsAttache() != 0) {
+	// isOffical = 2;
+	// }
+	//
+	// }
+	// }
+	//
+	// if (gradeId != chatUser.getGradeId()
+	// || isOffical != chatUser.getIsOffical()) {
+	// chatUser.setIsOffical(isOffical);
+	// chatUser.setGradeId(gradeId);
+	// this.sendOfficialRefresh(gradeId, isOffical, userId);
+	//
+	// }
+	// }
+	// } catch (Exception e) {
+	// log.error("更新聊天官职标志异常", e);
+	// }
+	//
+	// }
+
+	// private void sendOfficialRefresh(int gradeId, int isOffical, long userId)
+	// {
+	// Map<String, Object> params = new HashMap<String, Object>(2);
+	// params.put("gradeId", gradeId);
+	// params.put("isOffical", isOffical);
+	// // messageService.sendEventMessage(userId,
+	// // EventMessage.TYPE_USER_CHANGED, params);
+	// EventMessage message = new EventMessage();
+	// message.setEventType(EventMessage.TYPE_USER_CHANGED);
+	// message.setParams(params);
+	// ChatMessage chatMsg = new ChatMessage();
+	// chatMsg.setFromUserId(0);
+	// chatMsg.setToUserId(userId);
+	// chatMsg.setChannelType(ChatChannelManager.CHANNEL_EVENT);
+	// chatMsg.setContext(message);
+	// this.systemSendMessage(chatMsg);
+	//
+	// }
+
+}

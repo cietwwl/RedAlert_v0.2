@@ -1,0 +1,250 @@
+package com.youxigu.dynasty2.map.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.DelayQueue;
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.youxigu.dynasty2.map.domain.action.ImmediateAction;
+import com.youxigu.dynasty2.map.domain.action.ShutdownAction;
+import com.youxigu.dynasty2.map.domain.action.TimeAction;
+import com.youxigu.dynasty2.map.domain.action.UserOperAction;
+import com.youxigu.dynasty2.map.service.ICommandDistatcher;
+import com.youxigu.dynasty2.map.service.ICommander;
+import com.youxigu.dynasty2.user.domain.User;
+import com.youxigu.dynasty2.util.BaseException;
+import com.youxigu.dynasty2.util.MathUtils;
+import com.youxigu.wolf.net.NodeSessionMgr;
+
+/**
+ * 任务调度
+ * 
+ * @author LK
+ * @date 2016年2月18日
+ */
+public class CommandDistatcher implements ICommandDistatcher {
+
+	public static final Logger log = LoggerFactory
+			.getLogger(CommandDistatcher.class);
+
+	private Map<Integer, ICommander> commandMap;// 执行器
+	private List<Worker> workers = new ArrayList<Worker>();// 线程池
+	private static final int STATE_NUM = 15;// 区总个数
+	private static final int maxThreadNum = STATE_NUM;// 线程数
+	private static final String WORK_NAME_PREFIX = "MAP_THREAD_";
+	private boolean isMapServer = false;
+
+	public void setCommandMap(Map<Integer, ICommander> commandMap) {
+		this.commandMap = commandMap;
+	}
+
+	/**
+	 * 初始化service
+	 */
+	public void init() {
+		// 只在mainserver上加载
+		String str = System.getProperty(NodeSessionMgr.SERVER_TYPE_KEY);
+		if (str == null) {
+			return;
+		}
+		int serverType = Integer.parseInt(str);
+		if (serverType != NodeSessionMgr.SERVER_TYPE_MAIN) {
+			return;
+		}
+
+		isMapServer = true;
+
+		if (workers != null) {
+			for (Worker worker : workers) {
+				if (worker != null) {
+					worker.shutDown();
+				}
+			}
+		}
+
+		log.info("启动{}个线程 0号为主线程，刷新资源和npc", maxThreadNum);
+
+		for (int i = 0; i < maxThreadNum; i++) {
+			Worker worker = new Worker(WORK_NAME_PREFIX + i);
+			worker.start();
+			log.info("启动地图线程{}", worker.getName());
+			workers.add(worker);
+		}
+	}
+
+	/**
+	 * 销毁service
+	 */
+	public void destory() {
+		if (!isMapServer) {
+			return;
+		}
+
+		if (workers != null && workers.size() > 0) {
+			for (Worker worker : workers) {
+				if (worker != null) {
+					worker.shutDown();
+				}
+			}
+		}
+
+		log.info("MapService 退出条件达成！");
+	}
+
+	/**
+	 * 线程队列定义
+	 * 
+	 * @author LK
+	 * @date 2016年2月5日
+	 */
+	public class Worker extends Thread {
+		private DelayQueue<TimeAction> queue;
+		private boolean start = true;
+
+		public Worker(String name) {
+			this.setDaemon(true);
+			this.setName(name);
+			this.queue = new DelayQueue<TimeAction>();
+		}
+
+		public boolean isStart() {
+			return start;
+		}
+
+		public void setStart(boolean start) {
+			this.start = start;
+		}
+
+		public DelayQueue<TimeAction> getQueue() {
+			return queue;
+		}
+
+		public void setQueue(DelayQueue<TimeAction> queue) {
+			this.queue = queue;
+		}
+
+		public void put(TimeAction action) {
+			queue.put(action);
+		}
+
+		public void shutDown() {
+			start = false;
+			queue.put(new ShutdownAction());
+		}
+
+		@Override
+		public void run() {
+			while (start) {
+				try {
+					TimeAction action = queue.poll(30, TimeUnit.SECONDS);
+					if (action == null || !start) {
+						continue;
+					}
+
+					if (action instanceof ShutdownAction) {
+						// 线程跳出
+						log.info("thread {} 终止运行.",
+								Thread.currentThread().getName());
+						break;
+					}
+
+					// 执行任务
+					CommandDistatcher.this.doExcute(action);
+				} catch (Exception e) {
+					log.error(e.toString(), e);
+				}
+			}
+		}
+	}
+
+	/**
+	 * 执行任务
+	 * 
+	 * @param action
+	 */
+	private void doExcute(TimeAction action) {
+
+		Map<String, Object> dataMap = null;
+		try {
+			ICommander commander = commandMap.get(action.getCmd());
+			dataMap = commander.doExcute(action);
+
+			if (log.isWarnEnabled()) {
+				// 计算执行的时间
+				long now = System.currentTimeMillis(); // 开始时间
+				long lag = System.currentTimeMillis() - now;
+				if (lag > 5000) {
+					log.warn("命令:{}处理时间过长:{}", action, lag);
+				}
+			}
+		} catch (BaseException e) {
+			if (action instanceof UserOperAction) {
+				User user = ((UserOperAction) action).getUser();
+				String errInfo = e.getErrMsg();
+				if (user != null) {
+					// TODO 单推消息：发生逻辑异常
+					// chatService.sendEventMessage(userId,
+					// EventMessage.TYPE_ERROR_INFO, errInfo);
+				} else {
+					log.error("map queue未处理的异常--" + errInfo);
+				}
+			}
+		} catch (Exception e) {
+			log.error(e.toString(), e);
+		} finally {
+
+		}
+	}
+
+	@Override
+	public void putCommander(int thread, TimeAction action) {
+		if (action instanceof ImmediateAction) {
+			this.doExcute(action);
+		} else {
+			this.getWorker(thread).put(action);
+		}
+	}
+
+	@Override
+	public void putCommander(TimeAction action) {
+		this.putCommander(-1, action);
+	}
+
+	/**
+	 * 分配执行线程
+	 * 
+	 * @param index
+	 * @return
+	 */
+	private Worker getWorker(int index) {
+		if (index < 0) {
+			// 随机一个线程
+			index = MathUtils.getRandomExMax(1, maxThreadNum);
+		} else if (index >= maxThreadNum) {
+			index = index % maxThreadNum;
+		}
+
+		Worker worker = workers.get(index);
+		if (!worker.isStart()) {
+			synchronized (worker) {
+				if (!worker.isStart()) {
+					try {
+						worker.setStart(true);
+						worker.start();
+						workers.set(index, worker);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					if (log.isDebugEnabled()) {
+						log.debug("start MapThread:{} ", worker.getName());
+					}
+				}
+			}
+		}
+		return worker;
+	}
+}

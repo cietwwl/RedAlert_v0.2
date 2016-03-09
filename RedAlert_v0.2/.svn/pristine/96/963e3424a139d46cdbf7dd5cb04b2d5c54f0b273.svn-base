@@ -1,0 +1,119 @@
+package com.youxigu.dynasty2.map.domain;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+/*
+ * 建城点定义
+ */
+public class MapCell implements java.io.Serializable {
+	//castType; 城池类型
+	public static final int CAS_TYPE_EMPTY = 0;//空建城点
+	public static final int CAS_TYPE_USER = 1;//玩家城
+	public static final int CAS_TYPE_GUILD = 2;//联盟基地
+	public static final int CAS_TYPE_NPC = 3;//NPC
+	public static final int CAS_TYPE_CANT_USE = 4;// 禁用点
+	public static final int CAS_TYPE_RES = 5;// 资源点
+	
+	// //userRel; 与该城的关系
+	// public static final int USER_REL_EMPTY = 0;//无关
+	// public static final int USER_REL_OWN = 1;//自己的城池
+	// public static final int USER_REL_PEACE = 2;//别人的城池
+	// public static final int USER_REL_COMBAT = 3;// 宣战状态
+	// public static final int USER_REL_WAR = 4;//战争状态
+	// public static final int USER_REL_NOWAR = 5;//免战状态
+
+	private int id;// id=posX*10000+posY
+	private int posX;// 坐标
+	private int posY;
+	private int stateId;// 郡城id
+	private int casId; // 城池编号(可能是玩家/联盟/野怪.....，通过castleType来区别)
+	private int castType;// 城池类型
+	private int countryId;// 国家id
+
+	private State state;// 所属区
+	private Country country;// 所属国家
+	private AtomicInteger locker = new AtomicInteger();// 锁控制器
+
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public int getPosX() {
+		return posX;
+	}
+	public void setPosX(int posX) {
+		this.posX = posX;
+	}
+	public int getPosY() {
+		return posY;
+	}
+	public void setPosY(int posY) {
+		this.posY = posY;
+	}
+	public int getStateId() {
+		return stateId;
+	}
+	public void setStateId(int stateId) {
+		this.stateId = stateId;
+	}
+
+	public int getCasId() {
+		return casId;
+	}
+
+	public void setCasId(int casId) {
+		this.casId = casId;
+	}
+	public int getCastType() {
+		return castType;
+	}
+	public void setCastType(int castType) {
+		this.castType = castType;
+	}
+
+	public int getCountryId() {
+		return countryId;
+	}
+
+	public void setCountryId(int countryId) {
+		this.countryId = countryId;
+	}
+
+	public State getState() {
+		return state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
+	}
+
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
+	}
+
+	/**
+	 * 锁
+	 * 
+	 * @return
+	 */
+	public int lock() {
+		int cur = locker.getAndIncrement();
+		return cur;
+	}
+
+	/**
+	 * 释放锁
+	 * 
+	 * @return
+	 */
+	public int unlock() {
+		int cur = locker.getAndDecrement();
+		return cur;
+	}
+}

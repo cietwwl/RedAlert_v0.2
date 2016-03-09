@@ -1,0 +1,30 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <!-- 52001-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="52001"/>
+        <property name="bean" ref="towerAction"/>
+        <property name="methodName" value="getTowerInfo"/>
+    </bean>
+    <!-- 52003-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="52003"/>
+        <property name="bean" ref="towerAction"/>
+        <property name="methodName" value="enter"/>
+    </bean>
+    <!-- 52005-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="52005"/>
+        <property name="bean" ref="towerAction"/>
+        <property name="methodName" value="combat"/>
+    </bean>
+    <!-- 52007-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="52007"/>
+        <property name="bean" ref="towerAction"/>
+        <property name="methodName" value="exit"/>
+    </bean>
+</beans>
+

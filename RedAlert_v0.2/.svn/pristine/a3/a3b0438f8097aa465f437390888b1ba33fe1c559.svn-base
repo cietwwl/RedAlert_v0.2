@@ -1,0 +1,333 @@
+package com.youxigu.dynasty2.user.service;
+
+import java.sql.Timestamp;
+import java.util.Map;
+
+import com.youxigu.dynasty2.log.imp.JunGongAct;
+import com.youxigu.dynasty2.log.imp.LogActiveAct;
+import com.youxigu.dynasty2.log.imp.LogCashAct;
+import com.youxigu.dynasty2.log.imp.LogHpAct;
+import com.youxigu.dynasty2.log.imp.LogUserExpAct;
+import com.youxigu.dynasty2.user.domain.LvParaLimit;
+import com.youxigu.dynasty2.user.domain.User;
+import com.youxigu.dynasty2.user.domain.UserCount;
+
+public interface IUserService {
+	/**
+	 * 按角色id取得君主
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	User getUserById(long userId);
+
+	/**
+	 * 按名称取得君主
+	 * 
+	 * @param userName
+	 * @return
+	 */
+	User getUserByName(String userName);
+
+	/**
+	 * 按account.accId取得君主
+	 * 
+	 * @param accId
+	 * @return
+	 */
+	User getUserByaccId(long accId);
+
+	/**
+	 * 取得注册角色量
+	 * 
+	 * @return
+	 */
+	int getCountUsers();
+
+	/**
+	 * @param user
+	 * @param isRecommend
+	 *            是否是推荐的国家
+	 */
+	void doCreateUser(User user, boolean isRecommend);
+
+	void doUpdateUser(User user);
+
+	/**
+	 * 更新用户的主城ID
+	 * 
+	 * @param user
+	 */
+	void updateUserMainCastleId(long userId, long casId);
+
+	/**
+	 * 按等级取得君主各项属性的最大值的配置
+	 * 
+	 * @param level
+	 * @return
+	 */
+	LvParaLimit getLvParaLimit(int level);
+
+	User lockGetUser(User user);
+
+	User lockGetUser(long userId);
+
+	void lockUser(long userId);
+
+	/**
+	 * 修改个性签名
+	 * 
+	 * @param user
+	 * @param selfSignature
+	 */
+	String doUpdateSelfSignature(User user, String selfSignature);
+
+	public boolean isOnline(long userId);
+
+	public Map<Long, Boolean> isOnlines(long[] userIds);
+
+	/**
+	 * 取得指定类型的君主计数器
+	 * 
+	 * @param userId
+	 * @param type
+	 * @return
+	 */
+	UserCount getUserCount(long userId, String type);
+
+	/**
+	 * 创建指定类型的君主计数器
+	 * 
+	 * @param userCount
+	 */
+	void createUserCount(UserCount userCount);
+
+	/**
+	 * 修改指定类型的君主计数器
+	 * 
+	 * @param userCount
+	 */
+	void updateUserCount(UserCount userCount);
+
+	/**
+	 * 加元宝
+	 * 
+	 * @param userId
+	 * @param num
+	 * @param iaction
+	 * @return
+	 */
+	User addCash(long userId, int num, LogCashAct iaction);
+
+	/**
+	 * 赠送元宝
+	 * 
+	 * @param user
+	 * @param num
+	 * @param iaction
+	 * @return
+	 */
+	User addGiftCash(User user, int num, LogCashAct iaction);
+	User addGiftCash(long userId, int num, LogCashAct iaction);
+
+	/**
+	 * gmtool增加元宝
+	 * 
+	 * @param userId
+	 * @param num
+	 * @param iaction
+	 * @return
+	 */
+	User doGmAddCash(long userId, int num, LogCashAct iaction);
+
+	/**
+	 * 消耗钻石
+	 * 
+	 * @param userId
+	 * @param num
+	 * @param iaction
+	 * @param recordLocalLog 默认true
+	 * @return
+	 */
+	User doConsumeCash(long userId, int num, LogCashAct iaction);
+	User doConsumeCash(long userId, int num, LogCashAct iaction,
+			boolean recordLocalLog);
+	User doConsumeCash(User user, int num, LogCashAct iaction);
+	User doConsumeCash(User user, int num, LogCashAct iaction,
+			boolean recordLocalLog);
+
+	/**
+	 * 推送君主信息变化
+	 * 
+	 * @param user
+	 */
+	void sendUserEvent(User user);
+
+	/**
+	 * 更新用户的exp(经验值)
+	 * 
+	 * @param user
+	 * @param exp
+	 */
+	User doUpdateUserHonor(User user, int exp, LogUserExpAct iAction);
+
+	void doUpdateUserHonor(long userId, int exp, LogUserExpAct iAction);
+
+	/**
+	 * 行动力上限
+	 * 
+	 * @param user
+	 * @return
+	 */
+	int getActPointMaxA(User user);
+
+	int getActPointMaxB();
+
+	/**
+	 * 推送行动力发生变化event
+	 * 
+	 * @param userId
+	 * @param actionPoint
+	 * @param actionLimit
+	 */
+	void sendActPointEvent(long userId, int actionPoint, int actionLimit);
+
+	/**
+	 * 更新玩家行动点
+	 * 
+	 * @param userId
+	 * @param num
+	 * @return
+	 */
+	User doAddCurActPoint(long userId, int num, LogActiveAct act);
+
+	User doAddCurActPoint(User user, int num, LogActiveAct act);
+	
+	/**
+	 * 消耗行动力
+	 * @param userId
+	 * @param num
+	 * @param act
+	 * @return
+	 */
+	User doCostCurActPoint(long userId, int num, LogActiveAct act);
+	User doCostCurActPoint(User user, int num, LogActiveAct act);
+
+	/**
+	 * 体力上限
+	 * 
+	 * @param user
+	 */
+	int getHpPointMaxA(User user);
+
+	/**
+	 * 体力上限
+	 * 
+	 * @param user
+	 */
+	int getHpPointMaxB();
+
+	/**
+	 * 推送体力变化event
+	 * 
+	 * @param userId
+	 * @param hpPoint
+	 * @param hpLimit
+	 */
+	void sendHpPointEvent(long userId, int hpPoint, int hpLimit);
+
+	/**
+	 * 增加体力
+	 * 
+	 * @param user
+	 * @param num
+	 * @return
+	 */
+	User doAddHpPoint(User user, int num, LogHpAct act);
+
+	User doAddHpPoint(long userId, int num, LogHpAct act);
+
+	/**
+	 * 扣除体力
+	 * 
+	 * @param user
+	 * @param num
+	 * @param act
+	 * @return
+	 */
+	User doCostHpPoint(User user, int num, LogHpAct act);
+
+	User doCostHpPoint(long userId, int num, LogHpAct act);
+
+	/**
+	 * 该君主名
+	 * 
+	 * @param userId
+	 * @param name
+	 */
+	String doChangeUserName(long userId, String name);
+
+	/**
+	 * 每15分钟补充体力和行动力
+	 * 
+	 * @param user
+	 * @param now
+	 * @param quarters
+	 */
+	void doFillUpHpAfteQuarters(User user, Timestamp now, int quarters);
+
+	/**
+	 * 增加军功-成就系统的产出
+	 * 
+	 * @param userId
+	 * @param num
+	 * @param act
+	 * @param return
+	 */
+	User doAddjunGong(long userId, int num, JunGongAct act);
+
+	User doAddjunGong(User user, int num, JunGongAct act);
+
+	/**
+	 * 消耗军功
+	 * 
+	 * @param userId
+	 * @param num
+	 * @param act
+	 * @param return
+	 */
+	User doCostjunGong(long userId, int num, JunGongAct act);
+
+	User doCostjunGong(User user, int num, JunGongAct act);
+	
+	/**
+	 * 转国
+	 * @param userId
+	 * @param newCountryId
+	 */
+	void doChangeCountry(long userId, int newCountryId);
+	
+	
+	/**
+	 * 自动设置建城点
+	 * @param userId 
+	 * @return
+	 */
+	int[] doAutoCityPoint(long userId);
+	
+	/**
+	 * 主动设置建城点
+	 * @param posX
+	 * @param posY
+	 * @return
+	 */
+	boolean doSetCityPoint(long userId,int posX,int posY);
+	
+	
+	/**
+	 * 统计每个国家的人数
+	 */
+	public int statisticsAllUsers(int countryId);
+	
+	
+}

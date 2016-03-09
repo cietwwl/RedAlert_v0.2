@@ -1,0 +1,130 @@
+package com.youxigu.dynasty2.armyout.service.impl;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.manu.util.UtilDate;
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+import com.youxigu.dynasty2.armyout.domain.Strategy;
+import com.youxigu.dynasty2.armyout.domain.UserArmyout;
+import com.youxigu.dynasty2.armyout.domain.action.PVEOutAction;
+import com.youxigu.dynasty2.hero.enums.TroopIdle;
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.map.domain.action.TimeAction;
+import com.youxigu.dynasty2.map.service.impl.command.StrategyCommander;
+import com.youxigu.dynasty2.user.domain.User;
+import com.youxigu.dynasty2.util.BaseException;
+
+/**
+ * 出征打野怪
+ * 
+ * @author LK
+ * @date 2016年2月29日
+ */
+public class PVEOutStrategyService extends StrategyCommander {
+	public static final Logger log = LoggerFactory
+			.getLogger(PVEOutStrategyService.class);
+
+	public void doCheakStrategy(MapCell fromCell, MapCell toCell,
+			Strategy strategy, Map<String, Object> params) {
+		if (strategy.getId() == Strategy.COMMAND_203
+				|| strategy.getId() == Strategy.COMMAND_204) {
+			throw new BaseException("野怪不能驻守不能集结");
+		}
+
+		if (fromCell.getId() == toCell.getId()) {
+			throw new BaseException("不能对自己出征");
+		}
+
+		if (toCell.isEmpty(true)) {
+			throw new BaseException("目标是个空地，不能出征");
+		}
+
+		if (fromCell.getUserId() == toCell.getUserId()
+				|| (fromCell.getGuildId() > 0
+						&& fromCell.getGuildId() == toCell.getGuildId())) {
+			throw new BaseException("不能出征己方目标");
+		}
+
+		User fromUser = userService.getUserById(fromCell.getUserId());
+		if (fromUser == null) {
+			throw new BaseException("您已流亡，不能出征");
+		}
+
+		// 校验出征队列
+		UserArmyout userArmyout = armyoutService
+				.lockUserArmyout(fromUser.getUserId());
+		super.cheakArmyoutQueue(userArmyout, strategy);
+
+		long troopId = (Long) params.get("troopId");
+
+		// 所需时间
+		double needSecond = armyoutService.getBaseTimeBetweenPoints(fromUser,
+				fromCell, toCell);
+		int baseTime = (int) Math.ceil(needSecond);
+		Timestamp outDttm = UtilDate.nowTimestamp();
+		Timestamp outArriveDttm = UtilDate.moveSecond(outDttm, baseTime);
+		Timestamp outBackDttm = UtilDate.moveSecond(outArriveDttm, baseTime);
+
+		// 锁军团状态
+		troopService.updateTroopStatus(fromUser.getUserId(), troopId,
+				TroopIdle.STATUS_OUT, outBackDttm);
+
+		// 消耗
+		this.doConsume(fromUser, strategy, fromCell, toCell);
+
+		// 构造armyout
+		Armyout armyout = new Armyout(Strategy.COMMAND_208, fromCell.getId(),
+				fromCell.getCasId(), fromCell.getGuildId(), Armyout.PLAER_TYPE,
+				toCell.getId(), Armyout.ENVIRONMENT_TYPE, troopId, baseTime,
+				outDttm, outArriveDttm, outBackDttm, Armyout.STATUS_FORWARD);
+		armyoutService.createArmyOut(armyout);
+
+		// 占用出征队列
+		super.updateArmyoutQueue(userArmyout, armyout, strategy);
+
+		// 进入线程队列
+		armyoutService.doArmtoutJoinExeQueue(armyout, strategy, fromCell,
+				toCell, fromUser);
+	}
+
+	@Override
+	public Map<String, Object> doExcute(TimeAction action) {
+		if (!(action instanceof PVEOutAction)) {
+			throw new BaseException("不是一条pve出征");
+		}
+		PVEOutAction pveOutAction = (PVEOutAction) action;
+		// 加锁
+		List<Integer> cellIds = new ArrayList<Integer>();
+		cellIds.add(pveOutAction.fromCell.getId());
+		cellIds.add(pveOutAction.toCell.getId());
+		try {
+			mapService.getMapCellForWrite(cellIds);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		Armyout armyout = pveOutAction.armyout;
+
+		combatService.execCombat(armyout);
+
+		armyoutService.deleteArmyOut(armyout);
+
+		// // 移除出征队列
+		// UserArmyout userArmyout = armyoutService
+		// .lockUserArmyout(spyAction.fromUser.getUserId());
+		// userArmyout.removeArmyout(armyout.getId());
+		// armyoutService.updateUserArmyout(userArmyout);
+		//
+		// // TODO 被侦查方发送军情
+		// // TODO 侦查方发送军情
+		// // TODO 推送目标广播区动画
+		return null;
+	}
+
+}

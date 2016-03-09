@@ -1,0 +1,447 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:flex="http://www.springframework.org/schema/flex"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+
+	<bean id="entityDao" class="com.youxigu.dynasty2.entity.dao.impl.EntityDao">
+		<property name="sqlMapClientTemplate">
+			<ref bean="sqlMapClientTemplate" />
+		</property>
+	</bean>
+
+	<!--装备业务处理，强化，分解......... -->
+	<!-- <bean id="equipActionService" class="com.youxigu.dynasty2.entity.service.impl.EquipActionService" 
+		init-method="init"> <property name="entityDao"><ref bean="entityDao" /></property> 
+		<property name="entityService"><ref bean="entityService" /></property> <property 
+		name="treasuryService"><ref bean="treasuryService" /></property> <property 
+		name="userService"><ref bean="userService" /></property> </bean> -->
+	<!--实体加载service begin -->
+	<bean id="abstractEntityFactoryService"
+		class="com.youxigu.dynasty2.entity.service.impl.AbstractEntityFactoryService"
+		abstract="true">
+		<property name="entityDao">
+			<ref bean="entityDao" />
+		</property>
+	</bean>
+
+	<bean id="equipEntityService"
+		class="com.youxigu.dynasty2.entity.service.impl.EquipEntityService"
+		init-method="initService" parent="abstractEntityFactoryService">
+		<property name="entityDao">
+			<ref bean="entityDao" />
+		</property>
+	</bean>
+
+	<bean id="dropPackEntityService"
+		class="com.youxigu.dynasty2.entity.service.impl.DropPackEntityService"
+		init-method="initService" parent="abstractEntityFactoryService">
+	</bean>
+  
+  	<bean id="boxEntityService"
+		class="com.youxigu.dynasty2.entity.service.impl.BoxEntityService"
+		init-method="initService" parent="abstractEntityFactoryService">
+	</bean>
+	
+	<bean id="itemEntityService"
+		class="com.youxigu.dynasty2.entity.service.impl.ItemEntityService"
+		init-method="initService" parent="abstractEntityFactoryService">
+		<property name="factorys">
+			<map>
+				<entry key="EQUIP">
+					<ref bean="equipEntityService" />
+				</entry>
+				<entry key="DROPPACK"><!--掉落包 -->
+					<ref bean="dropPackEntityService" />
+				</entry>
+				<entry key="BOX"><!--宝箱类掉落包，不直接掉落，扔到背包中，使用时打开掉落 -->
+					<ref bean="boxEntityService" />
+				</entry>
+                
+			</map>
+		</property>
+	</bean>
+
+	<bean id="partyEntityService"
+		class="com.youxigu.dynasty2.entity.service.impl.PartyEntityService"
+		init-method="initService" parent="abstractEntityFactoryService">
+	</bean>
+  
+    <bean id="buildingEntityService"
+        class="com.youxigu.dynasty2.entity.service.impl.BuildingEntityService"
+        init-method="initService" parent="abstractEntityFactoryService">
+    </bean>
+    
+    <bean id="techEntityService"
+        class="com.youxigu.dynasty2.entity.service.impl.TechnologyEntityService"
+        init-method="initService" parent="abstractEntityFactoryService">
+    </bean>
+    
+    <bean id="armyEntityService"
+        class="com.youxigu.dynasty2.entity.service.impl.ArmyEntityService"
+        init-method="initService" parent="abstractEntityFactoryService">
+    </bean>
+    
+    <bean id="resEntityService"
+        class="com.youxigu.dynasty2.entity.service.impl.ResourceEntityService"
+        init-method="initService" parent="abstractEntityFactoryService">
+    </bean>
+    
+    <bean id="sysHeroEntityService"
+        class="com.youxigu.dynasty2.entity.service.impl.SysHeroEntityService"
+        init-method="initService" parent="abstractEntityFactoryService">
+    </bean>
+    
+    <bean id="heroSkillEntityService"
+        class="com.youxigu.dynasty2.entity.service.impl.HeroSkillEntityService"
+        init-method="initService" parent="abstractEntityFactoryService">
+    </bean>
+  
+	<!--实体加载service end -->
+
+
+	<bean id="consumeChecker"
+		class="com.youxigu.dynasty2.entity.service.impl.DefaultEntityConsumeChecker">
+<!--		<property name="castleService">-->
+<!--			<ref bean="castleService" />-->
+<!--		</property>-->
+	</bean>
+
+	<bean id="limitChecker"
+		class="com.youxigu.dynasty2.entity.service.impl.DefaultEntityLimitChecker">
+<!--		<property name="castleService">-->
+<!--			<ref bean="castleService" />-->
+<!--		</property>-->
+	</bean>
+
+    <bean id="goldConsumeValidator"
+          class="com.youxigu.dynasty2.entity.service.validator.impl.ResourceGoldConsumeValidator">
+        <property name="castleService">
+            <ref bean="castleService" />
+        </property>
+         <property name="castleResService">
+            <ref bean="castleResService" />
+        </property>
+    </bean>
+
+    <bean id="ironConsumeValidator"
+          class="com.youxigu.dynasty2.entity.service.validator.impl.ResourceIronConsumeValidator">
+        <property name="castleService">
+            <ref bean="castleService" />
+        </property>
+         <property name="castleResService">
+            <ref bean="castleResService" />
+        </property>
+    </bean>
+
+    <bean id="uraniumConsumeValidator"
+          class="com.youxigu.dynasty2.entity.service.validator.impl.ResourceUraniumConsumeValidator">
+        <property name="castleService">
+            <ref bean="castleService" />
+        </property>
+         <property name="castleResService">
+            <ref bean="castleResService" />
+        </property>
+    </bean>
+
+    <bean id="oilConsumeValidator"
+          class="com.youxigu.dynasty2.entity.service.validator.impl.ResourceOilConsumeValidator">
+        <property name="castleService">
+            <ref bean="castleService" />
+        </property>
+         <property name="castleResService">
+            <ref bean="castleResService" />
+        </property>
+    </bean>
+
+	<bean id="timeConsumeValidator"
+		class="com.youxigu.dynasty2.entity.service.validator.impl.TimeConsumeValidator">
+	</bean>
+
+
+	<!--实体消耗，实体约束检查Service end -->
+
+    <bean id="buildingLimitValidator"
+          class="com.youxigu.dynasty2.entity.service.validator.impl.BuildingLimitValidator">
+        <property name="castleService">
+            <ref bean="castleService" />
+        </property>
+    </bean>
+
+    <bean id="userLevelLimitValidator"
+          class="com.youxigu.dynasty2.entity.service.validator.impl.UserLevelLimitValidator">
+        <property name="castleService">
+            <ref bean="castleService"/>
+        </property>
+        <property name="userService">
+            <ref bean="userService"/>
+        </property>
+    </bean>
+
+	<bean id="technologyLimitValidator"
+		class="com.youxigu.dynasty2.entity.service.validator.impl.TechnologyLimitValidator">
+		<property name="castleService" ref="castleService"/>
+	</bean>
+
+    <!--实体效果 service begin -->
+
+	<!-- some entity effect render: 这类的 render是按实体类型或者实体编号来处理，配置到entityService的entityEffectRenders 
+		通常是建筑 科技类的效果，这类实体的效果通常可以统一处理，因此按实体来进行效果处理 -->
+	<bean id="dropPackEntityRender"
+		class="com.youxigu.dynasty2.entity.service.script.DropPackEntityRender">
+		<property name="entityService">
+			<ref bean="entityService" />
+		</property>
+		<property name="userService">
+			<ref bean="userService" />
+		</property>
+		<property name="treasuryService">
+			<ref bean="treasuryService" />
+		</property>
+            <property name="heroService">
+          <ref bean="heroService" />
+        </property>
+        <property name="castleResService">
+          <ref bean="castleResService" />
+        </property>
+	</bean>
+
+	<bean id="dropCashEntityRender"
+		class="com.youxigu.dynasty2.entity.service.script.DropCashEntityRender">
+	</bean>
+
+	<bean id="addCashRender"
+		class="com.youxigu.dynasty2.entity.service.script.AddCashRender">
+        <property name="userService">
+            <ref bean="userService" />
+        </property>
+	</bean>
+
+    <bean id="castleEffectTimePeriodRender"
+          class="com.youxigu.dynasty2.entity.service.script.CastleEffectTimePeriodRender">
+        <property name="castleEffectService">
+            <ref bean="castleEffectService" />
+        </property>
+        <property name="buffTipService">
+            <ref bean="buffTipService" />
+        </property>
+    </bean>
+
+    <bean id="resourceSkillRender"
+          class="com.youxigu.dynasty2.entity.service.script.ResourceSkillRender" parent="castleEffectTimePeriodRender">
+    </bean>
+
+    <!-- end -->
+
+	<!-- some effect render: 这类render按effect来处理，可以配置到entityService的effectRenders或者在数据库表effectDefine的字段serviceName来配置 
+		通常是Item的效果，这类的效果没有统一的处理方式，按不同的效果分别实现 -->
+    <!-- 实现IEntityEffectRender接口 -->
+  	
+    <!--实体效果 service end -->
+	
+      <!-- 效果render 实现IEffectRender接口 -->
+      <bean id="heroExpRender" class="com.youxigu.dynasty2.entity.service.script.HeroExpRender">
+        <property name="userService" ref="userService" />
+        <property name="treasuryService" ref="treasuryService" />
+        <property name="heroService" ref="heroService" />
+        <property name="entityService" ref="entityService" />
+        <property name="logService" ref="logService" />
+      </bean>
+      <bean id="goldRender" class="com.youxigu.dynasty2.entity.service.script.GoldRender">
+          <property name="messageService" ref="messageService" />
+          <property name="castleResService" ref="castleResService" />
+      </bean>
+      <bean id="ironRender" class="com.youxigu.dynasty2.entity.service.script.IronRender">
+          <property name="messageService" ref="messageService" />
+          <property name="castleResService" ref="castleResService" />
+      </bean>
+      <bean id="oilRender" class="com.youxigu.dynasty2.entity.service.script.OilRender">
+          <property name="messageService" ref="messageService" />
+          <property name="castleResService" ref="castleResService" />
+      </bean>
+      <bean id="uraniumRender" class="com.youxigu.dynasty2.entity.service.script.UraniumRender">
+          <property name="messageService" ref="messageService" />
+          <property name="castleResService" ref="castleResService" />
+      </bean>
+
+	<!-- 增加行动力 -->
+	<bean id="actionPointRender" class="com.youxigu.dynasty2.entity.service.script.ActionPoint">
+		<property name="userService"><ref bean="userService" /></property>
+	</bean>
+	<!-- 增加体力 -->
+	<bean id="riskHpPointRender" class="com.youxigu.dynasty2.entity.service.script.RiskHpPointRender">
+		<property name="userService"><ref bean="userService" /></property>
+    </bean>
+	
+	<!-- entityService这个bean被初始化，初始化过程包括装配bean内的属性entityDao和(map bean)factorys,初始化结束之后会调用初始化方法init -->
+
+	<bean id="entityService" class="com.youxigu.dynasty2.entity.service.impl.EntityService"
+		init-method="init">
+
+		<property name="broadcastMgr">
+			<ref bean="broadcastMgr" />
+		</property>
+		<property name="entityDao">
+			<ref bean="entityDao" />
+		</property>
+		<property name="consumeChecker">
+			<ref bean="consumeChecker" />
+		</property>
+		<property name="limitChecker">
+			<ref bean="limitChecker" />
+		</property>
+		<property name="factorys">
+			<map>
+				<entry key="ITEM">
+					<ref bean="itemEntityService" />
+				</entry>
+				<entry key="EQUIP">
+					<ref bean="itemEntityService" />
+				</entry>
+				<entry key="DROPPACK">
+					<ref bean="itemEntityService" />
+				</entry>
+				<entry key="BOX">
+					<ref bean="itemEntityService" />
+				</entry>
+				<entry key="PARTY">
+					<ref bean="partyEntityService" />
+				</entry>
+                <entry key="BUILDING">
+                    <ref bean="buildingEntityService" />
+                </entry>
+                <entry key="TECH">
+                    <ref bean="techEntityService" />
+                </entry>
+                <entry key="ARMY">
+                    <ref bean="armyEntityService" />
+                </entry>
+                <entry key="RESOURCE">
+                    <ref bean="resEntityService" />
+                </entry>
+                <entry key="SYSHERO">
+                    <ref bean="sysHeroEntityService" />
+                </entry>
+                <entry key="HEROSKILL">
+                    <ref bean="heroSkillEntityService" />
+                </entry>
+			</map>
+		</property>
+
+		<property name="limitValidators">
+			<map>
+				<entry key="*">
+					<bean
+						class="com.youxigu.dynasty2.entity.service.validator.impl.DefaultEntityLimitValidator" />
+				</entry>
+                <entry key="BUILDING">
+                    <ref bean="buildingLimitValidator" />
+                </entry>
+                <entry key="59899">
+                    <ref bean="userLevelLimitValidator" />
+                </entry><!-- 君主等级 -->
+				<entry key="TECH" value-ref="technologyLimitValidator"/>
+			</map>
+		</property>
+
+		<property name="consumeValidators">
+			<map>
+				<entry key="*">
+					<bean
+						class="com.youxigu.dynasty2.entity.service.validator.impl.DefaultEntityConsumeValidator" />
+                </entry>
+                <entry key="59901">
+                    <ref bean="oilConsumeValidator"/>
+                </entry><!--油矿消耗 -->
+                <entry key="59902">
+                    <ref bean="ironConsumeValidator"/>
+                </entry><!--铁矿消耗 -->
+                <entry key="59903">
+                    <ref bean="uraniumConsumeValidator"/>
+                </entry><!--铀矿消耗 -->
+                <entry key="59904">
+                    <ref bean="goldConsumeValidator"/>
+                </entry><!--金矿消耗 -->
+                <entry key="59900">
+                    <ref bean="timeConsumeValidator"/>
+                </entry><!--时间消耗 -->
+            </map>
+		</property>
+
+		<!--按entity进行的effect 渲染 key可是是entity的类型或者Id ,这个优先于下面的effectRenders 通常是building使用 -->
+		<property name="entityEffectRenders">
+			<map>
+                <entry key="BUILDING">
+                    <ref bean="castleBuildingEffectRender" />
+                </entry>
+                <entry key="TECH">
+                    <ref bean="castleTechnologyEffectRender" />
+                </entry>
+                <entry key="DROPPACK">
+					<ref bean="dropPackEntityRender" />
+				</entry>
+				<entry key="BOX">
+					<ref bean="dropPackEntityRender" />
+				</entry>
+                <entry key="59801"><!-- 掉落钻石 -->
+					<ref bean="dropCashEntityRender" />
+				</entry>
+
+            </map>
+		</property>
+
+		<!-- 由于一个entity可能有多个effect,这里是每个effect对应的渲染器 通常Item使用这种配置方式 如果effect数据表中设置了serviceName，这里可以不设置 
+			否则，先按照effectId进行查找，再按照effectType查找 -->
+		<property name="effectRenders">
+			<map>
+				<entry key="*">
+					<bean
+						class="com.youxigu.dynasty2.entity.service.effect.impl.DefaultEffectRender" />
+				</entry>
+				<!-- TODO:这里的key是错的，需要effectDefine中的effId或者effectType作为key -->
+				<entry key="I_HERO_EXP"><!-- 武将经验卡效果 -->
+					<ref bean="heroExpRender" />
+				</entry>
+                <entry key="I_GOLD"><!-- 加金矿 -->
+                    <ref bean="goldRender" />
+                </entry>
+                <entry key="I_IRON"><!-- 加铁矿 -->
+                    <ref bean="ironRender" />
+                </entry>
+                <entry key="I_OIL"><!-- 加油矿 -->
+                    <ref bean="oilRender" />
+                </entry>
+                <entry key="I_URANIUM"><!-- 加铀矿 -->
+                    <ref bean="uraniumRender" />
+                </entry>
+                <entry key="B_GOLD_YIELD"><!-- 金矿产量加速 -->
+                    <ref bean="resourceSkillRender" />
+                </entry>
+                <entry key="B_IRON_YIELD"><!-- 铁矿产量加速 -->
+                    <ref bean="resourceSkillRender" />
+                </entry>
+                <entry key="B_OIL_YIELD"><!-- 油矿产量加速 -->
+                    <ref bean="resourceSkillRender" />
+                </entry>
+                <entry key="B_URANIUM_YIELD"><!-- 铀矿产量加速 -->
+                    <ref bean="resourceSkillRender" />
+                </entry>
+                <entry key="I_CASH"><!-- 道具加钻石 -->
+                    <ref bean="addCashRender" />
+                </entry>
+                
+                <entry key="USER_ACTION_POINT">
+					<ref bean="actionPointRender" />
+				</entry><!--增加行动力 -->
+        
+                <entry key="RISK_HP_POINT">
+                    <ref bean="riskHpPointRender" />
+                </entry><!--增加体力 -->
+            </map>
+		</property>
+	</bean>
+
+</beans>
+

@@ -1,0 +1,131 @@
+package com.youxigu.dynasty2.armyout.service.impl;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.manu.util.UtilDate;
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+import com.youxigu.dynasty2.armyout.domain.Strategy;
+import com.youxigu.dynasty2.armyout.domain.UserArmyout;
+import com.youxigu.dynasty2.armyout.domain.action.SpyAction;
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.map.domain.action.TimeAction;
+import com.youxigu.dynasty2.map.service.ICommander;
+import com.youxigu.dynasty2.map.service.impl.command.StrategyCommander;
+import com.youxigu.dynasty2.user.domain.User;
+import com.youxigu.dynasty2.util.BaseException;
+
+/**
+ * 侦查
+ * 
+ * @author LK
+ * @date 2016年2月29日
+ */
+public class SpyStrategyService extends StrategyCommander {
+	public static final Logger log = LoggerFactory
+			.getLogger(SpyStrategyService.class);
+
+	@Override
+	public void doCheak(Map<String, Object> params) {
+		MapCell fromMapCell = (MapCell) params.get("fromMapCell");
+		MapCell toMapCell = (MapCell) params.get("toMapCell");
+		Strategy strategy = (Strategy) params.get("strategy");
+		if (fromMapCell == null) {
+			throw new BaseException("您已流亡，不能侦查");
+		}
+
+		if (toMapCell == null) {
+			throw new BaseException("目标不存在");
+		}
+
+		// 加锁
+		List<Integer> cellIds = new ArrayList<Integer>();
+		cellIds.add(fromMapCell.getId());
+		cellIds.add(fromMapCell.getId());
+		try {
+			mapService.getMapCellForWrite(cellIds);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		if (fromMapCell.getId() == toMapCell.getId()) {
+			throw new BaseException("不能对自己侦查");
+		}
+
+		if (toMapCell.isEmpty(true)) {
+			throw new BaseException("目标是个空地，不能侦查");
+		}
+
+		if (fromMapCell.getUserId() == 0 || toMapCell.getUserId() == 0) {
+			throw new BaseException("目标未被玩家占据不能侦查");
+		}
+
+		if (fromMapCell.getUserId() == toMapCell.getUserId()
+				|| (fromMapCell.getGuildId() > 0 && fromMapCell
+						.getGuildId() == toMapCell.getGuildId())) {
+			throw new BaseException("不能侦查己方目标");
+		}
+
+		if (!toMapCell.isSurface(MapCell.EARTH_TYPE_USER_RES)
+				&& !toMapCell.isSurface(MapCell.CAS_TYPE_USER)) {
+			throw new BaseException("侦查目标只能是玩家基地和个人资源点");
+		}
+
+		User fromUser = userService.getUserById(fromMapCell.getUserId());
+		User toUser = userService.getUserById(toMapCell.getUserId());
+		if (fromUser == null || toUser == null) {
+			throw new BaseException("目标未被玩家占据不能侦查");
+		}
+
+		long attackerId = fromUser.getUserId();
+		long attackerGuildId = fromUser.getGuildId();
+
+		// 校验出征队列
+		UserArmyout userArmyout = this.doCheakArmyoutQueue(attackerId,
+				strategy);
+
+		// 消耗
+		this.doConsume(fromUser, strategy, fromMapCell, toMapCell);
+
+		// 所需时间
+		double needSecond = armyoutService.getSpyTimeBetweenPoints(fromUser,
+				fromMapCell, toMapCell);
+		int baseTime = (int) Math.ceil(needSecond);
+		Timestamp outDttm = UtilDate.nowTimestamp();
+		Timestamp outArriveDttm = UtilDate.moveSecond(outDttm, baseTime);
+
+		// 构造armyout
+		Armyout armyout = new Armyout();
+		armyout.setOutType(ICommander.COMMAND_201);
+		armyout.setAttackerCellId(fromMapCell.getId());
+		armyout.setAttackerId(attackerId);
+		armyout.setAttackerGuildId(attackerGuildId);
+		armyout.setDefenderCellId(toMapCell.getId());
+		armyout.setBaseTime(baseTime);
+		armyout.setOutDttm(outDttm);
+		armyout.setOutArriveDttm(outArriveDttm);
+		armyout.setOutBackDttm(outArriveDttm);
+		armyout.setStatus(Armyout.STATUS_FORWARD);
+		armyoutService.createArmyOut(armyout);
+
+		// 占用出征队列
+		userArmyout.setArmyout(armyout.getId());
+		armyoutService.updateUserArmyout(userArmyout);
+
+		// 进入线程队列
+		commandDistatcher.putCommander(new SpyAction(fromMapCell, toMapCell,
+				armyout, fromUser, toUser, strategy, outArriveDttm.getTime()));
+	}
+
+	@Override
+	public Map<String, Object> doExcute(TimeAction action) {
+
+		return null;
+	}
+
+}

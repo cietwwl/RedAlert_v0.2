@@ -1,0 +1,229 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:flex="http://www.springframework.org/schema/flex"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+
+	<bean id="userDao" class="com.youxigu.dynasty2.user.dao.impl.UserDao">
+		<property name="sqlMapClientTemplate" ref="sqlMapClientTemplate"/>
+	</bean>
+
+	<bean id="accountDao" class="com.youxigu.dynasty2.user.dao.impl.AccountDao">
+		<property name="sqlMapClientTemplate" ref="sqlMapClientTemplate" />
+	</bean>
+  
+	<bean id="accountService" class="com.youxigu.dynasty2.user.service.impl.AccountService">
+		<property name="accountDao" ref="accountDao" />
+		<property name="userDao" ref="userDao" />
+		<property name="logService" ref="logService" />
+		<property name="tlogService" ref="tlogService" />
+		<property name="userService" ref="userService" />
+		<property name="mainServerClient" ref="mainServerClient" />
+		<property name="useWhiteList" value="${useWhiteList:false}" />
+		<property name="loginQueueSize">
+			<value>0</value>
+		</property>
+		<property name="tecentMobileQqService">
+			<ref bean="tecentMobileQqService" />
+		</property>
+		<property name="tecentWeiXinService">
+			<ref bean="tecentWeiXinService" />
+		</property>
+		<property name="testAccIds"
+			value="1001,1002,1003,1004,1005,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010" />
+		<property name="messageService">
+			<ref bean="messageService" />
+		</property>
+
+	</bean>
+
+	<bean id="userService" class="com.youxigu.dynasty2.user.service.impl.UserService"
+		init-method="init">
+		<property name="consumeBack">
+			<value>${openplatform.cashConsume.back:false}</value>
+		</property>
+		<property name="consumeLog">
+			<value>${openplatform.cashConsume.log:false}</value>
+		</property>
+		<property name="userDao" ref="userDao" />
+		<property name="messageService" ref="messageService" />
+		<property name="sensitiveWordService" ref="sensitiveWordService" />
+		<property name="userAttrService" ref="userAttrService" />
+		<property name="mainServerClient" ref="mainServerClient" />
+		<property name="commonService" ref="commonService" />
+		<property name="logService" ref="logService" />
+		<property name="tlogService" ref="tlogService" />
+		<property name="accountService" ref="accountService" />
+		<property name="userCountService" ref="userCountService" />
+		<property name="userAchieveService" ref="userAchieveService" />
+		<property name="discountId">
+			<value>${openplatform.present.discountid:}</value>
+		</property>
+		<property name="giftId">
+			<value>${openplatform.present.giftid:}</value>
+		</property>
+		<property name="mapService" ref="mapService" />
+		<property name="troopService" ref="troopService" />
+		<property name="heroService" ref="heroService" />
+        <property name="castleService" ref="castleService" />
+		<property name="vipService"><ref bean="vipService" /></property>
+		<property name="friendService"><ref bean="friendService" /></property>
+		<property name="missionService"><ref bean="missionService" /></property>
+		<property name="treasuryService"><ref bean="treasuryService" /></property>
+	</bean>
+
+	<!-- 玩家属性 -->
+	<bean id="userAttrDao" class="com.youxigu.dynasty2.user.dao.impl.UserAttrDao">
+		<property name="sqlMapClientTemplate">
+			<ref bean="sqlMapClientTemplate" />
+		</property>
+	</bean>
+	<bean id="userAttrService" class="com.youxigu.dynasty2.user.service.impl.UserAttrService"
+		init-method="init">
+		<property name="userAttrDao">
+			<ref bean="userAttrDao" />
+		</property>
+	</bean>
+  
+    <!-- 计数器 -->
+    <bean id="userCountDao" class="com.youxigu.dynasty2.user.dao.impl.UserCountDao">
+        <property name="sqlMapClientTemplate">
+          <ref bean="sqlMapClientTemplate" />
+        </property>
+    </bean>
+    <bean id="userCountService" class="com.youxigu.dynasty2.user.service.impl.UserCountService">
+        <property name="userCountDao">
+          <ref bean="userCountDao" />
+        </property>
+    </bean>
+
+
+	<!--==============AMF3Action begin==============-->
+	<bean id="userAction" class="com.youxigu.dynasty2.user.web.UserAction">
+		<property name="accountService">
+			<ref bean="accountService" />
+		</property>
+		<property name="userService">
+			<ref bean="userService" />
+		</property>
+		<property name="mainServerClient">
+			<ref bean="mainServerClient" />
+		</property>
+		<property name="userAttrService">
+			<ref bean="userAttrService" />
+		</property>
+		<property name="mapService">
+			<ref bean="mapService" />
+		</property>
+		<property name="commonService">
+			<ref bean="commonService" />
+		</property>
+		<property name="logService">
+			<ref bean="logService" />
+		</property>
+	</bean>
+
+
+	<bean id="loginAction" class="com.youxigu.dynasty2.user.web.LoginAction"
+		init-method="init">
+		<property name="supportClientVersion" value="${client.version:1.0.13}" />
+		<property name="accountService">
+			<ref bean="accountService" />
+		</property>
+		<property name="chatService">
+			<ref bean="chatService" />
+		</property>
+		<property name="protoReportService">
+			<ref bean="protoReportService" />
+		</property>
+	</bean>
+
+    <!-- userEffect define -->
+    <bean id="userEffectDao" class="com.youxigu.dynasty2.user.dao.impl.UserEffectDao">
+        <property name="sqlMapClientTemplate">
+          <ref bean="sqlMapClientTemplate" />
+        </property>
+    </bean>
+    <bean id="userEffectService"
+      class="com.youxigu.dynasty2.user.service.impl.UserEffectService">
+      <property name="userEffectDao">
+        <ref bean="userEffectDao" />
+      </property>
+    </bean>
+    
+    <!-- 二级密码/操作密码 -->
+    <bean id="operPasswordService" class="com.youxigu.dynasty2.user.service.impl.OperPasswordService">
+        <property name="userService"><ref bean="userService" /></property>
+        <property name="vipService"><ref bean="vipService" /></property>
+        <property name="commonService"><ref bean="commonService" /></property>
+        <property name="messageService"><ref bean="messageService" /></property>
+        <property name="broadcastMgr"><ref bean="broadcastMgr" /></property>
+    </bean>
+    <bean id="operPasswordAction" class="com.youxigu.dynasty2.user.web.OperPasswordAction">
+        <property name="operPasswordService"><ref bean="operPasswordService" /></property>
+    </bean>
+
+	<bean id="forumService" class="com.youxigu.dynasty2.user.service.impl.ForumService" init-method="init">
+		<property name="userService" ref="userService"/>
+		<property name="userDao" ref="userDao"/>
+		<property name="sensitiveWordService" ref="sensitiveWordService"/>
+		<property name="broadcastMgr" ref="broadcastMgr"/>
+	</bean>
+	
+	<!-- achieve成就 -->
+	<bean id="userAchieveDao" class="com.youxigu.dynasty2.user.dao.impl.UserAchieveDao">
+        <property name="sqlMapClientTemplate"><ref bean="sqlMapClientTemplate" /></property>
+    </bean>
+    
+    <!-- achieve cheaker -->
+    <bean id="commanderEquipColorNumAchieveChecker" class="com.youxigu.dynasty2.user.service.impl.achieve.CommanderEquipColorNumAchieveChecker">
+	    <property name="troopService" ref="troopService"/>
+		<property name="userService" ref="userService"/>
+		<property name="treasuryService" ref="treasuryService"/>
+	</bean>
+	<bean id="equipLvColorNumAchieveChecker" class="com.youxigu.dynasty2.user.service.impl.achieve.EquipLvColorNumAchieveChecker">
+		<property name="treasuryService" ref="treasuryService"/>
+	</bean>
+	<bean id="heroLvColorNumAchieveChecker" class="com.youxigu.dynasty2.user.service.impl.achieve.HeroLvColorNumAchieveChecker">
+		<property name="heroService" ref="heroService"/>
+	</bean>
+    
+	<bean id="userAchieveService" class="com.youxigu.dynasty2.user.service.impl.UserAchieveService" init-method="initService">
+	    <property name="userAchieveDao" ref="userAchieveDao"/>
+		<property name="userService" ref="userService"/>
+		<property name="messageService" ref="messageService"/>
+		<property name="commonService" ref="commonService"/>
+		<property name="logService" ref="logService"/>
+		<property name="limitCheckers"><!--成就检查-->
+			<map>
+				<!-- 任务奖励器 -->
+				<entry key="commanderEquipColorNum"><ref bean="commanderEquipColorNumAchieveChecker" /></entry><!-- 指挥官坦克装备X件Y品质装备 -->
+				<entry key="equipLvColorNum"><ref bean="equipLvColorNumAchieveChecker" /></entry><!-- X件Y品质Z级装备 -->
+				<entry key="heroLvColorNum"><ref bean="heroLvColorNumAchieveChecker" /></entry><!-- X辆Z级Y品质坦克 -->
+			</map>
+		</property>
+	</bean>
+	<bean id="userAchieveAction" class="com.youxigu.dynasty2.user.web.UserAchieveAction">
+        <property name="userAchieveService"><ref bean="userAchieveService" /></property>
+    </bean>
+    
+    <!-- title军衔 -->
+    <bean id="userTitleDao" class="com.youxigu.dynasty2.user.dao.impl.UserTitleDao">
+        <property name="sqlMapClientTemplate"><ref bean="sqlMapClientTemplate" /></property>
+    </bean>
+    <bean id="userTitleService" class="com.youxigu.dynasty2.user.service.impl.UserTitleService" init-method="initService">
+	    <property name="userTitleDao" ref="userTitleDao"/>
+		<property name="userService" ref="userService"/>
+		<property name="entityService" ref="entityService"/>
+		<property name="treasuryService" ref="treasuryService"/>
+		<property name="messageService" ref="messageService"/>
+		<property name="userAchieveService" ref="userAchieveService"/>
+		<property name="logService"><ref bean="logService" /></property>
+	</bean>
+	<bean id="userTitleAction" class="com.youxigu.dynasty2.user.web.UserTitleAction">
+        <property name="userTitleService"><ref bean="userTitleService" /></property>
+    </bean>
+</beans>
+

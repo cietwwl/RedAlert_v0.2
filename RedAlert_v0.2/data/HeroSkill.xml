@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<dataset>
+
+
+<HeroSkill entId="11000001" skillName="1号位坦克普攻" level="1" nextSkillId="0" skillDesc="1号位坦克普攻" icon="skill1donghua" pic="skill1" quality="2" ownSkill="1" skillType="0" firedAt="0" percent="1000" morale="0" roundPeriod="0" priority="1" powerType="0" power="0" />
+<HeroSkill entId="11000011" skillName="2号位坦克普攻" level="1" nextSkillId="0" skillDesc="2号位坦克普攻" icon="skill2donghua" pic="skill2" quality="2" ownSkill="1" skillType="0" firedAt="0" percent="1000" morale="0" roundPeriod="0" priority="1" powerType="0" power="0" />
+<HeroSkill entId="11000021" skillName="7号位坦克普攻" level="1" nextSkillId="0" skillDesc="7号位坦克普攻" icon="skill3donghua" pic="skill3" quality="2" ownSkill="1" skillType="0" firedAt="0" percent="1000" morale="0" roundPeriod="0" priority="1" powerType="0" power="0" />
+<HeroSkill entId="11000031" skillName="8号位坦克普攻" level="1" nextSkillId="0" skillDesc="8号位坦克普攻" icon="skill4donghua" pic="skill4" quality="2" ownSkill="1" skillType="0" firedAt="0" percent="1000" morale="0" roundPeriod="0" priority="1" powerType="0" power="0" />
+<HeroSkill entId="11000041" skillName="1号位坦克合击" level="1" nextSkillId="0" skillDesc="1号位坦克合击" icon="skill1donghua" pic="skill1" quality="2" ownSkill="1" skillType="1" firedAt="0" percent="1000" morale="0" roundPeriod="0" priority="1" powerType="0" power="0" />
+<HeroSkill entId="11000051" skillName="7号位坦克合击" level="1" nextSkillId="0" skillDesc="7号位坦克合击" icon="skill2donghua" pic="skill2" quality="2" ownSkill="1" skillType="1" firedAt="0" percent="1000" morale="0" roundPeriod="0" priority="1" powerType="0" power="0" />
+
+<HeroSkill entId="12000001" skillName="1号位士气技能" level="1" nextSkillId="0" skillDesc="1号位士气技能" icon="skill1donghua" pic="skill1" quality="2" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="12000011" skillName="7号位士气技能" level="1" nextSkillId="0" skillDesc="7号位士气技能" icon="skill2donghua" pic="skill2" quality="2" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="12000021" skillName="2号位飞机技能" level="1" nextSkillId="0" skillDesc="2号位飞机技能" icon="skill3donghua" pic="skill3" quality="2" ownSkill="1" skillType="3" firedAt="2" percent="1000" morale="0" roundPeriod="1" priority="5" powerType="0" power="0" />
+<HeroSkill entId="12000031" skillName="8号位飞机机能" level="1" nextSkillId="0" skillDesc="8号位飞机机能" icon="skill4donghua" pic="skill4" quality="2" ownSkill="1" skillType="3" firedAt="2" percent="1000" morale="0" roundPeriod="1" priority="5" powerType="0" power="0" />
+<HeroSkill entId="12000041" skillName="重型坦克技能" level="1" nextSkillId="0" skillDesc="重型坦克技能" icon="skill1donghua" pic="skill1" quality="2" ownSkill="1" skillType="3" firedAt="0" percent="1000" morale="0" roundPeriod="1" priority="2" powerType="0" power="0" />
+<HeroSkill entId="12000051" skillName="维修坦克技能" level="1" nextSkillId="0" skillDesc="维修坦克技能" icon="skill2donghua" pic="skill2" quality="2" ownSkill="1" skillType="1" firedAt="0" percent="1000" morale="0" roundPeriod="1" priority="10" powerType="0" power="0" />
+
+<HeroSkill entId="13000001" skillName="1号位士合击能" level="1" nextSkillId="0" skillDesc="1号位士合击能" icon="skill1donghua" pic="skill1" quality="2" ownSkill="1" skillType="1" firedAt="0" percent="1000" morale="0" roundPeriod="2" priority="3" powerType="0" power="0" />
+<HeroSkill entId="13000011" skillName="7号位士合击能" level="1" nextSkillId="0" skillDesc="7号位士合击能" icon="skill2donghua" pic="skill2" quality="2" ownSkill="1" skillType="1" firedAt="0" percent="1000" morale="0" roundPeriod="2" priority="3" powerType="0" power="0" />
+<HeroSkill entId="13000021" skillName="2号位飞合击能" level="1" nextSkillId="0" skillDesc="2号位飞合击能" icon="skill3donghua" pic="skill3" quality="2" ownSkill="1" skillType="3" firedAt="2" percent="30" morale="0" roundPeriod="1" priority="3" powerType="0" power="0" />
+<HeroSkill entId="13000031" skillName="8号位飞合击能" level="1" nextSkillId="0" skillDesc="8号位飞合击能" icon="skill4donghua" pic="skill4" quality="2" ownSkill="1" skillType="3" firedAt="2" percent="30" morale="0" roundPeriod="1" priority="3" powerType="0" power="0" />
+<HeroSkill entId="13000041" skillName="重型坦克合击" level="1" nextSkillId="0" skillDesc="重型坦克合击" icon="skill1donghua" pic="skill1" quality="2" ownSkill="1" skillType="2" firedAt="0" percent="30" morale="0" roundPeriod="1" priority="2" powerType="0" power="0" />
+<HeroSkill entId="13000051" skillName="维修坦克合击" level="1" nextSkillId="0" skillDesc="维修坦克合击" icon="skill2donghua" pic="skill2" quality="2" ownSkill="1" skillType="2" firedAt="0" percent="30" morale="0" roundPeriod="1" priority="10" powerType="0" power="0" />
+
+<HeroSkill entId="14000001" skillName="1号位士飞机能" level="1" nextSkillId="0" skillDesc="1号位士飞机能" icon="skill1donghua" pic="skill1" quality="2" ownSkill="1" skillType="3" firedAt="2" percent="1000" morale="0" roundPeriod="2" priority="3" powerType="0" power="0" />
+<HeroSkill entId="14000011" skillName="7号位士飞机能" level="1" nextSkillId="0" skillDesc="7号位士飞机能" icon="skill2donghua" pic="skill2" quality="2" ownSkill="1" skillType="3" firedAt="2" percent="1000" morale="0" roundPeriod="2" priority="3" powerType="0" power="0" />
+<HeroSkill entId="14000021" skillName="2号位飞飞机能" level="1" nextSkillId="0" skillDesc="2号位飞飞机能" icon="skill3donghua" pic="skill3" quality="2" ownSkill="1" skillType="3" firedAt="2" percent="30" morale="0" roundPeriod="1" priority="3" powerType="0" power="0" />
+<HeroSkill entId="14000031" skillName="8号位飞飞机能" level="1" nextSkillId="0" skillDesc="8号位飞飞机能" icon="skill4donghua" pic="skill4" quality="2" ownSkill="1" skillType="3" firedAt="2" percent="30" morale="0" roundPeriod="1" priority="3" powerType="0" power="0" />
+<HeroSkill entId="14000041" skillName="重型坦克飞机" level="1" nextSkillId="0" skillDesc="重型坦克飞机" icon="skill1donghua" pic="skill1" quality="2" ownSkill="1" skillType="3" firedAt="2" percent="30" morale="0" roundPeriod="1" priority="2" powerType="0" power="0" />
+<HeroSkill entId="14000051" skillName="维修坦克飞机" level="1" nextSkillId="0" skillDesc="维修坦克飞机" icon="skill2donghua" pic="skill2" quality="2" ownSkill="1" skillType="3" firedAt="2" percent="30" morale="0" roundPeriod="1" priority="10" powerType="0" power="0" />
+
+<HeroSkill entId="15000001" skillName="1号位士被动能" level="1" nextSkillId="0" skillDesc="1号位士被动能" icon="skill1donghua" pic="skill1" quality="2" ownSkill="0" skillType="0" firedAt="0" percent="0" morale="0" roundPeriod="0" priority="3" powerType="0" power="0" />
+<HeroSkill entId="15000011" skillName="7号位士被动能" level="1" nextSkillId="0" skillDesc="7号位士被动能" icon="skill2donghua" pic="skill2" quality="2" ownSkill="1" skillType="0" firedAt="0" percent="0" morale="0" roundPeriod="2" priority="3" powerType="0" power="0" />
+<HeroSkill entId="15000021" skillName="2号位飞被动能" level="1" nextSkillId="0" skillDesc="2号位飞被动能" icon="skill3donghua" pic="skill3" quality="2" ownSkill="1" skillType="0" firedAt="0" percent="0" morale="0" roundPeriod="1" priority="3" powerType="0" power="0" />
+<HeroSkill entId="15000031" skillName="8号位飞被动能" level="1" nextSkillId="0" skillDesc="8号位飞被动能" icon="skill4donghua" pic="skill4" quality="2" ownSkill="1" skillType="0" firedAt="0" percent="0" morale="0" roundPeriod="1" priority="3" powerType="0" power="0" />
+<HeroSkill entId="15000041" skillName="重型坦克被动" level="1" nextSkillId="0" skillDesc="重型坦克被动" icon="skill1donghua" pic="skill1" quality="2" ownSkill="1" skillType="0" firedAt="0" percent="0" morale="0" roundPeriod="1" priority="2" powerType="0" power="0" />
+<HeroSkill entId="15000051" skillName="维修坦克被动" level="1" nextSkillId="0" skillDesc="维修坦克被动" icon="skill2donghua" pic="skill2" quality="2" ownSkill="1" skillType="0" firedAt="0" percent="0" morale="0" roundPeriod="1" priority="10" powerType="0" power="0" />
+<HeroSkill entId="16000001" skillName="合击技能" level="0" nextSkillId="0" skillDesc="合击技能" icon="skill3donghua" pic="skill3" quality="2" ownSkill="1" skillType="1" firedAt="0" percent="50" morale="0" roundPeriod="0" priority="5" powerType="0" power="0" />
+
+<HeroSkill entId="11111001" skillName="苏氏自行火炮红色品质士气技能" level="1" nextSkillId="0" skillDesc="对全体敌人造成25%的伤害，20%概率眩晕敌人,攻击徳氏阵营增加10%攻击" icon="skill1donghua" pic="skill1" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="11121001" skillName="苏氏中型坦克红色品质士气技能" level="1" nextSkillId="0" skillDesc="对敌人以及相邻敌人造成50%的伤害，并且20%概率减少目标20%防御，持续2回合,攻击徳氏阵营增加10%攻击" icon="skill2donghua" pic="skill2" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="11131001" skillName="苏氏轻型坦克红色品质士气技能" level="1" nextSkillId="0" skillDesc="对前排敌人造成50%的伤害，并且20%概率眩晕目标，持续1回合,攻击徳氏阵营增加10%攻击" icon="skill3donghua" pic="skill3" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="11141001" skillName="苏氏反坦克炮红色品质士气技能" level="1" nextSkillId="0" skillDesc="对随机3个敌人造成150%的伤害，若目标处于眩晕状态则必定暴击,20%概率增加自身20%命中，持续2回合。攻击徳氏阵营增加10%攻击" icon="skill4donghua" pic="skill4" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="11151001" skillName="苏氏重型坦克红色品质士气技能" level="1" nextSkillId="0" skillDesc="对后排敌人造成50%的伤害，20%概率使目标被暴击的概率增加20%，持续2回合,攻击徳氏阵营增加10%攻击" icon="skill1donghua" pic="skill1" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="11161001" skillName="苏氏维修坦克红色品质士气技能" level="1" nextSkillId="0" skillDesc="给我方全体单位增加一个护盾（80%+30），我方坦克增加20%的暴击，持续1回合,护盾生效时被徳氏阵营攻击时减少10的伤害" icon="skill2donghua" pic="skill2" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="11211001" skillName="苏氏坦克红色品质合击技能" level="1" nextSkillId="0" skillDesc="对单体造成200%的伤害，必定命中，若敌人处于眩晕状态则暴击翻倍，攻击徳氏阵营增加10%攻击" icon="skill3donghua" pic="skill3" quality="7" ownSkill="1" skillType="1" firedAt="0" percent="50" morale="0" roundPeriod="1" priority="3" powerType="0" power="0" />
+<HeroSkill entId="11311001" skillName="苏氏坦克红色品质君主光环" level="1" nextSkillId="0" skillDesc="战场上所有苏氏坦克增加30%暴击伤害" icon="skill4donghua" pic="skill4" quality="7" ownSkill="1" skillType="4" firedAt="3" percent="50" morale="0" roundPeriod="0" priority="2" powerType="0" power="0" />
+
+<HeroSkill entId="12111001" skillName="法氏自行火炮红色品质士气技能" level="1" nextSkillId="0" skillDesc="对全体敌人造成25%的伤害,20%概率降低敌方20%的命中，攻击苏氏阵容时增加10%攻击" icon="skill1donghua" pic="skill1" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="12121001" skillName="法氏中型坦克红色品质士气技能" level="1" nextSkillId="0" skillDesc="对敌人以及相邻敌人造成50%的伤害，此次攻击暴击翻倍，持续3回合，攻击苏氏阵容时增加10%攻击" icon="skill2donghua" pic="skill2" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="12131001" skillName="法氏轻型坦克红色品质士气技能" level="1" nextSkillId="0" skillDesc="对前排敌人造成50%的伤害，并增加自身20%的闪避，持续1回合，攻击苏氏阵容时增加10%攻击" icon="skill3donghua" pic="skill3" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="12141001" skillName="法氏反坦克炮红色品质士气技能" level="1" nextSkillId="0" skillDesc="对血量最少的敌人造成150%的伤害，20%概率降低敌方20%攻击，持续2回合，攻击苏氏阵容时增加10%攻击" icon="skill4donghua" pic="skill4" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="12151001" skillName="法氏重型坦克红色品质士气技能" level="1" nextSkillId="0" skillDesc="对后排敌人造成50%的伤害，并且10%概率眩晕敌方，持续2回合，攻击苏氏阵容时增加10%攻击" icon="skill1donghua" pic="skill1" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="12161001" skillName="法氏维修坦克红色品质士气技能" level="1" nextSkillId="0" skillDesc="给我方全体单位增加一个护盾（80%+30），我方全体单位增加10%的闪避，持续3回合,护盾生效时被苏氏阵营攻击时减少10%的伤害" icon="skill2donghua" pic="skill2" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="12211001" skillName="法氏坦克红色品质合击技能" level="1" nextSkillId="0" skillDesc="对单体造成200%的伤害，必定命中，减少该单位90%的命中" icon="skill3donghua" pic="skill3" quality="7" ownSkill="1" skillType="1" firedAt="0" percent="50" morale="0" roundPeriod="1" priority="3" powerType="0" power="0" />
+<HeroSkill entId="12311001" skillName="法氏坦克红色品质君主光环" level="1" nextSkillId="0" skillDesc="战场上所有法式坦克增加30%闪避" icon="skill4donghua" pic="skill4" quality="7" ownSkill="1" skillType="4" firedAt="3" percent="50" morale="0" roundPeriod="0" priority="2" powerType="0" power="0" />
+
+<HeroSkill entId="13111001" skillName="徳氏自行火炮红色品质士气技能" level="1" nextSkillId="0" skillDesc="对全体敌人造成25%的伤害,此次攻击必定命中，攻击美式坦克增加10%的伤害" icon="skill1donghua" pic="skill1" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="13121001" skillName="徳氏中型坦克红色品质士气技能" level="1" nextSkillId="0" skillDesc="对敌人以及相邻敌人造成50%的伤害，并且10%概率减少目标20%攻击，持续3回合，攻击美式坦克增加10%的伤害" icon="skill2donghua" pic="skill2" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="13131001" skillName="徳氏轻型坦克红色品质士气技能" level="1" nextSkillId="0" skillDesc="对前排敌人造成50%的伤害，并且10%的概率减少目标的10%的闪避，持续1回合，攻击美式坦克增加10%的伤害" icon="skill3donghua" pic="skill3" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="13141001" skillName="徳氏反坦克炮红色品质士气技能" level="1" nextSkillId="0" skillDesc="对随机3个敌人造成150%的伤害，30%概率沉默对方，持续2回合，攻击美式坦克增加10%的伤害" icon="skill4donghua" pic="skill4" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="13151001" skillName="徳氏重型坦克红色品质士气技能" level="1" nextSkillId="0" skillDesc="对后排敌人造成50%的伤害，并且10%概率减少目标20%的命中率，持续2回合，攻击美式坦克增加10%的伤害" icon="skill1donghua" pic="skill1" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="13161001" skillName="徳氏维修坦克红色品质士气技能" level="1" nextSkillId="0" skillDesc="给我方全体单位增加一个护盾（30%+30），我方全体单位增加10%的命中，持续3回合护盾生效时被美氏阵营攻击时减少10%的伤害" icon="skill2donghua" pic="skill2" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="13211001" skillName="徳氏坦克红色品质合击技能" level="1" nextSkillId="0" skillDesc="对单体造成200%的伤害，必定命中，减少该单位90%的闪避" icon="skill3donghua" pic="skill3" quality="7" ownSkill="1" skillType="1" firedAt="0" percent="50" morale="0" roundPeriod="1" priority="3" powerType="0" power="0" />
+<HeroSkill entId="13311001" skillName="徳氏坦克红色品质君主光环" level="1" nextSkillId="0" skillDesc="战场上所有徳氏坦克增加30%命中" icon="skill4donghua" pic="skill4" quality="7" ownSkill="1" skillType="4" firedAt="3" percent="50" morale="0" roundPeriod="0" priority="2" powerType="0" power="0" />
+
+<HeroSkill entId="14111001" skillName="美式自行火炮红色品质士气技能" level="1" nextSkillId="0" skillDesc="对全体敌人造成25%的伤害,20%的概率沉默对方持续1回合，攻击法式阵营增加10%的伤害" icon="skill1donghua" pic="skill1" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="14121001" skillName="美式中型坦克红色品质士气技能" level="1" nextSkillId="0" skillDesc="对敌人以及相邻敌人造成50%的伤害,20%概率降低敌人20%暴击，持续2回合，攻击法式阵营增加10%的伤害" icon="skill2donghua" pic="skill2" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="14131001" skillName="美式轻型坦克红色品质士气技能" level="1" nextSkillId="0" skillDesc="对前排敌人造成50%的伤害,20%概率减少敌人20%的攻击，持续2回合，攻击法式阵营增加10%的伤害" icon="skill3donghua" pic="skill3" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="14141001" skillName="美式反坦克炮红色品质士气技能" level="1" nextSkillId="0" skillDesc="对随机3个敌人造成150%的伤害,20%几率缴械敌方，持续1回合，攻击法式阵营增加10%的伤害" icon="skill4donghua" pic="skill4" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="14151001" skillName="美式重型坦克红色品质士气技能" level="1" nextSkillId="0" skillDesc="对后排敌人造成50%的伤害，自身无敌1回合，攻击法式阵营增加10%的伤害" icon="skill1donghua" pic="skill1" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="14161001" skillName="美式维修坦克红色品质士气技能" level="1" nextSkillId="0" skillDesc="给我方全体单位增加一个护盾（30%+30），我方全体单位增加免疫状态，持续2回合，护盾生效时被法氏阵营攻击时减少10%的伤害" icon="skill2donghua" pic="skill2" quality="7" ownSkill="1" skillType="2" firedAt="0" percent="1000" morale="4" roundPeriod="0" priority="5" powerType="0" power="0" />
+<HeroSkill entId="14211001" skillName="美式坦克红色品质合击技能" level="1" nextSkillId="0" skillDesc="对单体造成200%的伤害，必定命中，沉默该单位直到回合结束" icon="skill3donghua" pic="skill3" quality="7" ownSkill="1" skillType="1" firedAt="0" percent="50" morale="0" roundPeriod="1" priority="3" powerType="0" power="0" />
+<HeroSkill entId="14311001" skillName="美式坦克红色品质君主光环" level="1" nextSkillId="0" skillDesc="战场上所有美式坦克增加30%伤害减免" icon="skill4donghua" pic="skill4" quality="7" ownSkill="1" skillType="4" firedAt="3" percent="50" morale="0" roundPeriod="0" priority="2" powerType="0" power="0" />
+<HeroSkillEffect effId="100001" effPic="xiaoguotupian" groupId="1" priority="1" owner="1" target="22" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="40" para2="SP_ARMY_BITE_ROIT" isShow="1" />
+<HeroSkillEffect effId="100002" effPic="xiaoguotupian" groupId="2" priority="1" owner="1" target="2" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="40" para2="0" isShow="1" />
+<HeroSkillEffect effId="100003" effPic="xiaoguotupian" groupId="3" priority="10" owner="1" target="2" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100004" effPic="xiaoguotupian" groupId="4" priority="1" owner="1" target="2" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="40" para2="0" isShow="1" />
+<HeroSkillEffect effId="100005" effPic="xiaoguotupian" groupId="5" priority="5" owner="1" target="2" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100006" effPic="xiaoguotupian" groupId="6" priority="2" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="1" effKey="EFF_INVINCIBLE" round="2" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100007" effPic="xiaoguotupian" groupId="7" priority="5" owner="1" target="7" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100008" effPic="xiaoguotupian" groupId="8" priority="2" owner="1" target="7" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_MAGICDEFEND" round="2" para1="200" para2="0" isShow="1" />
+<HeroSkillEffect effId="100009" effPic="xiaoguotupian" groupId="9" priority="3" owner="1" target="7" targetNum="0" targetArmy="0" targetCountryId="0" effType="1" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100010" effPic="xiaoguotupian" groupId="10" priority="3" owner="1" target="7" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100011" effPic="xiaoguotupian" groupId="11" priority="3" owner="1" target="2" targetNum="1" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_ARMY_BITE_ROIT" round="2" para1="500" para2="1001" isShow="1" />
+<HeroSkillEffect effId="100012" effPic="xiaoguotupian" groupId="12" priority="3" owner="1" target="2" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_ARMY_BITE_ROIT" round="2" para1="1000" para2="1001" isShow="1" />
+<HeroSkillEffect effId="100013" effPic="xiaoguotupian" groupId="13" priority="3" owner="1" target="7" targetNum="1" targetArmy="0" targetCountryId="0" effType="2" effKey="SA_MAGICDEFEND" round="2" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100014" effPic="xiaoguotupian" groupId="14" priority="3" owner="24" target="7" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_TOGETHER_ATTACK" round="0" para1="1" para2="100000001,100000002,100000003,100000004,100000005,100000006" isShow="1" />
+<HeroSkillEffect effId="100015" effPic="xiaoguotupian" groupId="15" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="1" effKey="EFF_CONF" round="1" para1="40" para2="0" isShow="1" />
+<HeroSkillEffect effId="100016" effPic="xiaoguotupian" groupId="16" priority="7" owner="1" target="2" targetNum="0" targetArmy="0" targetCountryId="0" effType="1" effKey="EFF_NORMAL_ATTACK" round="0" para1="40" para2="0" isShow="1" />
+<HeroSkillEffect effId="100017" effPic="xiaoguotupian" groupId="17" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_Hit" round="2" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100018" effPic="xiaoguotupian" groupId="18" priority="7" owner="1" target="1" targetNum="1" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_DAMAGE_PER" round="2" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100019" effPic="xiaoguotupian" groupId="19" priority="7" owner="1" target="2" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="EFF_NORMAL_ATTACK" round="0" para1="40" para2="0" isShow="1" />
+<HeroSkillEffect effId="100020" effPic="xiaoguotupian" groupId="20" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_CRITADD" round="1" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100021" effPic="xiaoguotupian" groupId="21" priority="1" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="EFF_CONF" round="0" para1="5000" para2="0" isShow="1" />
+<HeroSkillEffect effId="100022" effPic="xiaoguotupian" groupId="22" priority="5" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_MAGICATTACK" round="5" para1="3000" para2="0" isShow="1" />
+<HeroSkillEffect effId="100023" effPic="xiaoguotupian" groupId="23" priority="1" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="EFF_CONF" round="0" para1="3000" para2="0" isShow="1" />
+<HeroSkillEffect effId="100024" effPic="xiaoguotupian" groupId="24" priority="5" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_MAGICATTACK" round="3" para1="3000" para2="0" isShow="1" />
+<HeroSkillEffect effId="100025" effPic="xiaoguotupian" groupId="25" priority="1" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="EFF_CONF" round="0" para1="4000" para2="0" isShow="1" />
+<HeroSkillEffect effId="100026" effPic="xiaoguotupian" groupId="26" priority="5" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_MAGICATTACK" round="4" para1="3000" para2="0" isShow="1" />
+<HeroSkillEffect effId="100027" effPic="xiaoguotupian" groupId="27" priority="2" owner="1" target="2" targetNum="0" targetArmy="0" targetCountryId="0" effType="4" effKey="DOT_LOST_ARMY" round="2" para1="200" para2="0" isShow="1" />
+<HeroSkillEffect effId="100028" effPic="xiaoguotupian" groupId="28" priority="2" owner="1" target="2" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_Hit" round="2" para1="500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100029" effPic="xiaoguotupian" groupId="29" priority="3" owner="1" target="2" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="2" para1="40" para2="0" isShow="1" />
+<HeroSkillEffect effId="100030" effPic="xiaoguotupian" groupId="30" priority="2" owner="24" target="2" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_TOGETHER_ATTACK" round="0" para1="1" para2="100000001,100000002" isShow="1" />
+<HeroSkillEffect effId="100031" effPic="xiaoguotupian" groupId="31" priority="2" owner="1" target="9" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="EFF_INVINCIBLE" round="2" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100032" effPic="xiaoguotupian" groupId="32" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="-750" para2="0" isShow="1" />
+<HeroSkillEffect effId="100033" effPic="xiaoguotupian" groupId="33" priority="4" owner="1" target="7" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100034" effPic="xiaoguotupian" groupId="34" priority="3" owner="1" target="7" targetNum="0" targetArmy="0" targetCountryId="0" effType="1" effKey="EFF_CONF" round="1" para1="200" para2="0" isShow="1" />
+<HeroSkillEffect effId="100035" effPic="xiaoguotupian" groupId="35" priority="6" owner="1" target="13" targetNum="0" targetArmy="1002" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100036" effPic="xiaoguotupian" groupId="36" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="-500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100037" effPic="xiaoguotupian" groupId="37" priority="4" owner="1" target="16" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100038" effPic="xiaoguotupian" groupId="38" priority="3" owner="1" target="16" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_PHYSICALDEFEND" round="2" para1="-200" para2="0" isShow="1" />
+<HeroSkillEffect effId="100039" effPic="xiaoguotupian" groupId="39" priority="6" owner="1" target="13" targetNum="0" targetArmy="1003" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100040" effPic="xiaoguotupian" groupId="40" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="-500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100041" effPic="xiaoguotupian" groupId="41" priority="4" owner="1" target="4" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100042" effPic="xiaoguotupian" groupId="42" priority="3" owner="1" target="4" targetNum="0" targetArmy="0" targetCountryId="0" effType="1" effKey="EFF_CONF" round="1" para1="200" para2="0" isShow="1" />
+<HeroSkillEffect effId="100043" effPic="xiaoguotupian" groupId="43" priority="6" owner="1" target="13" targetNum="0" targetArmy="1004" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100044" effPic="xiaoguotupian" groupId="44" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100045" effPic="xiaoguotupian" groupId="45" priority="3" owner="1" target="11" targetNum="3" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100046" effPic="xiaoguotupian" groupId="45" priority="4" owner="1" target="11" targetNum="3" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="40" para2="0" isShow="1" />
+<HeroSkillEffect effId="100047" effPic="xiaoguotupian" groupId="46" priority="2" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_Hit" round="2" para1="200" para2="0" isShow="1" />
+<HeroSkillEffect effId="100048" effPic="xiaoguotupian" groupId="47" priority="6" owner="1" target="13" targetNum="3" targetArmy="1005" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100049" effPic="xiaoguotupian" groupId="48" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="-500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100050" effPic="xiaoguotupian" groupId="49" priority="4" owner="1" target="5" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100051" effPic="xiaoguotupian" groupId="50" priority="3" owner="1" target="5" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_CRITDEC" round="2" para1="-200" para2="0" isShow="1" />
+<HeroSkillEffect effId="100052" effPic="xiaoguotupian" groupId="51" priority="6" owner="1" target="13" targetNum="0" targetArmy="1001" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+
+
+
+
+
+<HeroSkillEffect effId="100058" effPic="xiaoguotupian" groupId="57" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="1000" para2="0" isShow="1" />
+<HeroSkillEffect effId="100059" effPic="xiaoguotupian" groupId="58" priority="4" owner="1" target="11" targetNum="1" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100060" effPic="xiaoguotupian" groupId="59" priority="5" owner="1" target="11" targetNum="1" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_TOGETHER_ATTACK" round="0" para1="20" para2="100000086,100000087" isShow="1" />
+<HeroSkillEffect effId="100061" effPic="xiaoguotupian" groupId="60" priority="3" owner="1" target="11" targetNum="1" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_CRITDAMAGE_DEC" round="0" para1="-500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100062" effPic="xiaoguotupian" groupId="61" priority="6" owner="1" target="12" targetNum="1" targetArmy="1001" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100063" effPic="xiaoguotupian" groupId="62" priority="7" owner="1" target="12" targetNum="0" targetArmy="1001" targetCountryId="0" effType="0" effKey="SP_CRITDAMAGE" round="0" para1="300" para2="0" isShow="1" />
+<HeroSkillEffect effId="100064" effPic="xiaoguotupian" groupId="63" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="-750" para2="0" isShow="1" />
+<HeroSkillEffect effId="100065" effPic="xiaoguotupian" groupId="64" priority="4" owner="1" target="7" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100066" effPic="xiaoguotupian" groupId="65" priority="3" owner="1" target="7" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_Hit" round="2" para1="-200" para2="0" isShow="1" />
+<HeroSkillEffect effId="100067" effPic="xiaoguotupian" groupId="66" priority="6" owner="1" target="13" targetNum="0" targetArmy="1002" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100068" effPic="xiaoguotupian" groupId="67" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="-500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100069" effPic="xiaoguotupian" groupId="68" priority="4" owner="1" target="16" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100070" effPic="xiaoguotupian" groupId="69" priority="3" owner="1" target="16" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_CRITDAMAGE_DEC" round="3" para1="-500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100071" effPic="xiaoguotupian" groupId="70" priority="6" owner="1" target="13" targetNum="0" targetArmy="1003" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100072" effPic="xiaoguotupian" groupId="71" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="-500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100073" effPic="xiaoguotupian" groupId="72" priority="4" owner="1" target="4" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100074" effPic="xiaoguotupian" groupId="73" priority="3" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_DODGE" round="1" para1="200" para2="0" isShow="1" />
+<HeroSkillEffect effId="100075" effPic="xiaoguotupian" groupId="74" priority="6" owner="1" target="13" targetNum="0" targetArmy="1004" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100076" effPic="xiaoguotupian" groupId="75" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100077" effPic="xiaoguotupian" groupId="76" priority="4" owner="1" target="20" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100078" effPic="xiaoguotupian" groupId="77" priority="3" owner="1" target="20" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_PHYSICALATTACK" round="2" para1="-200" para2="0" isShow="1" />
+<HeroSkillEffect effId="100079" effPic="xiaoguotupian" groupId="78" priority="6" owner="1" target="13" targetNum="0" targetArmy="1005" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100080" effPic="xiaoguotupian" groupId="79" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100081" effPic="xiaoguotupian" groupId="80" priority="4" owner="1" target="5" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100082" effPic="xiaoguotupian" groupId="81" priority="3" owner="1" target="5" targetNum="0" targetArmy="0" targetCountryId="0" effType="1" effKey="EFF_CONF" round="2" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100083" effPic="xiaoguotupian" groupId="82" priority="6" owner="1" target="13" targetNum="0" targetArmy="1001" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+
+
+
+
+
+<HeroSkillEffect effId="100089" effPic="xiaoguotupian" groupId="88" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="1000" para2="0" isShow="1" />
+<HeroSkillEffect effId="100090" effPic="xiaoguotupian" groupId="89" priority="4" owner="1" target="11" targetNum="1" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100091" effPic="xiaoguotupian" groupId="90" priority="5" owner="1" target="11" targetNum="1" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_TOGETHER_ATTACK" round="0" para1="20" para2="100000092,100000093" isShow="1" />
+<HeroSkillEffect effId="100092" effPic="xiaoguotupian" groupId="91" priority="3" owner="1" target="11" targetNum="1" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_Hit" round="0" para1="-900" para2="0" isShow="1" />
+<HeroSkillEffect effId="100093" effPic="xiaoguotupian" groupId="92" priority="7" owner="1" target="12" targetNum="0" targetArmy="1001" targetCountryId="0" effType="0" effKey="SP_DODGE" round="0" para1="300" para2="0" isShow="1" />
+<HeroSkillEffect effId="100094" effPic="xiaoguotupian" groupId="93" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="-750" para2="0" isShow="1" />
+<HeroSkillEffect effId="100095" effPic="xiaoguotupian" groupId="95" priority="3" owner="1" target="7" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="20" para2="0" isShow="1" />
+<HeroSkillEffect effId="100096" effPic="xiaoguotupian" groupId="96" priority="6" owner="1" target="13" targetNum="0" targetArmy="1001" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100097" effPic="xiaoguotupian" groupId="97" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="-500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100098" effPic="xiaoguotupian" groupId="98" priority="4" owner="1" target="16" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100099" effPic="xiaoguotupian" groupId="99" priority="3" owner="1" target="16" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_PHYSICALATTACK" round="3" para1="-200" para2="0" isShow="1" />
+<HeroSkillEffect effId="100100" effPic="xiaoguotupian" groupId="100" priority="6" owner="1" target="13" targetNum="0" targetArmy="1002" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100101" effPic="xiaoguotupian" groupId="101" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="-500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100102" effPic="xiaoguotupian" groupId="102" priority="4" owner="1" target="4" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100103" effPic="xiaoguotupian" groupId="103" priority="3" owner="1" target="4" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_DODGE" round="1" para1="-100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100104" effPic="xiaoguotupian" groupId="104" priority="6" owner="1" target="13" targetNum="0" targetArmy="1003" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100105" effPic="xiaoguotupian" groupId="105" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100106" effPic="xiaoguotupian" groupId="106" priority="4" owner="1" target="11" targetNum="3" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100107" effPic="xiaoguotupian" groupId="107" priority="3" owner="1" target="11" targetNum="3" targetArmy="0" targetCountryId="0" effType="1" effKey="EFF_SILENCE" round="2" para1="300" para2="0" isShow="1" />
+<HeroSkillEffect effId="100108" effPic="xiaoguotupian" groupId="108" priority="6" owner="1" target="13" targetNum="3" targetArmy="1004" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100109" effPic="xiaoguotupian" groupId="109" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="-500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100110" effPic="xiaoguotupian" groupId="110" priority="4" owner="1" target="5" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100111" effPic="xiaoguotupian" groupId="111" priority="3" owner="1" target="5" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_Hit" round="0" para1="-200" para2="0" isShow="1" />
+<HeroSkillEffect effId="100112" effPic="xiaoguotupian" groupId="112" priority="6" owner="1" target="13" targetNum="0" targetArmy="1005" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+
+
+
+
+
+<HeroSkillEffect effId="100118" effPic="xiaoguotupian" groupId="118" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="1000" para2="0" isShow="1" />
+<HeroSkillEffect effId="100119" effPic="xiaoguotupian" groupId="119" priority="4" owner="1" target="11" targetNum="1" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100120" effPic="xiaoguotupian" groupId="120" priority="5" owner="1" target="11" targetNum="1" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_TOGETHER_ATTACK" round="0" para1="20" para2="100000098,100000099" isShow="1" />
+<HeroSkillEffect effId="100121" effPic="xiaoguotupian" groupId="121" priority="3" owner="1" target="11" targetNum="1" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_DODGE" round="2" para1="-900" para2="0" isShow="1" />
+<HeroSkillEffect effId="100122" effPic="xiaoguotupian" groupId="122" priority="6" owner="1" target="12" targetNum="0" targetArmy="1001" targetCountryId="0" effType="0" effKey="SP_Hit" round="0" para1="300" para2="0" isShow="1" />
+<HeroSkillEffect effId="100123" effPic="xiaoguotupian" groupId="123" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="-250" para2="0" isShow="1" />
+<HeroSkillEffect effId="100124" effPic="xiaoguotupian" groupId="124" priority="4" owner="1" target="7" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100125" effPic="xiaoguotupian" groupId="125" priority="3" owner="1" target="7" targetNum="0" targetArmy="0" targetCountryId="0" effType="1" effKey="EFF_SILENCE" round="1" para1="200" para2="0" isShow="1" />
+<HeroSkillEffect effId="100126" effPic="xiaoguotupian" groupId="126" priority="6" owner="1" target="13" targetNum="0" targetArmy="1001" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100127" effPic="xiaoguotupian" groupId="127" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="-500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100128" effPic="xiaoguotupian" groupId="128" priority="4" owner="1" target="16" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100129" effPic="xiaoguotupian" groupId="129" priority="3" owner="1" target="16" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_CRITADD" round="2" para1="-200" para2="0" isShow="1" />
+<HeroSkillEffect effId="100130" effPic="xiaoguotupian" groupId="130" priority="6" owner="1" target="13" targetNum="0" targetArmy="1002" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100131" effPic="xiaoguotupian" groupId="131" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="-500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100132" effPic="xiaoguotupian" groupId="132" priority="4" owner="1" target="4" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100133" effPic="xiaoguotupian" groupId="133" priority="3" owner="1" target="4" targetNum="0" targetArmy="0" targetCountryId="0" effType="2" effKey="SP_PHYSICALATTACK" round="2" para1="-200" para2="0" isShow="1" />
+<HeroSkillEffect effId="100134" effPic="xiaoguotupian" groupId="134" priority="6" owner="1" target="13" targetNum="0" targetArmy="1003" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100135" effPic="xiaoguotupian" groupId="135" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100136" effPic="xiaoguotupian" groupId="136" priority="4" owner="1" target="11" targetNum="3" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100137" effPic="xiaoguotupian" groupId="137" priority="3" owner="1" target="11" targetNum="3" targetArmy="0" targetCountryId="0" effType="1" effKey="EFF_UNSILENCE" round="1" para1="200" para2="0" isShow="1" />
+<HeroSkillEffect effId="100138" effPic="xiaoguotupian" groupId="138" priority="6" owner="1" target="13" targetNum="3" targetArmy="1004" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+<HeroSkillEffect effId="100139" effPic="xiaoguotupian" groupId="139" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="-500" para2="0" isShow="1" />
+<HeroSkillEffect effId="100140" effPic="xiaoguotupian" groupId="140" priority="4" owner="1" target="5" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100141" effPic="xiaoguotupian" groupId="141" priority="3" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="1" effKey="EFF_INVINCIBLE" round="1" para1="1000" para2="0" isShow="1" />
+<HeroSkillEffect effId="100142" effPic="xiaoguotupian" groupId="142" priority="6" owner="1" target="13" targetNum="0" targetArmy="1005" targetCountryId="0" effType="0" effKey="SP_ARMY_BITE_ROIT" round="0" para1="100" para2="0" isShow="1" />
+
+
+
+
+<HeroSkillEffect effId="100147" effPic="xiaoguotupian" groupId="147" priority="7" owner="1" target="1" targetNum="0" targetArmy="0" targetCountryId="0" effType="0" effKey="SP_DAMAGE_PER" round="0" para1="1000" para2="0" isShow="1" />
+<HeroSkillEffect effId="100148" effPic="xiaoguotupian" groupId="148" priority="5" owner="1" target="11" targetNum="1" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_NORMAL_ATTACK" round="0" para1="1" para2="0" isShow="1" />
+<HeroSkillEffect effId="100149" effPic="xiaoguotupian" groupId="149" priority="4" owner="1" target="11" targetNum="1" targetArmy="0" targetCountryId="0" effType="0" effKey="EFF_TOGETHER_ATTACK" round="0" para1="20" para2="100000104,100000105" isShow="1" />
+<HeroSkillEffect effId="100150" effPic="xiaoguotupian" groupId="150" priority="3" owner="1" target="11" targetNum="1" targetArmy="0" targetCountryId="0" effType="1" effKey="EFF_SILENCE" round="1" para1="1000" para2="0" isShow="1" />
+<HeroSkillEffect effId="100151" effPic="xiaoguotupian" groupId="151" priority="7" owner="1" target="12" targetNum="0" targetArmy="1001" targetCountryId="0" effType="0" effKey="SP_SHIELD_PER" round="0" para1="300" para2="0" isShow="1" />
+
+
+
+
+
+
+
+<HeroSkillEffectRela skillId="11000001" effId="100001" />
+<HeroSkillEffectRela skillId="11000011" effId="100002" />
+<HeroSkillEffectRela skillId="11000021" effId="100003" />
+<HeroSkillEffectRela skillId="11000031" effId="100004" />
+<HeroSkillEffectRela skillId="11000041" effId="100005" />
+<HeroSkillEffectRela skillId="11000041" effId="100006" />
+<HeroSkillEffectRela skillId="11000051" effId="100007" />
+<HeroSkillEffectRela skillId="11000051" effId="100008" />
+<HeroSkillEffectRela skillId="12000011" effId="100009" />
+<HeroSkillEffectRela skillId="12000021" effId="100011" />
+<HeroSkillEffectRela skillId="12000031" effId="100012" />
+<HeroSkillEffectRela skillId="12000041" effId="100012" />
+<HeroSkillEffectRela skillId="12000041" effId="100013" />
+<HeroSkillEffectRela skillId="12000051" effId="100014" />
+<HeroSkillEffectRela skillId="12000021" effId="100001" />
+<HeroSkillEffectRela skillId="12000031" effId="100001" />
+<HeroSkillEffectRela skillId="11000001" effId="100003" />
+<HeroSkillEffectRela skillId="14311001" effId="100001" />
+<HeroSkillEffectRela skillId="11000021" effId="100002" />
+<HeroSkillEffectRela skillId="11000031" effId="100003" />
+<HeroSkillEffectRela skillId="11000041" effId="100003" />
+<HeroSkillEffectRela skillId="11000051" effId="100003" />
+<HeroSkillEffectRela skillId="12000001" effId="100003" />
+<HeroSkillEffectRela skillId="12000011" effId="100003" />
+<HeroSkillEffectRela skillId="12000021" effId="100003" />
+<HeroSkillEffectRela skillId="12000031" effId="100003" />
+<HeroSkillEffectRela skillId="12000041" effId="100003" />
+<HeroSkillEffectRela skillId="12000051" effId="100003" />
+<HeroSkillEffectRela skillId="13000001" effId="100003" />
+<HeroSkillEffectRela skillId="13000011" effId="100003" />
+<HeroSkillEffectRela skillId="13000021" effId="100003" />
+<HeroSkillEffectRela skillId="13000031" effId="100003" />
+<HeroSkillEffectRela skillId="13000041" effId="100003" />
+<HeroSkillEffectRela skillId="13000051" effId="100003" />
+<HeroSkillEffectRela skillId="14000001" effId="100003" />
+<HeroSkillEffectRela skillId="14000011" effId="100003" />
+<HeroSkillEffectRela skillId="14000021" effId="100003" />
+<HeroSkillEffectRela skillId="14000031" effId="100003" />
+<HeroSkillEffectRela skillId="14000041" effId="100003" />
+<HeroSkillEffectRela skillId="14000051" effId="100003" />
+<HeroSkillEffectRela skillId="15000001" effId="100003" />
+<HeroSkillEffectRela skillId="15000011" effId="100003" />
+<HeroSkillEffectRela skillId="15000021" effId="100003" />
+<HeroSkillEffectRela skillId="15000031" effId="100003" />
+<HeroSkillEffectRela skillId="15000041" effId="100003" />
+<HeroSkillEffectRela skillId="15000051" effId="100003" />
+<HeroSkillEffectRela skillId="16000001" effId="100003" />
+<HeroSkillEffectRela skillId="11111001" effId="100032" />
+<HeroSkillEffectRela skillId="11111001" effId="100033" />
+<HeroSkillEffectRela skillId="11111001" effId="100034" />
+<HeroSkillEffectRela skillId="11111001" effId="100035" />
+<HeroSkillEffectRela skillId="11121001" effId="100036" />
+<HeroSkillEffectRela skillId="11121001" effId="100037" />
+<HeroSkillEffectRela skillId="11121001" effId="100038" />
+<HeroSkillEffectRela skillId="11121001" effId="100039" />
+<HeroSkillEffectRela skillId="11131001" effId="100040" />
+<HeroSkillEffectRela skillId="11131001" effId="100041" />
+<HeroSkillEffectRela skillId="11131001" effId="100042" />
+<HeroSkillEffectRela skillId="11131001" effId="100043" />
+<HeroSkillEffectRela skillId="11141001" effId="100044" />
+<HeroSkillEffectRela skillId="11141001" effId="100045" />
+<HeroSkillEffectRela skillId="11141001" effId="100046" />
+<HeroSkillEffectRela skillId="11141001" effId="100047" />
+<HeroSkillEffectRela skillId="11141001" effId="100048" />
+<HeroSkillEffectRela skillId="11151001" effId="100049" />
+<HeroSkillEffectRela skillId="11151001" effId="100050" />
+<HeroSkillEffectRela skillId="11151001" effId="100051" />
+<HeroSkillEffectRela skillId="11151001" effId="100052" />
+<HeroSkillEffectRela skillId="11211001" effId="100058" />
+<HeroSkillEffectRela skillId="11211001" effId="100059" />
+<HeroSkillEffectRela skillId="11211001" effId="100060" />
+<HeroSkillEffectRela skillId="11211001" effId="100061" />
+<HeroSkillEffectRela skillId="11211001" effId="100062" />
+<HeroSkillEffectRela skillId="11311001" effId="100063" />
+<HeroSkillEffectRela skillId="12111001" effId="100064" />
+<HeroSkillEffectRela skillId="12111001" effId="100065" />
+<HeroSkillEffectRela skillId="12111001" effId="100066" />
+<HeroSkillEffectRela skillId="12111001" effId="100067" />
+<HeroSkillEffectRela skillId="12121001" effId="100068" />
+<HeroSkillEffectRela skillId="12121001" effId="100069" />
+<HeroSkillEffectRela skillId="12121001" effId="100070" />
+<HeroSkillEffectRela skillId="12121001" effId="100071" />
+<HeroSkillEffectRela skillId="12131001" effId="100072" />
+<HeroSkillEffectRela skillId="12131001" effId="100073" />
+<HeroSkillEffectRela skillId="12131001" effId="100074" />
+<HeroSkillEffectRela skillId="12131001" effId="100075" />
+<HeroSkillEffectRela skillId="12141001" effId="100076" />
+<HeroSkillEffectRela skillId="12141001" effId="100077" />
+<HeroSkillEffectRela skillId="12141001" effId="100078" />
+<HeroSkillEffectRela skillId="12141001" effId="100079" />
+<HeroSkillEffectRela skillId="12151001" effId="100080" />
+<HeroSkillEffectRela skillId="12151001" effId="100081" />
+<HeroSkillEffectRela skillId="12151001" effId="100082" />
+<HeroSkillEffectRela skillId="12151001" effId="100083" />
+<HeroSkillEffectRela skillId="12211001" effId="100089" />
+<HeroSkillEffectRela skillId="12211001" effId="100090" />
+<HeroSkillEffectRela skillId="12211001" effId="100091" />
+<HeroSkillEffectRela skillId="12211001" effId="100092" />
+<HeroSkillEffectRela skillId="12311001" effId="100093" />
+<HeroSkillEffectRela skillId="13111001" effId="100094" />
+<HeroSkillEffectRela skillId="13111001" effId="100095" />
+<HeroSkillEffectRela skillId="13111001" effId="100096" />
+<HeroSkillEffectRela skillId="13121001" effId="100097" />
+<HeroSkillEffectRela skillId="13121001" effId="100098" />
+<HeroSkillEffectRela skillId="13121001" effId="100099" />
+<HeroSkillEffectRela skillId="13121001" effId="100100" />
+<HeroSkillEffectRela skillId="13131001" effId="100101" />
+<HeroSkillEffectRela skillId="13131001" effId="100102" />
+<HeroSkillEffectRela skillId="13131001" effId="100103" />
+<HeroSkillEffectRela skillId="13131001" effId="100104" />
+<HeroSkillEffectRela skillId="13141001" effId="100105" />
+<HeroSkillEffectRela skillId="13141001" effId="100106" />
+<HeroSkillEffectRela skillId="13141001" effId="100107" />
+<HeroSkillEffectRela skillId="13141001" effId="100108" />
+<HeroSkillEffectRela skillId="13151001" effId="100109" />
+<HeroSkillEffectRela skillId="13151001" effId="100110" />
+<HeroSkillEffectRela skillId="13151001" effId="100111" />
+<HeroSkillEffectRela skillId="13151001" effId="100112" />
+<HeroSkillEffectRela skillId="13211001" effId="100118" />
+<HeroSkillEffectRela skillId="13211001" effId="100119" />
+<HeroSkillEffectRela skillId="13211001" effId="100120" />
+<HeroSkillEffectRela skillId="13211001" effId="100121" />
+<HeroSkillEffectRela skillId="13311001" effId="100122" />
+<HeroSkillEffectRela skillId="14111001" effId="100123" />
+<HeroSkillEffectRela skillId="14111001" effId="100124" />
+<HeroSkillEffectRela skillId="14111001" effId="100125" />
+<HeroSkillEffectRela skillId="14111001" effId="100126" />
+<HeroSkillEffectRela skillId="14121001" effId="100127" />
+<HeroSkillEffectRela skillId="14121001" effId="100128" />
+<HeroSkillEffectRela skillId="14121001" effId="100129" />
+<HeroSkillEffectRela skillId="14121001" effId="100130" />
+<HeroSkillEffectRela skillId="14131001" effId="100131" />
+<HeroSkillEffectRela skillId="14131001" effId="100132" />
+<HeroSkillEffectRela skillId="14131001" effId="100133" />
+<HeroSkillEffectRela skillId="14131001" effId="100134" />
+<HeroSkillEffectRela skillId="14141001" effId="100135" />
+<HeroSkillEffectRela skillId="14141001" effId="100136" />
+<HeroSkillEffectRela skillId="14141001" effId="100137" />
+<HeroSkillEffectRela skillId="14141001" effId="100138" />
+<HeroSkillEffectRela skillId="14151001" effId="100139" />
+<HeroSkillEffectRela skillId="14151001" effId="100140" />
+<HeroSkillEffectRela skillId="14151001" effId="100141" />
+<HeroSkillEffectRela skillId="14151001" effId="100142" />
+<HeroSkillEffectRela skillId="14211001" effId="100147" />
+<HeroSkillEffectRela skillId="14211001" effId="100148" />
+<HeroSkillEffectRela skillId="14211001" effId="100149" />
+<HeroSkillEffectRela skillId="14211001" effId="100150" />
+<HeroSkillEffectRela skillId="14311001" effId="100151" />
+<HeroSkillLimit id="100001" skillId="11000041" limitType="S_PUNCH" para1="0" para2="100000001,100000002" />
+<HeroSkillLimit id="100002" skillId="11000051" limitType="S_PUNCH" para1="0" para2="100000049,100000085" />
+<HeroSkillLimit id="100003" skillId="11211001" limitType="S_PUNCH" para1="0" para2="100000086,100000087" />
+<HeroSkillLimit id="100004" skillId="12211001" limitType="S_PUNCH" para1="0" para2="100000092,100000093" />
+<HeroSkillLimit id="100005" skillId="13211001" limitType="S_PUNCH" para1="0" para2="100000098,100000099" />
+<HeroSkillLimit id="100006" skillId="14211001" limitType="S_PUNCH" para1="0" para2="100000104,100000105" />
+<HeroSkillLimit id="100007" skillId="12000051" limitType="S_PUNCH" para1="0" para2="100000001,100000002,100000003,100000004,100000005,100000006" />
+
+
+
+
+<HeroSkillEffectLimit id="200001" effId="100006" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200003" effId="100013" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200004" effId="100014" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200005" effId="100034" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200006" effId="100034" limitType="E_WEIGHT" para1="1000" para2="0" />
+<HeroSkillEffectLimit id="200007" effId="100038" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200008" effId="100038" limitType="E_WEIGHT" para1="200" para2="0" />
+<HeroSkillEffectLimit id="200009" effId="100042" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200010" effId="100042" limitType="E_WEIGHT" para1="1000" para2="0" />
+<HeroSkillEffectLimit id="200011" effId="100046" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200012" effId="100046" limitType="E_WEIGHT" para1="1000" para2="0" />
+<HeroSkillEffectLimit id="200013" effId="100047" limitType="E_UNDER_BUFF" para1="0" para2="EFF_CONF" />
+<HeroSkillEffectLimit id="200014" effId="100047" limitType="E_WEIGHT" para1="1000" para2="0" />
+<HeroSkillEffectLimit id="200015" effId="100051" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200016" effId="100051" limitType="E_WEIGHT" para1="200" para2="0" />
+<HeroSkillEffectLimit id="200017" effId="100060" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200018" effId="100060" limitType="E_WEIGHT" para1="1000" para2="0" />
+<HeroSkillEffectLimit id="200019" effId="100061" limitType="E_UNDER_BUFF" para1="0" para2="EFF_CONF" />
+<HeroSkillEffectLimit id="200020" effId="100061" limitType="E_WEIGHT" para1="1000" para2="0" />
+<HeroSkillEffectLimit id="200021" effId="100066" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200022" effId="100066" limitType="E_WEIGHT" para1="200" para2="0" />
+<HeroSkillEffectLimit id="200023" effId="100070" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200024" effId="100070" limitType="E_WEIGHT" para1="1000" para2="0" />
+<HeroSkillEffectLimit id="200025" effId="100074" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200026" effId="100074" limitType="E_WEIGHT" para1="1000" para2="0" />
+<HeroSkillEffectLimit id="200027" effId="100078" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200028" effId="100078" limitType="E_WEIGHT" para1="200" para2="0" />
+<HeroSkillEffectLimit id="200029" effId="100082" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200030" effId="100082" limitType="E_WEIGHT" para1="200" para2="0" />
+<HeroSkillEffectLimit id="200031" effId="100091" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200032" effId="100091" limitType="E_WEIGHT" para1="1000" para2="0" />
+<HeroSkillEffectLimit id="200033" effId="100098" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200034" effId="100098" limitType="E_WEIGHT" para1="100" para2="0" />
+<HeroSkillEffectLimit id="200035" effId="100103" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200036" effId="100103" limitType="E_WEIGHT" para1="100" para2="0" />
+<HeroSkillEffectLimit id="200037" effId="100107" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200038" effId="100107" limitType="E_WEIGHT" para1="1000" para2="0" />
+<HeroSkillEffectLimit id="200039" effId="100111" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200040" effId="100111" limitType="E_WEIGHT" para1="100" para2="0" />
+<HeroSkillEffectLimit id="200041" effId="100120" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200042" effId="100120" limitType="E_WEIGHT" para1="1000" para2="0" />
+<HeroSkillEffectLimit id="200043" effId="100125" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200044" effId="100125" limitType="E_WEIGHT" para1="1000" para2="0" />
+<HeroSkillEffectLimit id="200045" effId="100129" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200046" effId="100129" limitType="E_WEIGHT" para1="200" para2="0" />
+<HeroSkillEffectLimit id="200047" effId="100133" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200048" effId="100133" limitType="E_WEIGHT" para1="200" para2="0" />
+<HeroSkillEffectLimit id="200049" effId="100137" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200050" effId="100137" limitType="E_WEIGHT" para1="1000" para2="0" />
+<HeroSkillEffectLimit id="200051" effId="100141" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200052" effId="100141" limitType="E_WEIGHT" para1="1000" para2="0" />
+<HeroSkillEffectLimit id="200053" effId="100149" limitType="E_UNDER_BUFF" para1="0" para2="114" />
+<HeroSkillEffectLimit id="200054" effId="100149" limitType="E_WEIGHT" para1="1000" para2="0" />
+
+</dataset>

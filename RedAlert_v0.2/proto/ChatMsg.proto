@@ -1,0 +1,93 @@
+package dynasty;
+import "Common.proto";
+
+option java_package = "com.youxigu.dynasty2.chat.proto";
+option java_outer_classname = "ChatMsg";
+
+//10009 聊天请求(mainserver)
+message Request10009Define{
+   required int32 cmd = 1;
+   optional int64 toUserId = 2;//消息接收者Id =0表示返给频道内的所有用户
+   optional string toUserName = 3;//消息接收者名称，
+   optional string channel = 4;//消息发送频道 目前的频道：system	系统频道	private 私聊频道	world 世界频道	country 国家频道guild 联盟频道item  道具喇叭频道
+   optional string context = 5;//玩家发送的聊天消息内容
+   optional string channelId = 6;//频道内的ID:
+}
+
+//10010 聊天响应(mainserver)
+message Response10009Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 fromUserId = 2;//消息发送者Id（系统发送的消息 =0）
+   optional string fromUserName = 3;//聊天消息发送人（系统发送的消息为null）
+   optional string icon = 4;//头像，如果=null,还是用sex+country来确定
+   optional int32 sex = 5;//性别  1=男， 0=女
+   optional int32 country = 6;//国家Id
+   optional int32 fromVip = 7;//发送方Vip等级，如果不是vip,则没有这个参数
+   optional string channel = 8;//消息发送频道见客户端发送消息的channel说明
+   optional string context = 9;//String,则是玩家接收到的聊天消息内容
+   optional string channelId = 10;//频道内的ID
+   optional string url = 11;//超链接 world频道的channelId=GM时有效
+   optional int32 prio = 12;//消息的优先级，仅对world频道，并且channelId=”system”有效。
+   optional int32 fromUsrLv = 13;//发送方的君主等级
+   optional int32 fromTitle = 14;//发送方的军衔
+}
+
+//10011 保存频道设置请求(mainserver)
+message Request10011Define{
+   required int32 cmd = 1;
+   optional string channelConfig = 2;//频道配置 "1,1,1,0" 0表示关闭  1开启
+}
+
+//10012 保存频道设置响应(mainserver)
+message Response10011Define{
+   optional ResponseHead responseHead = 1;
+   optional string channelConfig = 2;//频道配置
+}
+
+//10013 取快捷聊天记录请求(mainserver)
+message Request10013Define{
+   required int32 cmd = 1;
+}
+
+//10014 取快捷聊天记录响应(mainserver)
+message Response10013Define{
+   optional ResponseHead responseHead = 1;
+   repeated string hisRecord = 2;//快捷聊天记录
+}
+
+//10015 取得频道设置信息请求, 每次登陆后调用(mainserver)
+message Request10015Define{
+   required int32 cmd = 1;
+}
+
+//10016 取得频道设置信息响应(mainserver)
+message Response10015Define{
+   optional ResponseHead responseHead = 1;
+   optional string channelConfig = 2;//频道配置
+   optional int32 statu = 3;//状态信息 采用二进制 表示 第0位表示是否屏蔽陌生人消息
+}
+
+//10017 读取玩家的离线消息(mainserver)
+message Request10017Define{
+   required int32 cmd = 1;
+   optional int64 userId = 2;//读取那个的离线消息
+}
+
+//10018 读取玩家的离线消息响应(mainserver)
+message Response10017Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 userId = 2;//玩家id
+   repeated string msgs = 3;//消息集合最新的消息在最前面 
+}
+
+//10019 设置开启或关闭陌生人聊天(mainserver)
+message Request10019Define{
+   required int32 cmd = 1;
+   optional bool statu = 2;//true关闭陌生人聊天,false开启模式人聊天
+}
+
+//10020 设置开启或关闭陌生人聊天响应(mainserver)
+message Response10019Define{
+   optional ResponseHead responseHead = 1;
+   optional bool statu = 2;//true关闭陌生人聊天成功,false开启模式人聊天成功
+}

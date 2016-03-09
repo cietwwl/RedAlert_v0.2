@@ -1,0 +1,468 @@
+package com.youxigu.dynasty2.combat.domain;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.youxigu.dynasty2.combat.proto.CombatMsg;
+import com.youxigu.dynasty2.util.EffectValue;
+
+/**
+ * 战斗团队
+ * @author Dagangzi
+ *
+ */
+public class CombatTeam implements Serializable, Cloneable {
+	/**
+	 * 战团的类型-目前的战团支持混编，也就是玩家军团里可以有npc武将
+	 */
+	private static final long serialVersionUID = -5444179220670147533L;
+	public static final short TEAM_TYPE_PLAYERHERO = 0;// 玩家英雄
+	public static final short TEAM_TYPE_PLAYERHERO_ASSIT = 1;// 协防玩家英雄
+	public static final short TEAM_TYPE_CASTLEBATTLEUNIT = 2;// 哨塔
+	public static final short TEAM_TYPE_NPCHERO = 3;// NPC英雄
+
+	/**
+	 * 所属的用户ID或者NPC ID,对于NPC.userId=casId
+	 */
+	private long userId;
+
+	/**
+	 * 玩家城池ID或者NPC ID
+	 */
+	private long casId;
+
+	/**
+	 * 玩家或者npc的等级
+	 */
+	private int level;
+
+	/**
+	 * 团队名称,通常是玩家名称或者NPC名称
+	 */
+	private String teamName;
+
+	/**
+	 * 玩家图标或者NPC图标
+	 */
+	private String icon;
+
+	private short teamType;
+
+	/**
+	 * 战斗力--这个用作显示不会随着战斗而变化
+	 */
+	private int teamPower;
+
+	/**
+	 * 战斗单元
+	 */
+	private List<CombatUnit> units;
+
+	/**
+	 * 所属的战斗场景
+	 */
+	private transient Combat parent;
+
+	/**
+	 * 战斗结果分数-攻守双方各需要一个评分star
+	 */
+	private short score;
+
+	/**
+	 * 保存一些其他需要的信息
+	 * 
+	 */
+	private transient Object params;
+
+	/**
+	 * 城池坐标
+	 */
+	private int posX;
+	private int posY;
+
+	private transient long troopId;// 军团Id
+	private transient String troopName;// 军团名称
+
+	/*
+	 * 外部加的临时效果--开战前对整个战队产生影响
+	 */
+	private transient Map<String, EffectValue> effects;
+
+	public CombatTeam() {
+		units = new ArrayList<CombatUnit>();
+	}
+
+	public CombatTeam(short teamType) {
+		this();
+		this.teamType = teamType;
+	}
+
+	public short getTeamType() {
+		return teamType;
+	}
+
+	public void setTeamType(short teamType) {
+		this.teamType = teamType;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	public short getScore() {
+		return score;
+	}
+
+	public void setScore(short score) {
+		this.score = score;
+	}
+
+	public long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(long userId) {
+		this.userId = userId;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+
+	public String getTeamName() {
+		return teamName;
+	}
+
+	public void setTeamName(String teamName) {
+		this.teamName = teamName;
+	}
+
+	public Combat getParent() {
+		return parent;
+	}
+
+	public void setParent(Combat parent) {
+		this.parent = parent;
+	}
+
+	public List<CombatUnit> getUnits() {
+		return units;
+	}
+
+	public void setUnits(List<CombatUnit> units) {
+		this.units.clear();
+		for (CombatUnit unit : units) {
+			addUint(unit);
+		}
+	}
+
+	/**
+	 * 增加一个战斗单位
+	 * @param unit
+	 */
+	public void addUint(CombatUnit unit) {
+		unit.setParent(this);
+		units.add(unit);
+		this.teamPower = this.teamPower + unit._getCurrentPower();
+	}
+
+	public int getTeamPower() {
+		return teamPower;
+	}
+
+	public void setTeamPower(int teamPower) {
+		this.teamPower = teamPower;
+	}
+
+	/**
+	 * 判断战斗是否失败
+	 * @return
+	 */
+	public boolean isFailure() {
+		for (CombatUnit unit : units) {
+			// 城防不考虑
+			if (!(unit instanceof CanotAttackedCombatUnit)) {
+				if (!unit.dead())
+					return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * 取得敌方军团
+	 * @return
+	 */
+	public CombatTeam getEnemyTeam() {
+		CombatTeam team = this.getParent().getAttacker();
+		if (team == this) {
+			return this.getParent().getDefender();
+		} else {
+			return team;
+		}
+	}
+
+	public long getCasId() {
+		return casId;
+	}
+
+	public void setCasId(long casId) {
+		this.casId = casId;
+	}
+
+	public Object getParams() {
+		return params;
+	}
+
+	public void setParams(Object params) {
+		this.params = params;
+	}
+
+	public int getPosX() {
+		return posX;
+	}
+
+	public void setPosX(int posX) {
+		this.posX = posX;
+	}
+
+	public int getPosY() {
+		return posY;
+	}
+
+	public void setPosY(int posY) {
+		this.posY = posY;
+	}
+
+	public long getTroopId() {
+		return troopId;
+	}
+
+	public void setTroopId(long troopId) {
+		this.troopId = troopId;
+	}
+
+	public String getTroopName() {
+		return troopName;
+	}
+
+	public void setTroopName(String troopName) {
+		this.troopName = troopName;
+	}
+
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("战斗部队：").append(this.teamName).append("[").append(this.userId).append("]\n");
+		for (CombatUnit unit : units) {
+			builder.append(unit.toString());
+		}
+
+		return builder.toString();
+
+	}
+
+	/**
+	 * 取得当前战力
+	 * @return
+	 */
+	public int _getCurrentPower() {
+		int currentPower = 0;
+		for (CombatUnit unit : units) {
+			currentPower = currentPower + unit._getCurrentPower();
+		}
+		return currentPower;
+	}
+
+	/**
+	 * 取得所有的外部临时效果
+	 * @param type
+	 * @return
+	 */
+	public Map<String, EffectValue> _getEffects() {
+		return effects;
+	}
+
+	/**
+	 * 取得某个效果类型的加成
+	 * @param type
+	 * @return
+	 */
+	public EffectValue _getEffect(String type) {
+		if (effects != null) {
+			EffectValue value = effects.get(type);
+			if (value != null) {
+				return value;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 取得某个效果类型的百分比加成
+	 * @param type
+	 * @return
+	 */
+	public int _getPercentEffect(String type) {
+		if (effects != null) {
+			EffectValue value = effects.get(type);
+			if (value != null) {
+				return value.getPerValue();
+			}
+		}
+		return 0;
+
+	}
+
+	/**
+	 * 取得某个效果类型的绝对值加成
+	 * @param type
+	 * @return
+	 */
+	public int _getAbsEffect(String type) {
+		if (effects != null) {
+			EffectValue value = effects.get(type);
+			if (value != null) {
+				return value.getAbsValue();
+			}
+		}
+		return 0;
+
+	}
+
+	/**
+	 * 增加外部临时效果EffectValue
+	 * @param type
+	 * @param value
+	 */
+	public void addEffect(String type, EffectValue value) {
+		if (effects == null) {
+			effects = new HashMap<String, EffectValue>();
+			effects.put(type, value);
+		} else {
+			EffectValue old = effects.get(type);
+			if (old == null) {
+				effects.put(type, value);
+			} else {
+				old.setAbsValue(old.getAbsValue() + value.getAbsValue());
+				old.setPerValue(old.getPerValue() + value.getPerValue());
+			}
+		}
+	}
+
+	/**
+	 * 增加外部的临时效果
+	 * @param type 效果类型
+	 * @param abs 绝对值加成
+	 * @param percent 百分比加成
+	 */
+	public void addEffect(String type, int abs, int percent) {
+		if (effects == null) {
+			effects = new HashMap<String, EffectValue>();
+			effects.put(type, new EffectValue(abs, percent));
+		} else {
+			EffectValue old = effects.get(type);
+			if (old == null) {
+				effects.put(type, new EffectValue(abs, percent));
+			} else {
+				old.setAbsValue(old.getAbsValue() + abs);
+				old.setPerValue(old.getPerValue() + percent);
+			}
+		}
+	}
+
+	/**
+	 * 是否有城墙或是城防
+	 * @return
+	 */
+	public boolean hasWallOrTower() {
+		for (CombatUnit unit : units) {
+			if (unit instanceof WallCombatUnit) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 战团中每个unit减少percent%的血量&&不低于min
+	 * @param percent
+	 * @param minNum
+	 */
+	public void reduceArmyNum(int percent, int minNum) {
+		if (units != null) {
+			for (CombatUnit unit : units) {
+				if (!(unit instanceof CanotAttackedCombatUnit) && !(unit instanceof WallCombatUnit) && !unit.dead()) {
+					int curHp = unit.getTotalHp();
+					int lost = (int) (unit.initHp * percent / 100d);
+					if (curHp > (lost + minNum)) {
+						unit.reduceTotalHp(lost);
+					} else {
+						if (curHp > minNum) {
+							unit.reduceTotalHp(curHp - minNum);
+						} else {
+							unit.addTotalHp(minNum - curHp);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * 战团中每个unit恢复percent%的血量&&不低于min
+	 * @param percent
+	 */
+	public void resumeArmyNum(int percent) {
+		if (units != null) {
+			for (CombatUnit unit : units) {
+				if (!(unit instanceof CanotAttackedCombatUnit) && !(unit instanceof WallCombatUnit) && !unit.dead()) {
+					int add = (int) (unit.initHp * percent / 100d);
+					unit.addTotalHp(add);
+				}
+			}
+		}
+	}
+
+	/**
+	 * 清掉战团上的外部临时效果和unit上临时效果
+	 */
+	public void clean() {
+		if (effects != null) {
+			effects.clear();
+		}
+		if (units != null) {
+			for (CombatUnit unit : units) {
+				unit.clean();
+			}
+		}
+	}
+
+	public CombatMsg.CombatTeam toCombatTeam() {
+		CombatMsg.CombatTeam.Builder combatTeamBr = CombatMsg.CombatTeam.newBuilder();
+		combatTeamBr.setUserId(this.userId);
+		combatTeamBr.setCasId(this.casId);
+		combatTeamBr.setLevel(this.level);
+		combatTeamBr.setTeamName(this.teamName);
+		combatTeamBr.setIcon(this.icon);
+		combatTeamBr.setTeamType(this.teamType);
+		combatTeamBr.setTeamPower(this.teamPower);
+		if (units != null && units.size() > 0) {
+			for (CombatUnit unit : units) {
+				combatTeamBr.addUnits(unit.toCombatUnit());
+			}
+		}
+		combatTeamBr.setScore(this.score);
+		return combatTeamBr.build();
+	}
+}

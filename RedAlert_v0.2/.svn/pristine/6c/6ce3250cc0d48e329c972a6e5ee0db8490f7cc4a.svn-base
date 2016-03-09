@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+  <!-- troop -->
+  <typeAlias alias="troop" type="com.youxigu.dynasty2.hero.domain.Troop"/>
+  <cacheModel type="MEMCACHED" id="cache_troop" serialize="false" readOnly="false" >
+    <flushOnExecute statement="insertTroop">
+      <flushModel flushstatement="troop" flushMode="insert" flushpara="troopId"/>
+      <flushModel flushstatement="getTroopsByUserId" flushMode="insert" flushpara="userId"/>
+    </flushOnExecute>
+    <flushOnExecute statement="updateTroop">
+      <flushModel flushstatement="troop" flushMode="update" flushpara="troopId"/>
+    </flushOnExecute>
+    <flushOnExecute statement="deleteTroop">
+      <flushModel flushstatement="getTroopsByUserId" flushMode="delete" flushpara="userId"/>
+      <flushModel flushstatement="troop" flushMode="delete" flushpara="troopId"/>
+    </flushOnExecute>
+    <property name="class" value="troop"/>
+    <property name="pk" value="troopId"/>
+  </cacheModel>
+
+ <insert id="insertTroop" parameterClass="troop" >
+      INSERT INTO troop (troopId,name,userId,mainHeroId,indexs,status,freeDttm,
+      			troopGridId1,troopGridId2,troopGridId3,troopGridId4,troopGridId5,troopGridId6) 
+      VALUES (#troopId#,#name#,#userId#,#mainHeroId#,#indexs#,#status#,#freeDttm#,
+      			#troopGridId1#,#troopGridId2#,#troopGridId3#,#troopGridId4#,#troopGridId5#,#troopGridId6#)
+ </insert>
+
+  <update id="updateTroop" parameterClass="troop" asyncUpdate="5">
+      UPDATE troop set status=#status#,freeDttm=#freeDttm#,mainHeroId=#mainHeroId#,
+      	troopGridId1=#troopGridId1#,troopGridId2=#troopGridId2#,
+      	troopGridId3=#troopGridId3#,troopGridId4=#troopGridId4#,troopGridId5=#troopGridId5#,troopGridId6=#troopGridId6# 
+      WHERE troopId=#troopId#
+  </update>
+
+  <select id="getTroopsByUserId" parameterClass="long" resultClass="troop" cacheModel="cache_troop"  resultIsList="true">
+      SELECT * FROM troop WHERE userId = #userId# ORDER BY indexs ASC
+  </select>
+
+  <select id="getTroopById" parameterClass="long" resultClass="troop"  cacheModel="cache_troop" cacheOnlyObject="true">
+      SELECT * FROM troop WHERE troopId = #troopId# ORDER BY indexs asc
+  </select>
+
+  <delete id="deleteTroop" parameterClass="troop" >
+      DELETE FROM troop WHERE troopId = #troopId#
+  </delete>
+  
+ <!--========================================================= hero（武将） start============================================== -->
+	<typeAlias alias="hero" type="com.youxigu.dynasty2.hero.domain.Hero"/>
+
+	<cacheModel type="MEMCACHED" id="cache_hero" serialize="false" readOnly="false">
+    <flushOnExecute statement="insertHero">
+      <flushModel flushstatement="hero" flushMode="insert" flushpara="userId,heroId"/>
+      <flushModel flushstatement="getHeroByUserId" flushMode="insert" flushpara="userId"/>
+      <flushModel flushstatement="getHeroBySysHeroId" flushMode="insert" flushpara="userId,sysHeroId"/>
+    </flushOnExecute>
+	<flushOnExecute statement="updateHero">
+	  <flushModel flushstatement="hero" flushMode="update" flushpara="userId,heroId"/>
+	</flushOnExecute>
+    <flushOnExecute statement="deleteHero">
+      <flushModel flushstatement="getHeroByUserId" flushMode="delete" flushpara="userId"/>
+      <flushModel flushstatement="hero" flushMode="delete" flushpara="userId,heroId"/>
+      <flushModel flushstatement="getHeroBySysHeroId" flushMode="delete" flushpara="userId,sysHeroId"/>
+    </flushOnExecute>
+		<property name="class" value="hero"/>
+		<property name="pk" value="userId,heroId"/>
+	</cacheModel>
+  
+  <insert id="insertHero" parameterClass="hero" shardingParams='[{"paramExpr":"userId","tableName":"hero"}]'>
+    INSERT INTO hero(heroId,casId, userId,sysHeroId, name,icon, level,exp, curHp, 
+    				magicAttack, physicalAttack, magicDefend, physicalDefend, intHp, actionStatus, freeDttm,
+    				troopGridId, skillId1,skillId2,skillId3,skillId4,skillId5,skillId6,
+    				heroFate,growing,growingItem,relifeNum,heroStrength,status,
+    				teamLeader, heroCardEntId,heroCardNum,heroSoulEntId,heroSoulNum,sumHeroCardNum,commander) 
+    VALUES(#heroId#,#casId#, #userId#,#sysHeroId#, #name#,#icon#, #level#, #exp#,#curHp#,
+   		 #magicAttack#, #physicalAttack#,#magicDefend#, #physicalDefend#, #intHp#, #actionStatus#, #freeDttm#,
+   		 #troopGridId#, #skillId1#, #skillId2#, #skillId3#, #skillId4#, #skillId5#, #skillId6#,
+   		 #heroFate#,#growing#,#growingItem#,#relifeNum#,#heroStrength#,#status#,
+   		 #teamLeader#,#heroCardEntId#,#heroCardNum#,#heroSoulEntId#,#heroSoulNum#,#sumHeroCardNum#,#commander#)
+  </insert>
+  
+  <update id="updateHero" parameterClass="hero" shardingParams='[{"paramExpr":"userId","tableName":"hero"}]' asyncUpdate="5">
+    UPDATE hero SET casId = #casId#, userId = #userId#, sysHeroId = #sysHeroId#, name = #name#, icon = #icon#,
+    level=#level#,exp=#exp#, curHp = #curHp#,magicAttack = #magicAttack#, physicalAttack = #physicalAttack#, 
+    magicDefend = #magicDefend#, physicalDefend = #physicalDefend#, intHp = #intHp#, actionStatus = #actionStatus#,
+    freeDttm = #freeDttm#,troopGridId = #troopGridId#, skillId1=#skillId1#, skillId2=#skillId2#,skillId3 = #skillId3#,
+    skillId4=#skillId4#,skillId5=#skillId5#,skillId6=#skillId6#,heroFate=#heroFate#,growing=#growing#,
+    growingItem=#growingItem#,relifeNum=#relifeNum#,heroStrength=#heroStrength#,status=#status#,teamLeader=#teamLeader#,
+    heroCardEntId=#heroCardEntId#,heroCardNum=#heroCardNum#,heroSoulEntId=#heroSoulEntId#,heroSoulNum=#heroSoulNum#,
+    sumHeroCardNum=#sumHeroCardNum#,commander=#commander# WHERE heroId=#heroId#
+  
+  </update>
+  
+  <delete id="deleteHero" parameterClass="hero" shardingParams='[{"paramExpr":"userId","tableName":"hero"}]'>
+    DELETE FROM hero WHERE userId=#userId# and heroId = #heroId# 
+  </delete>
+
+  <select id="getHeroByHeroId" resultClass="hero" parameterClass="java.util.Map" cacheModel="cache_hero" cacheOnlyObject="true" shardingParams='[{"paramExpr":"userId","tableName":"hero"}]'>
+    SELECT * FROM hero WHERE userId=#userId# and heroId = #heroId# 
+  </select>
+  
+  <select id="getHeroBySysHeroId" resultClass="hero" parameterClass="java.util.Map" cacheModel="cache_hero" shardingParams='[{"paramExpr":"userId","tableName":"hero"}]'>
+    SELECT * FROM hero WHERE userId=#userId# and sysHeroId = #sysHeroId#
+  </select>
+
+  <select id="getHeroByUserId" resultClass="hero" parameterClass="long" cacheModel="cache_hero"  resultIsList="true" shardingParams='[{"paramExpr":"userId","tableName":"hero"}]'>
+    SELECT * FROM hero WHERE userId = #userId#
+  </select>
+  
+ <!--系统启动时更新武将状态信息，防止系统停机导致武将状态错误-->
+ <update id="updateHeroStatus" parameterClass="java.util.Map" shardingParams='[{"paramExpr":"shardNum","tableName":"hero"}]'>
+	UPDATE hero SET actionStatus=1 where actionStatus=#status#
+ </update>
+ 
+  
+  <!-- heroPub -->
+  <typeAlias alias="heroPub"
+    type="com.youxigu.dynasty2.hero.domain.HeroPub" />
+  <select id="getHeroPubs" resultClass="heroPub">
+    SELECT * FROM
+    heropub
+  </select>
+
+  <!-- userPubAttr -->
+  <typeAlias alias="userPubAttr"
+    type="com.youxigu.dynasty2.hero.domain.UserPubAttr" />
+
+  <cacheModel type="MEMCACHED" id="cache_userPubAttr"
+    serialize="false" readOnly="false" broadcast="false">
+    <flushOnExecute statement="insertUserPubAttr">
+      <flushModel flushstatement="userPubAttr" flushMode="insert"
+        flushpara="userId" />
+    </flushOnExecute>
+    <flushOnExecute statement="updateUserPubAttr">
+      <flushModel flushstatement="userPubAttr" flushMode="update"
+        flushpara="userId" />
+    </flushOnExecute>
+    <property name="class" value="userPubAttr" />
+    <property name="pk" value="userId" />
+  </cacheModel>
+
+  <insert id="insertUserPubAttr" parameterClass="userPubAttr">
+    INSERT INTO
+    userpubattr(userId,
+    hireNum1,hireCD1,freetimes1,hireNum2,hireCD2,freetimes2,hireNum3,hireCD3,freetimes3,version,status)
+    VALUES(#userId#,#hireNum1#,#hireCD1#,#freetimes1#,#hireNum2#,#hireCD2#,#freetimes2#,#hireNum3#,#hireCD3#,#freetimes3#,#version#,#status#)
+  </insert>
+
+  <update id="updateUserPubAttr" parameterClass="userPubAttr"
+    asyncUpdate="5">
+    UPDATE userpubattr SET
+    hireNum1=#hireNum1#,hireCD1=#hireCD1#,hireNum2=#hireNum2#,hireCD2=#hireCD2#,hireNum3=#hireNum3#,hireCD3=#hireCD3#,
+    freetimes1=#freetimes1#,freetimes2=#freetimes2#,freetimes3=#freetimes3#,version=#version#,status=#status#
+    WHERE userId=#userId#
+  </update>
+
+  <select id="getUserPubAttrById" resultClass="userPubAttr"
+    parameterClass="long" cacheModel="cache_userPubAttr" cacheOnlyObject="true">
+    SELECT * FROM userpubattr WHERE userId = #userId#
+  </select>
+  
+  
+  <!-- 军团格子 -->
+  <typeAlias alias="troopGrid" type="com.youxigu.dynasty2.hero.domain.TroopGrid"/>
+  <cacheModel type="MEMCACHED" id="cache_troopGrid" serialize="false" readOnly="false" >
+    <flushOnExecute statement="insertTroopGrid">
+      <flushModel flushstatement="troopGrid" flushMode="insert" flushpara="troopGridId"/>
+      <flushModel flushstatement="getTroopGridsByUserId" flushMode="insert" flushpara="userId"/>
+      <flushModel flushstatement="getTroopGridById" flushMode="insert" flushpara="userId,troopGridId"/>
+    </flushOnExecute>
+    <flushOnExecute statement="updateTroopGrid">
+      <flushModel flushstatement="troopGrid" flushMode="update" flushpara="troopGridId"/>
+      <flushModel flushstatement="getTroopGridById" flushMode="update" flushpara="userId,troopGridId"/>
+    </flushOnExecute>
+    <property name="class" value="troopGrid"/>
+    <property name="pk" value="troopGridId"/>
+  </cacheModel>
+
+ <insert id="insertTroopGrid" parameterClass="troopGrid"  shardingParams='[{"paramExpr":"userId","tableName":"troopgrid"}]'>
+      INSERT INTO troopgrid 
+      		(troopGridId,userId,troopId,heroId,sysHeroId,
+      			equ1,equ2,equ3,equ4,equ5,equ6,equipFate) 
+      VALUES (#troopGridId#,#userId#,#troopId#,#heroId#,#sysHeroId#,
+      			#equ1#,#equ2#,#equ3#,#equ4#,#equ5#,#equ6#,#equipFate#)		
+ </insert>
+
+  <update id="updateTroopGrid" parameterClass="troopGrid" asyncUpdate="5"   shardingParams='[{"paramExpr":"userId","tableName":"troopgrid"}]'>
+      UPDATE troopgrid set userId=#userId#,troopId=#troopId#,heroId=#heroId#,sysHeroId=#sysHeroId#,
+      		equ1=#equ1#,equ2=#equ2#,equ3=#equ3#,equ4=#equ4#,equ5=#equ5#,equ6=#equ6#,equipFate=#equipFate# 
+      WHERE troopGridId=#troopGridId#
+  </update>
+
+  <select id="getTroopGridsByUserId" parameterClass="long" resultClass="troopGrid" cacheModel="cache_troopGrid"  resultIsList="true"   shardingParams='[{"paramExpr":"userId","tableName":"troopgrid"}]'>
+      SELECT * FROM troopgrid WHERE userId = #userId#
+  </select>
+
+  <select id="getTroopGridById" parameterClass="java.util.HashMap" resultClass="troopGrid"  cacheModel="cache_troopGrid" cacheOnlyObject="true"   shardingParams='[{"paramExpr":"userId","tableName":"troopgrid"}]'>
+      SELECT * FROM troopgrid WHERE troopGridId = #troopGridId# and userId=#userId#
+  </select>
+
+  <select id="getHeroExp" resultClass="java.util.HashMap">
+        SELECT * FROM heroexp
+  </select>
+  
+   <!-- 指挥官的品质对应的属性 -->
+   <typeAlias alias="commanderColorProperty" type="com.youxigu.dynasty2.hero.domain.CommanderColorProperty"/>
+   <select id="listCommanderColorPropertys" resultClass="commanderColorProperty">
+        SELECT * FROM commandercolorproperty
+   </select>
+</sqlMap>

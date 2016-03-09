@@ -1,0 +1,83 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+
+		<!-- 账号注册/登录(10001) -->
+		<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+			<property name="cmd" value="10001"/>
+			<property name="bean" ref="loginAction"/>
+			<property name="methodName" value="login"/>
+			<property name="secCheck" value="false"/>
+			<property name="frequency" value="false"/>
+		</bean>
+		
+		<!--聊天 10009-->
+		<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+			<property name="cmd" value="10009"/>
+			<property name="bean" ref="chatAction"/>
+			<property name="frequency" value="false"/>
+			<property name="methodName" value="receive"/>
+		</bean>
+		
+		<!--保存频道设置-10011-->
+		<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+			<property name="cmd" value="10011"/>
+			<property name="bean" ref="chatAction"/>
+			<property name="methodName" value="setChanelConfig"/>
+		</bean>
+		
+		<!--10013 取快捷聊天记录请求-->
+		<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+			<property name="cmd" value="10013"/>
+			<property name="bean" ref="chatAction"/>
+			<property name="methodName" value="getHisRecord"/>
+		</bean>
+		
+		<!--10015 取得频道设置信息请求, 每次登陆后调用-->
+		<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+			<property name="cmd" value="10015"/>
+			<property name="bean" ref="chatAction"/>
+			<property name="methodName" value="getChanelConfig"/>
+		</bean>
+		
+		<!--10017 读取玩家的离线消息-->
+		<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+			<property name="cmd" value="10017"/>
+			<property name="bean" ref="chatAction"/>
+			<property name="frequency" value="false"/>
+			<property name="methodName" value="readOfflineMsg"/>
+		</bean>
+		
+		<!--10019 设置开启或关闭陌生人聊天-->
+		<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+			<property name="cmd" value="10019"/>
+			<property name="bean" ref="chatAction"/>
+			<property name="frequency" value="false"/>
+			<property name="methodName" value="setChatStrangeMsg"/>
+		</bean>
+		
+		
+		<!--10044自动分配建城点-->
+		<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+			<property name="cmd" value="10044"/>
+			<property name="bean" ref="loginAction"/>
+			<property name="frequency" value="true"/>
+			<property name="methodName" value="autoCityPoint"/>
+		</bean>
+		
+		<!--10046主动设置建城点-->
+		<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+			<property name="cmd" value="10046"/>
+			<property name="bean" ref="loginAction"/>
+			<property name="frequency" value="true"/>
+			<property name="methodName" value="setCityPoint"/>
+		</bean>
+    
+</beans>
+

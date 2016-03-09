@@ -1,0 +1,57 @@
+package com.youxigu.dynasty2.map.domain;
+
+/**
+ * 国家定义
+ * 
+ * @author Administrator
+ * 
+ */
+public class Country implements java.io.Serializable {
+
+	private int countryId;// 国家id
+	private String countryName;// 国家名
+	private String iconPath;
+	private String maleIcon;// 男头像
+	private String feMaleIcon;// 女头像
+
+	public int getCountryId() {
+		return countryId;
+	}
+
+	public void setCountryId(int countryId) {
+		this.countryId = countryId;
+	}
+
+	public String getCountryName() {
+		return countryName;
+	}
+
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
+	}
+
+	public String getIconPath() {
+		return iconPath;
+	}
+
+	public void setIconPath(String iconPath) {
+		this.iconPath = iconPath;
+	}
+
+	public String getMaleIcon() {
+		return maleIcon;
+	}
+
+	public void setMaleIcon(String maleIcon) {
+		this.maleIcon = maleIcon;
+	}
+
+	public String getFeMaleIcon() {
+		return feMaleIcon;
+	}
+
+	public void setFeMaleIcon(String feMaleIcon) {
+		this.feMaleIcon = feMaleIcon;
+	}
+
+}

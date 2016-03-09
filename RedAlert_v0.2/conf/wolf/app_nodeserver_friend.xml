@@ -1,0 +1,102 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+	<bean id="friendAction" class="com.youxigu.dynasty2.friend.web.FriendAction">
+		<property name="friendService" ref="friendService"></property>
+		<property name="userService" ref="userService"></property>
+		<property name="hpFriendService" ref="friendService"></property>
+		<property name="commonService" ref="commonService"></property>
+	</bean>
+	
+	<!-- 推荐好友列表-51001-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="51001"/>
+	   <property name="bean" ref="friendAction"/>
+	   <property name="methodName" value="getFriendRecommends"/>
+	</bean>
+	
+	<!-- 51003申请添加好友-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="51003"/>
+	   <property name="bean" ref="friendAction"/>
+	   <property name="methodName" value="appFriend"/>
+	</bean>
+  
+  	<!-- 51005获取申请列表(收到的)-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="51005"/>
+	   <property name="bean" ref="friendAction"/>
+	   <property name="methodName" value="getReceivedApp"/>
+	</bean>
+	
+	<!-- 51007同意或拒绝好友申请-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="51007"/>
+	   <property name="bean" ref="friendAction"/>
+	   <property name="methodName" value="accFriend"/>
+	</bean>
+	
+	<!-- 51009删除好友-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="51009"/>
+	   <property name="bean" ref="friendAction"/>
+	   <property name="methodName" value="delFriend"/>
+	</bean>
+	
+	<!-- 51011获取列表-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="51011"/>
+	   <property name="bean" ref="friendAction"/>
+	   <property name="methodName" value="getFriendListByGroupId"/>
+	</bean>
+	
+	<!-- 51013移出列表(最近联系人)-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="51013"/>
+	   <property name="bean" ref="friendAction"/>
+	   <property name="methodName" value="removeFromList"/>
+	</bean>
+	
+	<!-- 51015屏蔽此人(加入黑名单)-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="51015"/>
+	   <property name="bean" ref="friendAction"/>
+	   <property name="methodName" value="addBlack"/>
+	</bean>
+	
+	<!-- 51017移出黑名单-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="51017"/>
+	   <property name="bean" ref="friendAction"/>
+	   <property name="methodName" value="delBlack"/>
+	</bean>
+	
+	<!-- 51050赠送好友体力-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="51050"/>
+	   <property name="bean" ref="friendAction"/>
+	   <property name="methodName" value="doSendFriendAll"/>
+	</bean>
+	
+	<!-- 51052领取体力(单个好友)-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="51052"/>
+	   <property name="bean" ref="friendAction"/>
+	   <property name="methodName" value="doReceiveHp"/>
+	</bean>
+	
+	<!-- 51054一键领取体力并且反赠-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="51054"/>
+	   <property name="bean" ref="friendAction"/>
+	   <property name="methodName" value="doReceiveHpAll"/>
+	</bean>
+	
+</beans>
+

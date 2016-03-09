@@ -1,0 +1,35 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+	<bean id="mysticShopAction" class="com.youxigu.dynasty2.activity.web.MysticShopAction" >
+        <property name="mysticShopService"><ref bean="mysticShopService" /></property>
+         <property name="commonService"><ref bean="commonService" /></property>
+    </bean>
+    
+	<!--11021打开神秘商店面板 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="11021"/>
+	   <property name="bean" ref="mysticShopAction"/>
+	   <property name="methodName" value="getShopItemView"/>
+	</bean>
+	<!--11023刷新神秘商店 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="11023"/>
+	   <property name="bean" ref="mysticShopAction"/>
+	   <property name="methodName" value="freashShopIems"/>
+	</bean>
+	
+	<!--11025购买神秘商店道具 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="11025"/>
+	   <property name="bean" ref="mysticShopAction"/>
+	   <property name="methodName" value="buyShopIem"/>
+	</bean>
+</beans>
+

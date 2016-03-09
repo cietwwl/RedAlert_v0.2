@@ -1,0 +1,114 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreResourceNotFound"><value>true</value></property>
+	
+        <property name="locations">
+        	<list>
+        		<value>classpath:application.properties</value>
+        		<value>file:${TX_CONF_PATH}/application.properties</value>
+        	</list>
+        </property>
+        <property name="fileEncoding" value="utf-8"/>
+
+    </bean>
+    
+	<!--flex 连接的wolf server-->
+<!--	<bean id="openPlatformTransFilter" class="com.youxigu.dynasty2.core.flex.amf.OpenPlatformTransFilter">-->
+<!--		<property name="amf3WolfService"><ref bean="amf3WolfService" /></property>-->
+<!---->
+<!--	</bean>-->
+	<bean id="protoReportService" class="com.youxigu.dynasty2.openapi.service.impl.TlogSecReportService" >
+		<property name="tlogService" ><ref bean="tlogService"/></property> <!--mainServer不需要这个配置-->
+	 </bean>
+<!--	<bean id="amf3WolfService" class="com.youxigu.dynasty2.core.flex.amf.AMF3WolfService" init-method="init">-->
+<!--		<property name="mainClient" ><ref bean="mainServerClient"/></property> mainServer不需要这个配置-->
+<!--		-->
+<!--		<property name="openPlatformTransFilter"><ref bean="openPlatformTransFilter" /></property>-->
+<!--		-->
+<!--		<property name="protoReportService"><ref bean="protoReportService" /></property>-->
+<!--		-->
+<!--		<property name="maxRequestPerSecond" value="${maxRequestPerSecond:300}"/>-->
+<!--	</bean>-->
+  
+    <!--protobuf 连接的wolf server-->
+    <bean id="protobufWolfService" class="com.youxigu.dynasty2.core.protobuf.ProtobufWolfService" init-method="init">
+        <property name="mainClient" ><ref bean="mainServerClient"/></property> <!--mainServer不需要这个配置-->
+		<property name="protoReportService"><ref bean="protoReportService" /></property>
+		<property name="maxRequestPerSecond" value="${maxRequestPerSecond:300}"/>
+    </bean>
+    
+	<bean id="wolf_service_mainService" class="com.youxigu.wolf.node.core.MainService"/>
+	<bean id="wolf_service_remoteService" class="com.youxigu.wolf.net.RemoteWolfService"></bean>
+	<!--user session 管理-->
+	<bean id="wolf_onlineUserService"  class="com.youxigu.wolf.net.OnlineUserSessionManager">
+		<property name="maxUserNum" value="${maxUserNum:5000}"/>
+	</bean>
+  
+	<bean id="wolf_server" class="com.youxigu.wolf.net.WolfServer" init-method="init"  destroy-method="stop">
+<!-- 
+		<property name="processorNum" value="17"/>
+
+		<property name="corePoolSize" value="24"/>
+		<property name="maxPoolSize" value="24"/>
+ -->		
+<!--默认是false,设置成true,表示每个请求（相应）都立即发送，这样在服务器压力不大的情况下，可以加快相应速度，但是增大的网络IO
+
+-->
+		<property name="tcpNoDelay" value="true"/>
+		<property name="appProp" ref="app_properties"/>
+		<!--
+		<property name="ip" value="${wolfserver.ip}"/>
+		<property name="port" value="${wolfserver.port}"/>
+		<property name="serverName" value="${wolfserver.name}"/>
+		<property name="adminUser" value="${wolfserver.usr}"/>
+		<property name="adminPwd" value="${wolfserver.pwd}"/>
+		-->
+		<!-- 这里设置成600秒相当于不发送心跳,由于客户端收到心跳请求后同时给mainserver与nodeserver发送心跳相应，nodeserver就尽量不发送心跳 -->
+		<property name="keepAliveRequestInterval" value="600"/>
+		<property name="useOrderedPool" value="true"/>
+		<property name="handler">
+				<bean class="com.youxigu.wolf.net.WolfMessageChain" >
+					<!--<property name="threadNum" value="5"/>--><!--配置handler的线程池大小-->
+					<property name="services">
+						<list>
+							<ref bean="wolf_service_mainService" />
+							<ref bean="wolf_service_remoteService" />
+							<bean class="com.youxigu.wolf.net.WolfHandler"/>
+<!--							<ref bean="amf3WolfService"/>-->
+                            <ref bean="protobufWolfService" />
+							<!--<bean class="com.youxigu.wolf.node.app.message.service.MessageTaskService"/>-->
+						</list>
+					</property>
+					<property name="sessionListeners">
+						<list>
+							<ref bean="wolf_service_remoteService" />
+							<!--清除活动大厅的用户-->
+							<!--
+							<ref bean="hallServiceClient"/> 
+							-->
+							<bean class="com.youxigu.wolf.net.NodeSessionListener"/>
+
+							<ref bean="wolf_onlineUserService" /><!--这个放在最后-->
+						</list>
+					</property>
+				</bean>
+		</property>
+		<property name="codecFactory">
+			  <bean class="com.youxigu.wolf.net.codec.NewMutilCodecFactory">
+                  <property name="compressLen" value="${mina.encoder.compressLen:5120}"/>
+              </bean>
+		</property>
+		
+	</bean>
+	<import resource="app_nodeserver_*.xml"/>
+</beans>
+

@@ -1,0 +1,224 @@
+package dynasty;
+import "Common.proto";
+
+option java_package = "com.youxigu.dynasty2.combat.proto";
+option java_outer_classname = "CombatMsg";
+
+
+//战斗结果
+message Combat{
+	optional string combatId = 1;//战斗id
+	optional int32 combatType = 2;//战斗类型
+	optional int32 scoreType = 3;//评分方式
+	optional CombatTeam attacker = 4;//攻击方team
+	optional CombatTeam defender = 5;//防守方team
+	repeated AbstractCombatAction prevActions = 6;//战斗开始前行为
+	message RoundAction{
+		repeated AbstractCombatAction roundaction = 1;//行为
+	}
+	repeated RoundAction actions = 7;//战斗中的行为
+	optional int32 round = 8;//当前的回合数:所有单元执行完攻击+移动后为一个轮次
+	optional int32 winType = 9;//胜利类型
+	optional CombatRob combatRob = 10;//战斗后城池资源变化
+	optional CombatStats combatStats = 11;//结算面板信息
+}
+
+//战斗团队
+message CombatTeam{
+	optional int64 userId = 1;//所属的用户ID或者NPC ID,对于NPC.userId=casId
+	optional int64 casId = 2;//玩家城池ID或者NPC ID
+	optional int32 level = 3;//玩家或者npc的等级
+	optional string teamName = 4;//团队名称,通常是玩家名称或者NPC名称
+	optional string icon = 5;//玩家图标或者NPC图标
+	optional int32 teamType = 6;//战团的类型 0-玩家英雄 1-协防玩家英雄  3-NPC英雄
+	optional int32 teamPower = 7;//战斗力--这个用作显示不会随着战斗而变化
+	repeated CombatUnit units = 8;//战斗单元
+	optional int32 score = 9;//战斗结果分数-攻守双方各需要一个评分star
+}
+
+//战斗单元
+message CombatUnit{
+	optional int32 id = 1;//战斗单元的ID,攻击方1-6 防守方7-12
+	optional string name = 2;//战斗单元的名称(武将/哨塔/城防/城墙)
+	optional string icon = 3;//战斗单元的头像
+	optional int32 level = 4;//战斗单元的等级
+	optional int32 unitEntId = 5;//战斗单元的entId(SysheroId....)，前台显示用
+	optional int32 armyEntId = 6;//兵种，前台显示用
+	optional int32 initHp = 7;//初始武将生命值
+	optional int32 curHp = 8;//当前武将生命值
+	optional int32 shieldHp = 9;//护盾生命值
+	optional int32 initMorale = 10;//初始士气
+	optional int32 curMorale = 11;//当前士气
+	optional int32 unitType = 12;//战斗单元类型：默认为子类名称;
+	optional int32 attackType = 13;//1物攻  2法攻
+}
+
+//战后统计中每个战斗单位的统计-做结算面板使用
+message CombatStatsUnit{
+	optional string name = 1;//名称
+	optional int32 initHp = 2;//战前耐久
+	optional int32 lostHp = 3;//损耗
+	optional int32 lastHp = 4;//战后耐久
+	optional int32 harmHp = 5;//造成伤害
+}
+
+//战后统计信息-做结算面板使用
+message CombatStats{
+	optional bool pvp = 1;//是否是pvp true是，否则pve
+	optional int32 combatType = 2;//战斗类型，战役，千重楼。。
+	optional int32 scoreType = 3;//评分方式  1回合数  2总血量  3死亡单位数 
+	optional int32 winType = 4;//1进攻方赢， 2防守方赢
+	optional int64 atkUserId = 5;//攻方君主id >0为君主id
+	optional string atkName = 6;//攻方名
+	optional int32 atkScore = 7;//攻方获得的星
+	repeated CombatStatsUnit atkUnit = 8;//攻击方单位列表
+	optional int64 defUserId = 9;//守方君主id >0为君主id
+	optional string defName = 10;//守方名
+	optional int32 defScore = 11;//守方获得的星
+	repeated CombatStatsUnit defUnit = 12;//守方单位列表
+}
+
+//战斗后双方资源的增加，减少
+message CombatRob{
+	optional int32 winFoodNum = 1;//粮食
+	optional int32 winBronzeNum = 2;//矿石
+	optional int32 winMoneyNum = 3;//铜币
+	optional int32 winRangeValue = 4;//繁荣度
+	optional int32 winHonor = 5;//威望
+	repeated ItemInfo winItems = 6;//掉落道具
+	optional int32 lostFoodNum = 7;//损失粮食
+	optional int32 lostBronzeNum = 8;//损失矿石
+	optional int32 lostMoneyNum = 9;//损失铜币
+	optional int32 lostRangeValue = 10;//损失繁荣度
+	optional int32 lostHonor = 11;//损失威望
+	repeated ItemInfo lostItems = 12;//损失道具
+}
+
+//行为描述
+message AbstractCombatAction{
+	optional int32 actionId = 1;//行为编号
+	optional bytes actionBytes = 2;//行为二进制描述  例如actionId=312 actionBytes可以转为AddCombatUnitEffectAction
+}
+
+//回合发生变化 Action-11
+message RoundChangeAction{
+	optional int32 actionId = 1;//行为编号
+	optional int32 ownerId = 2;//执行动作的战斗单元ID
+	optional int32 round = 3;//回合数
+}
+
+//211 加护盾
+message ShieldChangeAction{
+	optional int32 actionId = 1;//行为编号
+	optional int32 ownerId = 2;//执行动作的战斗单元ID
+	optional int32 subType = 3;//攻击类型 112暴击  111闪避  110普通攻击 113护盾攻击
+	optional int32 shield = 4;//加护盾  可正可负，前台只管加
+}
+
+//伤血-210
+message HPChangeAction{
+	optional int32 actionId = 1;//行为编号
+	optional int32 ownerId = 2;//执行动作的战斗单元ID
+	optional int32 subType = 3;//攻击类型 112暴击  111闪避  110普通攻击 113护盾攻击
+	optional int32 hp = 4;//血量损失 永远>0 优先消耗shieldHp，其次消耗curHp
+	repeated int32 sourceIds= 5;//发起攻击的人的id,为了支持合击技能
+}
+
+//加士气-212
+message MoraleAddAction{
+	optional int32 actionId = 1;//行为编号
+	optional int32 ownerId = 2;//执行动作的战斗单元ID
+	optional int32 subType = 3;//攻击类型 112暴击  111闪避  110普通攻击 113护盾攻击
+	optional int32 morale = 4;//加士气
+}
+
+//减士气-213
+message MoraleDecAction{
+	optional int32 actionId = 1;//行为编号
+	optional int32 ownerId = 2;//执行动作的战斗单元ID
+	optional int32 subType = 3;//攻击类型 112暴击  111闪避  110普通攻击 113护盾攻击
+	optional int32 morale = 4;//减士气
+}
+
+//剧情对话-214
+message StoryAction{
+	optional int32 actionId = 1;//行为编号
+	optional int32 ownerId = 2;//执行动作的战斗单元ID
+	optional int32 storyId = 3;//对话id
+}
+
+//释放技能-310
+message FireSkillAction{
+	optional int32 actionId = 1;//行为编号
+	optional int32 ownerId = 2;//执行动作的战斗单元ID
+	optional int32 skillId = 3;//技能ID
+	optional int32 cold = 4;//冷却回合数
+	optional int32 morale = 5;//消耗的士气
+	repeated AbstractCombatAction results = 6;//子行为集合
+}
+
+//释放效果Action-311
+message SkillEffectAction{
+	optional int32 actionId = 1;//行为编号
+	repeated int32 ownerIds = 2 [packed=true];//主体集
+	optional int32 effId = 3;//效果id
+	optional string effKey = 4;//效果key(如果等于DOT_EFFECT_TRIGERED 特殊处理DOT效果，ownerIds，effId，targetIds，missIds 都没有值)
+	repeated int32 targetIds = 5 [packed=true];//目标集
+	repeated int32 missIds = 6 [packed=true];//miss集
+	repeated AbstractCombatAction results = 7;//子行为集合
+}
+
+//给一个战斗单元增加效果-312
+message AddCombatUnitEffectAction{
+	optional int32 actionId = 1;//行为编号
+	optional int32 ownerId = 2;//执行动作的战斗单元ID
+	optional int32 effId = 3;//效果ID
+	optional int32 value = 4;//效果值
+	optional int32 round = 5;//持续到的回合数
+}
+
+//给一个战斗单元移除效果-313
+message RemoveCombatUnitEffectAction{
+	optional int32 actionId = 1;//行为编号
+	optional int32 ownerId = 2;//执行动作的战斗单元ID
+	optional int32 effId = 3;//效果id
+}
+
+//DOT类效果生效Action-314
+message ApplyDotEffectAction{
+	optional int32 actionId = 1;//行为编号
+	optional int32 ownerId = 2;//执行动作的战斗单元ID
+	optional int32 effId = 3;//效果ID
+	repeated AbstractCombatAction results = 4;//子行为集合
+}
+
+//Dot伤血-315
+message DotHPChangeAction{
+	optional int32 actionId = 1;//行为编号
+	optional int32 ownerId = 2;//执行动作的战斗单元ID
+	optional int32 hp = 3;//血量损失 永远>0 优先消耗shieldHp，其次消耗curHp
+	optional int32 effId = 4;//效果id
+	optional string effKey = 5;//效果key
+}
+
+//Dot加护盾-315
+message DotShieldChangeAction{
+	optional int32 actionId = 1;//行为编号
+	optional int32 ownerId = 2;//执行动作的战斗单元ID
+	optional int32 shield = 3;//加护盾  可正可负，前台只管加
+	optional int32 effId = 4;//效果id
+	optional string effKey = 5;//效果key
+}
+
+//70101 获取战斗结果请求(nodeserver)
+message Request70101Define{
+   required int32 cmd = 1;//命令号
+   required string combatId = 2;//战斗id
+   optional int32 fromDB = 3;//是否从db取
+}
+
+//70102 获取战斗结果响应
+message Response70101Define{
+   required ResponseHead responseHead = 1;
+   required Combat combat = 2;//战斗结果
+}

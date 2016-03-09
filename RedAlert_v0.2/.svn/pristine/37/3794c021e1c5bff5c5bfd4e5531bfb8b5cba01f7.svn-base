@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+    <typeAlias alias="mapCell" type="com.youxigu.dynasty2.map.domain.MapCell"/>
+<!--     <select id="getMapCellById" resultClass="mapCell" shardingParams='[{"paramExpr":"stateId","tableName":"mapcell"}]'> -->
+<!--         SELECT * FROM mapcell WHERE id=#id# -->
+<!--     </select> -->
+	<select id="getMapCellsByStateId" resultClass="mapCell" shardingParams='[{"paramExpr":"stateId","tableName":"mapcell"}]'>
+		SELECT * FROM mapcell WHERE stateId = #stateId# 
+	</select>
+<!-- 	<select id="getAvialbleMapCells" parameterClass="java.util.Map" resultClass="mapCell" shardingParams='[{"paramExpr":"stateId","tableName":"mapcell"}]'> -->
+<!-- 	    SELECT * FROM mapcell B JOIN (SELECT ROUND((MAX(ID)-MIN(ID))*RAND()+MIN(ID)) AS ID1 FROM mapcell WHERE stateId = #stateId# and casId=0 and castType=0) AS m ON B.ID &gt;= m.ID1 and B.stateId = #stateId# and B.casId=0 and B.castType=0 LIMIT #count#; -->
+<!-- 	</select> -->
+<!-- 	<select id="getMapCellsByIds" parameterClass="java.util.List" resultClass="mapCell" shardingParams='[{"paramExpr":"stateId","tableName":"mapcell"}]'> -->
+<!-- 		SELECT * FROM mapcell WHERE id IN  -->
+<!-- 		<iterate open="(" close=")"  conjunction=","> -->
+<!-- 					#[]# -->
+<!-- 		</iterate> -->
+<!-- 	</select> -->
+<!-- 	<select id="getCastleNums" resultClass="java.util.HashMap" > -->
+<!-- 		select stateId,count(id) as num from mapcell where casId >0 and castType=1 group by stateId -->
+<!-- 	</select> -->
+	<update id="updateMapCell" parameterClass="mapCell" shardingParams='[{"paramExpr":"stateId","tableName":"mapcell"}]'>
+		UPDATE mapcell SET casId = #casId#,castType=#castType#,userId=#userId#,guildId=#guildId# WHERE id=#id#
+	</update>
+	<!--工具方法，用于生成mapCell数据-->
+<!-- 	<insert id="insertMapCell" parameterClass="mapCell"> -->
+<!-- 		INSERT INTO mapcell(id,posX,posY,stateId,casId,castType) values(#id#,#posX#,#posY#,#stateId#,#casId#,#castType#) -->
+<!-- 	</insert> -->
+
+    <typeAlias alias="country" type="com.youxigu.dynasty2.map.domain.Country"/>
+	<select id="listAllCountry" resultClass="country">
+		SELECT * FROM country
+	</select>
+<!-- 	<select id="getCountryById" resultClass="country"> -->
+<!-- 		SELECT * FROM country where countryId=#countryId# -->
+<!-- 	</select> -->
+    
+    <typeAlias alias="state" type="com.youxigu.dynasty2.map.domain.State"/>
+<!--     <cacheModel type="MEMCACHED" id="cache_state" serialize="false" readOnly="false"> -->
+<!-- 		<flushOnExecute statement="updateState"> -->
+<!-- 			<flushModel flushstatement="state" flushMode="update" flushpara="stateId"/> -->
+<!-- 		</flushOnExecute> -->
+<!-- 		<property name="class" value="state"/> -->
+<!-- 		<property name="pk" value="stateId"/> -->
+<!-- 	</cacheModel> -->
+<!-- 	<select id="getStateById" resultClass="state"> -->
+<!-- 		SELECT * FROM state where stateId=#stateId# -->
+<!-- 	</select> -->
+
+	<select id="getStatesByCountryId" resultClass="state">
+		SELECT * FROM state where countryId=#countryId#
+	</select>
+
+<!-- 	<update id="updateState" parameterClass="state"> -->
+<!-- 		UPDATE state SET status = #status# WHERE stateId=#stateId# -->
+<!-- 	</update> -->
+	
+	
+	<typeAlias alias="countryCharacter" type="com.youxigu.dynasty2.map.domain.CountryCharacter"/>
+    <select id="listAllCountryCharacters" resultClass="countryCharacter">
+		SELECT * FROM countrycharacter
+	</select>
+</sqlMap>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+    <!-- ================================================userVip start=========================================-->
+    <typeAlias alias="userVip" type="com.youxigu.dynasty2.vip.domain.UserVip"/>
+    
+    <cacheModel type="MEMCACHED" id="cache_userVip" serialize="false" readOnly="false" >
+		<flushOnExecute statement="insertUserVip">
+			<flushModel flushstatement="userVip" flushMode="insert" flushpara="userId"/>
+		</flushOnExecute>
+		<flushOnExecute statement="updateUserVip">
+			<flushModel flushstatement="userVip" flushMode="update" flushpara="userId"/>
+		</flushOnExecute>
+		<property name="class" value="userVip"/>
+		<property name="pk" value="userId"/><!--对于分表的情况,这里应该是表的主键+分表的字段-->
+	</cacheModel>
+	
+	<insert id="insertUserVip" parameterClass="userVip">
+		INSERT INTO uservip (userId,vipPoint,vipStartTime,vipEndTime,lastDttm,vipLv,prizeCount,totalCash,reward,everyReward,unfreeReward) VALUES (
+		#userId#, #vipPoint#, #vipStartTime#,#vipEndTime#, #lastDttm#,#vipLv#,#prizeCount#,#totalCash#,#reward#,#everyReward#,#unfreeReward#)
+	</insert>
+
+	<update id="updateUserVip" parameterClass="userVip" asyncUpdate="1">
+		UPDATE uservip SET vipPoint = #vipPoint#, vipStartTime = #vipStartTime#, 
+		vipEndTime = #vipEndTime#, lastDttm = #lastDttm#, vipLv = #vipLv#,prizeCount = #prizeCount#,totalCash=#totalCash#,reward=#reward#,everyReward=#everyReward#,unfreeReward=#unfreeReward#
+		WHERE userId = #userId#
+	</update>
+	
+    <select id="getUserVip" resultClass="userVip" parameterClass = "long" cacheModel="cache_userVip" cacheOnlyObject="true">
+    	SELECT * FROM uservip where userId = #userId#
+    </select>
+ </sqlMap>

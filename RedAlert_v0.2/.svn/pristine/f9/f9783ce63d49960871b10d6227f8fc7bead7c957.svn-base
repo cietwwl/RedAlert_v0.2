@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+
+<Country countryId="1" countryName="苏" iconPath="zhongguo" maleIcon="zhihuiguan" feMaleIcon="zhihuiguan" />
+<Country countryId="2" countryName="法" iconPath="yingguo" maleIcon="zhihuiguan" feMaleIcon="zhihuiguan" />
+<Country countryId="3" countryName="德" iconPath="yingguo" maleIcon="zhihuiguan" feMaleIcon="zhihuiguan" />
+<Country countryId="4" countryName="美" iconPath="meiguo" maleIcon="zhihuiguan" feMaleIcon="zhihuiguan" />
+
+
+
+
+
+
+
+</dataset>

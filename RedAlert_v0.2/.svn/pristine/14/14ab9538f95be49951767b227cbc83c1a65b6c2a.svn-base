@@ -1,0 +1,182 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="castleAction" class="com.youxigu.dynasty2.develop.web.CastleAction">
+        <property name="castleService" ref="castleService"/>
+        <property name="userService" ref="userService"/>
+        <property name="entityService" ref="entityService"/>
+        <property name="commonService"><ref bean="commonService" /></property>
+        <property name="vipService"><ref bean="vipService" /></property>
+        <!--<property name="logService"><ref bean="logService" /></property>-->
+        <property name="tlogService"><ref bean="tlogService" /></property>
+        <property name="treasuryService"><ref bean="treasuryService" /></property>
+        <property name="buffTipService"><ref bean="buffTipService" /></property>
+    </bean>
+
+    <bean id="rdCenterAction" class="com.youxigu.dynasty2.develop.web.RdCenterAction">
+        <property name="castleService" ref="castleService"/>
+        <property name="commonService" ref="commonService"/>
+    </bean>
+
+    <!-- 获取城内建筑列表 20001-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20001"/>
+        <property name="bean" ref="castleAction"/>
+        <property name="methodName" value="getCastleBuildings"/>
+    </bean>
+
+    <!-- 20003-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20003"/>
+        <property name="bean" ref="castleAction"/>
+        <property name="methodName" value="upgradeBuilding"/>
+    </bean>
+
+    <!-- 20005-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20005"/>
+        <property name="bean" ref="castleAction"/>
+        <property name="methodName" value="cancelBuilding"/>
+    </bean>
+
+    <!-- 20009-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20009"/>
+        <property name="bean" ref="castleAction"/>
+        <property name="methodName" value="getBuildingSpeedupItems"/>
+    </bean>
+
+    <!-- 20011-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20011"/>
+        <property name="bean" ref="castleAction"/>
+        <property name="methodName" value="speedupCastleBuilding"/>
+    </bean>
+
+    <!-- 20013-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20013"/>
+        <property name="bean" ref="castleAction"/>
+        <property name="methodName" value="getAllBuilderInfo"/>
+    </bean>
+
+    <!-- 20015-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20015"/>
+        <property name="bean" ref="castleAction"/>
+        <property name="methodName" value="openAutoBuild"/>
+    </bean>
+
+    <!-- ///////////////////维修工厂/////////////////////////////// -->
+	<bean id="castleBarrackAction" class="com.youxigu.dynasty2.develop.web.CastleBarrackAction">
+	    <property name="castleArmyService"><ref bean="castleArmyService" /></property>
+	    <property name="commonService"><ref bean="commonService" /></property>
+	    <property name="heroService"><ref bean="heroService" /></property>
+	    <property name="castleEffectService"><ref bean="castleEffectService" /></property>
+    </bean>
+    
+    <!-- 打开兵器工厂界面-20019-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20019"/>
+        <property name="bean" ref="castleBarrackAction"/>
+        <property name="methodName" value="viewBuiBarrack"/>
+    </bean>
+	
+	<!-- 20021 生产零件-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20021"/>
+        <property name="bean" ref="castleBarrackAction"/>
+        <property name="methodName" value="buiBarrackAddArmy"/>
+    </bean>
+    
+    <!-- 20023 高级零件兑换-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20023"/>
+        <property name="bean" ref="castleBarrackAction"/>
+        <property name="methodName" value="exchangeItem"/>
+    </bean>
+    
+    <!-- 20025 坦克零件生产加速-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20025"/>
+        <property name="bean" ref="castleBarrackAction"/>
+        <property name="methodName" value="speedUp"/>
+    </bean>
+    
+    <!-- 20027 客户端调用刷新 -->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20027"/>
+        <property name="bean" ref="flushCastleAction"/>
+        <property name="methodName" value="freshCastleData"/>
+    </bean>
+    
+    <!-- 20029 收获资源资源建筑 -->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20029"/>
+        <property name="bean" ref="flushCastleAction"/>
+        <property name="methodName" value="gainRes"/>
+    </bean>
+
+    <!-- ///////////////////////// Buff ////////////////////// -->
+
+    <!-- 20031-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20031"/>
+        <property name="bean" ref="castleAction"/>
+        <property name="methodName" value="getBuffTips"/>
+    </bean>
+
+    <!-- 20033-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20033"/>
+        <property name="bean" ref="castleAction"/>
+        <property name="methodName" value="activateBuff"/>
+    </bean>
+
+    <!-- 20035-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20035"/>
+        <property name="bean" ref="castleAction"/>
+        <property name="methodName" value="cancelBuff"/>
+    </bean>
+
+    <!-- 20037-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20037"/>
+        <property name="bean" ref="castleAction"/>
+        <property name="methodName" value="buyResource"/>
+    </bean>
+
+    <!-- ///////////////////////// UserTech ////////////////////// -->
+
+    <!-- 20041-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20041"/>
+        <property name="bean" ref="rdCenterAction"/>
+        <property name="methodName" value="getTechnology"/>
+    </bean>
+
+     <!-- 20043-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20043"/>
+        <property name="bean" ref="rdCenterAction"/>
+        <property name="methodName" value="upgradeTechnology"/>
+    </bean>
+
+    <!-- 20045-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20045"/>
+        <property name="bean" ref="rdCenterAction"/>
+        <property name="methodName" value="fastUpgradeTechnology"/>
+    </bean>
+
+    <!-- 20047-->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+        <property name="cmd" value="20047"/>
+        <property name="bean" ref="rdCenterAction"/>
+        <property name="methodName" value="cancelUpgradeTechnology"/>
+    </bean>
+
+</beans>
+

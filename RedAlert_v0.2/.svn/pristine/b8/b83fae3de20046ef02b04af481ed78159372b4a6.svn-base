@@ -1,0 +1,84 @@
+<root>
+	<!--
+		cmd:指令编号
+		name:指令名称
+		desc:描述 
+		{
+			name:参数名称
+			type:参数类型 (int,string)
+		}
+	-->
+	<node cmd="900002" name="增加元宝" desc="增加元宝  1元宝 2体力 3行动力  4军功">
+		<param name="账号名字" type="string"/>
+		<param name="type" type="int"/>
+		<param name="值" type="int"/>
+	</node>
+	
+	<node cmd="900010" name="增加资源" desc="增加资源 0添加所有4种资源,  1金矿  2铁矿  3油矿 4铀矿 ">
+		<param name="账号名字" type="string"/>
+		<param name="type" type="int"/>
+		<param name="值" type="int"/>
+	</node>
+
+	<node cmd="900004" name="角色加武将" desc="角色加武将">
+		<param name="账号名字" type="string"/>
+		<param name="sysHeroId" type="int"/>
+	</node>
+
+	
+	<node cmd="900005" name="添加物品到背包" desc="添加物品到背包">
+		<param name="账号名字" type="string"/>
+		<param name="itemId" type="int"/>
+		<param name="itemNum" type="int"/>
+	</node>
+	
+	<node cmd="900006" name="武将加经验" desc="武将加经验">
+		<param name="账号名字" type="string"/>
+		<param name="heroId" type="long"/>
+		<param name="exp" type="int"/>
+	</node>
+
+	<node cmd="900007" name="增加君主经验" desc="加君主等级">
+		<param name="账号名字" type="string"/>
+		<param name="经验值" type="int"/>
+	</node>
+
+	<node cmd="900008" name="创建建筑" desc="创建建筑">
+		<param name="账号名字" type="string"/>
+		<param name="建筑EntityId" type="int"/>
+	</node>
+
+	<node cmd="900009" name="升级建筑" desc="升级建筑">
+		<param name="账号名字" type="string"/>
+		<param name="建筑EntityId" type="int"/>
+        <param name="建筑队列序号（1~3）" type="int"/>
+	</node>
+
+    <node cmd="900011" name="创建邮件" desc="创建邮件。
+    时间格式：yyyy-MM-dd HH:mm:ss
+    邮件状态：0->未读 1->已读
+    邮件类型：0->普通 10->系统 11->pvp
+    附件：格式'itemId:itemNum,itemId:itemNum,...'。没有附件则留空，最多有6组">
+		<param name="发件人userId" type="int"/>
+		<param name="收件人userId" type="int"/>
+        <param name="发件时间" type="string"/>
+        <param name="阅读时间" type="string"/>
+        <param name="邮件标题" type="string"/>
+        <param name="邮件内容" type="string"/>
+        <param name="邮件状态" type="int"/>
+        <param name="邮件类型" type="int"/>
+        <param name="附件" type="string"/>
+	</node>
+	
+	<node cmd="900012" name="添加任务，支持世界任务" desc="添加任务，支持世界任务">
+		<param name="账号名字" type="string"/>
+		<param name="大区id" type="string"/>
+        <param name="missionId" type="int"/>
+	</node>
+	
+	<node cmd="900013" name="doSetUserVip" desc="设置vip等级">
+		<param name="账号名字" type="string"/>
+        <param name="vipLevel" type="int"/>
+	</node>
+
+</root>

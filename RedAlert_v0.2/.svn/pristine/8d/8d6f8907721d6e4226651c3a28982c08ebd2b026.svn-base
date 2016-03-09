@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+   
+<sqlMap namespace="ServerInfo">
+  <!-- 情报信息 -->
+  <typeAlias alias="mili"
+    type="com.youxigu.dynasty2.armyout.domain.qingbao.MilitarySituation" />
+    
+    <cacheModel type="MEMCACHED" id="cache_misi" serialize="false" readOnly="false">
+    <flushInterval hours="6"/>
+        <flushOnExecute statement="insertMilitarySituation">
+            <flushModel flushstatement="mili" flushMode="insert" flushpara="id"/>
+            <flushModel flushstatement="getMilitarySituationListByUserId" flushMode="insert" flushpara="userId"/>
+        </flushOnExecute>
+        <flushOnExecute statement="setHasView">
+            <flushModel flushstatement="mili" flushMode="update" flushpara="id"/>
+        </flushOnExecute>
+        <flushOnExecute statement="deleteMilitarySituation">
+            <flushModel flushstatement="getMilitarySituationListByUserId" flushMode="delete" flushpara="userId"/>
+            <flushModel flushstatement="mili" flushMode="delete" flushpara="id"/>
+        </flushOnExecute>
+        <property name="class" value="mili"/>
+        <property name="pk" value="id"/>
+    </cacheModel>
+    <!-- sorted之后，用于删除大于500后旧的情报，不用设置时间戳了 -->
+  <select id="getMilitarySituationListByUserId" parameterClass="long" resultClass="mili"  resultIsList="true" cacheModel="cache_misi" sorted="true">
+    select * from militarysituation where userId=#userId#
+	</select>
+	
+	<select id="getMilitarySituationById" parameterClass="int" resultClass="mili" cacheModel="cache_misi">
+    select * from militarysituation where id=#id#
+	</select>
+	<!-- id自增 -->
+	<insert id="insertMilitarySituation" parameterClass="mili">
+        insert into militarysituation (miSiType,name,content,misiDetail,userId,hasView,time) values 
+        (#miSiType#,#name#,#content#,#misiDetail#,#userId#,#hasView#,#time#)
+    </insert>
+    
+    <delete id="deleteMilitarySituation" parameterClass="int">
+        DELETE FROM militarysituation WHERE id = #id# 
+    </delete>
+    
+    <delete id="deleteMilitarySituations" parameterClass="java.util.Map">
+        DELETE FROM militarysituation WHERE userId = #userId# AND id > #id# 
+    </delete>
+    
+    <update id="setHasView" parameterClass="java.util.Map" asyncUpdate="9">
+        UPDATE militarysituation SET hasView = #hasView# where id = #id#
+    </update>
+	
+</sqlMap>

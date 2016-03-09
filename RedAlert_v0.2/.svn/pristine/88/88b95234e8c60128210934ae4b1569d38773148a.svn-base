@@ -1,0 +1,376 @@
+package com.youxigu.dynasty2.combat.service.impl;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+import com.youxigu.dynasty2.combat.domain.CombatTeam;
+import com.youxigu.dynasty2.combat.domain.NPCHeroCombatUnit;
+import com.youxigu.dynasty2.combat.domain.PlayHeroCombatUint;
+import com.youxigu.dynasty2.combat.service.ICombatTeamService;
+import com.youxigu.dynasty2.develop.domain.Castle;
+import com.youxigu.dynasty2.develop.service.ICastleService;
+import com.youxigu.dynasty2.hero.domain.FullArmyHero;
+import com.youxigu.dynasty2.hero.domain.Hero;
+import com.youxigu.dynasty2.hero.domain.Troop;
+import com.youxigu.dynasty2.hero.service.IHeroService;
+import com.youxigu.dynasty2.hero.service.ITroopService;
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.map.service.IMapService;
+import com.youxigu.dynasty2.npc.domain.NPCDefine;
+import com.youxigu.dynasty2.npc.domain.NPCHero;
+import com.youxigu.dynasty2.npc.domain.NPCTroop;
+import com.youxigu.dynasty2.user.domain.User;
+import com.youxigu.dynasty2.user.service.IUserService;
+import com.youxigu.dynasty2.util.BaseException;
+
+/**
+ * 玩家队伍构造器
+ */
+public class PlayerCombatTeamService implements ICombatTeamService {
+	private ArmyoutComparator armyoutComparator = new ArmyoutComparator();// 按照协防部队到达的时间顺序排序
+
+	private IUserService userService;
+	private ICastleService castleService;
+	private ITroopService troopService;
+	private IHeroService heroService;
+	private IMapService mapService;
+
+	public void setUserService(IUserService userService) {
+		this.userService = userService;
+	}
+
+	public void setCastleService(ICastleService castleService) {
+		this.castleService = castleService;
+	}
+
+	public void setTroopService(ITroopService troopService) {
+		this.troopService = troopService;
+	}
+
+	public void setHeroService(IHeroService heroService) {
+		this.heroService = heroService;
+	}
+
+	public void setMapService(IMapService mapService) {
+		this.mapService = mapService;
+	}
+
+	public class ArmyoutComparator implements Comparator<Armyout> {
+		@Override
+		public int compare(Armyout o1, Armyout o2) {
+			long t1 = Integer.MAX_VALUE;
+			if (o1.getOutArriveDttm() != null) {
+				t1 = o1.getOutArriveDttm().getTime();
+			}
+
+			long t2 = Integer.MAX_VALUE;
+			if (o2.getOutArriveDttm() != null) {
+				t2 = o2.getOutArriveDttm().getTime();
+			}
+			return (int) (t1 - t2);
+		}
+
+	}
+
+	@Override
+	public CombatTeam getCombatTeam(long casId) {
+		Castle castle = castleService.getCastleById(casId);
+		User user = userService.getUserById(castle.getUserId());
+		Troop troop = troopService.getTroopById(user.getUserId(),
+				user.getTroopId());
+		return getCombatTeamByUser(user, troop, false, false);
+	}
+
+	@Override
+	public CombatTeam getCombatTeam(long casId, boolean isDefender) {
+		Castle castle = castleService.getCastleById(casId);
+		User user = userService.getUserById(castle.getUserId());
+		Troop troop = troopService.getTroopById(user.getUserId(),
+				user.getTroopId());
+		return getCombatTeamByUser(user, troop, isDefender, false);
+	}
+
+	@Override
+	public CombatTeam getCombatTeam(long casId, long troopId,
+			boolean isDefender) {
+		Castle castle = castleService.getCastleById(casId);
+		User user = userService.getUserById(castle.getUserId());
+		Troop troop = troopService.getTroopById(user.getUserId(), troopId);
+		return getCombatTeamByUser(user, troop, isDefender, false);
+	}
+
+	@Override
+	public CombatTeam getCombatTeamByUser(User user, Troop troop,
+			boolean isDefender, boolean fullArmy) {
+		return this.getCombatTeamByUser(user, troop, null, isDefender,
+				fullArmy);
+	}
+
+	@Override
+	public CombatTeam getCombatTeamByUser(User user, Troop troop,
+			NPCDefine assistNpc, boolean isDefender, boolean fullArmy) {
+		long userId = user.getUserId();
+		long heroId = user.getHeroId();
+
+		// 君主坦克
+		Hero userHero = heroService.getHeroByHeroId(userId, heroId);
+		if (fullArmy && userHero != null) {
+			userHero = new FullArmyHero(userHero);
+		}
+
+		CombatTeam team = new CombatTeam(CombatTeam.TEAM_TYPE_PLAYERHERO);
+
+		int idelPosNum = 6;// 统计空位
+		long troopId = 0;
+		int teamPower = 0;
+		String troopName = null;
+		if (assistNpc != null) {
+			// 有助战军团
+			NPCTroop npcTroop = assistNpc.getTroop();
+			if (npcTroop != null) {
+				troopId = npcTroop.getTroopId();
+				troopName = assistNpc.getNpcName();
+				teamPower = assistNpc.getCombatPower();
+
+				NPCHero[] heros = npcTroop.getHeros();
+				int index = 0;
+				if (heros != null && heros.length > 0) {
+					for (NPCHero hero : heros) {
+						if (hero != null) {
+							if (hero.getSysHeroId() == userHero
+									.getSysHeroId()) {
+								// 替换为君主坦克
+								team.addUint(new PlayHeroCombatUint(userHero,
+										index + 1));
+							} else {
+								team.addUint(
+										new NPCHeroCombatUnit(hero, index + 1));
+							}
+							idelPosNum = idelPosNum - 1;
+						}
+						index = index + 1;
+					}
+				}
+			}
+		} else {
+			// 没有助战军团的额情况下使用玩家军团出战
+			Hero[] heros = null;
+			if (troop != null) {
+				troopId = troop.getTroopId();
+				troopName = troop.getName();
+				teamPower = troopService.getTroopCombatPower(troop);
+
+				if (fullArmy) {
+					heros = troop.getFullArmyHeros();
+				} else {
+					heros = troop.getHeros();
+				}
+
+				int index = 0;
+				for (Hero hero : heros) {
+					if (hero != null) {
+						team.addUint(new PlayHeroCombatUint(heros[index],
+								index + 1));
+						idelPosNum = idelPosNum - 1;
+					}
+					index = index + 1;
+				}
+			}
+		}
+
+		if (idelPosNum >= 6) {
+			throw new BaseException("team初始化失败");
+		}
+
+		team.setUserId(userId);
+		team.setTeamName(user.getUserName());
+		team.setIcon(user.getIcon());
+		team.setCasId(user.getMainCastleId());
+		team.setLevel(user.getUsrLv());
+		team.setTroopId(troopId);
+		team.setTroopName(troopName);
+		team.setTeamPower(teamPower);
+		// 设置联盟
+		if (user.getGuildId() != 0) {
+			// team.setGuild(guildService.getGuildById(user.getGuildId()));
+		}
+		return team;
+	}
+
+	@Override
+	public CombatTeam getNextDefenceCombatTeam(long casId) {
+		Castle castle = castleService.getCastleById(casId);
+		if (castle == null || castle.getStatus() == Castle.STATUS_OVER)
+			return null;
+
+		// 先找协防玩家队伍
+		CombatTeam team = getAssistTeam(castle);
+		if (team == null) {
+			// 找守城军团
+			team = getCastleDefPlanTeam(castle);
+			if (team != null) {
+				team.setPosX(castle.getPosX());
+				team.setPosY(castle.getPosY());
+			}
+		}
+		return team;
+	}
+
+	/**
+	 * 协防部队
+	 * 
+	 * @param castle
+	 * @return
+	 */
+	private CombatTeam getAssistTeam(Castle castle) {
+		CombatTeam team = null;
+		int cellId = MapCell.calculateId(castle.getPosX(), castle.getPosY());
+		MapCell toCell = null;
+		try {
+			toCell = mapService.getMapCellForWrite(cellId);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		List<Armyout> assistArmyOuts = (List<Armyout>) toCell.getStayArmyouts()
+				.values();
+		if (assistArmyOuts != null) {
+			Collections.sort(assistArmyOuts, armyoutComparator);
+
+			for (Armyout out : assistArmyOuts) {
+				if (!(out.getStatus() == Armyout.STATUS_STAY
+						&& out.getDefenderId() == castle.getCasId()))// 不是本城协防
+					continue;
+
+				Castle assistCastle = castleService
+						.getCastleById(out.getAttackerId());
+				if (assistCastle == null) {
+					continue;
+				}
+
+				Troop troop = troopService.getTroopById(
+						assistCastle.getUserId(), out.getTroopId());
+
+				if (troop == null) {
+					continue;
+				}
+
+				User user = userService.getUserById(assistCastle.getUserId());
+				team = this.getCombatTeamByUser(user, troop, true, false);
+				team.setPosX(assistCastle.getPosX());
+				team.setPosY(assistCastle.getPosY());
+			}
+		}
+		return team;
+	}
+
+	/**
+	 * 得到城池预定的防守队伍
+	 * 
+	 * @param casId
+	 * @return
+	 */
+	private CombatTeam getCastleDefPlanTeam(Castle castle) {
+		// CastleDefPlan defPlan = castleService
+		// .getCastleDefPlan(castle.getCasId());
+		// long userId = castle.getUserId();
+		// List<CombatUnit> units = new ArrayList<CombatUnit>();
+		// double power = 0;
+		// Formation formation = null;
+		// Troop troop = null;
+		// int heroNum = 0;
+		// if (defPlan != null && defPlan.getTroopId() > 0) {
+		//
+		// troop = troopService.getTroopById(userId, defPlan.getTroopId());
+		// if (troop != null) {
+		//
+		// // 武将
+		// Hero[] heros = troop.getHeros();
+		//
+		// for (Hero hero : heros) {
+		// if (hero != null && hero.idle()) {
+		// heroNum++;
+		// }
+		// }
+		//
+		// if (heroNum != 0) {
+		// // 阵型：影响每个武将的初始位置
+		// formation = troopService
+		// .getFormationById(troop.getFormationId());
+		// // int[] startPos = getStartPosAndSpace(heroNum);// y偏移量
+		// // int start = 0;
+		// power = troopService.getTroopCombatPower(troop);
+		//
+		// List<byte[]> fPostions = formation.getPostions();
+		// int posNum = fPostions.size();
+		// int num = 0;
+		// for (int i = 0; i < heros.length; i++) {
+		// if (heros[i] != null && num < posNum) {
+		// byte[] pos = fPostions.get(i);
+		//
+		// units.add(
+		// new PlayHeroCombatUint(heros[i],
+		// (byte) (CombatMap.MAX_X - 1
+		// - pos[0]),
+		// (byte) pos[1],
+		// CombatMap.DIRECTION_WEST));
+		// num++;
+		// }
+		// }
+		// }
+		//
+		// }
+		//
+		// }
+		// if (formation == null) {
+		// formation = troopService
+		// .getFormationById(AppConstants.FORMATION_DEFAULT_ID);
+		// }
+		// // 即使没有防守队伍，也要加上城墙+城防
+		// // 加城墙+城防
+		// List<CombatUnit> appends =
+		// getWallAndTowerArmyTeam(castle.getCasId());
+		// if (appends != null) {
+		// units.addAll(appends);
+		// }
+		// if (units != null && units.size() > 0) {
+		// CombatTeam team = new CombatTeam(CombatTeam.TEAM_TYPE_PLAYERHERO,
+		// formation);
+		// team.setUnits(units);
+		//
+		// if (troop != null) {
+		// team.setTroopId(troop.getTroopId());
+		// team.setTroopName(troop.getName());
+		// }
+		//
+		// team.setTeamPower((int) power);
+		//
+		// addUserEffect(team, userId);
+		//
+		// // team.setUserId(userId);
+		// // team.setCasId(castle.getCasId());
+		// // team.setIcon(user.getIcon());
+		// // team.setTeamName(user.getUserName());
+		// // team.setLevel(user.getUsrLv());
+		// // if (troop != null) {
+		// // team.setTroopId(troop.getTroopId());
+		// // team.setTroopName(troop.getName());
+		// // team.setTeamPower((int) troopService
+		// // .getTroopCombatPower(troop));
+		// // }
+		// // if (user.getGuildId() != 0) {
+		// // team.setGuild(guildService.getGuildById(user.getGuildId()));
+		// // }
+		// if (heroNum > 0) {
+		// User user = userService.getUserById(userId);
+		// addArmyAdviser(user, team, true, 3);
+		// }
+		// return team;
+		// }
+
+		return null;
+
+	}
+}

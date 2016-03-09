@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+	<typeAlias alias="armyout"
+		type="com.youxigu.dynasty2.armyout.domain.Armyout" />
+	<select id="listArmyouts" resultClass="armyout">
+		SELECT * FROM armyout
+	</select>
+
+	<update id="updateArmyout" parameterClass="armyout">
+		UPDATE armyout SET
+		outType = #outType#,attackerCellId=#attackerCellId#,
+		attackerId=#attackerId#,attackerGuildId=#attackerGuildId#,
+		attackerType=#attackerType#,defenderCellId=#defenderCellId#,defenderId=#defenderId#,
+		defenderGuildId=#defenderGuildId#,defenderType=#defenderType#,troopId=
+		#troopId#,atkPower=#atkPower#,defPower=#defPower#,baseTime=#baseTime#,
+		outDttm=#outDttm#,outArriveDttm=#outArriveDttm#,outBackDttm=#outBackDttm#,
+		status=#status#,combatId=#combatId#
+		WHERE id=#id#
+	</update>
+
+	<insert id="insertArmyout" parameterClass="armyout">
+		INSERT INTO armyout
+		(id,outType,attackerCellId,
+		attackerId,attackerGuildId,attackerType,defenderCellId,defenderId,
+		defenderGuildId,defenderType,troopId,atkPower,defPower,baseTime,
+		outDttm,outArriveDttm,outBackDttm,
+		status,combatId)
+		VALUES
+		(#id#,#outType#,#attackerCellId#,
+		#attackerId#,#attackerGuildId#,#attackerType#,#defenderCellId#,#defenderId#,
+		#defenderGuildId#,#defenderType#,#troopId#,#atkPower#,#defPower#,#baseTime#,
+		#outDttm#,#outArriveDttm#,#outBackDttm#,#status#,#combatId#)
+	</insert>
+
+	<delete id="deleteArmyout" parameterClass="armyout">
+		DELETE FROM armyout
+		WHERE id = #id#
+	</delete>
+
+</sqlMap>

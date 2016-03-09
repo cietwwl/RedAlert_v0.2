@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--系统参数:table:SysPara-->
+<dataset>
+<SysPara paraId="FIRST_SYS_HEROID" paraGroup="FIRST_SYS_HEROID" paraType="int" paraValue="100000000" paraName="角色创建时默认赠送的君主坦克" paraDesc="角色创建时默认赠送的君主坦克" />
+<SysPara paraId="TROOP_GRID_POSITION" paraGroup="TROOP_GRID_POSITION" paraType="int" paraValue="0" paraName="角色创建时默认君主坦克上阵的位置0到5表示6个位置" paraDesc="角色创建时默认君主坦克上阵的位置0到5表示6个位置" />
+<SysPara paraId="ENUMER_TROOP_NUM_1" paraGroup="TROOP_OPEN_USERLV" paraType="int" paraValue="0" paraName="主力军团的解锁等级" paraDesc="主力军团的解锁等级" />
+<SysPara paraId="ENUMER_TROOP_NUM_2" paraGroup="TROOP_OPEN_USERLV" paraType="int" paraValue="10" paraName="1号军团的解锁等级" paraDesc="1号军团的解锁等级" />
+<SysPara paraId="ENUMER_TROOP_NUM_3" paraGroup="TROOP_OPEN_USERLV" paraType="int" paraValue="20" paraName="2号军团的解锁等级" paraDesc="2号军团的解锁等级" />
+<SysPara paraId="TROOP_POS_NUM_1" paraGroup="TROOP_POS_OPEN_USERLV" paraType="int" paraValue="2" paraName="军团上阵1个武将的解锁等级" paraDesc="军团上阵1个武将的解锁等级" />
+<SysPara paraId="TROOP_POS_NUM_2" paraGroup="TROOP_POS_OPEN_USERLV" paraType="int" paraValue="4" paraName="军团上阵2个武将的解锁等级" paraDesc="军团上阵2个武将的解锁等级" />
+<SysPara paraId="TROOP_POS_NUM_3" paraGroup="TROOP_POS_OPEN_USERLV" paraType="int" paraValue="6" paraName="军团上阵3个武将的解锁等级" paraDesc="军团上阵3个武将的解锁等级" />
+<SysPara paraId="TROOP_POS_NUM_4" paraGroup="TROOP_POS_OPEN_USERLV" paraType="int" paraValue="8" paraName="军团上阵4个武将的解锁等级" paraDesc="军团上阵4个武将的解锁等级" />
+<SysPara paraId="TROOP_POS_NUM_5" paraGroup="TROOP_POS_OPEN_USERLV" paraType="int" paraValue="10" paraName="军团上阵5个武将的解锁等级" paraDesc="军团上阵5个武将的解锁等级" />
+<SysPara paraId="TROOP_POS_NUM_6" paraGroup="TROOP_POS_OPEN_USERLV" paraType="int" paraValue="12" paraName="军团上阵6个武将的解锁等级" paraDesc="军团上阵6个武将的解锁等级" />
+<SysPara paraId="SYS_HERO_REBIRTH_EXP_CARD" paraGroup="SYS_HERO" paraType="string" paraValue="1003001:20;1003002:100;1003003:500;1003004:1000;1003005:2000;1003006:5000" paraName="武将(重生)退还经验卡" paraDesc="武将(重生)退还经验卡" />
+<SysPara paraId="HERO_REBIRTH_CASH" paraGroup="SYS_HERO" paraType="string" paraValue="1:10;2:20;3:40;4:80;5:120;6:200;7:800" paraName="武将回炉(重生)需要消耗的元宝" paraDesc="武将回炉(重生)需要消耗的元宝" />
+<SysPara paraId="SYS_EQUIP_FACTORY_OPEN_STATUS" paraGroup="SYS_EQUIP_FACTORY" paraType="int" paraValue="2" paraName="兵器工厂开放等级" paraDesc="兵器工厂开放等级" />
+<SysPara paraId="HERO_EQUIP_LEVEL_UP" paraGroup="HERO_EQUIP" paraType="int" paraValue="2" paraName="装备强化默认最大是玩家等级多少倍" paraDesc="装备强化默认最大是玩家等级多少倍" />
+<SysPara paraId="HERO_EQUIP_EQUIP_REBIRTH_COST_1" paraGroup="HERO_EQUIP" paraType="int" paraValue="10" paraName="品质1装备分解消耗元宝" paraDesc="品质1装备分解消耗元宝" />
+<SysPara paraId="HERO_EQUIP_EQUIP_REBIRTH_COST_2" paraGroup="HERO_EQUIP" paraType="int" paraValue="20" paraName="品质2装备分解消耗元宝" paraDesc="品质2装备分解消耗元宝" />
+<SysPara paraId="HERO_EQUIP_EQUIP_REBIRTH_COST_3" paraGroup="HERO_EQUIP" paraType="int" paraValue="30" paraName="品质3装备分解消耗元宝" paraDesc="品质3装备分解消耗元宝" />
+<SysPara paraId="HERO_EQUIP_EQUIP_REBIRTH_COST_4" paraGroup="HERO_EQUIP" paraType="int" paraValue="40" paraName="品质4装备分解消耗元宝" paraDesc="品质4装备分解消耗元宝" />
+<SysPara paraId="HERO_EQUIP_EQUIP_REBIRTH_COST_5" paraGroup="HERO_EQUIP" paraType="int" paraValue="50" paraName="品质5装备分解消耗元宝" paraDesc="品质5装备分解消耗元宝" />
+<SysPara paraId="HERO_EQUIP_EQUIP_REBIRTH_COST_6" paraGroup="HERO_EQUIP" paraType="int" paraValue="60" paraName="品质6装备分解消耗元宝" paraDesc="品质6装备分解消耗元宝" />
+<SysPara paraId="HERO_EQUIP_EQUIP_REBIRTH_COST_7" paraGroup="HERO_EQUIP" paraType="int" paraValue="70" paraName="品质7装备分解消耗元宝" paraDesc="品质7装备分解消耗元宝" />
+<SysPara paraId="HERO_CARD_DISCARD_ENTID_COLOR_1" paraGroup="HERO_CARD_DISCARD_ENTID" paraType="int" paraValue="1" paraName="品质1武将图纸分解得到的物品数量" paraDesc="品质1武将图纸分解得到的物品数量" />
+<SysPara paraId="HERO_CARD_DISCARD_ENTID_COLOR_2" paraGroup="HERO_CARD_DISCARD_ENTID" paraType="int" paraValue="30" paraName="品质2武将图纸分解得到的物品数量" paraDesc="品质2武将图纸分解得到的物品数量" />
+<SysPara paraId="HERO_CARD_DISCARD_ENTID_COLOR_3" paraGroup="HERO_CARD_DISCARD_ENTID" paraType="int" paraValue="150" paraName="品质3武将图纸分解得到的物品数量" paraDesc="品质3武将图纸分解得到的物品数量" />
+<SysPara paraId="HERO_CARD_DISCARD_ENTID_COLOR_4" paraGroup="HERO_CARD_DISCARD_ENTID" paraType="int" paraValue="300" paraName="品质4武将图纸分解得到的物品数量" paraDesc="品质4武将图纸分解得到的物品数量" />
+<SysPara paraId="HERO_CARD_DISCARD_ENTID_COLOR_5" paraGroup="HERO_CARD_DISCARD_ENTID" paraType="int" paraValue="7000" paraName="品质5武将图纸分解得到的物品数量" paraDesc="品质5武将图纸分解得到的物品数量" />
+<SysPara paraId="HERO_CARD_DISCARD_ENTID_COLOR_6" paraGroup="HERO_CARD_DISCARD_ENTID" paraType="int" paraValue="20000" paraName="品质6武将图纸分解得到的物品数量" paraDesc="品质6武将图纸分解得到的物品数量" />
+<SysPara paraId="HERO_CARD_DISCARD_ENTID_COLOR_7" paraGroup="HERO_CARD_DISCARD_ENTID" paraType="int" paraValue="50000" paraName="品质7武将图纸分解得到的物品数量" paraDesc="品质7武将图纸分解得到的物品数量" />
+<SysPara paraId="HERO_CARD_DISCARD_ENTID" paraGroup="HERO_CARD_DISCARD_ENTID" paraType="int" paraValue="1020001" paraName="图纸分解产物" paraDesc="图纸分解产物" />
+<SysPara paraId="HERO_EQUIP_BUILD_ADD_ATTR" paraGroup="HERO_EQUIP" paraType="int" paraValue="2" paraName="打造装备每级加的属性百分比" paraDesc="打造装备每级加的属性百分比" />
+<SysPara paraId="BASE_BUILDING_ENABLE_LEVEL" paraGroup="BUILDING_ENABLE_LEVEL" paraType="int" paraValue="1" paraName="基地开启等级" paraDesc="主基地建筑可以被玩家访问需要的君主等级" />
+<SysPara paraId="BARRACK_OPEN_STATUS" paraGroup="BARRACK_OPEN_STATUS" paraType="int" paraValue="1" paraName="维修工厂的开启开关 1表示开启" paraDesc="维修工厂的开启开关 1表示开启" />
+<SysPara paraId="SYS_HERO_EXP_CARD" paraGroup="SYS_HERO_EXP_CARD" paraType="string" paraValue="1003001;1003002;1003003;1003004;1003005;1003006" paraName="武将经验卡ID" paraDesc="武将经验卡ID" />
+<SysPara paraId="MINERAL_RESOURCE_ITEM" paraGroup="RESOURCE_ITEM" paraType="string" paraValue="1020001;1020002;1020003;1020004" paraName="矿石资源道具" paraDesc="矿石资源道具" />
+<SysPara paraId="SYS_BARRACK_ONE_ARMY" paraGroup="SYS_BARRACK_ONE_ARMY" paraType="int" paraValue="180" paraName="维修工厂生产一个零件要多久时间单位秒" paraDesc="维修工厂生产一个零件要多久时间单位秒" />
+<SysPara paraId="SYS_BARRACK_ONE_ARMY_ITEM" paraGroup="SYS_BARRACK_ONE_ARMY_ITEM" paraType="int" paraValue="1020201" paraName="维修工厂高级零件的物品id" paraDesc="维修工厂高级零件的物品id" />
+<SysPara paraId="SYS_BARRACK_ONE_ARMY_EXCHANGE_COUNT" paraGroup="SYS_BARRACK_ONE_ARMY_EXCHANGE_COUNT" paraType="int" paraValue="20" paraName="维修工厂1个高级零件可以兑换的普通零件数量" paraDesc="维修工厂1个高级零件可以兑换的普通零件数量" />
+<SysPara paraId="SYS_BARRACK_ONE_ARMY_OIL_NUM" paraGroup="SYS_BARRACK_ONE_ARMY_OIL_NUM" paraType="int" paraValue="680000" paraName="维修工厂生产一个零件消耗的油矿数量" paraDesc="维修工厂生产一个零件消耗的油矿数量" />
+<SysPara paraId="SYS_BARRACK_ONE_ARMY_DIAMOND_NUM" paraGroup="SYS_BARRACK_ONE_ARMY_DIAMOND_NUM" paraType="int" paraValue="30" paraName="元宝加速1颗元宝可以抵消多少秒零件生产时间(秒）" paraDesc="元宝加速1颗元宝可以抵消多少秒零件生产时间（秒）" />
+<SysPara paraId="INIT_GOLD_IN_BUILDING" paraGroup="INIT_IN_BUILDING" paraType="int" paraValue="500" paraName="金矿开放时的初始值" paraDesc="金矿开放时的初始值" />
+<SysPara paraId="INIT_OIL_IN_BUILDING" paraGroup="INIT_IN_BUILDING" paraType="int" paraValue="500" paraName="油矿开放时的初始值" paraDesc="油矿开放时的初始值" />
+<SysPara paraId="INIT_IRON_IN_BUILDING" paraGroup="INIT_IN_BUILDING" paraType="int" paraValue="500" paraName="铁矿开放时的初始值" paraDesc="铁矿开放时的初始值" />
+<SysPara paraId="INIT_URANIUM_IN_BUILDING" paraGroup="INIT_IN_BUILDING" paraType="int" paraValue="500" paraName="铀矿开放时的初始值" paraDesc="铀矿开放时的初始值" />
+<SysPara paraId="AUTO_BUILD_OPEN_VIP_LEVEL" paraGroup="AUTO_BUILD" paraType="int" paraValue="4" paraName="开启自动建造的VIP等级" paraDesc="开启自动建造的VIP等级" />
+<SysPara paraId="SECOND_BUILDER_OPEN_USER_LEVEL" paraGroup="BUILDER_OPEN_LEVEL" paraType="int" paraValue="10" paraName="第二建造队列开启的用户等级" paraDesc="第二建造队列开启的用户等级" />
+<SysPara paraId="THIRD_BUILDER_OPEN_VIP_LEVEL" paraGroup="BUILDER_OPEN_LEVEL" paraType="int" paraValue="6" paraName="第三建造队列开启的VIP等级" paraDesc="第三建造队列开启的VIP等级" />
+<SysPara paraId="MYSTICSHOP_OPEN_STATUS" paraGroup="MYSTICSHOP_OPEN_STATUS" paraType="int" paraValue="1" paraName="神秘商店开关，1为开其他为关" paraDesc="神秘商店开关，1为开其他为关" />
+<SysPara paraId="SYS_OIL_RES_NUM_PER_DIAMOND" paraGroup="SYS_OIL_RES_NUM_PER_DIAMOND" paraType="int" paraValue="40" paraName="一个钻石购买多少个油矿" paraDesc="一个钻石购买多少个油矿" />
+<SysPara paraId="SYS_IRON_RES_NUM_PER_DIAMOND" paraGroup="SYS_IRON_RES_NUM_PER_DIAMOND" paraType="int" paraValue="24" paraName="一个钻石购买多少个铁矿" paraDesc="一个钻石购买多少个铁矿" />
+<SysPara paraId="SYS_URANIUM_RES_NUM_PER_DIAMOND" paraGroup="SYS_URANIUM_RES_NUM_PER_DIAMOND" paraType="int" paraValue="1" paraName="一个钻石购买多少个铀矿" paraDesc="一个钻石购买多少个铀矿" />
+<SysPara paraId="SYS_GOLD_RES_NUM_PER_DIAMOND" paraGroup="SYS_GOLD_RES_NUM_PER_DIAMOND" paraType="int" paraValue="10" paraName="一个钻石购买多少个金矿" paraDesc="一个钻石购买多少个金矿" />
+<SysPara paraId="CASTLE_FRIEND_MAXNUM" paraGroup="CASTLE_FRIEND_MAXNUM" paraType="int" paraValue="100" paraName="最大好友数量" paraDesc="最大好友数量" />
+<SysPara paraId="CASTLE_BLACK_MAXNUM" paraGroup="CASTLE_BLACK_MAXNUM" paraType="int" paraValue="50" paraName="最大黑名单数量" paraDesc="最大黑名单数量" />
+<SysPara paraId="CASTLE_APPFRIEND_MAXNUM" paraGroup="CASTLE_APPFRIEND_MAXNUM" paraType="int" paraValue="50" paraName="最大发出申请数量" paraDesc="最大发出申请数量" />
+<SysPara paraId="CASTLE_ACCFRIEND_MAXNUM" paraGroup="CASTLE_ACCFRIEND_MAXNUM" paraType="int" paraValue="50" paraName="最大收到申请数量" paraDesc="最大收到申请数量" />
+<SysPara paraId="SYS_CASTLE_RECENT_FRIEND_MAX" paraGroup="SYS_CASTLE_RECENT_FRIEND_MAX" paraType="int" paraValue="50" paraName="最大最近联系人数量" paraDesc="最大最近联系人数量" />
+<SysPara paraId="FRIEND_SEARCH_CD_TIME" paraGroup="FRIEND_SEARCH_CD_TIME" paraType="int" paraValue="10" paraName="好友搜索的cd时间" paraDesc="好友搜索的cd时间" />
+<SysPara paraId="FRIEND_APP_VALID_DAYS" paraGroup="FRIEND_APP_VALID_DAYS" paraType="int" paraValue="1" paraName="清除好友申请过期天 默认1天" paraDesc="清除好友申请过期天 默认1天" />
+<SysPara paraId="FRIEND_OPEN_LEVEL" paraGroup="FRIEND_OPEN_LEVEL" paraType="int" paraValue="1" paraName="好友功能开启等级" paraDesc="好友功能开启等级" />
+<SysPara paraId="FRIEND_RECEIVE_HP" paraGroup="FRIEND_RECEIVE_HP" paraType="int" paraValue="30" paraName="每日领取体力的次数" paraDesc="每日领取体力的次数" />
+<SysPara paraId="FRIEND_RECEIVE_HP_POINT" paraGroup="FRIEND_RECEIVE_HP_POINT" paraType="int" paraValue="6" paraName="赠送获得的体力点数默认30" paraDesc="赠送获得的体力点数默认30" />
+<SysPara paraId="CHANGE_USERNAME_ITEM_ITEM" paraGroup="CHANGE_USERNAME_ITEM_ITEM" paraType="int" paraValue="1030104" paraName="改名消耗的道具id" paraDesc="改名消耗的道具id" />
+<SysPara paraId="USER_MAX_HP_POINT" paraGroup="USER_MAX_HP_POINT" paraType="int" paraValue="600" paraName="体力最大上限值默认600" paraDesc="体力最大上限值默认600" />
+<SysPara paraId="USER_MAX_ACT_POINT" paraGroup="USER_MAX_ACT_POINT" paraType="int" paraValue="600" paraName="行动力最大上限值默认600" paraDesc="行动力最大上限值默认600" />
+<SysPara paraId="SYS_RISK_JOIN_NUM" paraGroup="SYS_RISK_JOIN_NUM" paraType="int" paraValue="10" paraName="系统设置的每天最大挑战次数" paraDesc="系统设置的每天最大挑战次数" />
+<SysPara paraId="RISK_CLEAR_CASH" paraGroup="RISK_CLEAR_CASH" paraType="int" paraValue="10" paraName="冒险清除某一小关当天已经挑战次数消耗的元宝" paraDesc="冒险清除某一小关当天已经挑战次数消耗的元宝" />
+<SysPara paraId="SYS_RISK_OPEN_LEVEL" paraGroup="SYS_RISK_OPEN_LEVEL" paraType="int" paraValue="5" paraName="冒险精英关卡开启等级" paraDesc="冒险精英关卡开启等级" />
+<SysPara paraId="SYS_RISK_REST_FAIL_NUM_TIME" paraGroup="SYS_RISK_REST_FAIL_NUM_TIME" paraType="string" paraValue="6;18" paraName="冒险关卡重置失败次数时间点，需要配置全天的时间点分号隔开如2;6;10;" paraDesc="冒险关卡重置失败次数时间点，需要配置全天的时间点分号隔开如2;6;10;" />
+<SysPara paraId="SYS_RISK_DROP_MAX_NUM" paraGroup="SYS_RISK_DROP_MAX_NUM" paraType="int" paraValue="3" paraName="冒险关卡物品多少次未掉落后必然掉落" paraDesc="冒险关卡物品多少次未掉落后必然掉落" />
+<SysPara paraId="SYS_TOWER_USER_LEVEL_LIMIT" paraGroup="SYS_TOWER_USER_LEVEL_LIMIT" paraType="int" paraValue="5" paraName="进入作战实验室用户等级限制" paraDesc="进入作战实验室用户等级限制" />
+<SysPara paraId="SYS_TOWER_FREE_JOIN_TIME" paraGroup="SYS_TOWER_FREE_JOIN_TIME" paraType="int" paraValue="3" paraName="作战实验室免费进入次数" paraDesc="作战实验室免费进入次数" />
+<SysPara paraId="SYS_TOWER_ITEM_JOIN_TIME" paraGroup="SYS_TOWER_ITEM_JOIN_TIME" paraType="int" paraValue="4" paraName="作战实验室道具进入次数" paraDesc="作战实验室道具进入次数" />
+<SysPara paraId="SYS_TOWER_ITEM_FACTOR" paraGroup="SYS_TOWER_ITEM_FACTOR" paraType="string" paraValue="1,2,4,7" paraName="作战实验室道具进入消耗的道具数量" paraDesc="作战实验室道具进入消耗的道具数量" />
+<SysPara paraId="SYS_TOWER_KEY_STAGE_SPAN" paraGroup="SYS_TOWER_KEY_STAGE_SPAN" paraType="int" paraValue="10" paraName="作战实验室保底奖励配置的关卡跨度" paraDesc="作战实验室保底奖励配置的关卡跨度" />
+<SysPara paraId="SYS_TOWER_ITEM_JOIN" paraGroup="SYS_TOWER_ITEM_JOIN" paraType="int" paraValue="1030109" paraName="作战实验室进入道具" paraDesc="作战实验室进入道具" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</dataset>

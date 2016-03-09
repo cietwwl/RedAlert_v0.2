@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+
+	<typeAlias alias="account" type="com.youxigu.dynasty2.user.domain.Account" />
+    <cacheModel type="MEMCACHED" id="cache_account" serialize="false" readOnly="false" >
+        <flushOnExecute statement="insertAccount">
+            <flushModel flushstatement="account" flushMode="insert" flushpara="accId"/>
+        </flushOnExecute>
+        <flushOnExecute statement="updateAccount">
+            <flushModel flushstatement="account" flushMode="update" flushpara="accId"/>
+        </flushOnExecute>
+        <property name="class" value="account"/>
+        <property name="pk" value="accId"/><!--对于分表的情况,这里应该是表的主键+分表的字段-->
+    </cacheModel>
+    <insert id="insertAccount" parameterClass="account">
+      INSERT INTO account (accId,accName,accDesc,status,createDttm,loginIp,lastLoginDttm,lastLogoutDttm,onlineTimeSum,offlineTimeSum, 
+      				envelopDttm,inviteAccId,nodeIp,qqFlag,qqCurrFlag,qqYellowLv,qqBlueLv,qqVipLv,qqPlusLv,qqLv,qq3366Lv,qqRedLv,qqGreenLv,
+      				qqPinkLv,qqSuperLv,pf,via,areaId,pType,dType,dInfo) 
+      VALUES (#accId#, #accName#,#accDesc#,#status#,#createDttm#, #loginIp#, #lastLoginDttm#,#lastLogoutDttm#,#onlineTimeSum#,
+      			#offlineTimeSum#,#envelopDttm#, #inviteAccId#,#nodeIp#,#qqFlag#,#qqCurrFlag#,#qqYellowLv#,#qqBlueLv#,#qqVipLv#,#qqPlusLv#,
+      			#qqLv#,#qq3366Lv#,#qqRedLv#,#qqGreenLv#,#qqPinkLv#,#qqSuperLv#,#pf#,#via#,#areaId#,#pType#,#dType#,#dInfo#)
+    </insert>
+      <!-- user是同步更新-->
+    <update id="updateAccount" parameterClass="account"> <!--asyncUpdate="1" 这里不能异步,vistor bind会修改accName-->
+      UPDATE account SET accName=#accName#,loginIp = #loginIp#, lastLoginDttm = #lastLoginDttm#,status = #status#, 
+      		accDesc = #accDesc#, envelopDttm = #envelopDttm#,lastLogoutDttm=#lastLogoutDttm#,onlineTimeSum=#onlineTimeSum#,
+      		offlineTimeSum=#offlineTimeSum#,nodeIp=#nodeIp#,qqFlag=#qqFlag#,qqCurrFlag=#qqCurrFlag#,qqYellowLv=#qqYellowLv#,
+      		qqBlueLv=#qqBlueLv#,qqVipLv=#qqVipLv#,qqPlusLv=#qqPlusLv#,qqLv=#qqLv#,qq3366Lv=#qq3366Lv#,qqRedLv=#qqRedLv#,
+      		qqGreenLv=#qqGreenLv#,qqPinkLv=#qqPinkLv#,qqSuperLv=#qqSuperLv#,pf=#pf#,areaId=#areaId#,
+      		pType=#pType#,dType=#dType#,dInfo=#dInfo#
+      WHERE accId = #accId#
+    </update>
+  
+    <select id="getAccountByAccId" parameterClass="long" resultClass="account" cacheModel="cache_account" cacheOnlyObject="true">
+      SELECT * FROM account WHERE accId = #accId# 
+    </select>
+  
+    <select id="getAccountByAccName" parameterClass="java.util.HashMap"
+      resultClass="account" cacheModel="cache_account" >
+      SELECT * FROM account WHERE accName = #accName# and areaId=#areaId#
+    </select>
+    <select id="getCountAccount" resultClass="int">
+      SELECT count(*) FROM account
+    </select>
+
+    <!-- user 开始 -->
+	<typeAlias alias="user" type="com.youxigu.dynasty2.user.domain.User" />
+	<cacheModel type="MEMCACHED" id="cache_user" serialize="false" readOnly="false">
+		<flushOnExecute statement="insertUser">
+			<flushModel flushstatement="user" flushMode="insert" flushpara="userId"/>
+			<!-- user是同步更新-->
+		</flushOnExecute>
+		<flushOnExecute statement="updateUser">
+			<flushModel flushstatement="user" flushMode="update" flushpara="userId"/>
+			<!-- user是同步更新-->
+		</flushOnExecute>
+		<property name="class" value="user"/>
+		<property name="pk" value="userId"/>
+	</cacheModel>
+	<insert id="insertUser" parameterClass="user">
+        INSERT INTO user (userId,accId,userName,charId,selfSignature,usrLv,cash,
+        consumeCash,giftTotal,cashTotal,payPoint,honor,lastLoginDttm,countryId,
+        mainCastleId,createDate,guildId,upLevelTime,password,vip,title,curActPoint,
+        troopId,hpPoint,junGong,heroId,color,autoResumeArmy,titleAwardId) 
+        VALUES (#userId#,#accId#,#userName#,#charId#,#selfSignature#,#usrLv#,
+        #cash#,#consumeCash#,#giftTotal#,#cashTotal#,#payPoint#,#honor#,#lastLoginDttm#,
+        #countryId#,#mainCastleId#,#createDate#,#guildId#,#upLevelTime#,#password#,#vip#,#title#,
+        #curActPoint#,#troopId#,#hpPoint#,#junGong#,#heroId#,#color#,#autoResumeArmy#,#titleAwardId#)
+    </insert>
+	<update id="updateUser" parameterClass="user" asyncUpdate="1"><!--这里用异步可能会出问题 asyncUpdate="1"-->
+		UPDATE user SET accId=#accId#,userName=#userName#,charId=#charId#,selfSignature=#selfSignature#,
+					usrLv=#usrLv#,cash=#cash#,consumeCash=#consumeCash#,giftTotal=#giftTotal#,cashTotal=#cashTotal#,
+					payPoint=#payPoint#,honor=#honor#,lastLoginDttm=#lastLoginDttm#,countryId=#countryId#,
+					mainCastleId=#mainCastleId#,createDate=#createDate#,guildId=#guildId#,upLevelTime=#upLevelTime#,
+					password=#password#,vip=#vip#,title=#title#,curActPoint=#curActPoint#,troopId=#troopId#,
+					hpPoint=#hpPoint#,junGong=#junGong#,heroId=#heroId#,color=#color#,autoResumeArmy=#autoResumeArmy#,
+					titleAwardId=#titleAwardId# 
+					WHERE userId = #userId#
+	</update>
+	<select id="getUserById" parameterClass="long" resultClass="user" cacheModel="cache_user" cacheOnlyObject="true">
+		SELECT * FROM user WHERE userId = #userId#
+	</select>
+	<select id="getUserByIds" parameterClass="java.util.List" resultClass="user" cacheModel="cache_user" cacheOnlyObject="true">
+				select * from user where userId in 
+		<iterate open="(" close=")"  conjunction=",">
+					#[]#
+		</iterate>
+	</select>
+	<select id="getUserByName" resultClass="user" parameterClass="java.lang.String" cacheModel="cache_user">
+		SELECT * FROM user WHERE userName = #userName#
+	</select>
+	<select id="getUserByAccId" parameterClass="long" resultClass="user" cacheModel="cache_user">
+		SELECT * FROM user WHERE accId = #accId# limit 1
+	</select>
+	<select id="getCountUsers" resultClass="int"> <!--no cache-->
+		SELECT count(*) FROM user
+	</select>
+    <!-- user 结束 -->
+
+    <!--  君主等级对应属性的配置 begin --> 
+	<typeAlias alias="lvParaLimit" type="com.youxigu.dynasty2.user.domain.LvParaLimit"/>
+	<select id="listLvParaLimits" resultClass="lvParaLimit">
+		SELECT * FROM lvparalimit
+	</select>
+
+    
+    <!-- 玩家属性 begin -->
+    <insert id="insertUserAttr" parameterClass="java.util.Map" shardingParams='[{"paramExpr":"userId","tableName":"userattributes"}]'>
+    	INSERT INTO userattributes(userId, attrName, attrValue) VALUES (#userId#, #attrName#, #attrValue#)
+    </insert>
+    
+    <update id="updateUserAttr" parameterClass="java.util.Map" shardingParams='[{"paramExpr":"userId","tableName":"userattributes"}]'>
+    	UPDATE userattributes set attrValue = #attrValue# WHERE userId = #userId# AND attrName = #attrName#
+    </update>
+    
+    <select id="getAllUserAttr" parameterClass="java.util.Map" resultClass="java.util.HashMap" shardingParams='[{"paramExpr":"userId","tableName":"userattributes"}]'>
+    	SELECT attrName, attrValue FROM userattributes WHERE userId = #userId#
+    </select>
+    <select id="getUserAttr" parameterClass="java.util.Map" resultClass="string" shardingParams='[{"paramExpr":"userId","tableName":"userattributes"}]'>
+    	SELECT attrValue FROM userattributes WHERE userId = #userId# AND attrName = #attrName#
+    </select>
+    <!-- 玩家属性 end -->
+
+	<!-- 白名单-->
+	<typeAlias alias="accountWhiteList" type="com.youxigu.dynasty2.user.domain.AccountWhiteList" />
+	<cacheModel type="MEMCACHED" id="cache_accountWhiteList" serialize="false" readOnly="false" >
+		<flushOnExecute statement="insertAccounttWhiteList">
+			<flushModel flushstatement="accountWhiteList" flushMode="insert" flushpara="accId"/>
+		</flushOnExecute>
+		<flushOnExecute statement="updateAccounttWhiteList">
+			<flushModel flushstatement="accountWhiteList" flushMode="update" flushpara="accId"/>
+		</flushOnExecute>
+		<property name="class" value="accountWhiteList"/>
+		<property name="pk" value="openId"/>
+	</cacheModel>
+	<insert id="insertAccounttWhiteList" parameterClass="accountWhiteList">
+		INSERT INTO accountwhitelist (openId,dttm,status) VALUES (#openId#,#dttm#,#status#)
+	</insert>
+	<update id="updateAccounttWhiteList" parameterClass="accountWhiteList">
+		UPDATE accountwhitelist SET dttm = #dttm#, status = #status# WHERE openId = #openId#
+	</update>
+	<select id="getAccounttWhiteList" parameterClass="java.lang.String" resultClass="accountWhiteList" cacheModel="cache_accountWhiteList" cacheOnlyObject="true">
+		SELECT * FROM accountwhitelist  WHERE openId = #openId#
+	</select>
+
+    <!-- 通用的君主计数器 -->
+    <typeAlias alias="userCount" type="com.youxigu.dynasty2.user.domain.UserCount" />
+    <cacheModel type="MEMCACHED" id="cache_userCount" serialize="false" readOnly="false">
+      <flushOnExecute statement="insertUserCount">
+        <flushModel flushstatement="userCount" flushMode="insert" flushpara="userId,type"/>
+      </flushOnExecute>
+      <flushOnExecute statement="updateUserCount">
+        <flushModel flushstatement="userCount" flushMode="update" flushpara="userId,type"/>
+      </flushOnExecute>
+      <property name="class" value="userCount"/>
+      <property name="pk" value="userId,type"/>
+    </cacheModel>
+    <select id="getUserCount" parameterClass="java.util.Map" resultClass="userCount" cacheModel="cache_userCount" cacheOnlyObject="true">
+        SELECT * FROM usercount WHERE userId = #userId# AND type = #type#
+    </select>
+    <insert id="insertUserCount" parameterClass="userCount">
+        INSERT INTO usercount (userId, type, num, lastDttm) VALUES (#userId#, #type#, #num#, #lastDttm#)
+    </insert>
+    <update id="updateUserCount" parameterClass="userCount" asyncUpdate="1">
+        UPDATE usercount SET num = #num#, lastDttm = #lastDttm# WHERE userId = #userId# AND type = #type#
+    </update>
+
+    <!--玩家冲值记录-->
+    <typeAlias alias="userRechargeLog" type="com.youxigu.dynasty2.user.domain.UserRechargeLog" />
+    <insert id="insertUserRechargeLog" parameterClass="userRechargeLog">
+        INSERT INTO userrechargelog (userId,type,cash,balance,qb,quan,dttm,orderId,pf) VALUES (#userId#,#type#,#cash#,#balance#,#qb#,#quan#,#dttm#,#orderId#,#pf#);
+    </insert>
+    <select id="getUserRechargeLog" parameterClass="java.util.HashMap" resultClass="userRechargeLog" >
+        select * from  userrechargelog where userId=#userId# and orderId=#orderId#  
+    </select>
+    <select id="getUserRechargeList" parameterClass="java.util.HashMap" resultClass="userRechargeLog" >
+      select userId,cash from (select userId,sum(cash) as cash,dttm from userrechargelog where dttm between #startDttm# and #endDttm# group by userId) as a order by cash desc,dttm asc limit #start#,#size#
+    </select>
+    <select id="getUserRechargeListByDate" parameterClass="java.util.HashMap" resultClass="userRechargeLog" >
+        select * from  userrechargelog where userId=#userId# and pf=#pf# and dttm&gt;=#startDttm# and dttm&lt;=#endDttm#
+    </select>
+	
+  
+    <!--玩家消费记录-->
+    <typeAlias alias="userConsumeLog" type="com.youxigu.dynasty2.user.domain.UserConsumeLog" />
+    <insert id="insertUserConsumeLog" parameterClass="userConsumeLog">
+        INSERT INTO userconsumelog (userId,reason,cash,balance,dttm,pf) VALUES (#userId#,#reason#,#cash#,#balance#,#dttm#,#pf#);
+    </insert>
+    <select id="getUserConsumeLogByDate" parameterClass="java.util.HashMap" resultClass="int" >
+        select sum(cash) sumcash from  userconsumelog where userId=#userId#  and dttm&gt;=#startDttm# and dttm&lt;=#endDttm#
+    </select>
+    
+    <!-- ====================================================UserEffect start================================================================-->
+    <typeAlias alias="userEffect" type="com.youxigu.dynasty2.user.domain.UserEffect"/>
+    <cacheModel type="MEMCACHED" id="cache_userEffect" serialize="false" readOnly="false">
+      <flushOnExecute statement="insertUserEffect">
+        <flushModel flushstatement="userEffect" flushMode="insert" flushpara="id"/>
+        <flushModel flushstatement="getUserEffectByUserId" flushMode="insert" flushpara="userId"/>
+      </flushOnExecute>
+      <flushOnExecute statement="updateUserEffect">
+        <flushModel flushstatement="userEffect" flushMode="update" flushpara="id"/>
+      </flushOnExecute>
+      <flushOnExecute statement="deleteUserEffectById">
+        <flushModel flushstatement="getUserEffectByUserId" flushMode="delete" flushpara="userId"/>
+        <flushModel flushstatement="userEffect" flushMode="delete" flushpara="id"/>
+      </flushOnExecute>
+  
+      <property name="class" value="userEffect"/>
+      <property name="pk" value="userId,id"/>
+    </cacheModel>
+    <insert id="insertUserEffect" parameterClass="userEffect">
+        INSERT INTO usereffect (userId, entId, effTypeId,  absValue, perValue, expireDttm) values( #userId#,  #entId#, #effTypeId#, #absValue#, #perValue#, #expireDttm#)
+        <selectKey resultClass="int" keyProperty="id">
+            SELECT last_insert_Id() 
+        </selectKey>
+    </insert>
+    <update id="updateUserEffect" parameterClass="userEffect" asyncUpdate="1">
+        UPDATE usereffect SET entId = #entId#, absValue = #absValue#, perValue = #perValue#, expireDttm = #expireDttm#  WHERE id = #id#
+    </update>
+    <delete id="deleteUserEffectById" parameterClass="userEffect">
+        DELETE FROM usereffect WHERE id = #id#
+    </delete>
+    <select id="getUserEffectByUserId" resultClass="userEffect" parameterClass="long" cacheModel="cache_userEffect" resultIsList="true">
+        SELECT * FROM usereffect where userId = #userId#
+    </select>
+
+    <!-- ====================================================Forum start================================================================-->
+    <typeAlias alias="forum" type="com.youxigu.dynasty2.user.domain.Forum" />
+    <select id="getForumList" resultClass="forum">
+        SELECT * FROM forum
+    </select>
+    <select id="getForumListByType" resultClass="forum" parameterClass="int">
+        SELECT * FROM forum where forumType=#forumType#
+    </select>
+    <insert id="insertForum" parameterClass="forum" >
+        INSERT INTO forum(forumType, title, forumContext, lastTime,countryId,tianZiName)
+        VALUES(#forumType#, #title#, #forumContext#, #lastTime#,#countryId#,#tianZiName#)
+        <selectKey keyProperty="forumId" resultClass="int">
+            SELECT last_insert_Id()
+        </selectKey>
+    </insert>
+
+    <delete id="deleteForum" parameterClass="int">
+        DELETE FROM forum where forumType=#forumType#
+    </delete>
+    <update id="updateForum" parameterClass="forum">
+        UPDATE forum set title=#title#,forumContext=#forumContext#,lastTime=#lastTime#,countryId=#countryId#,tianZiName=#tianZiName# where forumId=#forumId#
+    </update>
+
+    <select id="getForumById" resultClass="forum" parameterClass="int">
+        SELECT * FROM forum where forumId=#forumId#
+    </select>
+    
+    <!--cdkey-->
+	<typeAlias alias="userCdkey" type="com.youxigu.dynasty2.cdkey.domain.UserCdkey" />
+	<cacheModel type="MEMCACHED" id="cache_userCdkey" serialize="false" readOnly="false" useNullCache="false">
+		<flushOnExecute statement="insertUserCdkey">
+			<flushModel flushstatement="userCdkey" flushMode="insert" flushpara="userId,keyType"/>
+		</flushOnExecute>
+		<property name="class" value="userCdkey"/>
+		<property name="pk" value="userId,keyType"/>
+	</cacheModel>
+    
+    <select id="getUserCdkey" resultClass="userCdkey" parameterClass="java.util.HashMap" cacheModel="cache_userCdkey" cacheOnlyObject="true">
+        SELECT * FROM usercdkey where userId=#userId# and keyType=#keyType#
+    </select>
+	<insert id="insertUserCdkey" parameterClass="userCdkey" >
+		INSERT INTO usercdkey(userId, keyType, cdkey, dttm) VALUES(#userId#, #keyType#, #cdkey#, #dttm#)
+	</insert>
+	
+	<!-- achieve -->
+	<typeAlias alias="achieve" type="com.youxigu.dynasty2.user.domain.Achieve" />
+	<typeAlias alias="achieveType" type="com.youxigu.dynasty2.user.domain.AchieveType" />
+	<typeAlias alias="achieveLimit" type="com.youxigu.dynasty2.user.domain.AchieveLimit" />
+	<select id="listAllAchieve" resultClass="achieve">
+        SELECT * FROM achieve
+    </select>
+    <select id="listAchieveType" resultClass="achieveType">
+        SELECT * FROM achievetype
+    </select>
+    <select id="listAchieveLimit" resultClass="achieveLimit">
+        SELECT * FROM achievelimit
+    </select>
+    
+    <typeAlias alias="userAchieve" type="com.youxigu.dynasty2.user.domain.UserAchieve" />
+    <cacheModel type="MEMCACHED" id="cache_userAchieve" serialize="false" readOnly="false">
+      <flushOnExecute statement="insertUserAchieve">
+        <flushModel flushstatement="userAchieve" flushMode="insert" flushpara="userId,entId"/>
+        <flushModel flushstatement="getUserAchieveByUserId" flushMode="insert" flushpara="userId"/>
+      </flushOnExecute>
+      <flushOnExecute statement="updateUserAchieve">
+        <flushModel flushstatement="userAchieve" flushMode="update" flushpara="userId,entId"/>
+      </flushOnExecute>
+      <property name="class" value="userAchieve"/>
+      <property name="pk" value="userId,entId"/>
+    </cacheModel>
+    <insert id="insertUserAchieve" parameterClass="userAchieve" >
+		INSERT INTO userachieve(userId, type, achieveId,entId,entNum,finishDttm) VALUES(#userId#, #type#, #achieveId#,#entId#,#entNum#,#finishDttm#)
+		<selectKey keyProperty="id" resultClass="int">
+            SELECT last_insert_Id()
+        </selectKey>
+	</insert>
+	<update id="updateUserAchieve" parameterClass="userAchieve" asyncUpdate="1">
+        UPDATE userachieve SET userId=#userId#, type=#type#, achieveId=#achieveId#,entId=#entId#,entNum=#entNum#,finishDttm=#finishDttm# WHERE id=#id#
+    </update>
+    <select id="getUserAchieveByEntId" resultClass="userAchieve" parameterClass="java.util.HashMap" cacheModel="cache_userAchieve" cacheOnlyObject="true">
+        SELECT * FROM userachieve WHERE userId=#userId# and entId=#entId#
+    </select>
+    <select id="getUserAchieveByUserId" resultClass="userAchieve" parameterClass="long" cacheModel="cache_userAchieve" resultIsList="true">
+        SELECT * FROM userachieve WHERE userId=#userId#
+    </select>
+    
+    <!-- title军衔 -->
+    <typeAlias alias="title" type="com.youxigu.dynasty2.user.domain.Title" />
+	<typeAlias alias="titleAward" type="com.youxigu.dynasty2.user.domain.TitleAward" />
+	<select id="listTitles" resultClass="title">
+        SELECT * FROM title
+    </select>
+    <select id="listTitleAwards" resultClass="titleAward">
+        SELECT * FROM titleaward
+    </select>
+    
+    <!--统计当前有多少玩家-->
+     <select id="statisticsAllUsers" resultClass="int" parameterClass="int">
+        select count(userid) from user where countryId=#countryId#
+    </select>
+</sqlMap>

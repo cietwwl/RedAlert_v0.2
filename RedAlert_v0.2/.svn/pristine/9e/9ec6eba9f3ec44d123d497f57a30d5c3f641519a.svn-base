@@ -1,0 +1,497 @@
+package com.youxigu.dynasty2.user.web;
+
+import java.sql.Timestamp;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.youxigu.dynasty2.chat.proto.CommonHead;
+import com.youxigu.dynasty2.chat.proto.CommonHead.SexType;
+import com.youxigu.dynasty2.common.AppConstants;
+import com.youxigu.dynasty2.common.service.ICommonService;
+import com.youxigu.dynasty2.core.flex.amf.AMF3WolfService.SyncStat;
+import com.youxigu.dynasty2.core.flex.amf.BaseAction;
+import com.youxigu.dynasty2.core.wolf.IWolfClientService;
+import com.youxigu.dynasty2.log.ILogService;
+import com.youxigu.dynasty2.map.service.IMapService;
+import com.youxigu.dynasty2.user.domain.User;
+import com.youxigu.dynasty2.user.proto.UserMsg.Request10003Define;
+import com.youxigu.dynasty2.user.proto.UserMsg.Request10005Define;
+import com.youxigu.dynasty2.user.proto.UserMsg.Request10030Define;
+import com.youxigu.dynasty2.user.proto.UserMsg.Request10032Define;
+import com.youxigu.dynasty2.user.proto.UserMsg.Response10003Define;
+import com.youxigu.dynasty2.user.proto.UserMsg.Response10005Define;
+import com.youxigu.dynasty2.user.proto.UserMsg.Response10030Define;
+import com.youxigu.dynasty2.user.proto.UserMsg.Response10032Define;
+import com.youxigu.dynasty2.user.service.IAccountService;
+import com.youxigu.dynasty2.user.service.IUserAttrService;
+import com.youxigu.dynasty2.user.service.IUserService;
+import com.youxigu.dynasty2.util.BaseException;
+import com.youxigu.wolf.net.Response;
+import com.youxigu.wolf.net.UserSession;
+
+public class UserAction extends BaseAction {
+	private static Logger log = LoggerFactory.getLogger(UserAction.class);
+	private IAccountService accountService;
+	private IUserService userService;
+	private IWolfClientService mainServerClient;
+	private IUserAttrService userAttrService;
+	private IMapService mapService;
+	private ICommonService commonService;
+	private ILogService logService;
+
+	public void setLogService(ILogService logService) {
+		this.logService = logService;
+	}
+
+	public IAccountService getAccountService() {
+		return accountService;
+	}
+
+	public static void setLog(Logger log) {
+		UserAction.log = log;
+	}
+
+	public void setCommonService(ICommonService commonService) {
+		this.commonService = commonService;
+	}
+
+	public void setAccountService(IAccountService accountService) {
+		this.accountService = accountService;
+	}
+
+	public void setUserService(IUserService userService) {
+		this.userService = userService;
+	}
+
+	public void setMainServerClient(IWolfClientService mainServerClient) {
+		this.mainServerClient = mainServerClient;
+	}
+
+	public void setUserAttrService(IUserAttrService userAttrService) {
+		this.userAttrService = userAttrService;
+	}
+
+	public void setMapService(IMapService mapService) {
+		this.mapService = mapService;
+	}
+
+	/**
+	 * 取得角色信息-10003
+	 * 
+	 * @param params
+	 * @param context
+	 * @return
+	 */
+	public Object getUser(Object obj, Response context) {
+		Request10003Define request = (Request10003Define) obj;
+		UserSession us = super.getUserSession(context);
+		if (us == null) {
+			throw new BaseException("请先登录");
+		}
+		User user = null;
+		long userId = us.getUserId();
+		long accId = us.getAccId();
+		if (us.getUserId() > 0) {// 已经创建角色
+			// 用户有几率登陆到不同的gameserver,因此登录时删除缓存的userAttr
+			user = userService.getUserById(userId);
+		} else {
+			user = userService.getUserByaccId(accId);
+		}
+
+		Response10003Define.Builder br = Response10003Define.newBuilder();
+		// 同步标示
+		CommonHead.SyncStat.Builder syncStatBr = CommonHead.SyncStat
+				.newBuilder();
+		syncStatBr.setId(request.getSyncstat().getId());
+		syncStatBr.setStat(SyncStat.SYNC_STATUS_RESPONSE);
+		br.setSyncstat(syncStatBr.build());
+
+		br.setResponseHead(getResponseHead(request.getCmd()));
+
+		// 没有创建角色只返回cmd
+		String nickName = (String) us.removeAttribute("nickName");
+		String picture = (String) us.removeAttribute("picture");
+		if (nickName != null) {
+			br.setNickName(nickName);// qq昵称
+		}
+		if (picture != null) {
+			br.setPicture(picture);
+		}
+		if (user == null) {
+			// 君主id:-1 代表没有创建角色， >0已经创建角色
+			br.setUserId(-1);
+
+			// TODO 可以指定推荐规则
+			int countryId = 0;
+			us.addAttribute(UserSession.KEY_COUNTRYID, countryId);
+			br.setDefCountryId(countryId);
+			return br.build();
+		}
+
+		us.setMainCasId(user.getMainCastleId());
+		userAttrService.removeCachedUserAttrs(userId);
+		// troopService.doReleaseRiskTroop(us.getUserId());
+
+		br.setUserId(userId);// 君主id
+		br.setUserName(user.getUserName());// 君主名
+		br.setUsrLv(user.getUsrLv()); // 君主等级
+		br.setCasId(us.getMainCasId());// 主城id
+		if (user.getIcon() != null) {
+			br.setIcon(user.getIcon());
+		}
+		br.setCash(user.getCash());
+		br.setCountryId(user.getCountryId());
+		br.setHonor(user.getHonor());
+		br.setGuildId(user.getGuildId());
+		// todo: 做联盟的时候加上
+		br.setGuildName("");
+
+		br.setSex(SexType.valueOf(user.getSex()));
+		br.setVip(user.getVip());
+		br.setTitle(user.getTitle());
+		br.setSelfSignature(user.getSelfSignature());
+
+		// params.put("countryId", user.getCountryId());
+		// UserGuide userGuide = userService.getUserGuide(userId);
+		// if (userGuide != null) {
+		// String stageIds = userGuide.getStageIds();
+		// if (stageIds != null && stageIds.length() > 0) {
+		// String[] tmpArr = StringUtils.split(stageIds, ",");
+		// int arrLen = tmpArr.length;
+		// int[] stageIdArr = new int[arrLen];
+		// for (int i = 0; i < arrLen; i++) {
+		// stageIdArr[i] = Integer.parseInt(tmpArr[i]);
+		// br.setStageIds(i, stageIdArr[i]);// 新手指引当前Id
+		// }
+		//
+		// }
+		// }
+
+		// params.put("sceneId", user.getSceneId());//取得用户所在场景
+		long now = System.currentTimeMillis();
+		br.setCurTime(now);// 后台系统时间
+		// br.setSex(user.getSex());
+		// br.setAutoResume(user.getAutoResumeArmy());// 自动补兵
+		// // 功能列表
+		// params.put("userFunctions", userFuncationService.getFunctionList(user
+		// .getUserId()));
+
+		// 创建角色的时间
+		Timestamp createDttm = user.getCreateDate();
+		if (createDttm != null) {
+			br.setCreateDttm(createDttm.getTime());
+		} else {
+			br.setCreateDttm(0);
+		}
+
+		// // 得到已经传承的次数
+		// int inheritNum = userAttrService.getIntUserAttr(us.getUserId(),
+		// AppConstants.USERATTR_HEROINHERIT_NUM);
+		// params.put("inheritNum", inheritNum);
+
+		// 请神Boss相关的
+		// params.putAll(shrinesBossService.doCastleVisitShrinesBoss(us
+		// .getUserId(), us.getUserId()));
+		// 元宝
+
+		// br.setJungong(user.getJunGong());
+		// // 是否可以免费转国家
+		// int freeChg = 0;
+		// if (user.isNewBee()) {
+		// boolean isFree = castleService.getNewBeeNumChangeCountry(user);//
+		// 是否已经在新手期转国
+		// if (isFree) {
+		// freeChg = 1;
+		// }
+		// }
+		// params.put("freeChg", freeChg);
+
+		br.setOnlineDttm(us.getOnlineTimeSum());
+		br.setOfflineDttm(us.getOfflineTimeSum());
+
+		// // QQ平台特权数据
+		// // getQQPlatformInfo(us.getAccId(), params);
+		// us.putPlatformProperties(params);
+		//
+		// // 图鉴标志
+		// br.setTujian(userService.hasNewUserIllustrations(user));
+		//
+		// this.setStatus(params, user, us);
+		//
+		// platformFriendService.clearUserPlarformCache(userId);
+
+		// test
+		// platformFriendService.getPlatformFriends(us);
+
+		// ===================== 开关 =======================
+
+		// // 出征开关
+		// int value = commonService.getSysParaIntValue(
+		// AppConstants.SYS_PVP_ARMYOUT_OPEN, 0);
+		// if (value > 0) {
+		// params.put("armyOutOpenStatus", "SYS_PVP_ARMYOUT_OPEN_open");
+		// br.setAutoResume(value)
+		// }
+		//
+		// params.put("bidding",
+		// biddingActivityService.getOpenedBiddingActivity() == null ? 0
+		// : 1);
+		// 君主头像buff
+		// UserIcon ui = userIconBuffService.getUserIconByUserId(userId);
+		// params.put("iconBuffTime", 0);
+		// if (ui != null) {
+		// Timestamp buffTime = ui.getPassDttm();
+		// if (buffTime != null) {
+		// int buffSec = (int) ((buffTime.getTime() - System
+		// .currentTimeMillis()) / 1000);
+		// params.put("iconBuffTime", buffSec);// 君主头像buff剩余秒数
+		// params.put("iconBuffId", ui.getUserIconId());// 君主头像buff配置id
+		// params.put("iconBuffStatus", ui.getStatus());//
+		// 君主头像显示状态，1-显示易容后的，0-默认头像
+		// }
+		// }
+		// // 封地效果加成
+		// CountryOfficialFief cof =
+		// officialFiefService.getCountryOfficialFiefByUserId(userId);
+		// params.put("fiefBuffTime", 0);
+		// if (cof != null) {
+		// if(DateUtils.isSameDay(cof.getOwnTime())){
+		// Timestamp timenow = DateUtils.nowTimestamp();
+		// Timestamp frozenStart = DateUtils.getDayStart(timenow);
+		// Timestamp frozenNext = UtilDate.moveSecond(frozenStart, 24 * 60 *
+		// 60);
+		// int buffSec = (int) ((frozenNext.getTime()-timenow.getTime())/1000);
+		// params.put("fiefBuffTime", buffSec);// 封地效果加成buff剩余秒数
+		// params.put("fiefBuffId", cof.getOfficialFiefId());// 封地效果加成buff配置id
+		// }
+		// }
+		// params.put("hasPwd",
+		// us.getOldPwd() != null && !us.getOldPwd().equals(""));
+		return br.build();
+	}
+
+	/**
+	 * 创建角色-10005
+	 * 
+	 * @param params
+	 * @param context
+	 * @return
+	 */
+	public Object createUser(Object params, Response context) {
+		Request10005Define request = (Request10005Define) params;
+		String userName = null;
+		if (request.hasUserName()) {
+			userName = request.getUserName();
+		}
+
+		int countryId = 0;
+		if (request.hasCountryId()) {
+			countryId = request.getCountryId();
+		}
+		// int isShare = 0;
+		// if (params.get("isShare") != null) {
+		// isShare = (Integer) params.remove("isShare");
+		// }
+
+		UserSession us = super.getUserSession(context);
+		if (us.getUserId() > 0) {
+			throw new BaseException("您已经创建过角色了");
+		}
+		User user = new User();
+		user.setAccId(us.getAccId());
+		user.setUserName(userName);
+
+		int sex = 1;
+		if (request.hasSex()) {
+			sex = request.getSex();
+		}
+		SexType sexType = SexType.valueOf(sex);
+		if (sexType == null) {
+			throw new BaseException("性别类型错误");
+		}
+		user.setSex(sex);
+
+		// String icon = null;
+		// if (request.hasIcon()) {
+		// icon = request.getIcon();
+		// }
+		// user.setIcon(icon);
+		user.setCountryId(countryId);
+		Object o = us.getAttribute(UserSession.KEY_COUNTRYID);
+		// 是否使用了推荐
+		boolean isRecommond = o == null ? false
+				: ((Integer) (o)).intValue() == countryId;
+		userService.doCreateUser(user, isRecommond);
+		if (o != null) {
+			us.removeAttribute(UserSession.KEY_COUNTRYID);
+		}
+		// /这里createUser中向前台推的消息收不到，如果需要收，则把下面的注册放到createUser中
+		us.setUserId(user.getUserId());// session 中存userId
+		us.setGender(user.getSex());
+		us.setUserName(user.getUserName());
+		us.setMainCasId(user.getMainCastleId());
+		registerUserSession(context, us);
+		// 注册到main服务器
+		try {
+			// 改成同步 us中加入用户角色信息并注册聊天频道
+			mainServerClient.sendTask(Void.class, "loginAction",
+					"loginFromNodeServer", user);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// // 发送新手邮件
+		// MailMessage mail = new MailMessage();
+		// mail.setReceiveUserId(user.getUserId());
+		// if (us.isUnion()) {
+		// mail.setTitle("欢迎来到七雄争霸！");
+		// mail.setComment(mailMessageService.getContextByTemplate(null,
+		// "/template/newbee_union.vm"));
+		//
+		// } else {
+		// mail.setTitle("欢迎来到七雄争霸！");
+		// mail.setComment(mailMessageService.getContextByTemplate(null,
+		// "/template/newbee.vm"));
+		// }
+		// mail.setMessageType(MailMessage.TYPE_SYSTEM);
+		// mail.setSendDttm(new Timestamp(System.currentTimeMillis()));
+		// mailMessageService.createSystemMessage(mail);
+
+		Response10005Define.Builder response = Response10005Define.newBuilder();
+		// 同步标示
+		CommonHead.SyncStat.Builder syncStatBr = CommonHead.SyncStat
+				.newBuilder();
+		syncStatBr.setId(request.getSyncstat().getId());
+		syncStatBr.setStat(SyncStat.SYNC_STATUS_RESPONSE);
+		response.setSyncstat(syncStatBr.build());
+
+		response.setResponseHead(getResponseHead(request.getCmd()));
+
+		response.setUserId(user.getUserId());// 君主id
+		response.setUserName(user.getUserName());// 君主名
+		response.setCasId(user.getMainCastleId());// 主城id
+		if (user.getIcon() != null) {
+			response.setIcon(user.getIcon());
+		}
+		response.setStepId(userAttrService.getIntUserAttr(user.getUserId(),
+				AppConstants.USER_GUIDELINES));// 新手指引当前Id
+		response.setCountryId(user.getCountryId());
+		response.setCurTime((int) (System.currentTimeMillis() / 1000));// 后台系统时间（秒）
+		response.setUsrLv(user.getUsrLv());
+		response.setCash(user.getCash());
+		response.setHonor(user.getHonor());
+		response.setGuildId(user.getGuildId());
+		// todo: 做联盟的时候加上
+		response.setGuildName("");
+		// us.putPlatformProperties(params);
+
+		response.setSex(SexType.valueOf(user.getSex()));
+		response.setVip(user.getVip());
+		response.setTitle(user.getTitle());
+		response.setSelfSignature(user.getSelfSignature());
+
+		// // //是否领取过QQ会员礼包
+		// int qqFlag = us.getQqFlag();
+		// if ((qqFlag & Account.QQ_VIP) == Account.QQ_VIP
+		// || (qqFlag & Account.QQ_VIP_YEAR) == Account.QQ_VIP_YEAR
+		// || (qqFlag & Account.QQ_SUPER) == Account.QQ_SUPER) {
+		// List<Map<String, Object>> gifts = qqGiftService.getUserQQGifts(us
+		// .getUserId(), us.getAccId(), QQGift.TYPE_NEWBEE);
+		// if (gifts != null && gifts.size() > 0) {
+		// params.put("qqGifts", gifts);
+		// }
+		// }
+
+		// 发渠道礼包
+		// userService.doSendChannelAwardMail(us.getUserId());
+		// 发预约用户邮件
+		// this.sendWhiteUserMailWithAward(us);
+		// QQ平台特权数据
+		// getQQPlatformInfo(us.getAccId(), params);
+
+		// // 专门为体验一的消费反还
+		// AccountConsumeCash consumeCash = userService.getAccountConsumeCash(us
+		// .getAccName());
+		// int backCash = 0;
+		// if (consumeCash != null && consumeCash.getStatus() == 0) {
+		// backCash = consumeCash.getCash();
+		// }
+		// params.put("backCash", 0);
+
+		// if (consumeCash != null) {
+		// // 只有消费反还的情况在创建user的时候才有首冲返还
+		// // 首冲领奖状态 0:不可领 1：可领
+		// UserRecharge ur = paymentService.getRecharge(user.getUserId());
+		// int status = 0;
+		// if (ur != null) {
+		// status = ur.getStatus();
+		// }
+		// params.put("recStatus", status);
+		// }
+
+		// long expire = userService.getUserLvLotteryExpiredTime();
+		// if (expire > System.currentTimeMillis()) {
+		// params.put("lottery", expire / 1000);
+		// }
+		// this.setStatus(params, user, us);
+
+		// 图鉴标志 ,创建角色默认有一个蓝色武将，则图鉴标志=1
+		// params.put("tujian", 1);
+		// params.put("tujian", userService.hasNewUserIllustrations(userId));
+
+		// ===================== 开关 =======================
+
+		// // 出征开关
+		// int value = commonService.getSysParaIntValue(
+		// AppConstants.SYS_PVP_ARMYOUT_OPEN, 0);
+		// if (value > 0) {
+		// params.put("armyOutOpenStatus", "SYS_PVP_ARMYOUT_OPEN_open");
+		// }
+		//
+		// params.put("bidding",
+		// biddingActivityService.getOpenedBiddingActivity() == null ? 0
+		// : 1);
+
+		return response.build();
+	}
+
+	/**
+	 * 10030设置签名
+	 * 
+	 * @param params
+	 * @param context
+	 * @return
+	 */
+	public Object changeSignature(Object obj, Response context) {
+		Request10030Define req = (Request10030Define) obj;
+		UserSession us = super.getUserSession(context);
+		User user = userService.getUserById(us.getUserId());
+		String selfSignature = userService.doUpdateSelfSignature(user,
+				req.getSelfSignature());
+		Response10030Define.Builder res = Response10030Define.newBuilder();
+		res.setResponseHead(super.getResponseHead(req.getCmd()));
+		res.setSelfSignature(selfSignature);
+		return res.build();
+	}
+
+	/**
+	 * 君主改名-13050
+	 * 
+	 * @param params
+	 * @param context
+	 * @return
+	 */
+	public Object changeUserName(Object obj, Response context) {
+		Request10032Define req = (Request10032Define) obj;
+		UserSession us = super.getUserSession(context);
+		long userId = us.getUserId();
+		String newName = req.getNewName();
+		String name = userService.doChangeUserName(userId, newName);
+		Response10032Define.Builder res = Response10032Define.newBuilder();
+		res.setResponseHead(super.getResponseHead(req.getCmd()));
+		res.setNewName(name);
+		return res.build();
+	}
+
+}

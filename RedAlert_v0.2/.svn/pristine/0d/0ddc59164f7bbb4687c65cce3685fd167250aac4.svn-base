@@ -1,0 +1,89 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:flex="http://www.springframework.org/schema/flex"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+	<!-- hero -->
+    <bean id="heroDao" class="com.youxigu.dynasty2.hero.dao.impl.HeroDao">
+		<property name="sqlMapClientTemplate" ref="sqlMapClientTemplate" />
+	</bean>
+	
+	<bean id="heroService" class="com.youxigu.dynasty2.hero.service.impl.HeroService" init-method="init">
+		<property name="userService" ref="userService" />
+		<property name="logService" ref="logService" />
+		<property name="entityService" ref="entityService" />
+		<property name="accountService" ref="accountService" />
+		<property name="heroDao" ref="heroDao" />
+		<property name="treasuryService" ref="treasuryService" />
+		<property name="messageService" ref="messageService" />
+		<property name="missionService" ref="missionService" />
+		<property name="commonService" ref="commonService" />
+		<property name="castleArmyService" ref="castleArmyService" />
+		<property name="troopService" ref="troopService" />
+		<property name="sysHeroEntityService" ref="sysHeroEntityService" />
+		<property name="userAchieveService" ref="userAchieveService" />
+	</bean>
+    
+    <!-- troop -->
+    <bean id="troopDao" class="com.youxigu.dynasty2.hero.dao.impl.TroopDao">
+        <property name="sqlMapClientTemplate" ref="sqlMapClientTemplate" />
+    </bean>
+    
+    <bean id="troopService" class="com.youxigu.dynasty2.hero.service.impl.TroopService" init-method="init">
+        <property name="heroService" ref="heroService" />
+        <property name="troopDao" ref="troopDao" />
+        <property name="missionService" ref="missionService" />
+        <property name="userService" ref="userService" />
+        <property name="commonService" ref="commonService" />
+        <property name="entityService" ref="entityService" />
+        <property name="troopGridService" ref="troopGridService" />
+    </bean>
+    
+    <!-- TroopGrid -->
+    <bean id="troopGridDao" class="com.youxigu.dynasty2.hero.dao.impl.TroopGridDao">
+        <property name="sqlMapClientTemplate" ref="sqlMapClientTemplate" />
+    </bean>
+    <bean id="troopGridService" class="com.youxigu.dynasty2.hero.service.impl.TroopGridService">
+        <property name="troopGridDao" ref="troopGridDao" />
+        <property name="heroService" ref="heroService" />
+        <property name="userService" ref="userService" />
+        <property name="troopService" ref="troopService" />
+    </bean>
+    
+    
+    
+    <!-- heroeffect -->
+    <bean id="heroDrawDao" class="com.youxigu.dynasty2.hero.dao.impl.HeroDrawDao">
+        <property name="sqlMapClientTemplate" ref="sqlMapClientTemplate" />
+  </bean>
+  
+  <!-- heroDraw -->
+  <bean id="heroDrawService" class="com.youxigu.dynasty2.hero.service.impl.HeroDrawService" init-method="init">
+        <property name="heroDrawDao" ref="heroDrawDao" />
+        <property name="vipService" ref="vipService" />
+        <property name="userService" ref="userService" />
+        <property name="treasuryService" ref="treasuryService" />
+        <property name="heroService" ref="heroService" />
+        <property name="entityService" ref="entityService" />
+        <property name="castleResService" ref="castleResService" />
+        <property name="missionService" ref="missionService" />
+  </bean>
+  
+  <bean id="heroEquipService" class="com.youxigu.dynasty2.hero.service.impl.HeroEquipService">
+  	<property name="heroService" ref="heroService"></property>
+  	<property name="treasuryService" ref="treasuryService"></property>
+  	<property name="entityService" ref="entityService"></property>
+  	<property name="userService" ref="userService"></property>
+  	<property name="equipService" ref="equipEntityService"></property>
+  	<property name="logService" ref="logService"></property>
+  	<property name="troopGridService" ref="troopGridService"></property>
+  	<property name="commonService" ref="commonService"></property>
+    <property name="castleResService" ref="castleResService"></property>
+    <property name="missionService" ref="missionService"></property>
+    <property name="userAchieveService" ref="userAchieveService"></property>
+  </bean>
+  
+</beans>
+

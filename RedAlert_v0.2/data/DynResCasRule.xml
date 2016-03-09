@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+
+<!--各区随机资源点刷新数量，后台ResCas表-->
+<DynResCasRule id="1" stateId="4" type="0" level="3" count="100" />
+<DynResCasRule id="2" stateId="4" type="0" level="4" count="100" />
+<DynResCasRule id="3" stateId="5" type="0" level="3" count="100" />
+<DynResCasRule id="4" stateId="5" type="0" level="4" count="100" />
+<DynResCasRule id="5" stateId="6" type="0" level="3" count="100" />
+<DynResCasRule id="6" stateId="6" type="0" level="4" count="100" />
+<DynResCasRule id="7" stateId="7" type="0" level="4" count="100" />
+<DynResCasRule id="8" stateId="7" type="0" level="5" count="100" />
+<DynResCasRule id="9" stateId="8" type="0" level="4" count="100" />
+<DynResCasRule id="10" stateId="8" type="0" level="5" count="100" />
+<DynResCasRule id="11" stateId="9" type="0" level="4" count="100" />
+<DynResCasRule id="12" stateId="9" type="0" level="5" count="100" />
+<DynResCasRule id="13" stateId="10" type="0" level="4" count="100" />
+<DynResCasRule id="14" stateId="10" type="0" level="5" count="100" />
+<DynResCasRule id="15" stateId="10" type="0" level="6" count="100" />
+<DynResCasRule id="16" stateId="11" type="0" level="4" count="100" />
+<DynResCasRule id="17" stateId="11" type="0" level="5" count="100" />
+<DynResCasRule id="18" stateId="11" type="0" level="6" count="100" />
+<DynResCasRule id="19" stateId="12" type="0" level="4" count="100" />
+<DynResCasRule id="20" stateId="12" type="0" level="5" count="100" />
+<DynResCasRule id="21" stateId="12" type="0" level="6" count="100" />
+<DynResCasRule id="22" stateId="13" type="0" level="5" count="100" />
+<DynResCasRule id="23" stateId="13" type="0" level="6" count="100" />
+<DynResCasRule id="24" stateId="13" type="0" level="7" count="100" />
+<DynResCasRule id="25" stateId="14" type="0" level="5" count="100" />
+<DynResCasRule id="26" stateId="14" type="0" level="6" count="100" />
+<DynResCasRule id="27" stateId="14" type="0" level="7" count="100" />
+<DynResCasRule id="28" stateId="14" type="0" level="8" count="100" />
+<DynResCasRule id="29" stateId="15" type="0" level="6" count="100" />
+<DynResCasRule id="30" stateId="15" type="0" level="7" count="100" />
+<DynResCasRule id="31" stateId="15" type="0" level="8" count="100" />
+<DynResCasRule id="32" stateId="15" type="0" level="9" count="100" />
+<DynResCasRule id="33" stateId="4" type="1" level="3" count="100" />
+<DynResCasRule id="34" stateId="4" type="1" level="4" count="100" />
+<DynResCasRule id="35" stateId="5" type="1" level="3" count="100" />
+<DynResCasRule id="36" stateId="5" type="1" level="4" count="100" />
+<DynResCasRule id="37" stateId="6" type="1" level="3" count="100" />
+<DynResCasRule id="38" stateId="6" type="1" level="4" count="100" />
+<DynResCasRule id="39" stateId="7" type="1" level="4" count="100" />
+<DynResCasRule id="40" stateId="7" type="1" level="5" count="100" />
+<DynResCasRule id="41" stateId="8" type="1" level="4" count="100" />
+<DynResCasRule id="42" stateId="8" type="1" level="5" count="100" />
+<DynResCasRule id="43" stateId="9" type="1" level="4" count="100" />
+<DynResCasRule id="44" stateId="9" type="1" level="5" count="100" />
+<DynResCasRule id="45" stateId="10" type="1" level="4" count="100" />
+<DynResCasRule id="46" stateId="10" type="1" level="5" count="100" />
+<DynResCasRule id="47" stateId="10" type="1" level="6" count="100" />
+<DynResCasRule id="48" stateId="11" type="1" level="4" count="100" />
+<DynResCasRule id="49" stateId="11" type="1" level="5" count="100" />
+<DynResCasRule id="50" stateId="11" type="1" level="6" count="100" />
+<DynResCasRule id="51" stateId="12" type="1" level="4" count="100" />
+<DynResCasRule id="52" stateId="12" type="1" level="5" count="100" />
+<DynResCasRule id="53" stateId="12" type="1" level="6" count="100" />
+<DynResCasRule id="54" stateId="13" type="1" level="5" count="100" />
+<DynResCasRule id="55" stateId="13" type="1" level="6" count="100" />
+<DynResCasRule id="56" stateId="13" type="1" level="7" count="100" />
+<DynResCasRule id="57" stateId="14" type="1" level="5" count="100" />
+<DynResCasRule id="58" stateId="14" type="1" level="6" count="100" />
+<DynResCasRule id="59" stateId="14" type="1" level="7" count="100" />
+<DynResCasRule id="60" stateId="14" type="1" level="8" count="100" />
+<DynResCasRule id="61" stateId="15" type="1" level="6" count="100" />
+<DynResCasRule id="62" stateId="15" type="1" level="7" count="100" />
+<DynResCasRule id="63" stateId="15" type="1" level="8" count="100" />
+<DynResCasRule id="64" stateId="15" type="1" level="9" count="100" />
+
+
+
+</dataset>

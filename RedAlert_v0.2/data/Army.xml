@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+
+	<!--以下是玩家武将调用的兵种实体-->
+<Army entId="1001" armyName="自行火炮" armyDesc="自行火炮" armyType="1" />
+<Army entId="1002" armyName="中型坦克" armyDesc="自行火炮" armyType="2" />
+<Army entId="1003" armyName="轻型坦克" armyDesc="自行火炮" armyType="3" />
+<Army entId="1004" armyName="反坦克炮" armyDesc="自行火炮" armyType="4" />
+<Army entId="1005" armyName="重型坦克" armyDesc="自行火炮" armyType="5" />
+<Army entId="1006" armyName="维修坦克" armyDesc="自行火炮" armyType="6" />
+
+
+
+
+</dataset>

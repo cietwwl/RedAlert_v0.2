@@ -1,0 +1,137 @@
+package dynasty;
+import "Common.proto";
+
+option java_package = "com.youxigu.dynasty2.armyout.proto";
+option java_outer_classname = "MilitarySituationMsg";
+
+// 获取军情CSGetMiSi
+message Request91001Define{
+	optional int32 cmd 			= 1;
+	required int32 pageNum		= 2; // 分页，第几页
+}
+message Response91001Define{
+	optional ResponseHead responseHead	= 1;
+	repeated PBMiSi miSis				= 2;
+}
+// 军情列表信息
+message PBMiSi{
+	required int32 id				= 1;
+	required int32 hasView			= 2; // 是否已经查看
+	required MiSiType type			= 3; // 类型（图标根据类型不同而不同）
+	required string name			= 4; // 名称
+	required string content			= 5; // 内容
+	required int64 time				= 6; // 情报时间
+}
+// 军情类型
+enum MiSiType{
+	BeDetected		= 1; // 被侦查
+	BeAssembled		= 2; // 被集结
+	BeAttacked		= 3; // 被进攻
+	MyDetect		= 4; // 侦查
+}
+
+// 被侦查军情详情CSGetMiSiDetails
+message Request91003Define{
+	optional int32 cmd 				= 1;
+	required int32 id				= 2; // 军情id
+}
+// 被集结军情详情CSGetMiSiDetails
+message Request91005Define{
+	optional int32 cmd 				= 1;
+	required int32 id				= 2; // 军情id
+}
+// 被进攻军情详情CSGetMiSiDetails
+message Request91007Define{
+	optional int32 cmd 				= 1;
+	required int32 id				= 2; // 军情id
+}
+// 侦查军情详情CSGetMiSiDetails
+message Request91009Define{
+	optional int32 cmd 				= 1;
+	required int32 id				= 2; // 军情id
+}
+
+// 回复被侦查详情SCGetMiSiDetailsBeDetected
+message Response91003Define{
+	optional ResponseHead responseHead		= 1;
+	required int64 time						= 2; // 推送情报时间，年/月/日 时/分/秒
+	required string aimIcon					= 3; // 目标的资源图片
+	required string aimName					= 4; // 目标名称
+	required int32 aimPointX				= 5; // 目标坐标
+	required int32 aimPointY				= 6; // 
+	
+	required string originIcon				= 7; // 侦查方的指挥官头像
+	required string originCommanderName		= 8; // 侦查方指挥官名
+	required int32 originBasePointX			= 9; // 侦查方基地坐标
+	required int32 originBasePointY			= 10; // 
+	required string content					= 11; // 侦查内容字符串
+}
+// 回复被集结详情SCGetMiSiDetailsBeAssembled
+message Response91005Define{
+	optional ResponseHead responseHead		= 1;
+	required int64 time						= 2; // 推送情报时间，年/月/日 时/分/秒
+	required string aimIcon					= 3; // 目标的资源图片
+	required string aimName					= 4; // 目标名称
+	required int32 aimPointX				= 5; // 目标坐标
+	required int32 aimPointY				= 6; // 
+	
+	required string originUnionName			= 7; // 进攻方发起集结者的联盟名称和指挥官名
+	required string originCommanderName		= 8; // 
+	required int64 endTime					= 9; // 集结阶段结束时间
+	repeated string originCommanderIcons	= 10; // 参与集结者的各指挥官头像，最多5个
+	
+	required int32 originBasePointX			= 11; // 发起集结者的基地坐标
+	required int32 originBasePointY			= 12; // 
+}
+// 回复被进攻详情SCGetMiSiDetailsBeAttacked
+message Response91007Define{
+	optional ResponseHead responseHead		= 1;
+	required int64 time						= 2; // 推送情报时间，年/月/日 时/分/秒
+	required string aimIcon					= 3; // 目标的资源图片
+	required string aimName					= 4; // 目标名称
+	required int32 aimPointX				= 5; // 目标坐标
+	required int32 aimPointY				= 6; // 
+	
+	required string originUnionName			= 7; // 进攻者的联盟名称和指挥官名
+	required string originCommanderName		= 8; // 
+	required int32 unionAttackPower			= 9; // 军团战力值
+	repeated PBGeneral originGenerals		= 10; // 军团内的每个武将头像,武将等级，武将耐久值
+	
+	required int64 arriveTime				= 11; // 到达时间
+	
+	required int32 commanderBasePointX		= 12; // 该条目中的指挥官基地坐标
+	required int32 commanderBasePointY		= 13; // 
+}
+// 军团内武将信息
+message PBGeneral{
+	required string icon		= 1; //	武将头像
+	required int32 level		= 2; // 武将等级
+	required int32 durableValue	= 3; // 武将耐久值
+}
+
+
+// 回复侦查详情SCGetMiSiDetailsMyDetect
+message Response91009Define{
+	optional ResponseHead responseHead		= 1;
+	required int64 time						= 2; // 推送情报时间，年/月/日 时/分/秒
+	required string aimIcon					= 3; // 目标的资源图片
+	required string aimName					= 4; // 目标名称
+	required int32 aimPointX				= 5; // 目标坐标
+	required int32 aimPointY				= 6; // 
+	
+	required string defenderUnionName		= 7; // 防守者的联盟名称和指挥官名
+	required string defenderCommanderName	= 8; // 
+	
+	required int32 unionAttackPower			= 9; // 军团战力值
+	repeated PBGeneral defenderGenerals		= 10; // 军团内的每个武将头像,武将等级，武将耐久值
+	required PBResources aimResources		= 11; // 目标拥有的资源
+}
+// 侦查目标资源
+message PBResources{
+	required int32 money		= 1; // 金钱
+	required int32 oil			= 2; // 油
+	required int32 axis			= 3; // 轴
+	required int32 spareParts	= 4; // 零件
+	required int32 iron			= 5; // 钢铁
+	required int32 refugee		= 6; // 难民
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ServerInfo">
+  <!-- 战斗系数 -->
+  <typeAlias alias="combatFactor"
+    type="com.youxigu.dynasty2.combat.domain.CombatFactor" />
+  <select id="listCombatFactors" resultClass="combatFactor">
+    select * from combatfactor
+	</select>
+
+  <!-- combatDB 战斗过程的持久化 -->
+  <typeAlias alias="combatDB"
+    type="com.youxigu.dynasty2.combat.domain.CombatDB" />
+
+  <insert id="insertCombatDB" parameterClass="CombatDB">
+    INSERT INTO combatdb (combatId,combatData,combatDt) VALUES
+    (#combatId#,#combatData#,#combatDt#) ON DUPLICATE KEY UPDATE
+    combatData=#combatData#,combatDt=#combatDt#
+      </insert>
+  <select id="getCombatDB" parameterClass="string" resultClass="CombatDB">
+    SELECT * FROM combatdb WHERE combatId=#combatId#
+      </select>
+
+  <delete id="deleteCombatDBById" parameterClass="String">
+    delete FROM combatdb where combatId=#combatId#
+      </delete>
+  <delete id="deleteCombatDB" parameterClass="int">
+    delete FROM combatdb where (TO_DAYS(NOW()) - TO_DAYS(combatDt)) > #day#
+    </delete>
+</sqlMap>

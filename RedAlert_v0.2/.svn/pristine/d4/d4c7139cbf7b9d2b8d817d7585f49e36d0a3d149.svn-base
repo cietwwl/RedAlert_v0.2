@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+<Technology entId="61000" techType="TECH_MILITARY" techName="种植术" techDesc="升级后,增加武将命中" iconPath="01" maxLevel="20" orderIndex="1" target="0" />
+<Technology entId="61001" techType="TECH_MILITARY" techName="伐木术" techDesc="升级后,增加武将命中" iconPath="02" maxLevel="20" orderIndex="2" target="0" />
+<Technology entId="61002" techType="TECH_MILITARY" techName="挖掘术" techDesc="升级后,矿石产量提升" iconPath="03" maxLevel="20" orderIndex="3" target="0" />
+<Technology entId="61003" techType="TECH_DEVELOP" techName="冶炼术" techDesc="升级后,青铜产量提升" iconPath="04" maxLevel="20" orderIndex="4" target="0" />
+<Technology entId="61004" techType="TECH_DEVELOP" techName="贸易术" techDesc="升级后,铜币产量提升" iconPath="05" maxLevel="20" orderIndex="5" target="0" />
+
+<Technology entId="61005" techType="TECH_MILITARY" techName="锐矛术" techDesc="升级后,武将攻击提升" iconPath="01" maxLevel="40" orderIndex="6" target="0" />
+<Technology entId="61006" techType="TECH_MILITARY" techName="坚甲术" techDesc="升级后,武将穿甲防御提升" iconPath="02" maxLevel="40" orderIndex="7" target="0" />
+<Technology entId="61007" techType="TECH_MILITARY" techName="敏思术" techDesc="升级后,武将爆破防御提升" iconPath="03" maxLevel="40" orderIndex="8" target="0" />
+<Technology entId="61008" techType="TECH_MILITARY" techName="审慎术" techDesc="升级后,武将耐久提升" iconPath="04" maxLevel="40" orderIndex="9" target="0" />
+<Technology entId="61009" techType="TECH_MILITARY" techName="领导术" techDesc="升级后,武将耐久提升" iconPath="05" maxLevel="40" orderIndex="10" target="0" />
+<Technology entId="61010" techType="TECH_MILITARY" techName="坚守术" techDesc="升级后,部队在冒险副本的防守战中城防设施数量" iconPath="06" maxLevel="40" orderIndex="11" target="0" />
+
+<Technology entId="61011" techType="TECH_DEVELOP" techName="鹰眼术" techDesc="升级后,武将命中提升" iconPath="01" maxLevel="40" orderIndex="12" target="0" />
+<Technology entId="61012" techType="TECH_DEVELOP" techName="云流术" techDesc="升级后,武将闪避提升" iconPath="02" maxLevel="40" orderIndex="13" target="0" />
+<Technology entId="61013" techType="TECH_DEVELOP" techName="振奋术" techDesc="升级后,武将暴击提升" iconPath="03" maxLevel="40" orderIndex="14" target="0" />
+<Technology entId="61014" techType="TECH_DEVELOP" techName="坚韧术" techDesc="升级后,武将物理韧性提升" iconPath="04" maxLevel="40" orderIndex="15" target="0" />
+<Technology entId="61015" techType="TECH_DEVELOP" techName="神准术" techDesc="升级后,武将远程命中提升" iconPath="05" maxLevel="40" orderIndex="16" target="0" />
+<Technology entId="61016" techType="TECH_DEVELOP" techName="飘絮术" techDesc="升级后,武将远程闪避提升" iconPath="06" maxLevel="40" orderIndex="17" target="0" />
+<Technology entId="61017" techType="TECH_DEVELOP" techName="天怒术" techDesc="升级后,武将远程暴击提升" iconPath="01" maxLevel="40" orderIndex="18" target="0" />
+<Technology entId="61018" techType="TECH_MILITARY" techName="灵心术" techDesc="升级后,武将远程韧性提升" iconPath="02" maxLevel="40" orderIndex="19" target="0" />
+
+
+
+
+
+
+</dataset>

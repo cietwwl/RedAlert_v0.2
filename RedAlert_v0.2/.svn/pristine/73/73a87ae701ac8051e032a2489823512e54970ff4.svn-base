@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ServerInfo">
+	<typeAlias alias="job" type="com.youxigu.wolf.node.job.Job"/>
+	<select id="getJobList" resultClass="job">
+		select * from jobcontext
+	</select>
+	<insert id="insertJob" parameterClass="job">
+		insert into jobcontext (jobGroupName, jobIdInGroup, jobExcuteTime,repeatRunRule, serviceName, methodName,jobPara, jobType, dispatch,runOnServer,runOnStart,errorDesc) values (#jobGroupName#, #jobIdInGroup#, #jobExcuteTime#,#repeatRunRule#, #serviceName#,#methodName#, #jobPara#, #jobType#, #dispatch#,#runOnServer#,#runOnStart#,#errorDesc#)
+		<selectKey keyProperty="jobId" resultClass="int">
+			SELECT last_insert_Id()
+		</selectKey>
+	</insert>
+	
+	<insert id="insertErrJob" parameterClass="job">
+		insert into jobcontext_err (jobId,jobGroupName, jobIdInGroup, jobExcuteTime,repeatRunRule, serviceName, methodName,jobPara, jobType, dispatch,runOnServer,runOnStart,errorDesc) values (#jobId#,#jobGroupName#, #jobIdInGroup#, #jobExcuteTime#,#repeatRunRule#, #serviceName#,#methodName#, #jobPara#, #jobType#, #dispatch#,#runOnServer#,#runOnStart#,#errorDesc#)
+	</insert>
+
+	<update id="updateJob" parameterClass="job">
+		update jobcontext set jobExcuteTime = #jobExcuteTime#,errorDesc=#errorDesc# where jobId = #jobId#
+	</update>
+	
+	<delete id="deleteJob" parameterClass="int">
+		delete from jobcontext where jobId = #jobId#
+	</delete>
+</sqlMap>

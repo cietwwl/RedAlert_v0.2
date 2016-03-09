@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<dataset>
+
+<AchieveType type="1" name="资源获取" icon="ziyuan" num="20" achieveIds="10001,10002,10003,10004,10005,11001,11002,11003,11004,11005,12001,12002,12003,12004,12005,13001,13002,13003,13004,13005" />
+<AchieveType type="2" name="科技成长" icon="keji" num="3" achieveIds="20001,20002,20003" />
+<AchieveType type="3" name="军事养成" icon="junshi" num="21" achieveIds="30001,30002,30003,31001,31002,31003,32001,32002,32003,33001,33002,33003,34001,34002,34003,35001,35002,35003,36001,36002,36003" />
+<AchieveType type="4" name="建筑建设" icon="guojia" num="5" achieveIds="40001,40002,40003,40004,40005" />
+<AchieveType type="5" name="联盟成就" icon="lianmeng" num="5" achieveIds="50001,50002,50003,50004,50005" />
+
+
+
+
+
+
+
+
+<Achieve achieveId="10001" name="金矿获取5000" type="1" entId="59904" entNum="5000" jungong="5" icon="jinkuang" isCumulative="1" />
+<Achieve achieveId="10002" name="金矿获取10000" type="1" entId="59904" entNum="10000" jungong="5" icon="jinkuang" isCumulative="1" />
+<Achieve achieveId="10003" name="金矿获取50000" type="1" entId="59904" entNum="50000" jungong="5" icon="jinkuang" isCumulative="1" />
+<Achieve achieveId="10004" name="金矿获取100000" type="1" entId="59904" entNum="100000" jungong="5" icon="jinkuang" isCumulative="1" />
+<Achieve achieveId="10005" name="金矿获取200000" type="1" entId="59904" entNum="200000" jungong="5" icon="jinkuang" isCumulative="1" />
+<Achieve achieveId="11001" name="铀矿获取5000" type="1" entId="59903" entNum="5000" jungong="5" icon="youkuang" isCumulative="1" />
+<Achieve achieveId="11002" name="铀矿获取10000" type="1" entId="59903" entNum="10000" jungong="5" icon="youkuang" isCumulative="1" />
+<Achieve achieveId="11003" name="铀矿获取50000" type="1" entId="59903" entNum="50000" jungong="5" icon="youkuang" isCumulative="1" />
+<Achieve achieveId="11004" name="铀矿获取100000" type="1" entId="59903" entNum="100000" jungong="5" icon="youkuang" isCumulative="1" />
+<Achieve achieveId="11005" name="铀矿获取200000" type="1" entId="59903" entNum="200000" jungong="5" icon="youkuang" isCumulative="1" />
+<Achieve achieveId="12001" name="铁矿获取5000" type="1" entId="59902" entNum="5000" jungong="5" icon="tiekuang" isCumulative="1" />
+<Achieve achieveId="12002" name="铁矿获取10000" type="1" entId="59902" entNum="10000" jungong="5" icon="tiekuang" isCumulative="1" />
+<Achieve achieveId="12003" name="铁矿获取50000" type="1" entId="59902" entNum="50000" jungong="5" icon="tiekuang" isCumulative="1" />
+<Achieve achieveId="12004" name="铁矿获取100000" type="1" entId="59902" entNum="100000" jungong="5" icon="tiekuang" isCumulative="1" />
+<Achieve achieveId="12005" name="铁矿获取200000" type="1" entId="59902" entNum="200000" jungong="5" icon="tiekuang" isCumulative="1" />
+<Achieve achieveId="13001" name="钻石获取5000" type="1" entId="59801" entNum="5000" jungong="5" icon="zuanshi" isCumulative="1" />
+<Achieve achieveId="13002" name="钻石获取10000" type="1" entId="59801" entNum="10000" jungong="5" icon="zuanshi" isCumulative="1" />
+<Achieve achieveId="13003" name="钻石获取50000" type="1" entId="59801" entNum="50000" jungong="5" icon="zuanshi" isCumulative="1" />
+<Achieve achieveId="13004" name="钻石获取100000" type="1" entId="59801" entNum="100000" jungong="5" icon="zuanshi" isCumulative="1" />
+<Achieve achieveId="13005" name="钻石获取200000" type="1" entId="59801" entNum="200000" jungong="5" icon="zuanshi" isCumulative="1" />
+<Achieve achieveId="20001" name="科技等级1" type="2" entId="61000" entNum="1" jungong="6" icon="keji" isCumulative="0" />
+<Achieve achieveId="20002" name="科技等级2" type="2" entId="61001" entNum="2" jungong="6" icon="keji" isCumulative="0" />
+<Achieve achieveId="20003" name="科技等级3" type="2" entId="61002" entNum="3" jungong="6" icon="keji" isCumulative="0" />
+<Achieve achieveId="30001" name="装备收集1" type="3" entId="31" entNum="1" jungong="7" icon="junshi" isCumulative="1" />
+<Achieve achieveId="30002" name="装备收集2" type="3" entId="31" entNum="2" jungong="7" icon="junshi" isCumulative="1" />
+<Achieve achieveId="30003" name="装备收集3" type="3" entId="31" entNum="3" jungong="7" icon="junshi" isCumulative="1" />
+<Achieve achieveId="31001" name="X件Y品质Z级装备" type="3" entId="32" entNum="1" jungong="7" icon="junshi" isCumulative="0" />
+<Achieve achieveId="31002" name="X件Y品质Z级装备" type="3" entId="32" entNum="3" jungong="7" icon="junshi" isCumulative="0" />
+<Achieve achieveId="31003" name="X件Y品质Z级装备" type="3" entId="32" entNum="5" jungong="7" icon="junshi" isCumulative="0" />
+<Achieve achieveId="32001" name="坦克收集1" type="3" entId="33" entNum="1" jungong="7" icon="junshi" isCumulative="1" />
+<Achieve achieveId="32002" name="坦克收集2" type="3" entId="33" entNum="2" jungong="7" icon="junshi" isCumulative="1" />
+<Achieve achieveId="32003" name="坦克收集3" type="3" entId="33" entNum="3" jungong="7" icon="junshi" isCumulative="1" />
+<Achieve achieveId="33001" name="X辆Z级Y品质坦克" type="3" entId="34" entNum="1" jungong="7" icon="junshi" isCumulative="0" />
+<Achieve achieveId="33002" name="X辆Z级Y品质坦克" type="3" entId="34" entNum="2" jungong="7" icon="junshi" isCumulative="0" />
+<Achieve achieveId="33003" name="X辆Z级Y品质坦克" type="3" entId="34" entNum="3" jungong="7" icon="junshi" isCumulative="0" />
+<Achieve achieveId="34001" name="指挥官等级10" type="3" entId="35" entNum="10" jungong="7" icon="junshi" isCumulative="0" />
+<Achieve achieveId="34002" name="指挥官等级20" type="3" entId="35" entNum="20" jungong="7" icon="junshi" isCumulative="0" />
+<Achieve achieveId="34003" name="指挥官等级30" type="3" entId="35" entNum="30" jungong="7" icon="junshi" isCumulative="0" />
+<Achieve achieveId="35001" name="指挥官军衔1" type="3" entId="36" entNum="1" jungong="7" icon="junshi" isCumulative="0" />
+<Achieve achieveId="35002" name="指挥官军衔2" type="3" entId="36" entNum="2" jungong="7" icon="junshi" isCumulative="0" />
+<Achieve achieveId="35003" name="指挥官军衔3" type="3" entId="36" entNum="3" jungong="7" icon="junshi" isCumulative="0" />
+<Achieve achieveId="36001" name="指挥官坦克装备X件Y品质装备" type="3" entId="37" entNum="1" jungong="7" icon="junshi" isCumulative="0" />
+<Achieve achieveId="36002" name="指挥官坦克装备X件Y品质装备" type="3" entId="37" entNum="3" jungong="7" icon="junshi" isCumulative="0" />
+<Achieve achieveId="36003" name="指挥官坦克装备X件Y品质装备" type="3" entId="37" entNum="5" jungong="7" icon="junshi" isCumulative="0" />
+<Achieve achieveId="40001" name="建筑等级1" type="4" entId="11001" entNum="1" jungong="8" icon="jianzhu" isCumulative="0" />
+<Achieve achieveId="40002" name="建筑等级2" type="4" entId="11002" entNum="2" jungong="8" icon="jianzhu" isCumulative="0" />
+<Achieve achieveId="40003" name="建筑等级3" type="4" entId="11003" entNum="3" jungong="8" icon="jianzhu" isCumulative="0" />
+<Achieve achieveId="40004" name="建筑等级4" type="4" entId="11004" entNum="4" jungong="8" icon="jianzhu" isCumulative="0" />
+<Achieve achieveId="40005" name="建筑等级5" type="4" entId="11005" entNum="5" jungong="8" icon="jianzhu" isCumulative="0" />
+<Achieve achieveId="50001" name="联盟等级1" type="5" entId="51" entNum="1" jungong="9" icon="lianmeng" isCumulative="0" />
+<Achieve achieveId="50002" name="联盟等级2" type="5" entId="51" entNum="2" jungong="9" icon="lianmeng" isCumulative="0" />
+<Achieve achieveId="50003" name="联盟等级3" type="5" entId="51" entNum="3" jungong="9" icon="lianmeng" isCumulative="0" />
+<Achieve achieveId="50004" name="联盟等级4" type="5" entId="51" entNum="4" jungong="9" icon="lianmeng" isCumulative="0" />
+<Achieve achieveId="50005" name="联盟等级5" type="5" entId="51" entNum="5" jungong="9" icon="lianmeng" isCumulative="0" />
+
+
+
+<AchieveLimit achieveId="31001" octType="equipLvColorNum" para1="7" para2="20" para3="1" para4="0" para5="0" />
+<AchieveLimit achieveId="31002" octType="equipLvColorNum" para1="7" para2="20" para3="3" para4="0" para5="0" />
+<AchieveLimit achieveId="31003" octType="equipLvColorNum" para1="7" para2="20" para3="5" para4="0" para5="0" />
+<AchieveLimit achieveId="33001" octType="heroLvColorNum" para1="4" para2="20" para3="1" para4="0" para5="0" />
+<AchieveLimit achieveId="33002" octType="heroLvColorNum" para1="4" para2="20" para3="2" para4="0" para5="0" />
+<AchieveLimit achieveId="33003" octType="heroLvColorNum" para1="4" para2="20" para3="3" para4="0" para5="0" />
+<AchieveLimit achieveId="36001" octType="commanderEquipColorNum" para1="6" para2="1" para3="0" para4="0" para5="0" />
+<AchieveLimit achieveId="36002" octType="commanderEquipColorNum" para1="6" para2="3" para3="0" para4="0" para5="0" />
+<AchieveLimit achieveId="36003" octType="commanderEquipColorNum" para1="6" para2="5" para3="0" para4="0" para5="0" />
+
+
+
+<!--以下是君主品质属性-->
+<CommanderColorProperty color="2" growing="5" magicAttack="28" physicalAttack="28" magicDefend="28" physicalDefend="28" initHp="37" initMorale="0" initHit="6" initDodge="6" critDec="2" critAdd="2" critDamageAdd="2" critDamageDec="2" />
+<CommanderColorProperty color="3" growing="10" magicAttack="42" physicalAttack="42" magicDefend="42" physicalDefend="42" initHp="56" initMorale="0" initHit="9" initDodge="9" critDec="4" critAdd="4" critDamageAdd="4" critDamageDec="4" />
+<CommanderColorProperty color="4" growing="20" magicAttack="64" physicalAttack="64" magicDefend="64" physicalDefend="64" initHp="85" initMorale="0" initHit="14" initDodge="14" critDec="6" critAdd="6" critDamageAdd="6" critDamageDec="6" />
+<CommanderColorProperty color="5" growing="40" magicAttack="96" physicalAttack="96" magicDefend="96" physicalDefend="96" initHp="128" initMorale="0" initHit="21" initDodge="21" critDec="10" critAdd="10" critDamageAdd="10" critDamageDec="10" />
+<CommanderColorProperty color="6" growing="80" magicAttack="144" physicalAttack="144" magicDefend="144" physicalDefend="144" initHp="192" initMorale="0" initHit="32" initDodge="32" critDec="16" critAdd="16" critDamageAdd="16" critDamageDec="16" />
+<CommanderColorProperty color="7" growing="160" magicAttack="216" physicalAttack="216" magicDefend="216" physicalDefend="216" initHp="288" initMorale="0" initHit="48" initDodge="48" critDec="24" critAdd="24" critDamageAdd="24" critDamageDec="24" />
+
+
+
+<!--以下是军衔-->
+<Title titleId="1" name="一等兵" icon="shibing1" parentId="0" color="2" award1="1001" award2="1002" award3="1003" award4="1004" award5="1005" entId="1001001" />
+<Title titleId="2" name="二等兵" icon="shibing2" parentId="1" color="2" award1="1006" award2="1007" award3="1008" award4="1009" award5="1010" entId="1001002" />
+<Title titleId="3" name="三等兵" icon="shibing3" parentId="2" color="2" award1="1011" award2="1012" award3="1013" award4="1014" award5="1015" entId="1001003" />
+<Title titleId="4" name="下士" icon="shibing4" parentId="3" color="3" award1="1016" award2="1017" award3="1018" award4="1019" award5="1020" entId="1001001" />
+<Title titleId="5" name="中士" icon="shibing5" parentId="4" color="3" award1="1021" award2="1022" award3="1023" award4="1024" award5="1025" entId="1001002" />
+<Title titleId="6" name="上士" icon="shibing6" parentId="5" color="3" award1="1026" award2="1027" award3="1028" award4="1029" award5="1030" entId="1001003" />
+<Title titleId="7" name="1级军士长" icon="shibing7" parentId="6" color="3" award1="1031" award2="1032" award3="1033" award4="1034" award5="1035" entId="1001001" />
+<Title titleId="8" name="2级军士长" icon="shibing8" parentId="7" color="3" award1="1036" award2="1037" award3="1038" award4="1039" award5="1040" entId="1001002" />
+<Title titleId="9" name="3级军士长" icon="shibing9" parentId="8" color="3" award1="1041" award2="1042" award3="1043" award4="1044" award5="1045" entId="1001003" />
+<Title titleId="10" name="总军士长" icon="shibing10" parentId="9" color="4" award1="1046" award2="1047" award3="1048" award4="1049" award5="1050" entId="1001004" />
+<Title titleId="11" name="1级准尉" icon="shibing11" parentId="10" color="4" award1="1051" award2="1052" award3="1053" award4="1054" award5="1055" entId="1001001" />
+<Title titleId="12" name="2级准尉" icon="shibing12" parentId="11" color="4" award1="1056" award2="1057" award3="1058" award4="1059" award5="1060" entId="1001002" />
+<Title titleId="13" name="3级准尉" icon="shibing13" parentId="12" color="4" award1="1061" award2="1062" award3="1063" award4="1064" award5="1065" entId="1001003" />
+<Title titleId="14" name="4级准尉" icon="shibing14" parentId="13" color="4" award1="1066" award2="1067" award3="1068" award4="1069" award5="1070" entId="1001004" />
+<Title titleId="15" name="5级准尉" icon="shibing15" parentId="14" color="4" award1="1071" award2="1072" award3="1073" award4="1074" award5="1075" entId="1001005" />
+<Title titleId="16" name="高级准尉" icon="shibing16" parentId="15" color="4" award1="1076" award2="1077" award3="1078" award4="1079" award5="1080" entId="1001006" />
+<Title titleId="17" name="少尉" icon="shibing17" parentId="16" color="5" award1="1081" award2="1082" award3="1083" award4="1084" award5="1085" entId="1001001" />
+<Title titleId="18" name="中尉" icon="shibing18" parentId="17" color="5" award1="1086" award2="1087" award3="1088" award4="1089" award5="1090" entId="1001002" />
+<Title titleId="19" name="上尉" icon="shibing19" parentId="18" color="5" award1="1091" award2="1092" award3="1093" award4="1094" award5="1095" entId="1001003" />
+<Title titleId="20" name="少校" icon="shibing20" parentId="19" color="6" award1="1096" award2="1097" award3="1098" award4="1099" award5="1100" entId="1001001" />
+<Title titleId="21" name="中校" icon="shibing21" parentId="20" color="6" award1="1101" award2="1102" award3="1103" award4="1104" award5="1105" entId="1001002" />
+<Title titleId="22" name="上校" icon="shibing22" parentId="21" color="6" award1="1106" award2="1107" award3="1108" award4="1109" award5="1110" entId="1001003" />
+<Title titleId="23" name="准将" icon="shibing23" parentId="22" color="7" award1="1111" award2="1112" award3="1113" award4="1114" award5="1115" entId="1001001" />
+<Title titleId="24" name="少将" icon="shibing24" parentId="23" color="7" award1="1116" award2="1117" award3="1118" award4="1119" award5="1120" entId="1001002" />
+<Title titleId="25" name="中将" icon="shibing25" parentId="24" color="7" award1="1121" award2="1122" award3="1123" award4="1124" award5="1125" entId="1001003" />
+<Title titleId="26" name="4星上将" icon="shibing26" parentId="25" color="7" award1="1126" award2="1127" award3="1128" award4="1129" award5="1130" entId="1001004" />
+<Title titleId="27" name="5星上将" icon="shibing27" parentId="26" color="7" award1="1131" award2="1132" award3="1133" award4="1134" award5="1135" entId="1001005" />
+<Title titleId="28" name="特级上将" icon="shibing28" parentId="27" color="7" award1="1136" award2="1137" award3="1138" award4="1139" award5="1140" entId="1001006" />
+<Title titleId="29" name="六星上将" icon="shibing29" parentId="28" color="7" award1="1141" award2="1142" award3="1143" award4="1144" award5="1145" entId="1001006" />
+
+
+
+
+
+
+<TitleAward awardId="1001" name="一等兵1" icon="icon01" awardType="HERO_PRO" junGong="5" awardDetail="H_PHYSICALATTACK,100,A" awardTips="穿甲攻击100" />
+<TitleAward awardId="1002" name="一等兵2" icon="icon01" awardType="COLOR" junGong="6" awardDetail="2" awardTips="icon01" />
+<TitleAward awardId="1003" name="一等兵3" icon="icon01" awardType="DROPITEM" junGong="7" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1004" name="一等兵4" icon="icon01" awardType="HERO_PRO" junGong="8" awardDetail="H_INIT_HP,50,A" awardTips="耐久50" />
+<TitleAward awardId="1005" name="一等兵5" icon="icon01" awardType="DROPITEM" junGong="9" awardDetail="3000002" awardTips="普通武将包1" />
+<TitleAward awardId="1006" name="二等兵1" icon="icon01" awardType="HERO_PRO" junGong="10" awardDetail="H_PHYSICALATTACK,150,A" awardTips="穿甲攻击150" />
+<TitleAward awardId="1007" name="二等兵2" icon="icon01" awardType="COLOR" junGong="11" awardDetail="3" awardTips="icon02" />
+<TitleAward awardId="1008" name="二等兵3" icon="icon01" awardType="DROPITEM" junGong="12" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1009" name="二等兵4" icon="icon01" awardType="HERO_PRO" junGong="13" awardDetail="H_INIT_HP,80,A" awardTips="耐久80" />
+<TitleAward awardId="1010" name="二等兵5" icon="icon01" awardType="DROPITEM" junGong="14" awardDetail="3000003" awardTips="普通武将包2" />
+<TitleAward awardId="1011" name="三等兵1" icon="icon01" awardType="HERO_PRO" junGong="15" awardDetail="H_PHYSICALATTACK,300,A" awardTips="穿甲攻击300" />
+<TitleAward awardId="1012" name="三等兵2" icon="icon01" awardType="COLOR" junGong="16" awardDetail="4" awardTips="icon03" />
+<TitleAward awardId="1013" name="三等兵3" icon="icon01" awardType="DROPITEM" junGong="17" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1014" name="三等兵4" icon="icon01" awardType="HERO_PRO" junGong="18" awardDetail="H_INIT_HP,100,A" awardTips="耐久100" />
+<TitleAward awardId="1015" name="三等兵5" icon="icon01" awardType="DROPITEM" junGong="19" awardDetail="3000003" awardTips="普通武将包3" />
+<TitleAward awardId="1016" name="下士1" icon="icon02" awardType="HERO_PRO" junGong="10" awardDetail="H_INIT_HP,50,A" awardTips="耐久50" />
+<TitleAward awardId="1017" name="下士2" icon="icon02" awardType="HERO_PRO" junGong="10" awardDetail="H_INIT_HP,100,A" awardTips="耐久100" />
+<TitleAward awardId="1018" name="下士3" icon="icon02" awardType="HERO_PRO" junGong="10" awardDetail="H_INIT_HP,150,A" awardTips="耐久150" />
+<TitleAward awardId="1019" name="下士4" icon="icon02" awardType="HERO_PRO" junGong="10" awardDetail="H_INIT_HP,200,A" awardTips="耐久200" />
+<TitleAward awardId="1020" name="下士5" icon="icon02" awardType="HERO_PRO" junGong="10" awardDetail="H_INIT_HP,250,A" awardTips="耐久250" />
+<TitleAward awardId="1021" name="中士1" icon="icon02" awardType="HERO_PRO" junGong="10" awardDetail="H_INIT_HP,300,A" awardTips="耐久300" />
+<TitleAward awardId="1022" name="中士2" icon="icon02" awardType="HERO_PRO" junGong="10" awardDetail="H_INIT_HP,350,A" awardTips="耐久350" />
+<TitleAward awardId="1023" name="中士3" icon="icon02" awardType="HERO_PRO" junGong="10" awardDetail="H_INIT_HP,400,A" awardTips="耐久400" />
+<TitleAward awardId="1024" name="中士4" icon="icon02" awardType="HERO_PRO" junGong="10" awardDetail="H_INIT_HP,450,A" awardTips="耐久450" />
+<TitleAward awardId="1025" name="中士5" icon="icon02" awardType="HERO_PRO" junGong="10" awardDetail="H_INIT_HP,500,A" awardTips="耐久500" />
+<TitleAward awardId="1026" name="上士1" icon="icon02" awardType="HERO_PRO" junGong="10" awardDetail="H_INIT_HP,550,A" awardTips="耐久550" />
+<TitleAward awardId="1027" name="上士2" icon="icon02" awardType="HERO_PRO" junGong="10" awardDetail="H_INIT_HP,600,A" awardTips="耐久600" />
+<TitleAward awardId="1028" name="上士3" icon="icon02" awardType="HERO_PRO" junGong="10" awardDetail="H_INIT_HP,650,A" awardTips="耐久650" />
+<TitleAward awardId="1029" name="上士4" icon="icon02" awardType="HERO_PRO" junGong="10" awardDetail="H_INIT_HP,700,A" awardTips="耐久700" />
+<TitleAward awardId="1030" name="上士5" icon="icon02" awardType="HERO_PRO" junGong="10" awardDetail="H_INIT_HP,750,A" awardTips="耐久750" />
+<TitleAward awardId="1031" name="1级军士长1" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1032" name="1级军士长2" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1033" name="1级军士长3" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1034" name="1级军士长4" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1035" name="1级军士长5" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1036" name="2级军士长1" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1037" name="2级军士长2" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1038" name="2级军士长3" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1039" name="2级军士长4" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1040" name="2级军士长5" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1041" name="3级军士长1" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1042" name="3级军士长2" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1043" name="3级军士长3" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1044" name="3级军士长4" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1045" name="3级军士长5" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1046" name="总军士长1" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1047" name="总军士长2" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1048" name="总军士长3" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1049" name="总军士长4" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1050" name="总军士长5" icon="icon03" awardType="COLOR" junGong="15" awardDetail="5" awardTips="icon03" />
+<TitleAward awardId="1051" name="1级准尉1" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1052" name="1级准尉2" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1053" name="1级准尉3" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1054" name="1级准尉4" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1055" name="1级准尉5" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1056" name="2级准尉1" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1057" name="2级准尉2" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1058" name="2级准尉3" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1059" name="2级准尉4" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1060" name="2级准尉5" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1061" name="3级准尉1" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1062" name="3级准尉2" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1063" name="3级准尉3" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1064" name="3级准尉4" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1065" name="3级准尉5" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1066" name="4级准尉1" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1067" name="4级准尉2" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1068" name="4级准尉3" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1069" name="4级准尉4" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1070" name="4级准尉5" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1071" name="5级准尉1" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1072" name="5级准尉2" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1073" name="5级准尉3" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1074" name="5级准尉4" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1075" name="5级准尉5" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1076" name="高级准尉1" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1077" name="高级准尉2" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1078" name="高级准尉3" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1079" name="高级准尉4" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1080" name="高级准尉5" icon="icon04" awardType="DROPITEM" junGong="20" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1081" name="少尉1" icon="icon04" awardType="DROPITEM" junGong="25" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1082" name="少尉2" icon="icon04" awardType="DROPITEM" junGong="25" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1083" name="少尉3" icon="icon04" awardType="DROPITEM" junGong="25" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1084" name="少尉4" icon="icon04" awardType="DROPITEM" junGong="25" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1085" name="少尉5" icon="icon04" awardType="DROPITEM" junGong="25" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1086" name="中尉1" icon="icon04" awardType="DROPITEM" junGong="25" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1087" name="中尉2" icon="icon04" awardType="DROPITEM" junGong="25" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1088" name="中尉3" icon="icon04" awardType="DROPITEM" junGong="25" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1089" name="中尉4" icon="icon04" awardType="DROPITEM" junGong="25" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1090" name="中尉5" icon="icon04" awardType="DROPITEM" junGong="25" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1091" name="上尉1" icon="icon04" awardType="DROPITEM" junGong="25" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1092" name="上尉2" icon="icon04" awardType="DROPITEM" junGong="25" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1093" name="上尉3" icon="icon04" awardType="DROPITEM" junGong="25" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1094" name="上尉4" icon="icon04" awardType="DROPITEM" junGong="25" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1095" name="上尉5" icon="icon04" awardType="DROPITEM" junGong="25" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1096" name="少校1" icon="icon05" awardType="DROPITEM" junGong="30" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1097" name="少校2" icon="icon05" awardType="DROPITEM" junGong="30" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1098" name="少校3" icon="icon05" awardType="DROPITEM" junGong="30" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1099" name="少校4" icon="icon05" awardType="DROPITEM" junGong="30" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1100" name="少校5" icon="icon05" awardType="DROPITEM" junGong="30" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1101" name="中校1" icon="icon05" awardType="DROPITEM" junGong="30" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1102" name="中校2" icon="icon05" awardType="DROPITEM" junGong="30" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1103" name="中校3" icon="icon05" awardType="DROPITEM" junGong="30" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1104" name="中校4" icon="icon05" awardType="DROPITEM" junGong="30" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1105" name="中校5" icon="icon05" awardType="DROPITEM" junGong="30" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1106" name="上校1" icon="icon05" awardType="DROPITEM" junGong="30" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1107" name="上校2" icon="icon05" awardType="DROPITEM" junGong="30" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1108" name="上校3" icon="icon05" awardType="DROPITEM" junGong="30" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1109" name="上校4" icon="icon05" awardType="DROPITEM" junGong="30" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1110" name="上校5" icon="icon05" awardType="DROPITEM" junGong="30" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1111" name="准将1" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1112" name="准将2" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1113" name="准将3" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1114" name="准将4" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1115" name="准将5" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1116" name="少将1" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1117" name="少将2" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1118" name="少将3" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1119" name="少将4" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1120" name="少将5" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1121" name="中将1" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1122" name="中将2" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1123" name="中将3" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1124" name="中将4" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1125" name="中将5" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1126" name="4星上将1" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1127" name="4星上将2" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1128" name="4星上将3" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1129" name="4星上将4" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1130" name="4星上将5" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1131" name="5星上将1" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1132" name="5星上将2" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1133" name="5星上将3" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1134" name="5星上将4" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1135" name="5星上将5" icon="icon01" awardType="DROPITEM" junGong="35" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1136" name="特级上将1" icon="icon01" awardType="DROPITEM" junGong="50" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1137" name="特级上将2" icon="icon01" awardType="DROPITEM" junGong="50" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1138" name="特级上将3" icon="icon01" awardType="DROPITEM" junGong="50" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1139" name="特级上将4" icon="icon01" awardType="DROPITEM" junGong="50" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1140" name="特级上将5" icon="icon01" awardType="DROPITEM" junGong="50" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1141" name="六星上将1" icon="icon01" awardType="DROPITEM" junGong="50" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1142" name="六星上将2" icon="icon01" awardType="DROPITEM" junGong="50" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1143" name="六星上将3" icon="icon01" awardType="DROPITEM" junGong="50" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1144" name="六星上将4" icon="icon01" awardType="DROPITEM" junGong="50" awardDetail="3000001" awardTips="装备宝箱" />
+<TitleAward awardId="1145" name="六星上将5" icon="icon01" awardType="DROPITEM" junGong="50" awardDetail="3000001" awardTips="装备宝箱" />
+
+
+
+
+
+
+</dataset>

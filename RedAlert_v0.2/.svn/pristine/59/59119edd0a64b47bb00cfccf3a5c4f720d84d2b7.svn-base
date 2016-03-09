@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+<sqlMap namespace="ServerInfo">
+	<typeAlias alias="missionType" type="com.youxigu.dynasty2.mission.domain.MissionType" />
+	<typeAlias alias="mission" type="com.youxigu.dynasty2.mission.domain.Mission" />
+	<typeAlias alias="missionLimit" type="com.youxigu.dynasty2.mission.domain.MissionLimit" />
+	<typeAlias alias="userMission" type="com.youxigu.dynasty2.mission.domain.UserMission" />
+
+	<select id="getMissionTypes" resultClass="missionType">
+		SELECT * FROM missiontype
+	</select>
+	<select id="getAllMissions" resultClass="mission">
+		SELECT * FROM mission
+	</select>
+	<select id="getAllMissionLimits" resultClass="missionLimit">
+		SELECT * FROM missionlimit
+	</select>
+
+	<cacheModel type="MEMCACHED" id="cache_userMission" serialize="false" readOnly="false" broadcast="false">
+		<flushOnExecute statement="deleteUserMission">
+			<flushModel flushstatement="getUserMissionByUserId" flushMode="delete" flushpara="userId" />
+			<flushModel flushstatement="userMission" flushMode="delete" flushpara="userId,userMissionId" />
+		</flushOnExecute>
+		<flushOnExecute statement="insertUserMission">
+			<flushModel flushstatement="getUserMissionByUserId" flushMode="insert" flushpara="userId" />
+			<flushModel flushstatement="userMission" flushMode="insert" flushpara="userId,userMissionId" />
+		</flushOnExecute>
+		<flushOnExecute statement="updateUserMission">
+			<flushModel flushstatement="userMission" flushMode="update"	flushpara="userId,userMissionId" />
+		</flushOnExecute>
+		<property name="class" value="userMission" />
+		<property name="pk" value="userId,userMissionId" />
+	</cacheModel>
+	<select id="getUserMissionById" resultClass="userMission" parameterClass="java.util.HashMap" cacheModel="cache_userMission" cacheOnlyObject="true" shardingParams='[{"paramExpr":"userId","tableName":"usermission"}]'>
+		SELECT * FROM usermission WHERE userMissionId = #userMissionId#
+	</select>
+	<select id="getUserMissionByUserId" resultClass="userMission" parameterClass="long" cacheModel="cache_userMission" resultIsList="true" shardingParams='[{"paramExpr":"userId","tableName":"usermission"}]'>
+		SELECT * FROM usermission WHERE userId = #userId#
+	</select>
+	<select id="getUserMissionByMissionId" resultClass="userMission" parameterClass="java.util.HashMap" cacheModel="cache_userMission" shardingParams='[{"paramExpr":"userId","tableName":"usermission"}]'>
+		SELECT * FROM usermission WHERE	userId = #userId# and missionId=#missionId#
+	</select>
+	<update id="updateUserMission" parameterClass="userMission"	asyncUpdate="3" shardingParams='[{"paramExpr":"userId","tableName":"usermission"}]'>
+		update usermission	set missionId=#missionId#,status=#status#,num1=#num1#,num2=#num2#,num3=#num3#,num4=#num4#,num5=#num5#,factor=#factor#,read0=#read0#	where userMissionId=#userMissionId#
+	</update>
+	<delete id="deleteUserMission" parameterClass="userMission"	shardingParams='[{"paramExpr":"userId","tableName":"usermission"}]'>
+		delete from usermission where userMissionId = #userMissionId#
+	</delete>
+	<insert id="insertUserMission" parameterClass="userMission"	shardingParams='[{"paramExpr":"userId","tableName":"usermission"}]'>
+		insert into usermission	(missionId,userId,completeLimitTime,status,num1,num2,num3,num4,num5,factor,read0) values (#missionId#,#userId#,#completeLimitTime#,#status#,#num1#,#num2#,#num3#,#num4#,#num5#,#factor#,#read0#)
+		<selectKey resultClass="int" keyProperty="userMissionId">
+			SELECT last_insert_Id() 
+		</selectKey>
+	</insert>
+
+	<!-- 特殊事件 -->
+    <typeAlias alias="worldMission" type="com.youxigu.dynasty2.mission.domain.WorldMission" />
+    <cacheModel type="MEMCACHED" id="cache_worldMission" serialize="false" readOnly="false" broadcast="false">
+		<flushOnExecute statement="insertWorldMission">
+			<flushModel flushstatement="getAllWorldMission" flushMode="insert" flushpara="" />
+			<flushModel flushstatement="worldMission" flushMode="insert" flushpara="missionId" />
+		</flushOnExecute>
+		<flushOnExecute statement="updateWorldMission">
+			<flushModel flushstatement="worldMission" flushMode="update" flushpara="missionId" />
+		</flushOnExecute>
+		<property name="class" value="worldMission" />
+		<property name="pk" value="missionId" />
+	</cacheModel>
+	<select id="getAllWorldMission" resultClass="worldMission" cacheModel="cache_worldMission" resultIsList="true">
+		SELECT * FROM worldmission
+	</select>
+	<select id="getWorldMission" resultClass="worldMission" parameterClass="int" cacheModel="cache_worldMission" cacheOnlyObject="true">
+		SELECT * FROM worldmission WHERE missionId = #missionId#
+	</select>
+	<update id="updateWorldMission" parameterClass="worldMission" asyncUpdate="3">
+		UPDATE worldmission	SET status=#status#,num1=#num1#,num2=#num2#,num3=#num3#,num4=#num4#,num5=#num5#,
+		completeLimitTime=#completeLimitTime#,endDttm=#endDttm# WHERE missionId=#missionId#
+	</update>
+	<insert id="insertWorldMission" parameterClass="worldMission">
+		INSERT INTO worldmission (missionId,completeLimitTime,status,num1,num2,num3,num4,num5,endDttm) VALUES 
+		(#missionId#,#completeLimitTime#,#status#,#num1#,#num2#,#num3#,#num4#,#num5#,#endDttm#)
+	</insert>
+	
+	<!-- 特殊事件领奖记录 -->
+    <typeAlias alias="userWorldMission" type="com.youxigu.dynasty2.mission.domain.UserWorldMission" />
+    <cacheModel type="MEMCACHED" id="cache_userWorldMission" serialize="false" readOnly="false" broadcast="false">
+		<flushOnExecute statement="insertUserWorldMission">
+			<flushModel flushstatement="userWorldMission" flushMode="insert" flushpara="userId,missionId" />
+		</flushOnExecute>
+		<property name="class" value="userWorldMission" />
+		<property name="pk" value="userId,missionId" />
+	</cacheModel>
+	<insert id="insertUserWorldMission" parameterClass="userWorldMission" shardingParams='[{"paramExpr":"userId","tableName":"userworldmission"}]'>
+		INSERT INTO userworldmission (userId,missionId,finishDttm,awardDttm) VALUES  
+		(#userId#,#missionId#,#finishDttm#,#awardDttm#)
+	</insert>
+	<select id="getUserWorldMission" resultClass="userWorldMission" parameterClass="java.util.HashMap" cacheModel="cache_userWorldMission" cacheOnlyObject="true"  shardingParams='[{"paramExpr":"userId","tableName":"userworldmission"}]'>
+		SELECT * FROM userworldmission WHERE userId=#userId# AND missionId = #missionId#
+	</select>
+	
+</sqlMap>

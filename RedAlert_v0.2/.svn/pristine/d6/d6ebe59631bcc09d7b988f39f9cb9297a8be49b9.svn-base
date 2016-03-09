@@ -1,0 +1,146 @@
+package com.youxigu.dynasty2.armyout.domain;
+
+import java.io.Serializable;
+/**
+ * 策略
+ * @author Dagangzi
+ *
+ */
+public class Strategy implements Serializable {
+	//军事
+	public static final String CHUZHENG = "chu_zheng";//出征
+	public static final String CHEHUI = "che_hui";//撤回
+	public static final String QIANGXING = "qiang_xing";//强行
+	public static final String ZULU = "zu_lu";//阻路
+	public static final String MINGBINLING ="min_bing_ling";//民兵令
+	public static final String MENGJIANGLING ="meng_jiang_ling";//猛将令
+	public static final String LIJIAN ="li_jian";//离间
+	public static final String SPY ="zhen_cha";//侦查
+	public static final String YINGJI ="ying_ji";//迎击
+	public static final String WANGMING ="wang_ming";//亡命
+	public static final String QIANXING ="qian_xing";//潜行
+	public static final String FANQIAN ="fan_qian";//反潜
+	public static final String LUANJIANG ="luan_jiang";//乱将
+	public static final String JIJIANG ="ji_jiang";//激将
+	
+
+	private String id;//类似 POZHAN
+	private String name;
+	private String icon;
+	private int comsumeToken;//消耗的策略值
+	private int useTimeMax;//使用次数上限
+	
+	//效果
+	private int eff1;//效果绝对值
+	private int eff2;//效果百分比
+	private int eff3;//时间效果
+	private String buffName;//buff图标
+	private String consumeDesc;//后台传给前台的消耗描述
+	private String effDesc;//后台传给前台的效果描述
+	private String strategyDesc;//前台在可使用的策略界面使用的描述
+	private int orderNo;//所属类型下的顺序
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+
+	public int getComsumeToken() {
+		return comsumeToken;
+	}
+
+	public void setComsumeToken(int comsumeToken) {
+		this.comsumeToken = comsumeToken;
+	}
+
+	public int getUseTimeMax() {
+		return useTimeMax;
+	}
+
+	public void setUseTimeMax(int useTimeMax) {
+		this.useTimeMax = useTimeMax;
+	}
+
+	public int getEff1() {
+		return eff1;
+	}
+
+	public void setEff1(int eff1) {
+		this.eff1 = eff1;
+	}
+
+	public int getEff2() {
+		return eff2;
+	}
+
+	public void setEff2(int eff2) {
+		this.eff2 = eff2;
+	}
+
+	public int getEff3() {
+		return eff3;
+	}
+
+	public void setEff3(int eff3) {
+		this.eff3 = eff3;
+	}
+
+	public String getBuffName() {
+		return buffName;
+	}
+
+	public void setBuffName(String buffName) {
+		this.buffName = buffName;
+	}
+
+	public String getConsumeDesc() {
+		return consumeDesc;
+	}
+
+	public void setConsumeDesc(String consumeDesc) {
+		this.consumeDesc = consumeDesc;
+	}
+
+	public String getEffDesc() {
+		return effDesc;
+	}
+
+	public void setEffDesc(String effDesc) {
+		this.effDesc = effDesc;
+	}
+
+	public String getStrategyDesc() {
+		return strategyDesc;
+	}
+
+	public void setStrategyDesc(String strategyDesc) {
+		this.strategyDesc = strategyDesc;
+	}
+
+	public int getOrderNo() {
+		return orderNo;
+	}
+
+	public void setOrderNo(int orderNo) {
+		this.orderNo = orderNo;
+	}
+}

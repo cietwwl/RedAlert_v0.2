@@ -1,0 +1,89 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+	
+
+<!--	<bean id="payController" class="com.youxigu.dynasty2.openapi.web.PayController" >-->
+<!--		 <property name="payService"><ref bean="payService" /></property>	 		-->
+<!--	</bean>-->
+<!--	-->
+<!--	<bean id="unionPayController" class="com.youxigu.dynasty2.openapi.web.UnionPayController" >-->
+<!--		 <property name="payService"><ref bean="payService" /></property>	 		-->
+<!--	</bean>-->
+<!--	<bean id="faceBookController" class="com.youxigu.dynasty2.openapi.web.FaceBookController" >-->
+<!--	</bean>-->
+
+
+	
+
+<!---移动QQ用户接口-->
+	<bean id="tecentMobileQqService" class="com.youxigu.dynasty2.openapi.service.impl.TecentMobileQqService" init-method="init">
+		<property name="appid" value="${openplatform.qq.appId:}"/>
+		<property name="appkey" value="${openplatform.qq.appKey:}"/>
+		<property name="verifyLoginUrl" value="http://${openplatform.msdk.domain:}/auth/verify_login"/>
+		<property name="profile" value="http://${openplatform.msdk.domain:}/relation/qqprofile"/>
+		<property name="loadVip" value="http://${openplatform.msdk.domain:}/profile/load_vip"/>
+		<property name="friends" value="http://${openplatform.msdk.domain:}/relation/qqfriends_detail"/>
+		<property name="qqfriendsVip" value="http://${openplatform.msdk.domain:}/relation/qqfriends_vip"/>
+		<property name="qqscoreBatch" value="http://${openplatform.msdk.domain:}/profile/qqscore_batch"/>
+		<property name="vistorVerfyUrl" value="http://${openplatform.msdk.domain:}/auth/guest_check_token"/>
+		<property name="shareUrl" value="http://${openplatform.msdk.domain:}/share/qq"/>
+
+		
+	</bean>
+<!--微信用户接口-->
+	<bean id="tecentWeiXinService" class="com.youxigu.dynasty2.openapi.service.impl.TecentWeiXinService" init-method="init">
+		<property name="appid" value="${openplatform.wx.appId:}"/>
+		<property name="appkey" value="${openplatform.wx.appKey:}"/>
+		<property name="verifyLoginUrl" value="http://${openplatform.msdk.domain:}/auth/check_token"/>
+		<property name="refreshTokenUrl" value="http://${openplatform.msdk.domain:}/auth/refresh_token"/>
+		<property name="profile" value="http://${openplatform.msdk.domain:}/relation/wxprofile"/>
+		<property name="friendsProfile" value="http://${openplatform.msdk.domain:}/relation/wxfriends_profile"/>
+		<property name="wxscore" value="http://${openplatform.msdk.domain:}/profile/wxscore"/>
+		<property name="wxuserinfo" value="http://${openplatform.msdk.domain:}/relation/wxuserinfo"/>
+		<property name="vistorVerfyUrl" value="http://${openplatform.msdk.domain:}/auth/guest_check_token"/>
+		<property name="shareUrl" value="http://${openplatform.msdk.domain:}/share/wx"/>
+	</bean>
+<!--联运用户接口-->
+	<bean id="tecentUnionService" class="com.youxigu.dynasty2.openapi.service.impl.TecentUnionService" init-method="init">
+		<property name="appid" value="${openplatform.union.appId:}"/>
+		<property name="appkey" value="${openplatform.union.appKey:}"/>
+		<property name="verifyLoginUrl" value="http://${openplatform.unionpay.domain:}/v1/user/verify"/>
+		<property name="profile" value="http://${openplatform.unionpay.domain:}/v1/user/profile"/>
+	</bean>
+<!--qq/微信支付接口-->
+	<bean id="tecentPayService" class="com.youxigu.dynasty2.openapi.service.impl.TecentPayService" init-method="init">
+		<property name="serverName" value="${openplatform.pay.domain:}"/>
+		<property name="balaceUrl" value="/mpay/get_balance_m"/>
+		<property name="payUrl" value="/mpay/pay_m"/>
+		<property name="cancelPayUrl" value="/mpay/cancel_pay_m"/>
+		<property name="presentUrl" value="/mpay/present_m"/>
+		<property name="subscribeUrl" value="/mpay/subscribe_m"/>
+		<property name="transferUrl" value="/mpay/transfer_m"/>
+	</bean>
+
+<!--联运支付接口-->
+<!--	<bean id="tecentUnionPayService" class="com.youxigu.dynasty2.openapi.service.impl.TecentUnionPayService" init-method="init">-->
+<!--		<property name="appid" value="${openplatform.union.appId:}"/>-->
+<!--		<property name="appkey" value="${openplatform.union.appKey:}"/>-->
+<!--		<property name="payUrl" value="http://${openplatform.unionpay.domain:}/v1/pay/buy_goods"/>-->
+<!--		<property name="presentUrl" value="http://${openplatform.unionpay.domain:}/v1/pay/send_gift"/>-->
+<!--	</bean>-->
+	
+<!--	<bean id="faceBookService" class="com.youxigu.dynasty2.openapi.service.impl.FaceBookService" >-->
+<!--		<property name="accountService" ref="accountService"/>-->
+<!--		<property name="userDao" ref="userDao"/>-->
+<!--		<property name="userService" ref="userService"/>-->
+<!--	</bean>-->
+
+<!--	<bean id="payAction" class="com.youxigu.dynasty2.openapi.web.PayAction" >-->
+<!--		<property name="tecentUnionPayService"><ref bean="tecentUnionPayService" /></property>-->
+<!--	</bean>-->
+</beans>
+

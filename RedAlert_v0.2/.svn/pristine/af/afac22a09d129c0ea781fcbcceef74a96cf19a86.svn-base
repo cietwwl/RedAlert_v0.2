@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+<Technology entId="61000" techType="TECH_MILITARY" techName="初级锐矛术" techDesc="升级后,增加坦克攻击" iconPath="01" maxLevel="20" orderIndex="1" target="0" />
+<Technology entId="61001" techType="TECH_MILITARY" techName="初级防爆术" techDesc="升级后,增加坦克爆破防御" iconPath="02" maxLevel="20" orderIndex="2" target="0" />
+<Technology entId="61002" techType="TECH_MILITARY" techName="初级耐久术" techDesc="升级后,增加坦克耐久" iconPath="01" maxLevel="20" orderIndex="3" target="0" />
+<Technology entId="61003" techType="TECH_MILITARY" techName="初级坚甲术" techDesc="升级后,增加坦克穿甲防御" iconPath="02" maxLevel="20" orderIndex="4" target="0" />
+<Technology entId="61004" techType="TECH_MILITARY" techName="初级鹰眼术" techDesc="升级后,增加坦克命中" iconPath="03" maxLevel="20" orderIndex="5" target="0" />
+<Technology entId="61005" techType="TECH_MILITARY" techName="初级躲避术" techDesc="升级后,增加坦克闪避" iconPath="04" maxLevel="20" orderIndex="6" target="0" />
+<Technology entId="61006" techType="TECH_MILITARY" techName="初级爆破术" techDesc="升级后,增加坦克暴击" iconPath="05" maxLevel="20" orderIndex="7" target="0" />
+<Technology entId="61007" techType="TECH_MILITARY" techName="初级抵抗术" techDesc="升级后,增加坦克暴击抵抗" iconPath="06" maxLevel="20" orderIndex="8" target="0" />
+<Technology entId="61008" techType="TECH_MILITARY" techName="中级防爆术" techDesc="升级后,坦克爆破防御提升" iconPath="01" maxLevel="10" orderIndex="9" target="0" />
+<Technology entId="61009" techType="TECH_MILITARY" techName="中级锐矛术" techDesc="升级后,增加坦克攻击" iconPath="02" maxLevel="10" orderIndex="10" target="0" />
+<Technology entId="61010" techType="TECH_MILITARY" techName="中级坚甲术" techDesc="升级后,增加坦克穿甲防御" iconPath="03" maxLevel="10" orderIndex="11" target="0" />
+<Technology entId="61011" techType="TECH_MILITARY" techName="中级耐久术" techDesc="升级后,增加坦克耐久" iconPath="04" maxLevel="10" orderIndex="12" target="0" />
+<Technology entId="61012" techType="TECH_MILITARY" techName="初级伤害加成" techDesc="升级后,增加坦克伤害加成" iconPath="05" maxLevel="5" orderIndex="13" target="0" />
+<Technology entId="61013" techType="TECH_MILITARY" techName="初级伤害减免" techDesc="升级后,增加坦克伤害减免" iconPath="06" maxLevel="5" orderIndex="14" target="0" />
+<Technology entId="61014" techType="TECH_DEVELOP" techName="初级采石术" techDesc="升级后,增加石料产量" iconPath="01" maxLevel="20" orderIndex="15" target="0" />
+<Technology entId="61015" techType="TECH_DEVELOP" techName="初级金矿术" techDesc="升级后,增加金矿产量" iconPath="02" maxLevel="20" orderIndex="16" target="0" />
+<Technology entId="61016" techType="TECH_DEVELOP" techName="初级石油术" techDesc="升级后,增加石油产量" iconPath="03" maxLevel="20" orderIndex="17" target="0" />
+<Technology entId="61017" techType="TECH_DEVELOP" techName="初级铀矿术" techDesc="升级后,增加铀矿产量" iconPath="04" maxLevel="20" orderIndex="18" target="0" />
+<Technology entId="61018" techType="TECH_DEVELOP" techName="初级建造术" techDesc="升级后，减少建筑的建造时间" iconPath="05" maxLevel="20" orderIndex="19" target="0" />
+<Technology entId="61019" techType="TECH_DEVELOP" techName="初级研究术" techDesc="升级后，减少科技的研究时间" iconPath="06" maxLevel="20" orderIndex="20" target="0" />
+<Technology entId="61020" techType="TECH_DEVELOP" techName="中级金矿术" techDesc="升级后,增加金矿产量" iconPath="01" maxLevel="10" orderIndex="21" target="0" />
+<Technology entId="61021" techType="TECH_DEVELOP" techName="中级采石术" techDesc="升级后,增加石料产量" iconPath="02" maxLevel="10" orderIndex="22" target="0" />
+<Technology entId="61022" techType="TECH_DEVELOP" techName="中级石油术" techDesc="升级后,增加石油产量" iconPath="03" maxLevel="10" orderIndex="23" target="0" />
+<Technology entId="61023" techType="TECH_DEVELOP" techName="中级铀矿术" techDesc="升级后,增加铀矿产量" iconPath="04" maxLevel="10" orderIndex="24" target="0" />
+<Technology entId="61024" techType="TECH_DEVELOP" techName="中级建造术" techDesc="升级后，减少建筑的建造时间" iconPath="05" maxLevel="5" orderIndex="25" target="0" />
+<Technology entId="61025" techType="TECH_DEVELOP" techName="中级研究术" techDesc="升级后，减少科技的研究时间" iconPath="06" maxLevel="5" orderIndex="26" target="0" />
+
+
+
+
+
+
+</dataset>

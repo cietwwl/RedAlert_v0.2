@@ -1,0 +1,121 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+	
+	<bean id="idipService" class="com.youxigu.dynasty2.openapi.service.impl.IdipService" >
+	</bean>
+<!--	<bean id="userIdipProcessor" class="com.youxigu.dynasty2.openapi.service.processor.UserIdipProcessor">-->
+<!--	 	<property name="userService"><ref bean="userService" /></property>-->
+<!--	 	<property name="accountService"><ref bean="accountService" /></property>-->
+<!--	 	<property name="castleService"><ref bean="castleService" /></property>-->
+<!--	 	<property name="troopService"><ref bean="troopService" /></property>-->
+<!--	</bean>-->
+	<bean id="banUserProcessor" class="com.youxigu.dynasty2.openapi.service.processor.BanUserProcessor">
+	 	<property name="userService"><ref bean="userService" /></property>
+	 	<property name="accountService"><ref bean="accountService" /></property>
+	</bean>
+<!--	<bean id="mailItemProcessor" class="com.youxigu.dynasty2.openapi.service.processor.MailItemProcessor">-->
+<!--	 	<property name="userService"><ref bean="userService" /></property>-->
+<!--	 	<property name="accountService"><ref bean="accountService" /></property>-->
+<!--	 	<property name="mailMessageService"><ref bean="mailMessageService" /></property>-->
+<!--		<property name="logService"><ref bean="logService" /></property>-->
+<!--		<property name="tlogService"><ref bean="tlogService" /></property>-->
+<!--	</bean>-->
+<!--	<bean id="queryHerosProcessor" class="com.youxigu.dynasty2.openapi.service.processor.QueryHerosProcessor">-->
+<!--	 	<property name="userService"><ref bean="userService" /></property>-->
+<!--	 	<property name="accountService"><ref bean="accountService" /></property>-->
+<!--	 	<property name="heroService"><ref bean="heroService" /></property>-->
+<!--	</bean>-->
+<!--	<bean id="queryUsersProcessor" class="com.youxigu.dynasty2.openapi.service.processor.QueryUsersProcessor">-->
+<!--	 	<property name="userService"><ref bean="userService" /></property>-->
+<!--	 	<property name="accountService"><ref bean="accountService" /></property>-->
+<!--	 	<property name="userIdipProcessor"><ref bean="userIdipProcessor" /></property>-->
+<!--	</bean>-->
+<!--	<bean id="userByNameProcessor" class="com.youxigu.dynasty2.openapi.service.processor.UserByNameProcessor">-->
+<!--	 	<property name="userService"><ref bean="userService" /></property>-->
+<!--	 	<property name="accountService"><ref bean="accountService" /></property>-->
+<!--	 	<property name="userIdipProcessor"><ref bean="userIdipProcessor" /></property>-->
+<!--	</bean>-->
+<!--	<bean id="userEquipsProcessor" class="com.youxigu.dynasty2.openapi.service.processor.UserEquipsProcessor">-->
+<!--	 	<property name="userService"><ref bean="userService" /></property>-->
+<!--	 	<property name="accountService"><ref bean="accountService" /></property>-->
+<!--	 	<property name="treasuryService"><ref bean="treasuryService" /></property>-->
+<!--	</bean>-->
+<!--	<bean id="userItemProcessor" class="com.youxigu.dynasty2.openapi.service.processor.UserItemProcessor">-->
+<!--	 	<property name="userService"><ref bean="userService" /></property>-->
+<!--	 	<property name="accountService"><ref bean="accountService" /></property>-->
+<!--	 	<property name="treasuryService"><ref bean="treasuryService" /></property>-->
+<!--	</bean>-->
+	<bean id="queryCreateRoleProcessor" class="com.youxigu.dynasty2.openapi.service.processor.QueryCreateRoleProcessor">
+	 	<property name="userService"><ref bean="userService" /></property>
+	 	<property name="accountService"><ref bean="accountService" /></property>
+	</bean>
+	<bean id="userOnlineProcessor" class="com.youxigu.dynasty2.openapi.service.processor.UserOnlineProcessor">
+	 	<property name="userService"><ref bean="userService" /></property>
+	 	<property name="accountService"><ref bean="accountService" /></property>
+	</bean>
+	
+<!--	<bean id="singleMailProcessor" class="com.youxigu.dynasty2.openapi.service.processor.SingleMailProcessor">-->
+<!--	 	<property name="userService"><ref bean="userService" /></property>-->
+<!--	 	<property name="accountService"><ref bean="accountService" /></property>-->
+<!--	 	<property name="mailMessageService"><ref bean="mailMessageService" /></property>-->
+<!--		<property name="logService"><ref bean="logService" /></property>-->
+<!--	</bean>-->
+
+	<bean id="secBanAccountProcessor" class="com.youxigu.dynasty2.openapi.service.processor.SecBanAccountProcessor">
+	 	<property name="userService"><ref bean="userService" /></property>
+	 	<property name="accountService"><ref bean="accountService" /></property>
+	</bean>
+	<bean id="secBanOperateProcessor" class="com.youxigu.dynasty2.openapi.service.processor.SecBanOperateProcessor">
+	 	<property name="userService"><ref bean="userService" /></property>
+	 	<property name="accountService"><ref bean="accountService" /></property>
+	</bean>
+	<bean id="secBanTalkProcessor" class="com.youxigu.dynasty2.openapi.service.processor.SecBanTalkProcessor">
+	 	<property name="userService"><ref bean="userService" /></property>
+	 	<property name="accountService"><ref bean="accountService" /></property>
+	 	<property name="chatService"><ref bean="messageService" /></property>
+	</bean>
+	<bean id="secCancelPunishProcessor" class="com.youxigu.dynasty2.openapi.service.processor.SecCancelPunishProcessor">
+	 	<property name="userService"><ref bean="userService" /></property>
+	 	<property name="accountService"><ref bean="accountService" /></property>
+	 	<property name="chatService"><ref bean="messageService" /></property>
+	</bean>
+<!--	<bean id="secMailProcessor" class="com.youxigu.dynasty2.openapi.service.processor.SecMailProcessor">-->
+<!--	 	<property name="userService"><ref bean="userService" /></property>-->
+<!--	 	<property name="accountService"><ref bean="accountService" /></property>-->
+<!--	 	<property name="mailMessageService"><ref bean="mailMessageService" /></property>-->
+<!--	</bean>-->
+<!--	<bean id="secQueryUserInfoProcessor" class="com.youxigu.dynasty2.openapi.service.processor.SecQueryUserInfoProcessor">-->
+<!--	 	<property name="userService"><ref bean="userService" /></property>-->
+<!--	 	<property name="accountService"><ref bean="accountService" /></property>-->
+<!--	 	<property name="troopService"><ref bean="troopService" /></property>-->
+<!--	 	<property name="castleService"><ref bean="castleService" /></property>-->
+<!--	</bean>-->
+<!--	<bean id="secUpdateCashProcessor" class="com.youxigu.dynasty2.openapi.service.processor.SecUpdateCashProcessor">-->
+<!--	 	<property name="userService"><ref bean="userService" /></property>-->
+<!--	 	<property name="accountService"><ref bean="accountService" /></property>-->
+<!--	 	<property name="vipService"><ref bean="vipService" /></property>-->
+<!--	</bean>-->
+<!--	<bean id="secUpdateResourceProcessor" class="com.youxigu.dynasty2.openapi.service.processor.SecUpdateResourceProcessor">-->
+<!--	 	<property name="userService"><ref bean="userService" /></property>-->
+<!--	 	<property name="accountService"><ref bean="accountService" /></property>-->
+<!--	 	<property name="castleService"><ref bean="castleService" /></property>-->
+<!--	</bean>-->
+<!--	<bean id="updateCashProcessor" class="com.youxigu.dynasty2.openapi.service.processor.UpdateCashProcessor">-->
+<!--	 	<property name="userService"><ref bean="userService" /></property>-->
+<!--	 	<property name="accountService"><ref bean="accountService" /></property>-->
+<!--	 	<property name="vipService"><ref bean="vipService" /></property>-->
+<!--	</bean>-->
+	<bean id="resetPassWordProcessor" class="com.youxigu.dynasty2.openapi.service.processor.ResetPassWordProcessor">
+	 	<property name="userService"><ref bean="userService" /></property>
+	 	<property name="accountService"><ref bean="accountService" /></property>
+<!--	 	<property name="gmToolService"><ref bean="gmtoolService" /></property>-->
+	</bean>
+</beans>
+

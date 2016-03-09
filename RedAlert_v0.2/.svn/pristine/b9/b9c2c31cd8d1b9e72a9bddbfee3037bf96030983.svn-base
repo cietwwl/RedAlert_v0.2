@@ -1,0 +1,261 @@
+package com.youxigu.dynasty2.entity.service.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.youxigu.dynasty2.entity.domain.HeroProperty;
+import com.youxigu.dynasty2.entity.domain.SysHero;
+import com.youxigu.dynasty2.entity.service.ISysHeroService;
+import com.youxigu.dynasty2.hero.domain.HeroFate;
+import com.youxigu.dynasty2.hero.domain.HeroStrength;
+import com.youxigu.dynasty2.hero.domain.RelifeHeroBackItem;
+import com.youxigu.dynasty2.hero.domain.RelifeLimit;
+import com.youxigu.dynasty2.util.BaseException;
+
+/**
+ * 系统武将实体service定义
+ * 
+ * @author Dagangzi
+ * 
+ */
+public class SysHeroEntityService extends AbstractEntityFactoryService<SysHero>
+		implements ISysHeroService {
+	public static final Logger log = LoggerFactory
+			.getLogger(SysHeroEntityService.class);
+
+	private Map<Integer, SysHero> entityCache = null;
+	private Map<String, HeroFate> heroFateMaps = null;
+
+	/** key是系统武将id,val是可以进阶多少 */
+	private Map<Integer, List<RelifeLimit>> heroRelifeLimitMaps = null;
+	/** key进阶等级,val是进阶需要多少强化等级 **/
+	private Map<Integer, List<HeroStrength>> heroStrengthMaps = null;
+	/** key系统武将id,val武将每 一强化和进阶等级对应的返回物品 **/
+	private Map<Integer, Map<Integer, RelifeHeroBackItem>> relifeHeroBackItems = null;
+
+	public void initService() {
+		log.info("初始化系统武将");
+		if (entityCache != null) {
+			return;
+		}
+		entityCache = new ConcurrentHashMap<Integer, SysHero>();
+		List<SysHero> list = entityDao.listSysHeros();
+		if (list != null && list.size() > 0) {
+			for (SysHero entity : list) {
+				entity.check();
+				entityCache.put(entity.getEntId(), entity);
+			}
+		}
+
+		List<HeroFate> fates = entityDao
+				.listHeroFatesByType(HeroFate.HERO_FATE);
+		if (fates != null) {
+			heroFateMaps = new HashMap<String, HeroFate>(fates.size());
+			for (HeroFate fate : fates) {
+				if (fate.getType() != HeroFate.HERO_FATE) {
+					// 这里只加载武将的情缘
+					continue;
+				}
+				fate.parse();
+				heroFateMaps.put(String.valueOf(fate.getFateId()), fate);
+			}
+		}
+
+		Map<Integer, HeroStrength> heroStrengths = new HashMap<Integer, HeroStrength>();
+
+		List<HeroStrength> list2 = entityDao.getHeroStrengthList();
+		if (list2 != null) {
+			heroStrengthMaps = new HashMap<Integer, List<HeroStrength>>(6);
+			for (HeroStrength r : list2) {
+				int key = r.getId() / HeroStrength.FIX;
+				List<HeroStrength> rlist = heroStrengthMaps.get(key);
+				if (rlist == null) {
+					rlist = new ArrayList<HeroStrength>(10);
+					heroStrengthMaps.put(key, rlist);
+				}
+				rlist.add(r);
+				heroStrengths.put(r.getId(), r);
+
+			}
+		}
+		// 构建上下级关系
+		for (HeroStrength s : heroStrengths.values()) {
+			if (s.getNextLvevlId() <= 0) {
+				continue;
+			}
+			HeroStrength nt = heroStrengths.get(s.getNextLvevlId());
+			if (nt == null) {
+				throw new BaseException("未配置下一等级强化数据id:" + s.getId());
+			}
+			if (s.getLevel() + 1 != nt.getLevel()) {
+				// log.error("强化等级配置相同id:" + s.getId() + ",id2:" + nt.getId());
+				throw new BaseException("强化等级配置相同id:" + s.getId() + ",id2:"
+						+ nt.getId());
+			}
+			s.setNextHeroStrength(nt);
+		}
+
+		List<RelifeLimit> limits = entityDao.getRelifeLimitList();
+		if (limits != null) {
+			heroRelifeLimitMaps = new HashMap<Integer, List<RelifeLimit>>(
+					limits.size() / 4);
+			for (RelifeLimit r : limits) {
+				Integer sysHeroId = r.getSysHeroId();
+				List<RelifeLimit> rlist = heroRelifeLimitMaps.get(sysHeroId);
+				if (rlist == null) {
+					rlist = new ArrayList<RelifeLimit>(4);
+					heroRelifeLimitMaps.put(sysHeroId, rlist);
+				}
+				r.setProperties(parseProperty(r.getAttrValue()));
+				rlist.add(r);
+
+				heroStrengths.get(r.getHeroStrengthId());
+			}
+		}
+
+		for (List<RelifeLimit> vs : heroRelifeLimitMaps.values()) {
+			for (RelifeLimit r : vs) {
+				List<HeroStrength> hs = heroStrengthMaps.get(r.getRelifeNum());
+				if (hs == null || hs.isEmpty()) {
+					log.error("进阶未配置相应的强化等级数据id:" + r.getId());
+					// throw new BaseException("进阶未配置相应的强化等级数据id:" + r.getId());
+				}
+				r.setHeroStrengthLimits(hs);
+
+				HeroStrength h = heroStrengths.get(r.getHeroStrengthId());
+				if (h == null) {
+					throw new BaseException("进阶未配置相应的强化等级初始id:" + r.getId());
+				}
+				r.setInitHeroStrength(h);
+			}
+		}
+		// 构建武将重生或退役返还的物品
+		relifeHeroBackItems = new HashMap<Integer, Map<Integer, RelifeHeroBackItem>>();
+		for (Entry<Integer, List<RelifeLimit>> en : heroRelifeLimitMaps
+				.entrySet()) {
+			Map<Integer, RelifeHeroBackItem> items = relifeHeroBackItems.get(en
+					.getKey());
+			if (items == null) {
+				items = new HashMap<Integer, RelifeHeroBackItem>();
+				relifeHeroBackItems.put(en.getKey(), items);
+			}
+			RelifeHeroBackItem preItem = null;
+			List<RelifeLimit> rls = en.getValue();
+			int size = rls.size();
+			for (int relifeNum = 0; relifeNum < size; relifeNum++) {// 从0阶开始
+				RelifeLimit rl = rls.get(relifeNum);
+				HeroStrength hs = rl.getInitHeroStrength();
+				while (hs != null) {
+					RelifeHeroBackItem item = new RelifeHeroBackItem(
+							en.getKey(), relifeNum, hs.getLevel(), 0, hs,
+							preItem);
+					items.put(item.getId(), item);
+
+					hs = hs.getNextHeroStrength();
+					preItem = item;
+				}
+				// 补充 1-0 2-0 3-0。。。刚进阶的数据
+				RelifeHeroBackItem item = new RelifeHeroBackItem(en.getKey(),
+						relifeNum + 1, 0, rl.getHeroCardNum(), hs, preItem);
+				items.put(item.getId(), item);
+				preItem = item;
+			}
+
+		}
+
+		log.info("系统武将数据出身完毕");
+	}
+
+	/**
+	 * 解析属性定义： HERO_AGILE,26,A;HERO_HP,104,A; {属性ID,属性值,绝对值/百分比}
+	 * 
+	 * @param value
+	 */
+	public List<HeroProperty> parseProperty(String value) {
+		List<HeroProperty> properties = new ArrayList<HeroProperty>();
+		if (!StringUtils.isEmpty(value)) {
+			String[] props = StringUtils.split(value, ";");
+			for (String one : props) {
+				String[] tmp = StringUtils.split(one, ",");
+
+				HeroProperty heroProp = new HeroProperty();
+				heroProp.setPropName(tmp[0]);
+				heroProp.setValue(Integer.parseInt(tmp[1]));
+				if (tmp.length == 3) {
+					heroProp.setAbs("A".equals(tmp[2]));
+				} else {
+					heroProp.setAbs(true);
+				}
+				properties.add(heroProp);
+			}
+		}
+		return properties;
+	}
+
+	@Override
+	public SysHero loadEntity(int entityId, String entityType,
+			Map<String, Object> context) {
+		SysHero entity = entityCache.get(entityId);
+		if (entity == null) {
+			entity = entityDao.getSysHeroByEntId(entityId);
+		}
+		if (entity != null) {
+			entity.setEntType(entityType);
+			// 进阶配置数据
+			entity.setRelifeLimits(heroRelifeLimitMaps.get(entityId));
+		}
+
+		// 加载武将情缘
+		String fateIds = entity.getHeroFateIds();
+		if (fateIds != null && fateIds.length() > 0) {
+			String[] arr = StringUtils.split(fateIds, ",");
+			List<HeroFate> heroFates = new ArrayList<HeroFate>(arr.length);
+			List<HeroFate> equipFates = new ArrayList<HeroFate>(arr.length);
+			for (String id : arr) {
+				HeroFate fate = heroFateMaps.get(id);
+				if (fate != null) {
+					if (fate.getType() == 1) {
+						heroFates.add(fate);
+					} else {
+						equipFates.add(fate);
+					}
+				}
+			}
+			if (heroFates.size() > 0) {
+				entity.setHeroFates(heroFates);
+			}
+		}
+		return entity;
+	}
+
+	@Override
+	public HeroFate getHeroFate(String fateId) {
+		return heroFateMaps.get(fateId);
+	}
+
+	@Override
+	public HeroFate getHeroFate(int fateId) {
+		return getHeroFate(String.valueOf(fateId));
+	}
+
+	@Override
+	public RelifeHeroBackItem getRelifeHeroBackItem(int sysHeroId,
+			int relifeNum, int heroStrength) {
+		Map<Integer, RelifeHeroBackItem> map = relifeHeroBackItems
+				.get(sysHeroId);
+		if (map == null) {
+			return null;
+		}
+		int id = RelifeHeroBackItem.getId(relifeNum, heroStrength);
+		RelifeHeroBackItem item = map.get(id);
+		return item;
+	}
+}

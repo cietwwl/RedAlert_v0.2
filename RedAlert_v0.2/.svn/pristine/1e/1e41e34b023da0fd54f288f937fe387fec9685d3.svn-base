@@ -1,0 +1,106 @@
+package dynasty;
+import "Common.proto";
+
+option java_package = "com.youxigu.dynasty2.mission.proto";
+option java_outer_classname = "MissionMsg";
+
+//80001 显示君主任务列表请求(nodeserver)
+message Request80001Define{
+   required int32 cmd = 1;
+   optional string missionType = 2;//"QTYPE_MAIN" 主线任务[必须]
+}
+
+//单个任务的显示信息
+message UserMissionViewMsg{
+   optional int32 id = 1;//主键[必须](世界任务无效)
+   optional int32 missionId = 2;//任务配数id[必须]
+   optional int64 userId = 3;//君主id[必须](世界任务无效)
+   optional int32 status = 4;//状态 未完成0 已经完成没提交1 已经完成提交过2 失败3[必须]
+   optional int32 num1 = 5;//状态 完成进度1[可选]
+   optional int32 num2 = 6;//状态 完成进度2[可选]
+   optional int32 num3 = 7;//状态 完成进度3[可选]
+   optional int32 num4 = 8;//状态 完成进度4[可选]
+   optional int32 num5 = 9;//状态 完成进度5[可选]
+   optional int32 completeNum = 10 [deprecated=true];//完成次数，联盟循环任务使用[可选]
+   optional int32 read = 11 [deprecated=true];//已读状态[可选]
+   optional int64 remainTime = 12;//世界任务剩余时间(秒)[可选](君主任务无效)
+}
+
+//80002 显示君主任务列表响应
+message Response80001Define{
+   optional ResponseHead responseHead = 1;//协议头[必须]
+   repeated UserMissionViewMsg userMissionList = 2;//任务列表[必须]
+}
+
+//80003 提交君主任务请求(nodeserver)
+message Request80003Define{
+   required int32 cmd = 1;
+   optional int32 id = 2;//主键[必须]
+}
+
+//80004 提交君主任务响应
+message Response80003Define{
+   optional ResponseHead responseHead = 1;//协议头[必须]
+   optional int32 missionId = 2;//任务配数id[必须]
+   optional int32 mainNum = 3;//普通任务未领奖的数量[必须]
+}
+
+//80005 分页显示世界任务列表请求(nodeserver)
+message Request80005Define{
+   required int32 cmd = 1;
+   optional int32 pageNo = 2;//页码从0开始[必须]
+}
+
+//单个任务的显示信息
+message PagerMissionMsg{
+   optional int32 pageNo = 1;//页码[必须]
+   optional int32 pageSize = 2;//每页显示的行数[必须]
+   optional int32 total = 3;//总记录数[必须]
+   optional int32 totalPages = 4;//总页数[必须]
+   repeated UserMissionViewMsg datas = 5;//任务列表[必须]
+}
+
+//80006 分页显示世界任务列表响应
+message Response80005Define{
+   optional ResponseHead responseHead = 1;//协议头[必须]
+   optional PagerMissionMsg pagerResult = 2;//每一页的任务[必须]
+}
+
+//80007 提交世界任务请求(nodeserver)
+message Request80007Define{
+   required int32 cmd = 1;
+   optional int32 missionId = 2;//任务配数id[必须]
+}
+
+//80008 提交世界任务响应
+message Response80007Define{
+   optional ResponseHead responseHead = 1;//协议头[必须]
+   optional int32 missionId = 2;//任务配数id[必须]
+   optional int32 finishNum = 3;//世界任务完成数[必须]
+   optional int32 awardedNum = 4;//世界任务领取数[必须]
+}
+
+//80009 任务小红点 未领奖的君主任务数，未领奖的世间任务数(登陆时调用)请求(nodeserver)
+message Request80009Define{
+   required int32 cmd = 1;
+}
+
+//80010 任务小红点响应(世界任务未领奖数=finishNum-awardedNum)
+message Response80009Define{
+   optional ResponseHead responseHead = 1;//协议头[必须]
+   optional int32 mainNum = 2;//普通任务未领奖的数量[必须]
+   optional int32 finishNum = 3;//世界任务完成数[必须]
+   optional int32 awardedNum = 4;//世界任务领取数[必须]
+}
+
+//6003 推送普通任务未领奖的数量
+message SendEvent6003Define{
+   optional ResponseHead responseHead = 1;//命令头
+   optional int32 mainNum = 2;//普通任务未领奖的数量[必须]
+}
+
+//6004 广播世界任务完成数
+message SendBroad6004Define{
+   optional ResponseHead responseHead = 1;//命令头
+   optional int32 finishNum = 2;//世界任务完成数[必须]
+}

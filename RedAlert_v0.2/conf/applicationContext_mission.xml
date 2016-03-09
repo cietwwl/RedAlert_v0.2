@@ -1,0 +1,237 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:flex="http://www.springframework.org/schema/flex"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+	
+	<bean id="missionDao" class="com.youxigu.dynasty2.mission.dao.impl.MissionDao">
+		<property name="sqlMapClientTemplate">
+			<ref bean="sqlMapClientTemplate" />
+		</property>
+	</bean>
+	
+	<!-- checker 配置 -->
+	<bean id="noneMissionChecker" class="com.youxigu.dynasty2.mission.service.impl.NoneMissionChecker"/>
+
+    <bean id="cumulativeMatchChecker" class="com.youxigu.dynasty2.mission.service.impl.OTCCumulativeMatchChecker"/>
+    
+    <bean id="maxNumMatchChecker" class="com.youxigu.dynasty2.mission.service.impl.OTCMaxNumMatchChecker"/>
+    
+    <bean id="currentNumMatchChecker" class="com.youxigu.dynasty2.mission.service.impl.OTCCurrentNumMatchChecker"/>
+    
+    
+    <!-- 当前数量cheaker 配置 -->
+	<bean id="castleResourceMissionChecker" class="com.youxigu.dynasty2.mission.service.checker.CastleResourceMissionChecker">
+		<property name="castleResService"><ref bean="castleResService" /></property>
+	</bean>
+	<bean id="technologyCurrLvMissionChecker" class="com.youxigu.dynasty2.mission.service.checker.TechnologyCurrLvMissionChecker">
+		<property name="castleService"><ref bean="castleService" /></property>
+	</bean>
+	<bean id="treasuryMissionChecker" class="com.youxigu.dynasty2.mission.service.checker.TreasuryMissionChecker">
+		<property name="treasuryService"><ref bean="treasuryService" /></property>
+	</bean>
+	<bean id="userCurrLvMissionChecker" class="com.youxigu.dynasty2.mission.service.checker.UserCurrLvMissionChecker">
+	</bean>
+	<bean id="buildCurrLvMissionChecker" class="com.youxigu.dynasty2.mission.service.checker.BuildCurrLvMissionChecker">
+		<property name="castleService"><ref bean="castleService" /></property>
+	</bean>
+	<bean id="heroNumLevelChecker" class="com.youxigu.dynasty2.mission.service.checker.HeroNumLevelChecker">
+		<property name="heroService"><ref bean="heroService" /></property>
+	</bean>
+	<bean id="heroNumColorChecker" class="com.youxigu.dynasty2.mission.service.checker.HeroNumColorChecker">
+		<property name="heroService"><ref bean="heroService" /></property>
+	</bean>
+	<bean id="mainTroopHeroNumChecker" class="com.youxigu.dynasty2.mission.service.checker.MainTroopHeroNumChecker">
+		<property name="troopService"><ref bean="troopService" /></property>
+	</bean>
+	
+	<!-- 最大数量cheaker -->
+	<bean id="heroLvMissionChecker" class="com.youxigu.dynasty2.mission.service.checker.HeroLvMissionChecker">
+		<property name="heroService"><ref bean="heroService" /></property>
+	</bean>
+	<bean id="equipCurrentLvMissionChecker" class="com.youxigu.dynasty2.mission.service.checker.EquipCurrentLvMissionChecker">
+		<property name="treasuryService"><ref bean="treasuryService" /></property>
+	</bean>
+	<bean id="heroEquipNumMissionChecker" class="com.youxigu.dynasty2.mission.service.checker.HeroEquipNumMissionChecker">
+		<property name="troopGridService"><ref bean="troopGridService" /></property>
+	</bean>
+	
+	<bean id="riskScenePassMissionChecker" class="com.youxigu.dynasty2.mission.service.checker.RiskScenePassMissionChecker">
+		<property name="riskService"><ref bean="riskService" /></property>
+	</bean>
+    
+    <!-- award 配置 -->
+    <bean id="goldAward" class="com.youxigu.dynasty2.mission.service.award.GoldAward">
+		<property name="castleResService"><ref bean="castleResService" /></property>
+	</bean>
+	<bean id="heroAward" class="com.youxigu.dynasty2.mission.service.award.HeroAward">
+		<property name="heroService"><ref bean="heroService" /></property>
+	</bean>
+	<bean id="ironAward" class="com.youxigu.dynasty2.mission.service.award.IronAward">
+		<property name="castleResService"><ref bean="castleResService" /></property>
+	</bean>
+	<bean id="itemAward" class="com.youxigu.dynasty2.mission.service.award.ItemAward">
+		<property name="treasuryService"><ref bean="treasuryService" /></property>
+	</bean>
+	<bean id="oilAward" class="com.youxigu.dynasty2.mission.service.award.OilAward">
+		<property name="castleResService"><ref bean="castleResService" /></property>
+	</bean>
+	<bean id="resourceAward" class="com.youxigu.dynasty2.mission.service.award.ResourceAward">
+		<property name="castleResService"><ref bean="castleResService" /></property>
+		<property name="accountService"><ref bean="accountService" /></property>
+	</bean>
+	<bean id="uraniumAward" class="com.youxigu.dynasty2.mission.service.award.UraniumAward">
+		<property name="castleResService"><ref bean="castleResService" /></property>
+	</bean>
+	<bean id="userActionPointAward" class="com.youxigu.dynasty2.mission.service.award.UserActionPointAward">
+		<property name="userService"><ref bean="userService" /></property>
+	</bean>
+	<bean id="userHonorAward" class="com.youxigu.dynasty2.mission.service.award.UserHonorAward">
+		<property name="userService"><ref bean="userService" /></property>
+	</bean>
+	<bean id="userHpAward" class="com.youxigu.dynasty2.mission.service.award.UserHpAward">
+		<property name="userService"><ref bean="userService" /></property>
+	</bean>
+	<bean id="cashAward" class="com.youxigu.dynasty2.mission.service.award.CashAward">
+		<property name="userService"><ref bean="userService" /></property>
+	</bean>
+	<bean id="userJunGongAward" class="com.youxigu.dynasty2.mission.service.award.UserJunGongAward">
+		<property name="userService"><ref bean="userService" /></property>
+	</bean>
+	
+	<bean id="missionService" class="com.youxigu.dynasty2.mission.service.impl.MissionService"  init-method="init">
+		<property name="missionDao"><ref bean="missionDao" /></property>
+		<property name="userService"><ref bean="userService" /></property>
+		<property name="messageService"><ref bean="messageService" /></property>
+		<property name="logService"><ref bean="logService" /></property>
+		<property name="tlogService"><ref bean="tlogService" /></property>
+		<property name="accountService"><ref bean="accountService" /></property>
+		<property name="worldMissionClientService"><ref bean="worldMissionClientService" /></property>
+		
+		<property name="checkers">
+			<map>
+			    <!--任务检查器-->
+				<entry key="QCT_None"><ref bean="noneMissionChecker" /></entry><!--直接完成的任务-->
+				
+				<!-- 累计次数任务 -->
+				<entry key="QCT_Record"><!--酒馆抽武将N次,累计值-->
+					<ref bean="cumulativeMatchChecker" />
+				</entry>
+				<entry key="QCT_Rebron"><!--武将重生N次,累计值-->
+					<ref bean="cumulativeMatchChecker" />
+				</entry>
+				<entry key="QCT_Use"><!--使用道具,累计值-->
+					<ref bean="cumulativeMatchChecker" />
+				</entry>
+				<entry key="QCT_HeroPower"><!-- 强化武将N次,累计值 -->
+                    <ref bean="cumulativeMatchChecker" />
+                </entry>
+                <entry key="QCT_MoreBuild"><!--执行自动建造，累计值 -->
+                    <ref bean="cumulativeMatchChecker" />
+                </entry>
+                <entry key="QCT_EquipLvTimes"><!--强化装备N次，累计值 -->
+                    <ref bean="cumulativeMatchChecker" />
+                </entry>
+                <entry key="QCT_EquipBuild"><!--生产装备N次，累计值 -->
+                    <ref bean="cumulativeMatchChecker" />
+                </entry>
+                <entry key="QCT_RelifeHero"><!--武将进阶N次，累计值 -->
+                    <ref bean="cumulativeMatchChecker" />
+                </entry>
+                <entry key="QCT_GainGold"><!--收取金矿N次，累计值 -->
+                    <ref bean="cumulativeMatchChecker" />
+                </entry>
+                <entry key="QCT_GainIron"><!--收取铁矿N次，累计值 -->
+                    <ref bean="cumulativeMatchChecker" />
+                </entry>
+                <entry key="QCT_GainOil"><!--收取油矿N次，累计值 -->
+                    <ref bean="cumulativeMatchChecker" />
+                </entry>
+                <entry key="QCT_GainUranium"><!--收取铀矿N次，累计值 -->
+                    <ref bean="cumulativeMatchChecker" />
+                </entry>
+                
+                <!-- 当前数量任务 -->
+				<entry key="QCT_Resource"><!--囤积资源,当前资源量-->
+					<ref bean="castleResourceMissionChecker" />
+				</entry>
+				<entry key="QCT_Study"><!--科技升级-->
+					<ref bean="technologyCurrLvMissionChecker" />
+				</entry>
+				<entry key="QCT_Collection"><!--道具任务-->
+					<ref bean="treasuryMissionChecker" />
+				</entry>
+				<entry key="QCT_Uplevel"><!-- 君主级别 -->
+                    <ref bean="userCurrLvMissionChecker" />
+                </entry>
+                <entry key="QCT_Level"> <!--升级建筑 “建筑ID”到N级-->
+					<ref bean="buildCurrLvMissionChecker" />
+				</entry>
+				<entry key="QCT_HeroNumLevel"> <!--拥有N个Y等级的武将 missionLimit entId:heroLv-->
+					<ref bean="heroNumLevelChecker" />
+				</entry>
+				<entry key="QCT_HeroNumColor"> <!--拥有N个Y品质的武将 missionLimit entId:color-->
+					<ref bean="heroNumColorChecker" />
+				</entry>
+                <entry key="QCT_MainTroopHeroNum"><!-- 主力军团位置上有N个武将 -->
+                    <ref bean="mainTroopHeroNumChecker" />
+                </entry>
+                
+                <!-- 最大数量任务 -->
+                <entry key="QCT_HeroLevel"><!--任意武将升到N级-->
+					<ref bean="heroLvMissionChecker" />
+				</entry>
+				<entry key="QCT_equipLv"><!-- 强化装备到N级,最大值 -->
+                    <ref bean="equipCurrentLvMissionChecker" />
+                </entry>
+				<entry key="QCT_heroEquipNum"><!-- 任意武将身上装备达到N个 -->
+                    <ref bean="heroEquipNumMissionChecker" />
+                </entry>
+                
+                <entry key="QCT_PassOne"><!--通关冒险某一关-->
+					<ref bean="riskScenePassMissionChecker" />
+				</entry>
+			</map>
+		</property>
+		<property name="missionAwards"><!--任务奖励-->
+			<map>
+				<!-- 任务奖励器 -->
+				<entry key="gold"><ref bean="goldAward" /></entry><!-- 金矿 -->
+				<entry key="hero"><ref bean="heroAward" /></entry><!-- 武将 -->
+				<entry key="iron"><ref bean="ironAward" /></entry><!-- 铁矿 -->
+				<entry key="item"><ref bean="itemAward" /></entry><!-- 道具 -->
+				<entry key="oil"><ref bean="oilAward" /></entry><!-- 油矿 -->
+				<entry key="resource"><ref bean="resourceAward" /></entry><!-- 四种资源 -->
+				<entry key="uranium"><ref bean="uraniumAward" /></entry><!-- 铀矿 -->
+				<entry key="actionPoint"><ref bean="userActionPointAward" /></entry><!-- 行动力 -->
+				<entry key="userHonor"><ref bean="userHonorAward" /></entry><!-- 君主经验 -->
+				<entry key="userHp"><ref bean="userHpAward" /></entry><!-- 体力 -->
+				<entry key="cash"><ref bean="cashAward" /></entry><!-- 元宝 -->
+				<entry key="junGong"><ref bean="userJunGongAward" /></entry><!-- 军功 -->
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 特殊事件 -->
+	<bean id="worldMissionDao" class="com.youxigu.dynasty2.mission.dao.impl.WorldMissionDao">
+		<property name="sqlMapClientTemplate">
+			<ref bean="sqlMapClientTemplate" />
+		</property>
+	</bean>
+	<bean id="worldMissionClientService" class="com.youxigu.dynasty2.mission.service.impl.WorldMissionClientService">
+    	<property name="wolfService"><ref bean="jobServerClient" /></property>
+    	<property name="worldMissionDao"><ref bean="worldMissionDao" /></property>
+    	<property name="missionService"><ref bean="missionService" /></property>
+    	<property name="userService"><ref bean="userService" /></property>
+	</bean>
+	
+	<bean id="missionAction" class="com.youxigu.dynasty2.mission.web.MissionAction">
+    	<property name="missionService"><ref bean="missionService" /></property>
+    	<property name="userService"><ref bean="userService" /></property>
+    	<property name="worldMissionClientService"><ref bean="worldMissionClientService" /></property>
+	</bean>
+</beans>
+
+

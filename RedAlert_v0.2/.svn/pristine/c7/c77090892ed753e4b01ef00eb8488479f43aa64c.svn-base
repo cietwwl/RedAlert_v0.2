@@ -1,0 +1,981 @@
+package com.youxigu.dynasty2.map.service.impl;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.youxigu.dynasty2.common.AppConstants;
+import com.youxigu.dynasty2.map.dao.IMapDao;
+import com.youxigu.dynasty2.map.domain.Country;
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.map.domain.State;
+import com.youxigu.dynasty2.map.domain.StateCache;
+import com.youxigu.dynasty2.map.service.IMapService;
+import com.youxigu.wolf.net.NamingThreadFactory;
+import com.youxigu.wolf.net.NodeSessionMgr;
+
+public class MapService implements IMapService {
+	public static final Logger log = LoggerFactory.getLogger(MapService.class);
+
+	private Map<Integer, Country> countryMaps = new HashMap<Integer, Country>();// 国家
+	private Map<Integer, State> stateMaps = new HashMap<Integer, State>();// 区
+	private Map<Integer, MapCell> ALL_CELLS = new ConcurrentHashMap<Integer, MapCell>();// 所有坐标
+	private Map<Integer, StateCache> STATE_CELLS = new ConcurrentHashMap<Integer, StateCache>();// 区下的所有坐标
+	private static final int STATE_NUM = 15;// 区总个数
+
+	private IMapDao mapDao;
+
+	public void setMapDao(IMapDao mapDao) {
+		this.mapDao = mapDao;
+	}
+
+	/**
+	 * 初始化service
+	 */
+	public void init() {
+		// 只在mainserver上加载
+		String str = System.getProperty(NodeSessionMgr.SERVER_TYPE_KEY);
+		int serverType = Integer.parseInt(str);
+		if (serverType != NodeSessionMgr.SERVER_TYPE_MAIN) {
+			return;
+		}
+		log.info("加载 国家、郡城数据......");
+
+		String icons[][] = null;
+		List<Country> countrys = mapDao.getCountrys();
+		if (countrys != null && countrys.size() > 0) {
+			// 加载坐标的线程池
+			ExecutorService pool = Executors.newFixedThreadPool(STATE_NUM,
+					new NamingThreadFactory("MapCellInit"));// 初始化线程池
+			
+			// 初始化国家头像
+			icons = new String[countrys.size() + 1][2];
+			AppConstants.USER_ICON = icons;
+			for (Country country : countrys) {
+				// 国家
+				countryMaps.put(country.getCountryId(), country);
+				icons[country.getCountryId()][0] = country.getFeMaleIcon();
+				icons[country.getCountryId()][1] = country.getMaleIcon();
+
+				// 区
+				List<State> states = mapDao
+						.getStatesByCountryId(country.getCountryId());
+				if (states != null && states.size() > 0) {
+					for (State state : states) {
+						state.setParent(country);
+						stateMaps.put(state.getStateId(), state);
+
+						// 多线程加载坐标点
+						final int stateId = state.getStateId();
+						final int countryId = state.getCountryId();
+						pool.submit(new Runnable() {
+							@Override
+							public void run() {
+								List<MapCell> mapcells = mapDao
+										.getMapCellsByStateId(stateId);// 起一个线程初始化这个郡的地图
+
+								State _state = getStateById(stateId);
+								StateCache stateCache = STATE_CELLS
+										.get(stateId);
+								if (stateCache == null) {
+									stateCache = new StateCache(_state);
+									STATE_CELLS.put(stateId, stateCache);
+								}
+
+								for (MapCell mapcell : mapcells) {
+									mapcell.setState(_state);
+									mapcell.setCountry(
+											getCountryById(countryId));
+									// 缓存所有坐标点
+									ALL_CELLS.put(mapcell.getId(), mapcell);
+
+									// 初始化区缓存
+									stateCache.addCell(mapcell);
+								}
+								log.info("加载郡：{}的MapCell，数量{}完成......",
+										stateCache.getStateId(),
+										stateCache.getCellsNum());
+							}
+
+						});
+					}
+				}
+			}
+			// 关闭线程池
+			pool.shutdown();
+		}
+	}
+
+	/**
+	 * 销毁service
+	 */
+	public void destory() {
+
+	}
+
+	@Override
+	public State getStateById(int stateId) {
+		return stateMaps.get(stateId);
+	}
+
+	@Override
+	public Country getCountryById(int countryId) {
+		return countryMaps.get(countryId);
+	}
+
+	// public static final String MEM_COUNTRY_CAS_NUM_KEY = "ctry_cas_num_";//
+	// MEMCACHED
+	// // KEY:
+	// // 国家城池数
+	// public static final String MEM_STATE_CAS_NUM_KEY = "state_cas_num_";//
+	// MEMCACHED
+	//
+	// // KEY:
+	// // 郡城池数
+	//
+
+	//
+	//// private IRankService rankService;
+	//
+	// // 正方形地图，坐标(0,0)--(4680,4680)
+	//
+	// /**
+	// * 最大建城点坐标
+	// */
+	// private int maxX = AppConstants.MAP_DEFINE_MAPCELL_MAX_X
+	// - AppConstants.MAP_DEFINE_MAPCELL_MIN_X;
+	// private int maxY = AppConstants.MAP_DEFINE_MAPCELL_MAX_Y
+	// - AppConstants.MAP_DEFINE_MAPCELL_MIN_Y;
+	// /**
+	// * 最小建城点坐标
+	// */
+	// private int minX = AppConstants.MAP_DEFINE_MAPCELL_MIN_X;
+	// private int minY = AppConstants.MAP_DEFINE_MAPCELL_MIN_Y;
+	//
+	// /**
+	// * 建城点间隔
+	// */
+	// private int period = minX;// 3
+	//
+	// /**
+	// * 随机取的建城点的数量
+	// */
+	// private int randomCount = 50;
+	//
+	// private int stateXLen = 240;
+	// private int stateYLen = 240;
+
+	// private Map<Integer, Integer> stateCountryMaps = new HashMap<Integer,
+	// Integer>();
+	//
+	// public void setRandomCount(int randomCount) {
+	// this.randomCount = randomCount;
+	// }
+	//
+	// public void setMaxX(int maxX) {
+	// this.maxX = maxX;
+	// }
+	//
+	// public void setMaxY(int maxY) {
+	// this.maxY = maxY;
+	// }
+
+	// public void setRankService(IRankService rankService) {
+	// this.rankService = rankService;
+	// }
+	//
+	// public void setMinX(int minX) {
+	// this.minX = minX;
+	// }
+	//
+	// public void setMinY(int minY) {
+	// this.minY = minY;
+	// }
+	//
+	// public void setPeriod(int period) {
+	// this.period = period;
+	// }
+
+	// /**
+	// * 初始化载入建城点到缓存
+	// *
+	// *
+	// */
+	// @Override
+	// public void loadMap(int minStateId, int maxStateId) {
+	//
+	// int processors = Runtime.getRuntime().availableProcessors();
+	// // 加载到缓存
+	// int num = Runtime.getRuntime().availableProcessors() - 1;// 初始化处理线程的个数
+	// // if (num > maxStateId - minStateId) {
+	// // num = maxStateId - minStateId;
+	// // }
+	// if (num <= 0)
+	// num = 1;
+	// if (num > processors) {
+	// num = processors;
+	// }
+	// ExecutorService pool = Executors.newFixedThreadPool(num,
+	// new NamingThreadFactory("MapCellInit"));// 初始化线程池
+	// log.info("加载MapCell......");
+	// for (int i = minStateId; i <= maxStateId; i++) {// 遍历每个需要初始化的郡
+	// final int stateId = i;
+	// pool.submit(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// List<MapCell> mapcells = mapDao
+	// .getMapCellsByStateId(stateId);// 起一个线程初始化这个郡的地图
+	// for (MapCell mapcell : mapcells) {
+	// MemcachedManager.set("mapcell_" + mapcell.getId(),
+	// mapcell, CacheModel.CACHE_REMOTE);
+	// }
+	// log.info("加载郡：{}的MapCell完成......", stateId);
+	// }
+	//
+	// });
+	//
+	// }
+	// pool.shutdown();
+	//
+	// }
+	//
+	// /**
+	// * 这里用到了MemcachedManager.lockObjectNoWait，必须在事务范围内使用
+	// */
+	// @Override
+	// public MapCell getAvialbleMapCell(int stateId) {
+	// List<MapCell> mapcells = mapDao.getAvialbleMapCells(stateId,
+	// randomCount);// 随机取20个未分配的建城点
+	// if (mapcells != null) {
+	// for (MapCell mapcell : mapcells) {
+	// MapCell tmp = (MapCell) MemcachedManager
+	// .lockObjectNoWait(mapcell, mapcell.getId());// 锁定缓存中的数据-防止被其他调占用
+	// if (tmp != null) {// 是否未被占用
+	// if (tmp.getCasId() <= 0) {
+	// return tmp;
+	// } else {
+	// MemcachedManager.releaseLock(mapcell, mapcell.getId());
+	// }
+	// }
+	// }
+	// }
+	// return null;
+	// }
+	//
+	// @Override
+	// public MapCell getAvialbleMapCellNoLock(int stateId) {
+	// List<MapCell> mapcells = mapDao.getAvialbleMapCells(stateId,
+	// randomCount);// 随机取20个未分配的建城点
+	// if (mapcells != null) {
+	// for (MapCell mapcell : mapcells) {
+	// if (mapcell.getCasId() <= 0) {
+	// return mapcell;
+	// }
+	// }
+	// }
+	// return null;
+	// }
+
+	// /**
+	// * 根据给定的坐标点及范围，获取范围内建城点的坐标
+	// *
+	// * @param x
+	// * @param y
+	// * @param range
+	// * @return
+	// */
+	// @Deprecated
+	// private List<Integer> getMapCell(int x, int y, int range) {
+	//
+	// List<Integer> points = new ArrayList<Integer>();// 初始化取出的所有坐标的key
+	//
+	// //
+	// // 整个地图坐标(0,0)--(4680,4680)
+	// // 地图坐标均为正数， 建城点的坐标是3的整数倍，最小是（3，3），最大是(4677,4677)
+	// if (x < minX)// 这里或者抛出异常
+	// x = minX;
+	// if (y < minY)
+	// y = minY;
+	//
+	// if (x > maxX)// 这里或者抛出异常
+	// x = maxX;
+	//
+	// if (y > maxY)
+	// y = maxY;
+	//
+	// // 由于使用的缓存，无法按不匹配的坐标点查询，如果x,y不是3的倍数，则不是建城点，总是找到稍大的3的倍数
+	//
+	// if (x % period != 0) {
+	// x = (x / period + 1) * period;
+	// }
+	//
+	// if (y % period != 0) {
+	// y = (y / period + 1) * period;
+	// }
+	//
+	// // 范围不是3的倍数，取稍大的3的倍数
+	// if (range < 3) {
+	// range = 0; // 这里可以直接返回x,y
+	//
+	// } else if (range % period != 0) {
+	// range = (range / period + 1) * period;
+	// }
+	//
+	// // 去掉负数的
+	// int beginx = (range >= x ? x - minX : range) * -1;
+	// int endx = range + x > maxX ? (maxX - x) / period * range : range;
+	//
+	// int beginy = (range >= y ? y - minY : range) * -1;
+	// int endy = range + y > maxY ? (maxY - y) / period * range : range;
+	//
+	// int step = 2 * period;
+	// for (int i = beginx; i <= endx; i = i + step) {
+	// if (i % stateXLen != 0) {// 每个郡的边界不是建城点
+	// for (int j = beginy; j <= endy; j = j + step) {
+	// // MapCellPoint point = new MapCellPoint(x + i, y + j);
+	// // points.add(point);
+	// if (j % stateYLen != 0) {// 每个郡的边界不是建城点
+	// points.add((x + i) * 10000 + (y + j));
+	// }
+	// // System.out.println("x,y=" +(x + i) +","+(y+j));
+	// }
+	// }
+	// }
+	//
+	// beginx = beginx + period;
+	// beginy = beginy + period;
+	// for (int i = beginx; i <= endx; i = i + step) {
+	// if (i % stateXLen != 0) {
+	// for (int j = beginy; j <= endy; j = j + step) {
+	// // MapCellPoint point = new MapCellPoint(x + i, y + j);
+	// // points.add(point);
+	// if (j % stateYLen != 0) {
+	// points.add((x + i) * 10000 + (y + j));// 加入坐标的key
+	// }
+	// // System.out.println("x,y=" +(x + i) +","+(y+j));
+	// }
+	// }
+	// }
+	//
+	// // System.out.println("total point:" + points.size());
+	// return points;
+	// }
+	//
+	// private List<Integer> getMapCell(int x1, int y1, int x2, int y2) {
+	// List<Integer> points = new ArrayList<Integer>();// 初始化取出的所有坐标的key
+	// if (x1 < minX) {// 这里或者抛出异常
+	// x1 = minX;
+	// } else if (x1 > maxX)// 这里或者抛出异常
+	// {
+	// x1 = maxX;
+	// }
+	// if (y1 < minY) {
+	// y1 = minY;
+	// } else if (y1 > maxY) {
+	// y1 = maxY;
+	// }
+	//
+	// if (x2 < minX) {// 这里或者抛出异常
+	// x2 = minX;
+	// } else if (x2 > maxX) {// 这里或者抛出异常
+	// x2 = maxX;
+	// }
+	// if (y2 < minY) {
+	// y2 = minY;
+	// } else if (y2 > maxY) {
+	// y2 = maxY;
+	// }
+	//
+	// int tmp;
+	// if (x2 < x1) {
+	// tmp = x2;
+	// x2 = x1;
+	// x1 = tmp;
+	// }
+	//
+	// if (y2 < y1) {
+	// tmp = y2;
+	// y2 = y1;
+	// y1 = tmp;
+	// }
+	//
+	// //
+	// 由于使用的缓存，无法按不匹配的坐标点查询，如果x,y不是3的倍数，则不是建城点，对于x1,y1总是找到稍大的3的倍数,对于x2,y2总是找到稍小于的3的倍数
+	//
+	// if (x1 % period != 0) {
+	// x1 = (x1 / period + 1) * period;
+	// }
+	//
+	// if (y1 % period != 0) {
+	// y1 = (y1 / period + 1) * period;
+	// }
+	//
+	// if (x2 % period != 0) {
+	// x2 = (x2 / period) * period;
+	// }
+	//
+	// if (y2 % period != 0) {
+	// y2 = (y2 / period) * period;
+	// }
+	//
+	// int tmp1 = x1 % (period * 2);
+	// int tmp2 = y1 % (period * 2);
+	// if ((tmp1 == 0 && tmp2 != 0) || tmp1 != 0 && tmp2 == 0) {
+	// if (y1 > minY) {
+	// y1 = y1 - period;
+	// } else if (x1 > minX) {
+	// x1 = x1 - period;
+	// } else {
+	// x1 = minX;
+	// y1 = minY;
+	// }
+	//
+	// }
+	// tmp1 = x2 % (period * 2);
+	// tmp2 = y2 % (period * 2);
+	// if ((tmp1 == 0 && tmp2 != 0) || tmp1 != 0 && tmp2 == 0) {
+	//
+	// if (y2 < maxY) {
+	// y2 = y2 + period;
+	// } else if (x2 > maxX) {
+	// x2 = x2 + period;
+	// } else {
+	// x2 = maxX;
+	// y2 = maxY;
+	// }
+	// }
+	//
+	// int step = 2 * period;
+	// for (int i = x1; i <= x2; i = i + step) {
+	// if (i % stateXLen != 0) {// 每个郡的边界不是建城点
+	// for (int j = y1; j <= y2; j = j + step) {
+	//
+	// // MapCellPoint point = new MapCellPoint(x + i, y + j);
+	// // points.add(point);
+	// if (j % stateYLen != 0) {// 每个郡的边界不是建城点
+	// points.add(i * 10000 + j);
+	// }
+	// // System.out.println("x,y=" +( i) +","+(j));
+	// }
+	// }
+	// }
+	//
+	// x1 = x1 + period;
+	// y1 = y1 + period;
+	// for (int i = x1; i <= x2; i = i + step) {
+	// if (i % stateXLen != 0) {
+	// for (int j = y1; j <= y2; j = j + step) {
+	// // MapCellPoint point = new MapCellPoint(x + i, y + j);
+	// // points.add(point);
+	// if (j % stateYLen != 0) {
+	// points.add((i) * 10000 + (j));
+	// }
+	// // System.out.println("x,y=" +( i) +","+(j));
+	// }
+	// }
+	// }
+	//
+	// return points;
+	// }
+	//
+	// static class MapCellPoint {
+	// public int x;
+	// public int y;
+	//
+	// public MapCellPoint(int x, int y) {
+	// this.x = x;
+	// this.y = y;
+	// }
+	//
+	// public int getKey() {// 坐标点key的生成方式
+	// return x * 10000 + y;
+	// }
+	// }
+
+	// @Override
+	// public void updateMapCell(MapCell mapCell) {
+	// mapDao.updateMapCell(mapCell);
+	// }
+	//
+	// @Override
+	// public List<MapCell> getMapCells(int x, int y, int range) {
+	// // TODO Auto-generated method stub
+	// List<Integer> ids = getMapCell(x, y, range);
+	// return mapDao.getMapCellsByIds(ids);
+	// }
+	//
+	// public List<MapCell> getMapCells(int x1, int y1, int x2, int y2) {
+	// List<Integer> ids = getMapCell(x1, y1, x2, y2);
+	// if (ids == null || ids.size() == 0) {
+	// return null;
+	// }
+	// // Collections.sort(ids);
+	//
+	// return mapDao.getMapCellsByIds(ids);
+	// }
+	//
+	// @Override
+	// public List<MapCell> getNearMapCells(int x, int y) {//
+	// 取出坐标点周围8个建城点，含自身共9个
+	//
+	// return getNearMapCells(x, y, true);
+	// }
+	//
+	// public List<MapCell> getNearMapCells(int x, int y, boolean includeOwn) {
+	//
+	// List<Integer> ids = new ArrayList<Integer>();
+	// if (includeOwn) {
+	// ids.add(x * 10000 + y);// 包含自身
+	// }
+	// // 一环的4个{
+	// // addPoint(x + 3, y + 3, ids);
+	// // addPoint(x + 3, y - 3, ids);
+	// // addPoint(x - 3, y + 3, ids);
+	// // addPoint(x - 3, y - 3, ids);
+	//
+	// int tmpX1 = x + 3;
+	// int tmpX2 = x - 3;
+	// int tmpY1 = y + 3;
+	// int tmpY2 = y - 3;
+	// if (tmpX1 <= maxX && tmpX1 % stateXLen != 0) {
+	// if (tmpY1 <= maxY && tmpY1 % stateYLen != 0) {
+	// addPoint(tmpX1, tmpY1, ids);
+	// }
+	// if (tmpY2 >= minY && tmpY2 % stateYLen != 0) {
+	// addPoint(tmpX1, tmpY2, ids);
+	// }
+	// }
+	// if (tmpX2 >= minX && tmpX2 % stateXLen != 0) {
+	// if (tmpY1 <= maxY && tmpY1 % stateYLen != 0) {
+	// addPoint(tmpX2, tmpY1, ids);
+	// }
+	// if (tmpY2 >= minY && tmpY2 % stateYLen != 0) {
+	// addPoint(tmpX2, tmpY2, ids);
+	// }
+	// }
+	//
+	// // 2环的4个
+	// // addPoint(x + 6, y, ids);
+	// // addPoint(x - 6, y, ids);
+	// // addPoint(x, y + 6, ids);
+	// // addPoint(x, y - 6, ids);
+	// tmpX1 = x + 6;
+	// tmpX2 = x - 6;
+	// tmpY1 = y + 6;
+	// tmpY2 = y - 6;
+	// if (tmpX1 <= maxX && tmpX1 % stateXLen != 0) {
+	// addPoint(tmpX1, y, ids);
+	// }
+	// if (tmpX2 >= minX && tmpX1 % stateXLen != 0) {
+	// addPoint(tmpX2, y, ids);
+	// }
+	//
+	// if (tmpY1 <= maxY && tmpY1 % stateYLen != 0) {
+	// addPoint(x, tmpY1, ids);
+	// }
+	// if (tmpY2 >= minY && tmpY2 % stateYLen != 0) {
+	// addPoint(x, tmpY2, ids);
+	// }
+	// //
+	// //
+	// //
+	// // if (x < maxX && y < maxY) {
+	// // ids.add((x + 3) * 10000 + (y + 3));
+	// // }
+	// // if (x < maxX && y > minY)
+	// // ids.add((x + 3) * 10000 + (y - 3));
+	// // if (x > minX && y < maxY)
+	// // ids.add((x - 3) * 10000 + (y + 3));
+	// // if (x > minX && y > minY)
+	// // ids.add((x - 3) * 10000 + (y - 3));
+	// //
+	// // if (y + 6 <= maxY)// 2环的4个
+	// // ids.add(x * 10000 + (y + 6));
+	// // if (y - 6 >= minY)
+	// // ids.add(x * 10000 + (y - 6));
+	// //
+	// // if (x + 6 <= maxX)
+	// // ids.add((x + 6) * 10000 + y);
+	// // if (x - 6 >= minX)
+	// // ids.add((x - 6) * 10000 + y);
+	//
+	// return mapDao.getMapCellsByIds(ids);
+	//
+	// }
+	//
+	// private void addPoint(int x, int y, List<Integer> ids) {
+	// if (x > maxX || x < minX) {
+	// return;
+	// }
+	// if (y > maxY || y < minY) {
+	// return;
+	// }
+	//
+	// if (x % stateXLen == 0 || y % stateXLen == 0) {
+	// // 郡边界
+	// return;
+	// }
+	// ids.add(x * 10000 + y);
+	// }
+	//
+	// /**
+	// *
+	// *
+	// * 获取每个郡得城池数量，加入到缓存中，
+	// *
+	// * 如果郡中的城市数量〉设定数量，并且是开放状态，更新郡的状态为满
+	// *
+	// * 如果郡中的城市数量《设定数量，并且是满状态，更新郡的状态为开放
+	// *
+	// * 系统job,每小时调用一次
+	// */
+	// @Override
+	// public void loadCastleNum() {
+	// Map<String, Integer> cacheData = new HashMap<String, Integer>();//
+	// 存放（郡id-城池数）和（国家id-城池数）
+	//
+	// List<Map<String, Object>> datas = mapDao.getCastleNums();//
+	// 初始化所有郡的城池数(郡id-城池数)
+	// for (Map<String, Object> map : datas) {
+	// int stateId = (Integer) map.get("stateId");
+	// String stateKey = MEM_STATE_CAS_NUM_KEY + stateId;// 郡城池数KEY
+	// int num = 0;
+	// Object tmp = map.get("num");
+	// if (tmp != null) {
+	// if (tmp instanceof Long)
+	// num = ((Long) map.get("num")).intValue();
+	// else {
+	// num = (Integer) map.get("num");
+	// }
+	// }
+	// // int num = (Integer) map.get("num");
+	// cacheData.put(stateKey, num);// 存放（郡城池数KEY-城池数）
+	// }
+	//
+	// List<Country> countrys = mapDao.getCountrys();// 初始化所有国家
+	// for (Country country : countrys) {
+	// String countryKey = MEM_COUNTRY_CAS_NUM_KEY
+	// + country.getCountryId();// 国家池数KEY
+	// int countryCasNum = 0;// 国家城池数
+	// List<State> states = mapDao
+	// .getStatesByCountryId(country.getCountryId());// 国家内所有的郡
+	// for (State state : states) {
+	// if (state.getStatus() == State.STATUS_CLOSE) {
+	// // 没开放的郡
+	// continue;
+	// }
+	// String stateKey = MEM_STATE_CAS_NUM_KEY + state.getStateId();
+	// Integer num = cacheData.get(stateKey);// 从缓存中取每个郡的城池数
+	// if (num == null) {
+	// cacheData.put(stateKey, 0);
+	// } else {
+	// countryCasNum = countryCasNum + num;// 累计每个郡的城池数
+	// // // TODO:这里是系统参数
+	// if (num > AppConstants.CASTLE_MAX_PER_STATE
+	// - AppConstants.ENUMER_VALUE_RETAIN_CITY_SPOT_NUM) {// 是否城池数已满
+	// if (state.getStatus() == State.STATUS_OPEN) {// 已满处于开放状态则关闭
+	// state.setStatus(State.STATUS_FULL);
+	// mapDao.updateState(state);
+	// }
+	// } else {
+	// if (state.getStatus() == State.STATUS_FULL) {// 未满处于关闭状态则打开
+	// state.setStatus(State.STATUS_OPEN);
+	// mapDao.updateState(state);
+	// }
+	// }
+	// }
+	// }
+	// cacheData.put(countryKey, countryCasNum);// 存放（国家池数KEY-城池数）
+	// }
+	// // 加入缓存
+	// Iterator<Map.Entry<String, Integer>> lit = cacheData.entrySet()
+	// .iterator();
+	// while (lit.hasNext()) {
+	// Map.Entry<String, Integer> entry = lit.next();
+	// // log.info(entry.getKey() + "=" + entry.getValue());
+	// MemcachedManager.set(entry.getKey(), entry.getValue());// 存入memceched
+	// }
+	// log.info("calc castle num end.......");
+	// }
+	//
+	// @Override
+	// public int getCasNumByCountryId(int countryId) {
+	// StringBuilder sb = new StringBuilder(MEM_COUNTRY_CAS_NUM_KEY)
+	// .append(countryId);// 初始化国家池数KEY
+	// Integer tmp = (Integer) MemcachedManager.get(sb.toString());
+	// if (tmp == null) {
+	// // memcache重新启动可能会产生这种情况
+	// loadCastleNum();
+	// tmp = (Integer) MemcachedManager.get(sb.toString());// 从memcached取
+	// }
+	// return (tmp == null ? 0 : tmp);
+	// }
+	//
+	// @Override
+	// public int getCountryIdByMinUsernum() {
+	//
+	// // int cId = rankService.getDotaCountryId();
+	// // if (cId > 0) {
+	// // return cId;
+	// // }
+	// Set<Integer> countryIds = this.countryMaps.keySet();
+	// int len = countryIds.size();
+	// int[][] casNums = new int[len][2];
+	// int index = 0;
+	// int min = Integer.MAX_VALUE;
+	// int minId = -1;
+	// for (Integer countryId : countryIds) {
+	// casNums[index][0] = countryId;
+	// int casNum = this.getCasNumByCountryId(countryId);
+	// casNums[index][1] = casNum;
+	//
+	// if (min > casNums[index][1]) {
+	// min = casNums[index][1];
+	// minId = casNums[index][0];
+	// }
+	// index++;
+	// }
+	// return minId;
+	// }
+	//
+	// @Override
+	// public int getCasNumByStateId(int countryId) {
+	// StringBuilder sb = new StringBuilder(MEM_STATE_CAS_NUM_KEY)
+	// .append(countryId);// 初始化郡池数KEY
+	// Integer tmp = (Integer) MemcachedManager.get(sb.toString());
+	// if (tmp == null) {
+	// // memcache重新启动可能会产生这种情况
+	// loadCastleNum();
+	// tmp = (Integer) MemcachedManager.get(sb.toString());// 从memcached取
+	// }
+	// return (tmp == null ? 0 : tmp);
+	// }
+	//
+	// // //在一个国家中找到可用的郡
+	// // @Override
+	// // public State getAvialbleState(int stateId) {
+	// // // TODO Auto-generated method stub
+	// // List<State> states = mapDao.getStatesByCountryId(stateId);
+	// // int max = states.size();
+	// // int random = Util.randInt(max);
+	// // for (int i = random; i < max; i++) {
+	// // State state = states.get(i);
+	// // if (state.getStatus() == State.STATUS_OPEN) {
+	// // return state;
+	// // }
+	// // }
+	// //
+	// // for (int i = 0; i < random; i++) {
+	// // State state = states.get(i);
+	// // if (state.getStatus() == State.STATUS_OPEN) {
+	// // return state;
+	// // }
+	// // }
+	// // return null;
+	// //
+	// // }
+	//
+	// // 在一个国家中找到可用的郡
+	// public State getAvialbleState(int countryId) {
+	// // TODO Auto-generated method stub
+	// List<State> states = mapDao.getStatesByCountryId(countryId);
+	// // 初始化已开放未满的郡
+	// List<State> state_idels = new ArrayList<State>();
+	//
+	// for (State state : states) {// 过滤状态未满的郡
+	// // if ((!state_idels.contains(state))
+	// // && state.getStatus() == State.STATUS_OPEN) {
+	// // state_idels.add(state);
+	// // } else if (state_idels.contains(state)
+	// // && state.getStatus() != State.STATUS_OPEN) {
+	// // state_idels.remove(state);
+	// // }
+	// if (state.getStatus() == State.STATUS_OPEN) {
+	// state_idels.add(state);
+	// }
+	//
+	// }
+	//
+	// if (state_idels != null && state_idels.size() > 0) {
+	//
+	// // //TEST，正式环境
+	// // return state_idels.get(0);
+	// int max = state_idels.size();
+	// int random = Util.randInt(max);
+	// return state_idels.get(random);// 随机从未被占用的建城点中取一个
+	// }
+	// return null;
+	// }
+	//
+	// @Override
+	// public MapCell getMapCellByPos(int posX, int posY) {
+	// return mapDao.getMapCellById(posX * 10000 + posY);
+	// }
+	//
+	//
+	// public Collection<Country> getCountrys() {
+	// return countryMaps.values();
+	// }
+	//
+	// public Map<Integer, Country> getCountryMaps() {
+	// return countryMaps;
+	// }
+	//
+	// /**
+	// *
+	// *
+	// * 两点间距离 = （ | x_本城 - x_目标 | + | y_本城 - y_目标 | ） * 5 / 6
+	// *
+	// *
+	// *
+	// * @param fromX
+	// * @param fromY
+	// * @param toX
+	// * @param toY
+	// * @return
+	// */
+	// public double getDistanceBetweenPoints(int fromX, int fromY, int toX,
+	// int toY) {
+	//
+	// int disX = Math.abs(fromX - toX);
+	// int disY = Math.abs(fromY - toY);
+	// return (disX + disY) * 5d / 6;
+	// // int disX = fromX - toX;
+	// // int disY=fromY - toY;
+	// // return Math.pow(disX*disX+disY*disY, 0.5);
+	//
+	// }
+	//
+	// /**
+	// * 根据距离计算时间
+	// *
+	// * @param fromX
+	// * @param fromY
+	// * @param toX
+	// * @param toY
+	// * @return
+	// */
+	// @Deprecated
+	// public int getBaseTimeBetweenPoints(int fromX, int fromY, int toX,
+	// int toY) {
+	// double dis = getDistanceBetweenPoints(fromX, fromY, toX, toY);
+	// return (int) (20000 * Math.atan(dis / 900) + 900);
+	// }
+
+	// @Override
+	// public void generateMapDatas() {
+	//
+	// BufferedWriter w = null;//
+	//
+	// List<Country> countrys = mapDao.getCountrys();
+	// List<State> states = new ArrayList<State>();
+	// for (Country country : countrys) {
+	// states.addAll(mapDao.getStatesByCountryId(country.getCountryId()));
+	// }
+	//
+	// try {
+	// w = new BufferedWriter(new FileWriter("e:/mapcell.sql"));
+	// w.write("DELETE from mapcell;\n");
+	//
+	// for (State state : states) {
+	//
+	// int beginPosX = state.getMinPosX();
+	// int beginPosY = state.getMinPosY();
+	// int endPosX = 0;
+	// int endPosY = 0;
+	// if (state.getMaxPosX() > 0) {
+	// // 使用最大坐标计算
+	// endPosX = state.getMaxPosX() - period;
+	// endPosY = state.getMaxPosY() - period;
+	// } else {// 最大坐标为0，则使用最小坐标计算，并+默认郡大小360
+	// endPosX = beginPosX + stateXLen - period;
+	// endPosY = beginPosY + stateYLen - period;
+	// }
+	//
+	// int mod = beginPosX % period;
+	// beginPosX = beginPosX + (mod == 0 ? 0 : period - mod);
+	// mod = beginPosY % period;
+	// beginPosY = beginPosY + (mod == 0 ? 0 : period - mod);
+	//
+	// if (beginPosX % (period * 2) == 0
+	// && beginPosY % (period * 2) != 0) {
+	// beginPosY = beginPosY + period;
+	// }
+	//
+	// endPosX = endPosX - endPosX % period;
+	// endPosY = endPosY - endPosY % period;
+	// if (endPosX % (period * 2) == 0 && endPosY % (period * 2) != 0) {
+	// endPosY = endPosY - period;
+	// }
+	//
+	// List<Integer> cellIds = this.getMapCell(beginPosX, beginPosY,
+	// endPosX, endPosY);
+	// System.out.println("count:" + cellIds.size());
+	// for (int id : cellIds) {
+	// int posX = id / 10000;
+	// int posY = id % 10000;
+	// int type = 0;
+	// // if (posX % 18 == 0 && posY % 18 == 0) {
+	// // if ((posX % 36 == 0 && posY % 36 == 0)
+	// // || (posX % 36 == 18 && posY % 36 == 18)) {
+	// // // 联盟城点
+	// // type = MapCell.CAS_TYPE_GUILD;
+	// // }
+	// // }
+	// StringBuffer sb = new StringBuffer();
+	// sb
+	// .append("INSERT INTO mapcell(id,posX,posY,stateId,casId,castType)
+	// values(");
+	// sb.append(id).append(",");
+	// sb.append(posX).append(",");
+	// sb.append(posY).append(",");
+	// sb.append(state.getStateId()).append(",");
+	// sb.append("0,");
+	// sb.append(type).append(");\n");
+	// w.write(sb.toString());
+	// }
+	// }
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// } finally {
+	// if (w != null) {
+	// try {
+	// w.close();
+	// } catch (Exception e) {
+	// }
+	// }
+	// }
+	//
+	// }
+
+	// private int getStateIdByPos(int posX, int posY, List<State> states) {
+	// for (State state : states) {
+	// if (state.isInState(posX, posY)) {
+	// return state.getStateId();
+	// }
+	// }
+	// return -1;
+	// }
+
+	// @Override
+	// public List<State> getStatesByCountryId(int countryId) {
+	// return mapDao.getStatesByCountryId(countryId);
+	// }
+
+	// @Override
+	// public void lockMapCell(MapCell mapCell) {
+	// try {
+	// mapCell = (MapCell) MemcachedManager.lockObject(mapCell,
+	// mapCell.getId());
+	// } catch (TimeoutException e) {
+	// throw new BaseException(e.toString());
+	// }
+	// }
+}

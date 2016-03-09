@@ -1,0 +1,31 @@
+package com.youxigu.dynasty2.map.service;
+
+import java.util.List;
+
+/*
+ * 地图数据异步处理接口
+ */
+public interface IAsyUpdateMapService {
+	/**
+	 * 初始化service
+	 */
+	void initService();
+
+	// /**
+	// * 异步更新坐标点
+	// *
+	// * @param mapCell
+	// */
+	// void updateCityCell(MapCell mapCell);
+	//
+	// /*
+	// * 更新出征
+	// */
+	// void updateArmyout(Armyout armyout);
+	//
+	// void insertArmyout(Armyout armyout);
+	//
+	// void deleteArmyout(Armyout armyout);
+
+	void update(List<Object> objs);
+}

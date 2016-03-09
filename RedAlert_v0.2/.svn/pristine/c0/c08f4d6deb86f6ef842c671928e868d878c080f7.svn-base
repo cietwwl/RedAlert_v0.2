@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+	<typeAlias alias="entity" type="com.youxigu.dynasty2.entity.domain.Entity"/>
+	<typeAlias alias="entityConsumeEx" type="com.youxigu.dynasty2.entity.domain.EntityConsumeEx"/>
+	<typeAlias alias="entityLimit" type="com.youxigu.dynasty2.entity.domain.EntityLimit"/>
+	<typeAlias alias="effectType" type="com.youxigu.dynasty2.entity.domain.effect.EffectTypeDefine"/>
+	<typeAlias alias="effectDefine" type="com.youxigu.dynasty2.entity.domain.effect.EffectDefine"/>
+	<typeAlias alias="entityEffect" type="com.youxigu.dynasty2.entity.domain.effect.EntityEffect"/>
+
+
+	<typeAlias alias="dropPackEntity" type="com.youxigu.dynasty2.entity.domain.DropPackEntity"/>
+	<typeAlias alias="boxEntity" type="com.youxigu.dynasty2.entity.domain.BoxEntity"/>
+	<typeAlias alias="dropPackItem" type="com.youxigu.dynasty2.entity.domain.DropPackItem"/>
+  
+
+	<select id="listAllEntity" resultClass="java.util.HashMap"> 
+		select * from entity
+	</select>
+
+	<insert id="insertEntity" parameterClass="entity">
+		insert into entity(entId,entType) values(#entId#,#entType#)
+	</insert>
+
+	<delete id="deleteEntity" parameterClass="int" >
+		delete from entity where entId = #entId#
+	</delete>
+
+
+	<select id="getEntityByEntId" parameterClass="int" resultClass="java.util.HashMap"> 
+		select * from entity where entId=#entId#
+	</select>
+
+	<select id="getAllEntityConsumes" parameterClass="int" resultClass="entityConsumeEx">
+		select * from entityconsume
+	</select>
+
+	<insert id="insertEntityConsume" parameterClass="entityConsumeEx">
+		insert into entityconsume(id,entId,level,needEntId,needEntNum) values(#id#,#entId#,#level#,#needEntId#,#needEntNum#)
+	</insert>
+
+	<delete id="deleteEntityConsume" parameterClass="int" >
+		delete from entityconsume where entId = #entId#
+	</delete>
+
+	<select id="getAllEntityEntityLimits" parameterClass="int" resultClass="entityLimit">
+		select * from entitylimit
+	</select>
+
+	<insert id="insertEntityLimit" parameterClass="entityLimit">
+		insert into entitylimit(id,entId,level,needEntId,needLevel,leastNum) values(#id#,#entId#,#level#,#needEntId#,#needLevel#,#leastNum#)
+	</insert>
+	<delete id="deleteEntityLimit" parameterClass="int" >
+		delete from entitylimit where entId = #entId#
+	</delete>
+
+    <!-- party -->
+    <typeAlias alias="party" type="com.youxigu.dynasty2.entity.domain.Party"/>
+    <select id="listPartys" resultClass="party">
+        select * from party
+    </select>
+	<select id="getPartyByEntId" parameterClass="int" resultClass="party">
+		select * from party where entId=#entId#
+	</select>
+	<insert id="insertParty" parameterClass="party">
+		insert into party(entId,partyName,iconPath) values(#entId#,#partyName#,#iconPath#)
+	</insert>
+	<delete id="deleteParty" parameterClass="int" >
+		delete from party where entId = #entId#
+	</delete>
+
+    <typeAlias alias="item" type="com.youxigu.dynasty2.entity.domain.Item"/>
+    <typeAlias alias="itemExchange" type="com.youxigu.dynasty2.entity.domain.ItemExchange"/>
+    <select id="listItems" resultClass="item">
+        select * from item
+    </select>
+    <select id="itemExchange" resultClass="itemExchange">
+        select * from itemexchange
+    </select>
+	<select id="getItemByEntId" parameterClass="int" resultClass="item">
+		select * from item where entId=#entId#
+	</select>
+  
+	<insert id="insertItem" parameterClass="item">
+		insert into item(entId,itemName,itemDesc,iconPath,type,sumAble,bandAble,throwAble,useAble,useMaxNum,childType,level,color,
+			missionId,time,userHasMaxNum,stackNum,exchangeId,notJoinPack,sysHeroEntId,sellType,sellPrice) 
+		values(#entId#,#itemName#,#itemDesc#,#iconPath#,#type#,#sumAble#,#bandAble#,#throwAble#,#useAble#,#useMaxNum#,#childType#,#level#,#color#,
+			#missionId#,#time#,#userHasMaxNum#,#stackNum#,#exchangeId#,#notJoinPack#,#sysHeroEntId#,#sellType#,#sellPrice#)
+	</insert>
+
+	<delete id="deleteItem" parameterClass="int" >
+		delete from item where entId = #entId#
+	</delete>
+
+    <typeAlias alias="equip" type="com.youxigu.dynasty2.entity.domain.Equip"/>
+    <select id="listEquips" resultClass="equip">
+        select a.*,b.suitId,b.etype,b.value,b.fragmentItem,b.buildItem,
+        		b.specSysHeroId,b.specValue,
+        		b.buildAttr1,b.buildAttr2,b.buildAttr3,b.buildSpecialAttr,b.buildFactor,
+        		b.gold,b.equipDebris,b.equipDebrisCount,b.goldNum
+        from item a inner join equip b on a.entId=b.entId
+    </select>
+  
+	<select id="getEquipByEntId" parameterClass="int" resultClass="equip">
+		select a.*,b.suitId,b.type,b.value,b.fragmentItem,b.buildItem,
+				b.specSysHeroId,b.specValue,
+				b.buildAttr1,b.buildAttr2,b.buildAttr3,b.buildSpecialAttr,b.buildFactor,
+				b.gold,b.equipDebris,b.equipDebrisCount,b.goldNum
+		from item a inner join equip b on a.entId=b.entId where a.entId=#entId#
+	</select>
+
+	<insert id="insertEquip" parameterClass="equip">
+		insert into equip(entId,suitId,type,value,fragmentItem,buildItem,
+					specSysHeroId,specValue,
+					buildAttr1,buildAttr2,buildAttr3,buildSpecialAttr,buildFactor,
+					gold,equipDebris,equipDebrisCount,goldNum
+					) 
+		values(#entId#,#suitId#,#type#,#value#,#fragmentItem#,#buildItem#,
+					#specSysHeroId#,#specValue#,
+					#buildAttr1#,#buildAttr2#,#buildAttr3#,#buildSpecialAttr#,#buildFactor#,
+					#gold#,#equipDebris#,#equipDebrisCount#,#goldNum#
+					)
+	</insert>
+
+	<delete id="deleteEquip" parameterClass="int" >
+		delete from equip where entId = #entId#
+	</delete>
+
+	<select id="getAllEffectTypes" resultClass="effectType">
+		select * from effecttypedefine
+	</select>
+
+
+	<insert id="insertEntityEffect" parameterClass="java.util.HashMap">
+		insert into entityeffect(entId,effId) values(#entId#,#effId#)
+	</insert>
+
+	<delete id="deleteEntityEffect" parameterClass="int" >
+		delete from entityeffect where entId = #entId#
+	</delete>
+
+	<insert id="insertEffectTypeDefine" parameterClass="effectType">
+		insert into effecttypedefine(effTypeId,effTypeName,effTypedesc,showFlag,viewOrder) values(#effTypeId#,#effTypeName#,#effTypedesc#,#showFlag#,#viewOrder#)
+	</insert>
+
+	<select id="getAllEffectDefines" resultClass="effectDefine">
+		select * from effectdefine
+	</select>
+
+    <select id="getAllEntityEffects" resultClass="entityEffect" >
+    	SELECT * FROM entityeffect 
+    </select>
+
+
+	<delete id="deleteEffectTypeDefine" parameterClass="string" >
+		delete from effecttypedefine where effTypeId = #effTypeId#
+	</delete>
+
+	<insert id="insertEffectDefine" parameterClass="effectDefine">
+		insert into
+        effectdefine(effId,effTypeId,level,para1,para2,para3,serviceName,iconPath,buffName,buffId,effName,effDesc,target) values(#effId#,#effTypeId#,#level#,#para1#,#para2#,#para3#,#serviceName#,#iconPath#,#buffName#,#buffId#,#effName#,#effDesc#,#target#)
+	</insert>
+
+	<delete id="deleteEffectDefine" parameterClass="int" >
+		delete from effectdefine where effId = #effId#
+	</delete>
+
+<!-- =========================================================dropPack start=========================================================-->
+	<select id="getDropPackByEntId" parameterClass="int" resultClass="dropPackEntity">
+		select * from item where entId=#entId#
+	</select>
+  
+    <select id="listDropPackEntitys" resultClass="dropPackEntity">
+        select * from item where type=8
+    </select>
+
+	<select id="getDropPackItemsByEntId" resultClass="dropPackItem" parameterClass="int" >
+		select * from droppack where entId = #entId#
+	</select>
+
+	<select id="getDropPackItems" resultClass="dropPackItem">
+		select * from droppack
+	</select>
+
+	<insert id="insertDropPackItem" parameterClass="dropPackItem">
+		insert into droppack(id,entId,dropEntId,dropPercent,minValue,maxValue2,weight) values(#id#,#entId#,#dropEntId#,#dropPercent#,#minValue#,#maxValue2#,#weight#)
+	</insert>
+
+	<delete id="deleteDropPackItem" parameterClass="int" >
+		delete from droppack where entId = #entId#
+	</delete>
+
+    <select id="listBoxEntitys" resultClass="boxEntity">
+        select * from item where type=8
+    </select>
+  
+	<select id="getBoxByEntId" parameterClass="int" resultClass="boxEntity">
+		select * from item where entId=#entId#
+	</select>
+
+    <!-- building -->
+    <typeAlias alias="building" type="com.youxigu.dynasty2.entity.domain.Building"/>
+    <select id="listBuildings" resultClass="building">
+        select * from building
+    </select>
+    
+    <select id="getBuildingByEntId" parameterClass="int" resultClass="building">
+        select * from building where entId=#entId#
+    </select>
+
+    <insert id="insertBuilding" parameterClass="building">
+        insert into building(entId,buiName,buiDesc,maxLevel) values(#entId#,#buiName#,#buiDesc#,#maxLevel#)
+    </insert>
+    <delete id="deleteBuilding" parameterClass="int" >
+        delete from building where entId = #entId#
+    </delete>
+
+    <!-- technology -->
+    <typeAlias alias="technology" type="com.youxigu.dynasty2.entity.domain.Technology"/>
+    <select id="listTechnologys" resultClass="technology">
+        select * from technology
+    </select>
+    <select id="getTechnologyByEntId" parameterClass="int" resultClass="technology">
+        select * from technology where entId=#entId#
+    </select>
+  
+    <insert id="insertTechnology" parameterClass="technology">
+        insert into technology(entId,techType,techName,techDesc,iconPath,maxLevel,orderIndex) values(#entId#,#techType#,#techName#,#techDesc#,#iconPath#,#maxLevel#,#orderIndex#)
+    </insert>
+  
+    <delete id="deleteTechnology" parameterClass="int" >
+        delete from technology where entId = #entId#
+    </delete>
+    
+    
+    <!-- army -->
+    <typeAlias alias="army" type="com.youxigu.dynasty2.entity.domain.Army"/>
+    <select id="listArmys" resultClass="army">
+        select * from army
+    </select>
+    
+    <select id="getArmyByEntId" parameterClass="int" resultClass="army">
+        select * from army where entId=#entId#
+    </select>
+  
+    <insert id="insertArmy" parameterClass="army">
+        insert into army(entId,armyName,armyDesc,armyType) values(#entId#,#armyName#,#armyDesc#,#armyType#)
+    </insert>
+  
+    <delete id="deleteArmy" parameterClass="int" >
+        delete from army where entId = #entId#
+    </delete>
+    
+    
+    <!-- resource -->
+    <typeAlias alias="resource" type="com.youxigu.dynasty2.entity.domain.Resource"/>
+    <select id="listResources" resultClass="resource">
+        select * from resource
+    </select>
+    <select id="getResourceByEntId" parameterClass="int" resultClass="resource">
+        select * from resource where entId=#entId#
+    </select>
+    <insert id="insertResource" parameterClass="resource">
+        insert into resource(entId,resName,resDesc,iconPath) values(#entId#,#resName#,#resDesc#,#iconPath#)
+    </insert>
+    <delete id="deleteResource" parameterClass="int" >
+        delete from resource where entId = #entId#
+    </delete>
+    
+    
+    <!--武将技能定义-->
+    <typeAlias alias="heroSkill" type="com.youxigu.dynasty2.entity.domain.HeroSkill"/>
+    <typeAlias alias="heroSkillLimit" type="com.youxigu.dynasty2.entity.domain.HeroSkillLimit"/>
+    <typeAlias alias="heroSkillEffect" type="com.youxigu.dynasty2.entity.domain.HeroSkillEffect"/>
+    <typeAlias alias="heroSkillEffectLimit" type="com.youxigu.dynasty2.entity.domain.HeroSkillEffectLimit"/>
+    <select id="getHeroSkillByEntId" parameterClass="int" resultClass="heroSkill">
+      SELECT * FROM heroskill where entId=#entId#
+    </select>
+    <select id="listHeroSkills" resultClass="heroSkill">
+      SELECT * FROM heroskill
+    </select>
+    <select id="getHeroSkillEffects" parameterClass="int" resultClass="heroSkillEffect">
+      SELECT a.* FROM heroskilleffect a inner join heroskilleffectrela b on a.effId = b.effId where b.skillId=#skillId#
+    </select>
+    <select id="listHeroSkillEffects" resultClass="heroSkillEffect">
+      SELECT b.skillId,a.* FROM heroskilleffect a inner join heroskilleffectrela b on a.effId = b.effId
+    </select>
+    <select id="getHeroSkillLimits" parameterClass="int" resultClass="heroSkillLimit">
+      SELECT * FROM heroskilllimit where skillId=#skillId#
+    </select>
+    <select id="listHeroSkillLimits" resultClass="heroSkillLimit">
+      SELECT * FROM heroskilllimit
+    </select>
+    <select id="getHeroSkillEffectLimitByEffId" parameterClass="int" resultClass="heroSkillEffectLimit">
+      SELECT * FROM heroskilleffectlimit where effId=#effId#
+    </select>
+    <select id="listHeroSkillEffectLimits" resultClass="heroSkillEffectLimit">
+      SELECT * FROM heroskilleffectlimit
+    </select>
+    
+    <!-- 系统武将 -->
+    <typeAlias alias="sysHero" type="com.youxigu.dynasty2.entity.domain.SysHero"/>
+    <typeAlias alias="heroFate" type="com.youxigu.dynasty2.hero.domain.HeroFate"/>
+    <select id="getSysHeroByEntId" resultClass="sysHero">
+       SELECT * FROM syshero WHERE entId=#entId#
+    </select>
+    <select id="listSysHeros" resultClass="sysHero">
+       SELECT * FROM syshero
+    </select>
+    <select id="listHeroFates" resultClass="heroFate">
+       SELECT * FROM herofate
+    </select>
+    
+    <select id="listHeroFatesByType" resultClass="heroFate">
+       SELECT * FROM herofate where type = #type#
+    </select>
+    
+    <!--  装备升级-->
+    <typeAlias alias="equipLevelUp" type="com.youxigu.dynasty2.entity.domain.EquipLevelUpRule"/>
+    <select id="getEquipLevelUpRules" resultClass="equipLevelUp">
+		SELECT * FROM equiplevelup order by level
+	</select>
+	
+	<!-- 武将进阶 -->
+	<typeAlias alias="relifeLimit" type="com.youxigu.dynasty2.hero.domain.RelifeLimit"/>
+    <select id="getRelifeLimitList" resultClass="relifeLimit">
+        SELECT * FROM relifelimit order by sysHeroId,relifeNum
+    </select>
+
+	<!-- 武将强化 -->
+    <typeAlias alias="herostrength" type="com.youxigu.dynasty2.hero.domain.HeroStrength"/>
+    <select id="getHeroStrength" resultClass="herostrength">
+        SELECT * FROM herostrength order by id,level asc
+    </select>
+    
+    <!-- 系统武将所属的国家 -->
+   <typeAlias alias="sysHeroCountry" type="com.youxigu.dynasty2.entity.domain.SysHeroCountry"/>
+   <select id="getSysHeroCountrys" resultClass="sysHeroCountry">
+    SELECT * FROM sysherocountry
+  </select>
+</sqlMap>

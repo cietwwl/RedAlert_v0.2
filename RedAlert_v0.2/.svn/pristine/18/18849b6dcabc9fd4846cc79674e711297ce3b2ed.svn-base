@@ -1,0 +1,112 @@
+package com.youxigu.dynasty2.armyout.domain;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+
+/**
+ * 用户出征队列
+ * 
+ * @author LK
+ * @date 2016年2月29日
+ */
+public class UserArmyout implements Serializable {
+	private long userId;
+	private long outId1;
+	private long outId2;
+	private long outId3;
+	private int spyNum;// 侦查次数
+	private int outNum;// 出征次数
+	private int stayNum;// 驻守次数
+	private int togatherNum;// 集结次数
+	private Timestamp lastDttm;// 最后一次出征的时间
+	private Timestamp lastDeadDttm;// 上一次流亡的时间
+	private Timestamp lastMoveDttm;// 上一次迁城的时间
+
+	public long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(long userId) {
+		this.userId = userId;
+	}
+
+	public long getOutId1() {
+		return outId1;
+	}
+
+	public void setOutId1(long outId1) {
+		this.outId1 = outId1;
+	}
+
+	public long getOutId2() {
+		return outId2;
+	}
+
+	public void setOutId2(long outId2) {
+		this.outId2 = outId2;
+	}
+
+	public long getOutId3() {
+		return outId3;
+	}
+
+	public void setOutId3(long outId3) {
+		this.outId3 = outId3;
+	}
+
+	public int getSpyNum() {
+		return spyNum;
+	}
+
+	public void setSpyNum(int spyNum) {
+		this.spyNum = spyNum;
+	}
+
+	public int getOutNum() {
+		return outNum;
+	}
+
+	public void setOutNum(int outNum) {
+		this.outNum = outNum;
+	}
+
+	public int getStayNum() {
+		return stayNum;
+	}
+
+	public void setStayNum(int stayNum) {
+		this.stayNum = stayNum;
+	}
+
+	public int getTogatherNum() {
+		return togatherNum;
+	}
+
+	public void setTogatherNum(int togatherNum) {
+		this.togatherNum = togatherNum;
+	}
+
+	public Timestamp getLastDttm() {
+		return lastDttm;
+	}
+
+	public void setLastDttm(Timestamp lastDttm) {
+		this.lastDttm = lastDttm;
+	}
+
+	public Timestamp getLastDeadDttm() {
+		return lastDeadDttm;
+	}
+
+	public void setLastDeadDttm(Timestamp lastDeadDttm) {
+		this.lastDeadDttm = lastDeadDttm;
+	}
+
+	public Timestamp getLastMoveDttm() {
+		return lastMoveDttm;
+	}
+
+	public void setLastMoveDttm(Timestamp lastMoveDttm) {
+		this.lastMoveDttm = lastMoveDttm;
+	}
+}

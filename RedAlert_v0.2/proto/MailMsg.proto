@@ -1,0 +1,170 @@
+package dynasty;
+import "Common.proto";
+
+option java_package = "com.youxigu.dynasty2.mail.proto";
+option java_outer_classname = "MailMsg";
+
+//11001 用户发邮件请求(nodeserver)
+message Request11001Define{
+   required int32 cmd = 1;
+   optional string title = 2;//邮件标题[必须]
+   optional string content = 3;//邮件内容[必须]
+   repeated string userNames = 4;//收件人的名称数组[必须]
+}
+
+//11002 用户发邮件请求响应
+message Response11001Define{
+   optional ResponseHead responseHead = 1;//协议头[必须]
+}
+
+//11003 用户获取自己的邮件请求(nodeserver)
+message Request11003Define{
+   required int32 cmd = 1;
+   optional int32 type = 2;//邮件类型0 = 玩家之间的邮件10 = 系统邮件11 = 战报[必须]
+   optional int32 status = 3;//0 =未读1=已读-1=全部[必须]
+   optional int32 pageNo = 4;//页号， 从0开始[必须]
+   optional int32 pageSize = 5;//页长度[必须]
+}
+
+//邮箱邮件统计
+message MailCount{
+	optional int32 newNormal = 1;//新普通邮件的总数[必须]
+	optional int32 newSystem = 2;//新系统邮件的总数[必须]
+	optional int32 newPVP = 3;//新战报的总数[必须]
+}
+
+//战报信息-战报的内容暂定成这样，具体按照战报需求修改
+message CombatMail{
+    optional string combat_id = 1;//对应的战斗id
+	optional bool win = 2;//收邮件人是胜利还是失败,True 胜利 False 失败[必须]
+	message MailTeamInfo{
+        optional int64 user_id = 1;//君主id[必须]
+		optional string user_name = 2;//君主名称[必须]
+        optional int32 cord_x = 3;//X坐标值[必须]
+        optional int32 cord_y = 4;//Y坐标值[必须]
+        optional int32 team_power = 5;//军团战力[必须]
+        optional int32 harm = 6;//总伤害值[必须]
+        optional int32 lost_hp = 7;//损失总耐久值[必须]
+        optional int32 remain_hp = 8;//剩余总耐久值[必须]
+        repeated MailHeroInfo heros_info = 9;//所有英雄的战报信息[必须]
+	}
+    message MailHeroInfo{
+        optional int32 unit_hero_id = 1;//战斗单元id，对用户的武将和npc来说，是sysHeroId[必须]
+        optional int32 harm = 2;//伤害值[必须]
+        optional int32 remain_hp = 3;//剩余耐久[必须]
+        optional int32 lost_hp = 4;//损失耐久[必须]
+    }
+	optional MailTeamInfo atk_team = 3;//进攻单元
+	optional MailTeamInfo dfc_team = 4;//防守单元
+    optional sint32 gain_gold = 5;//本次战斗的金矿收益，可正可负
+    optional sint32 gain_iron = 6;//本次战斗的铁矿收益，可正可负
+    optional sint32 gain_oil = 7;//本次战斗的油矿收益，可正可负
+    optional sint32 gain_iranium = 8;//本次战斗的铀矿收益，可正可负
+    optional sint32 gain_parts = 9;//本次战斗的零件收益，可正可负
+    optional sint32 gain_refugee = 10;//本次战斗的难民收益，可正可负
+}
+
+//附件信息
+message AppendixDetail{
+	optional int32 itemId = 1;//附件的道具ID有附件的情况下，存在[必须]
+	optional int32 num = 2;//附件道具数量[必须]
+	optional int32 status = 3;//附件状态 0 =没有附件1=有附件，未提取2=有附件，已经提取[必须]
+	optional OnlinePack onlinePack = 4;//非null时为运营礼包，运营礼包信息[必须]
+}
+
+//单封邮件的信息
+message MailMessage{
+	optional int32 msgId = 1;//邮件ID[必须]
+	optional int32 type = 2;//邮件ID[必须]
+	optional int64 senderId = 3;//发送者的userId,系统邮件=0[必须]
+	optional string senderName = 4;//发送者的名称，系统邮件为null[必须]
+	optional string sendDttm = 5;//发送日期,”yyyy-mm-dd hh:MM:ss”[必须]
+	optional string content = 6;//邮件内容（战报类的为null）[必须]
+	optional int32 status = 7;//状态 0 =未读1=已读[必须]
+	optional string title = 8;//邮件标题[必须]
+	repeated AppendixDetail appendixDetail = 9;//附件[可选]
+	optional CombatMail combatDetail = 10;//战报信息[可选]
+}
+
+//11004 用户获取自己的邮件响应
+message Response11003Define{
+   optional ResponseHead responseHead = 1;//协议头
+   optional int32 type = 2;//邮件类型0 = 玩家之间的邮件10 = 系统邮件11 = 战报[必须]
+   optional int32 pageNo = 3;//页号， 从0开始[必须]
+   optional int32 pageSize = 4;//页长度[必须]
+   optional int32 total = 5;//总条数[必须]
+   optional int32 pages = 6;//总页数[必须]
+   optional MailCount mailCount = 7;//邮件统计数[必须]
+   repeated MailMessage datas = 8;//如果pages==0,则daats=null,否则是当前页的邮件对象数组[可选]
+   optional string serverTime = 9;//服务器当前时间。格式："yyyy-MM-dd HH:mm:ss"
+}
+
+//11005 标记邮件已读请求(nodeserver)
+message Request11005Define{
+   optional int32 cmd = 1;//命令号[必须]
+   optional int32 msgId = 2;//邮件id[必须]
+}
+
+//11006 标记邮件已读响应
+message Response11005Define{
+   optional ResponseHead responseHead = 1;//协议头[必须]
+   optional MailCount mailCount = 2;//邮件统计数[必须]
+}
+
+//11007 提取用户邮件附件请求(nodeserver)
+message Request11007Define{
+   optional int32 cmd = 1;//命令号[必须]
+   optional int32 msgId = 2;//邮件id[必须]
+   optional int32 pos = 3;//1到6[可选]
+}
+
+//11008 提取用户邮件附件响应
+message Response11007Define{
+   optional ResponseHead responseHead = 1;//协议头
+   //有传入pos参数的时候，有下列数据返回
+   optional MailMessage mail = 2;//邮件内容[可选]
+}
+
+//11009 删除邮件请求(nodeserver)
+message Request11009Define{
+   optional int32 cmd = 1;//命令号[必须]
+   repeated int32 msgIds = 2;//邮件id数组[必须]
+}
+
+//11010 删除邮件响应
+message Response11009Define{
+   optional ResponseHead responseHead = 1;//协议头[必须]
+   optional MailCount mailCount = 2;//邮件统计数[必须]
+}
+
+//11011 批量提取用户邮件附件请求(nodeserver)
+message Request11011Define{
+   optional int32 cmd = 1;//命令号[必须]
+   optional int32 type = 2;//提取方式[必须]。0->提取指定的邮件; 1->提取全部带附件的邮件
+   repeated int32 msg_id = 3;//邮件id列表。当type为0的时候必须有，type为1的时候留空
+}
+
+//11012 提取用户邮件附件响应
+message Response11011Define{
+   optional ResponseHead responseHead = 1;//协议头[必须]
+   repeated ItemInfo items = 2;//提取成功的所有Item的信息
+   optional MailCount mailCount = 3;//提取后的未读邮件统计数[必须]
+   optional string errDesc = 4;//如果提取过程中出错，则值为出错的描述信息
+}
+
+//11013 删除全部邮件请求
+message Request11013Define{
+   optional int32 cmd = 1;//命令号[必须]
+}
+
+//11014 删除全部邮件响应
+message Response11013Define{
+   optional ResponseHead responseHead = 1;//协议头[必须]
+   optional MailCount mailCount = 2;//删除后的未读邮件统计数[必须]
+}
+
+//推送获得新邮件消息-1001
+message SendMailEvent{
+   optional ResponseHead responseHead = 1;//命令头
+   optional int32 type = 2;//消息种类： 0：普通消息 1：系统消息 10 pvp战报 11 pve战报
+}

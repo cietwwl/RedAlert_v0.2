@@ -1,0 +1,62 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+	<bean id="activityDao" class="com.youxigu.dynasty2.activity.dao.impl.ActivityDao" >
+		<property name="sqlMapClientTemplate"><ref bean="sqlMapClientTemplate" /></property>
+	</bean>
+
+    <bean id="mysticShopService" class="com.youxigu.dynasty2.activity.service.impl.MysticShopService" init-method="init">
+		<property name="activityDao"><ref bean="activityDao" /></property>
+		<property name="vipService"><ref bean="vipService" /></property>
+		<property name="userService"><ref bean="userService" /></property>
+		<property name="treasuryService"><ref bean="treasuryService" /></property>
+		<property name="entityService"><ref bean="entityService" /></property>
+		<property name="heroService"><ref bean="heroService" /></property>
+		<property name="castleResService"><ref bean="castleResService" /></property>
+		<property name="commonService"><ref bean="commonService" /></property>
+	</bean>
+	
+	<bean id="extraProcessor" class="com.youxigu.dynasty2.activity.service.impl.ExtraProcessor" >
+		 <property name="userService"><ref bean="userService" /></property>
+         <property name="activityDao"><ref bean="activityDao" /></property>
+         <property name="operateActivityService"><ref bean="operateActivityService" /></property>
+         <property name="entityService"><ref bean="entityService" /></property>
+         <property name="treasuryService"><ref bean="treasuryService" /></property>
+         <property name="messageService"><ref bean="messageService" /></property>
+    </bean>
+	<bean id="operateActivityService" class="com.youxigu.dynasty2.activity.service.impl.OperateActivityService" init-method="init">
+        <property name="activityDao"><ref bean="activityDao" /></property>
+         <property name="messageService"><ref bean="messageService" /></property>
+         <property name="jobServerClient"><ref bean="jobServerClient" /></property>
+         <property name="mailMessageService"><ref bean="mailMessageService" /></property>
+         <property name="broadcastMgr"><ref bean="broadcastMgr" /></property>
+         <property name="processors">
+			<map>
+				<entry key="8">
+					<ref bean="extraProcessor" />
+				</entry>
+			</map>
+		</property>
+    </bean>
+    
+    
+    <bean id="activityService" class="com.youxigu.dynasty2.activity.service.impl.ActivityService" init-method="init">
+		<property name="activityDao"><ref bean="activityDao" /></property>
+		<property name="accountDao"><ref bean="accountDao" /></property>
+		<property name="userDao"><ref bean="userDao" /></property>
+		<property name="broadcastMgr">
+			<ref bean="broadcastMgr" />
+		</property>
+		<property name="commonService"><ref bean="commonService" /></property>
+		<property name="castleService"><ref bean="castleService" /></property>
+
+	</bean>
+   
+</beans>
+

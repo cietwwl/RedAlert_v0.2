@@ -1,0 +1,47 @@
+package com.youxigu.dynasty2.armyout.dao.impl;
+
+import java.util.List;
+
+import com.manu.core.base.BaseDao;
+import com.youxigu.dynasty2.armyout.dao.IArmyoutDao;
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+import com.youxigu.dynasty2.asyncdb.service.impl.IDUtil;
+import com.youxigu.dynasty2.map.service.impl.ThreadLocalMapCellCache;
+
+/**
+ * 出征dao
+ * @author Dagangzi
+ *
+ */
+public class ArmyoutDao extends BaseDao implements IArmyoutDao {
+	private static final String ID_TYPE = "ARMYOUT";
+
+	@Override
+	public List<Armyout> listArmyouts() {
+		return this.getSqlMapClientTemplate().queryForList("listArmyouts");
+	}
+
+	@Override
+	public void createArmyOut(Armyout armyout) {
+		armyout.setId(IDUtil.getNextId(ID_TYPE));
+
+		ThreadLocalMapCellCache.addData(ThreadLocalMapCellCache.INSERT,
+				armyout.getKey(), armyout);
+
+		this.getSqlMapClientTemplate().insert("insertArmyout", armyout);
+	}
+
+	@Override
+	public void updateArmyout(Armyout armyout) {
+		ThreadLocalMapCellCache.addData(ThreadLocalMapCellCache.UPDATE,
+				armyout.getKey(), armyout);
+	}
+
+	@Override
+	public void deleteArmyOut(Armyout armyout) {
+		ThreadLocalMapCellCache.addData(ThreadLocalMapCellCache.DELETE,
+				armyout.getKey(), armyout);
+
+		this.getSqlMapClientTemplate().delete("deleteArmyout", armyout);
+	}
+}

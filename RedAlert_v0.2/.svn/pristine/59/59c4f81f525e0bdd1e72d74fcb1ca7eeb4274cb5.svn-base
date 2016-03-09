@@ -1,0 +1,74 @@
+package dynasty;
+import "Common.proto";
+
+option java_package = "com.youxigu.dynasty2.map.proto";
+option java_outer_classname = "MapMsg";
+//世界地图协议，地图拖拽，角色创建等功能协议号从90001-91000
+
+//坐标信息
+message Point{
+   optional int32 posX = 1;//x坐标
+   optional int32 posY = 2;//y坐标
+}
+
+
+//格子绑定的用户信息
+message MapCellUserInfo{
+   optional int64 userId = 1;//格子所属的用户id
+   optional string name = 2;//用户名字
+   optional int32 level = 3;//用户的等级
+}
+
+//单个格子的信息
+message MapCellInfo{
+   optional int32 id = 1;//格子的id，可以通过格子的id解析出格子的x y坐标
+   optional bool new = 2;//是否为刷新的格子
+   optional MapCellUserInfo userInfo = 3;//格子所属用户信息,如果是npc那就是npc信息
+}
+
+//单个区块的信息
+message AreaInfo{
+   optional int32 areaId = 1;//区块的id，可以通过区块id解析出区块的x y坐标
+   repeated MapCellInfo cells = 2;//区块里面包含的所有格子信息
+}
+
+
+//90001 进入世界地图(mainserver)
+message Request90001Define{
+   required int32 cmd = 1;
+}
+
+//90002世界地图返回信息
+message Response90001Define{
+   optional ResponseHead responseHead = 1;
+   repeated AreaInfo areas=2;//所有的区块信息
+}
+
+//90003 离开世界地图，此消息不需要返回消息(mainserver)
+message Request90003Define{
+   required int32 cmd = 1;
+}
+
+//90005 获取可以迁城的区域列表(mainserver)
+message Request90005Define{
+   required int32 cmd = 1;
+}
+
+//90006获取可以迁城的区域列表返回信息
+message Response90005Define{
+   optional ResponseHead responseHead = 1;
+   repeated int32 ids=2;//所有可以迁城的开放区域集合
+}
+
+
+//90007 发起迁城(mainserver)
+message Request90007Define{
+   required int32 cmd = 1;
+   optional int32 id = 2;//迁城所到区域的格子id
+}
+
+//90008 发起迁城返回信息返回这个消息 表示成功
+message Response90007Define{
+   optional ResponseHead responseHead = 1;
+   optional int32 id = 2;//迁城所到区域的格子id
+}

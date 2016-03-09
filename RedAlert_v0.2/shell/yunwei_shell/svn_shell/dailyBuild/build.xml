@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<project name="SVN Ant Test" default="all" basedir=".">
+        <property name="tool_lib" value="lib" />
+        <property name="FLEX_HOME" value="flex4.0" />
+       <!-- 1 -->
+       <property name="remote_dynasty2.backend.url" value="svn://192.168.3.16/RedAlert/server/RedAlert_${app.version}" />
+       <property name="remote_dynasty2.client.url" value="svn://192.168.3.16/RedAlert/release/client" />
+       <property name="dynasty2.dir" value="../dynasty2" />
+       <property name="dynasty2.client.dir" value="../dynasty2_client" />
+       <path id="build.classpath">
+                <pathelement location="${tool_lib}/svnant.jar" />
+                <pathelement location="${tool_lib}/svnClientAdapter.jar" />
+                <pathelement location="${tool_lib}/svnjavahl.jar" />
+       </path>
+	   <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+          <classpath>
+                <pathelement location="${FLEX_HOME}/ant/lib/ant-contrib.jar"/>
+          </classpath>
+        </taskdef>
+
+        <target name="all">
+			<antcall target="svn_prepare"/>
+			<antcall target="svn_checkout_backend"/>
+			<!--
+			<antcall target="svn_checkout_client"/>
+			-->
+	    </target>
+
+
+
+       <!-- 2 -->
+       <taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask" classpathref="build.classpath"/>
+       <target name="svn_prepare" description="Prepare the dirs for other tasks">
+			  <delete dir="${dynasty2.dir}" />
+			  <delete dir="${dynasty2.client.dir}" />
+       </target>
+
+
+       <!-- 3-->
+<!--
+       <target name="svn_checkout" depends="svn_prepare">
+                <svn javahl="true" username="wangweihua" password="Tjxhh5@Suwwp6}f" >
+					<checkout url="${remote_dynasty2.backend.url}/" destPath="${dynasty2.dir}/" />
+				</svn>
+                <defaultexcludes remove="**/.svn/**" />
+                <defaultexcludes remove="**/.svn" />
+                <delete includeEmptyDirs="true">
+					  <fileset dir="${dynasty2.dir}" includes="**/.svn/**" />
+		              <fileset dir="${dynasty2.dir}" includes="**/.svn" />
+                </delete>
+        </target>
+-->
+   <target name="svn_checkout_backend">  
+        <exec executable="svn" > 
+       		<arg line="export --username lvkai  --password Lkxhh5@Suwwp6}f  ${remote_dynasty2.backend.url} ${dynasty2.dir}"/>
+      	</exec> 
+	<delete includeemptydirs="true">
+	       <fileset dir="${dynasty2.dir}" defaultexcludes="false" includes="**\*.svn\"/>
+	   </delete>
+    </target>
+
+
+   <target name="svn_checkout_client">  
+        <exec executable="svn" > 
+       		<arg line="export --username lvkai  --password Lkxhh5@Suwwp6}f  ${remote_dynasty2.client.url} ${dynasty2.client.dir}"/>
+      	</exec> 
+	<delete includeemptydirs="true">
+	       <fileset dir="${dynasty2.client.dir}" defaultexcludes="false" includes="**\*.svn\"/>
+	   </delete>
+    </target>
+
+</project>
+
+

@@ -1,0 +1,966 @@
+package com.youxigu.dynasty2.chat;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.youxigu.dynasty2.chat.OfflineMsgCacheService.OffLineMsg;
+import com.youxigu.dynasty2.chat.proto.ChatMsg.Request10009Define;
+import com.youxigu.dynasty2.chat.proto.ChatMsg.Request10011Define;
+import com.youxigu.dynasty2.chat.proto.ChatMsg.Request10013Define;
+import com.youxigu.dynasty2.chat.proto.ChatMsg.Request10015Define;
+import com.youxigu.dynasty2.chat.proto.ChatMsg.Request10017Define;
+import com.youxigu.dynasty2.chat.proto.ChatMsg.Request10019Define;
+import com.youxigu.dynasty2.chat.proto.ChatMsg.Response10011Define;
+import com.youxigu.dynasty2.chat.proto.ChatMsg.Response10013Define;
+import com.youxigu.dynasty2.chat.proto.ChatMsg.Response10015Define;
+import com.youxigu.dynasty2.chat.proto.ChatMsg.Response10017Define;
+import com.youxigu.dynasty2.chat.proto.ChatMsg.Response10019Define;
+import com.youxigu.dynasty2.common.AppConstants;
+import com.youxigu.dynasty2.common.service.ICommonService;
+import com.youxigu.dynasty2.common.service.ILogOutService;
+import com.youxigu.dynasty2.common.service.ISensitiveWordService;
+import com.youxigu.dynasty2.core.flex.amf.BaseAction;
+import com.youxigu.dynasty2.friend.domain.Friend;
+import com.youxigu.dynasty2.friend.service.IFriendService;
+import com.youxigu.dynasty2.log.AbsLogLineBuffer;
+import com.youxigu.dynasty2.log.ILogService;
+import com.youxigu.dynasty2.log.LogTypeConst;
+import com.youxigu.dynasty2.openapi.Constant;
+import com.youxigu.dynasty2.user.domain.User;
+import com.youxigu.dynasty2.user.domain.UserChat;
+import com.youxigu.dynasty2.user.domain.UserChat.RecentTimeFriend;
+import com.youxigu.dynasty2.user.enums.ChatStatusType;
+import com.youxigu.dynasty2.user.service.IUserService;
+import com.youxigu.dynasty2.util.BaseException;
+import com.youxigu.dynasty2.util.CompressUtils;
+import com.youxigu.wolf.net.OnlineUserSessionManager;
+import com.youxigu.wolf.net.Response;
+import com.youxigu.wolf.net.UserSession;
+
+/**
+ * 接收客户端聊天信息的协议接口的实现类
+ * 
+ * @author Phoeboo
+ * @version 1.0 2011.01.19
+ */
+public class ChatAction extends BaseAction {
+	public static final int MSG_MAX = 9;// 最大的快捷发送保存条数
+	public static final String CHANNEL_CONFIG = "1,1,1,1";
+
+	public static Logger log = LoggerFactory.getLogger(ChatAction.class);
+	// 与客户端约定的参数名
+	public static String CHAT_TOUSERID = "toUserId";
+	public static String CHAT_TOUSERNAME = "toUserName";
+	public static String CHAT_CHANNEL = "channel";
+	public static String CHAT_CHANNELID = "channelId";
+	public static String CHAT_CONTEXT = "context";
+	public static final String CHAT_MESTYPE = "mesType";
+	public static final String CHAT_VOICE = "voiceContext";
+
+	private ChatInterface chatService;
+	private ISensitiveWordService sensitiveWordService;
+	// private IEntityService entityService;
+
+	private ICommonService commonService;
+	// private IGuildService guildService;
+	// private IUserDailyActivityService userDailyActivityService;
+	private ILogService logService;
+
+	private IUserService userService;
+	private IFriendService friendService;
+	private ILogOutService logOutService;
+
+	/**
+	 * 用户发话的时间间隔
+	 */
+	private int chatPeriod = 5000;// 毫秒;
+
+	// public void setUserDailyActivityService(
+	// IUserDailyActivityService userDailyActivityService) {
+	// this.userDailyActivityService = userDailyActivityService;
+	// }
+	//
+	// public void setEntityService(IEntityService entityService) {
+	// this.entityService = entityService;
+	// }
+
+	public void setSensitiveWordService(
+			ISensitiveWordService sensitiveWordService) {
+		this.sensitiveWordService = sensitiveWordService;
+	}
+
+	public void setLogOutService(ILogOutService logOutService) {
+		this.logOutService = logOutService;
+	}
+
+	public void setFriendService(IFriendService friendService) {
+		this.friendService = friendService;
+	}
+
+	public void setChatService(ChatInterface chatService) {
+		this.chatService = chatService;
+	}
+
+	public void setCommonService(ICommonService commonService) {
+		this.commonService = commonService;
+	}
+
+	public void setLogService(ILogService logService) {
+		this.logService = logService;
+	}
+
+	// public void setGuildService(IGuildService guildService) {
+	// this.guildService = guildService;
+	// }
+
+	public void setUserService(IUserService userService) {
+		this.userService = userService;
+	}
+
+	/**
+	 * 10019 设置开启或关闭陌生人聊天
+	 * 
+	 * @param obj
+	 * @param response
+	 * @return
+	 */
+	public Object setChatStrangeMsg(Object obj, Response response) {
+		Request10019Define req = (Request10019Define) obj;
+		UserSession us = getUserSession(response);
+
+		int status = 0;
+		Object st = us.getAttribute(UserSession.KEY_CHAT_MSG);
+		if (st == null) {
+			us.addAttribute(UserSession.KEY_CHAT_MSG, 0);
+		} else {
+			status = Integer.valueOf(st + "");
+		}
+
+		status = ChatStatusType.CHAT_STRANGE_MSG.changeStatus(status);
+		us.addAttribute(UserSession.KEY_CHAT_MSG, status);
+
+		Response10019Define.Builder res = Response10019Define.newBuilder();
+		res.setResponseHead(super.getResponseHead(req.getCmd()));
+		res.setStatu(req.getStatu());
+		return res.build();
+
+	}
+
+	/**
+	 * 10017 读取玩家的离线消息
+	 * 
+	 * @param obj
+	 * @param response
+	 * @return
+	 */
+	public Object readOfflineMsg(Object obj, Response response) {
+		Request10017Define req = (Request10017Define) obj;
+		if (!req.hasUserId()) {
+			throw new BaseException("参数错误");
+		}
+		UserSession us = getUserSession(response);
+		List<OffLineMsg> msgs = OfflineMsgCacheService.getOffLineMsg(
+				us.getUserId(), req.getUserId());
+		Response10017Define.Builder res = Response10017Define.newBuilder();
+		res.setResponseHead(super.getResponseHead(req.getCmd()));
+		res.setUserId(req.getUserId());
+		if (msgs != null && !msgs.isEmpty()) {
+			for (OffLineMsg m : msgs) {
+				res.addMsgs(m.getMsg());
+			}
+		}
+		return res.build();
+	}
+
+	/**
+	 * 10009 聊天请求(mainserver)
+	 * 
+	 * @param obj
+	 * @param response
+	 */
+	public void receive(Object obj, Response response) {
+		Request10009Define request = (Request10009Define) obj;
+		long toUserId = 0L;
+		if (request.hasToUserId()) {
+			toUserId = request.getToUserId();
+		}
+
+		String channel = null;
+		if (request.hasChannel()) {
+			channel = request.getChannel();
+		}
+
+		String channelId = null;
+		if (request.hasChannelId()) {
+			channelId = request.getChannelId();
+		}
+		String context = null;
+		if (request.hasContext()) {
+			context = request.getContext().trim();
+		}
+		// context = sensitiveWordService.replace(context, null);
+
+		long now = System.currentTimeMillis();
+		UserSession us = getUserSession(response);
+
+		ChatUser fromUser = null;
+
+		if (us.getUserId() > 0) {
+			fromUser = ChatChannelManager.getInstance().getChatUser(
+					us.getUserId());
+		} else {
+			return;// 非法用户
+		}
+
+		// if (Constant.APP_ID_QQ == null && fromUser != null) {
+		// // 测试环境GMTOOL
+		// if (context.startsWith("gmtool:")) {
+		// GMTool.initCommandConfig(null);
+		// String command = context.substring(7, context.length());
+		//
+		// Map<String, Object> map = new HashMap<String, Object>();
+		// map.put(IAMF3Action.ACTION_CMD_KEY, IAMF3Action.CMD_CHAT_SEND);
+		// map.put(ChatInterface.CHAT_FROMUSERID, 0);
+		// map.put(ChatInterface.CHAT_FROMUSERNAME, null);
+		// map.put(CHAT_CHANNEL, channel);
+		//
+		// if (channelId != null) {
+		// map.put(CHAT_CHANNELID, channelId);
+		// }
+		// map.put(IAMF3Action.ACTION_ERROR_CODE_KEY, 0);
+		//
+		// try {
+		//
+		// GMCommand gmCommand = GMTool.parseCommand(command);
+		// SyncWolfTask task = new SyncWolfTask();
+		// task.setParams(gmCommand.getParams());
+		// task.setMethodName(gmCommand.getMethodName());
+		// task.setServiceName(gmCommand.getServiceName());
+		//
+		// Object obj = NodeSessionMgr.sendTask((String) null,
+		// Object.class, task);
+		// map.put(CHAT_CONTEXT, GMTool.toJsonString(obj));
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// map.put(CHAT_CONTEXT, e.toString());
+		// }
+		// OnlineUserSessionManager.sendMessage(fromUser.getUserId(), map);
+		// return;
+		// }
+		//
+		// }
+
+		if (channel.equals(ChatChannelManager.CHANNEL_SYSTEM)) {
+			return;
+		}
+
+		// 检查发言频率
+		int chl = -1;
+		if (!channel.equals(ChatChannelManager.CHANNEL_PRIVATE)) {
+			if (now - fromUser.getLastChatTime() < chatPeriod) {
+				// fromUser.setLastChatTime(now);
+				chatService.echoError(fromUser.getUserId(), "请不要发言过快", channel,
+						channelId);
+
+				return;//
+			} else {
+				fromUser.setLastChatTime(now);
+			}
+		}
+
+		// 检查黑名单
+		int second = chatService.isInBlackList(fromUser.getUserId());
+		if (second > 0) {
+			throw new BaseException("您已经被禁言，您发送的消息其他玩家无法看见");
+		}
+
+		ChatUser toUser = null;
+		if (toUserId > 0) {
+			toUser = ChatChannelManager.getInstance().getChatUser(toUserId);
+			// /toUser的黑名单是否有fromUser
+			if (toUser == null) {
+				processPrivateOfflineMsg(us.getUserId(), toUserId, channel,
+						channelId, context);
+				return;// 非法目标用户
+			}
+		} else {
+			String toUserName = null;
+			if (request.hasToUserName()) {
+				toUserName = request.getToUserName();
+			}
+			if (toUserName != null && !"".equals(toUserName)) {
+				toUser = ChatChannelManager.getInstance().getChatUser(
+						toUserName);
+				if (toUser == null) {
+					User user = userService.getUserByName(toUserName);
+					if (user == null) {
+						chatService.echoError(us.getUserId(), "用户不存在", channel,
+								channelId);
+						return;
+					}
+					processPrivateOfflineMsg(us.getUserId(), user.getUserId(),
+							channel, channelId, context);
+					return;// 非法目标用户
+				}
+			}
+		}
+
+		if (ChatChannelManager.CHANNEL_PRIVATE.equals(channel)) {
+			// 如果是私聊 判断是否为好友关系。。
+			boolean b = checkPrivateMsg(us.getUserId(), toUserId, channel,
+					channelId);
+			if (!b) {
+				return;
+			}
+		}
+
+		ChatMessage chatMessage = new ChatMessage(fromUser, toUser, channel,
+				channelId, context);
+
+		// 检测聊天消息
+		if (!check(chatMessage, fromUser, response))
+			return;
+
+		// 加入快捷发送记录
+		this.addHisRecord(us, context, fromUser, toUser);
+		// 最近联系人
+		addRecentTimeFriend(fromUser, toUser, context);
+		// 世界频道发言,增加活跃
+
+		if (channel.equals(ChatChannelManager.CHANNEL_WORLD)) {
+			chl = 2;
+			// userDailyActivityService.addUserDailyActivity(us.getUserId(),
+			// DailyActivity.ACT_CHAT, (byte) 1);
+			// TODO:这里减少小喇叭 不消耗道具
+			// Item item = null;
+			// item = (Item) entityService
+			// .getEntity(AppConstants.ENT_ITEM_SPEAKER);
+			// if (item == null) {
+			// userDailyActivityService.addUserDailyActivity(us.getUserId(),
+			// DailyActivity.ACT_CHAT, (byte) 1);
+			// log.info("小喇叭未配置！");
+			// }
+			// if (!useItem(us, item, chatMessage)) {
+			// return;
+			// }
+		} else if (channel.equals(ChatChannelManager.CHANNEL_COUNTRY)) {
+			chatMessage.setChannelId(String.valueOf(fromUser.getCountryId()));
+			chl = 3;
+
+		} /*
+		 * else if (channel.equals(ChatChannelManager.CHANNEL_RISK_DATA)) { if
+		 * (!useItem(us, AppConstants.ENT_ITEM_SPEAKER, chatMessage)) { return;
+		 * } }
+		 */else if (channel.equals(ChatChannelManager.CHANNEL_GUILD)) {
+			if (fromUser.getGuildId() > 0) {
+				chatMessage.setChannelId(String.valueOf(fromUser.getGuildId()));
+			} else {
+				chatService.echoError(chatMessage.getFromUserId(), "您还没有加入联盟",
+						channel, channelId);
+				return;
+			}
+			chl = 4;
+		} else if (channel.equals(ChatChannelManager.CHANNEL_ITEM)) {
+
+			// channelId=0默认使用大喇叭 channelId>0 (channelId=system 系统广告,
+			// channelId=entId其他道具)
+			// Item item = null;// AppConstants.ENT_ITEM_LARGE_SPEAKER;//
+			// TODO:这里减少用户道具：大喇叭
+			if (channelId != null && !channelId.equals("")) {// 其他广播道具
+				// int entId = Integer.parseInt(channelId);
+				// item = (Item) entityService.getEntity(entId);
+				chatMessage.setPriority(ChatMessage.PRIORITY_4);
+
+			}
+			// if (item != null) {
+			// if (!useItem(us, item, chatMessage)) {
+			// return;
+			// }
+			// } else {
+			// return;// 没有ItemId,忽略
+			// }
+		} else if (channel.equals(ChatChannelManager.CHANNEL_NOTICE)) {
+			return;// 不接受
+		}
+
+		// 发送用户聊天消息
+		chatService.userSendMessage(chatMessage);
+
+		if (toUser != null) {// 私聊返回发送者的信息
+			chl = 1;
+			ChatMessage backMessage = new ChatMessage(fromUser, fromUser,
+					channel, channelId, chatMessage.getContext());
+			// Map<String, Object> newContext = new HashMap<String, Object>();
+			// backMessage.setTag(newContext);
+			// newContext.put(CHAT_TOUSERNAME, toUser.getUserName());
+
+			chatService.userSendMessage(backMessage);
+		}
+		setTlog(fromUser, toUser, chl, context);
+	}
+
+	/**
+	 * 处理私聊的离线消息
+	 * 
+	 * @param fromUserId
+	 * @param toUserId
+	 * @param channel
+	 * @param channelId
+	 * @return
+	 */
+	private void processPrivateOfflineMsg(long fromUserId, long toUserId,
+			String channel, String channelId, String context) {
+		if (!ChatChannelManager.CHANNEL_PRIVATE.equals(channel)) {
+			return;
+		}
+		boolean b = checkPrivateMsg(fromUserId, toUserId, channel, channelId);
+		if (b) {
+			addRecentTimeFriendOffLine(channel, fromUserId, toUserId, context);
+			chatService.echoError(fromUserId, "离线消息发送成功", channel, channelId);
+		}
+	}
+
+	/**
+	 * 检查私人聊天
+	 * 
+	 * @param fromUserId
+	 * @param toUserId
+	 * @param channel
+	 * @param channelId
+	 * @return false表示校验不通过
+	 */
+	private boolean checkPrivateMsg(long fromUserId, long toUserId,
+			String channel, String channelId) {
+		if (!ChatChannelManager.CHANNEL_PRIVATE.equals(channel)) {
+			return false;
+		}
+
+		UserSession fsess = OnlineUserSessionManager
+				.getUserSessionByUserId(fromUserId);
+		if (fsess == null) {
+			throw new BaseException("发送者session为null");
+		}
+		Friend f = friendService.getFriendByFriendUserId(fromUserId, toUserId);
+		if (f != null) {
+			// 判断是否为好友
+			if (!f.getGroup().isFriend()) {
+				// 不接收黑名单消息
+				chatService.echoError(fromUserId, "玩家设置您为黑名单", channel,
+						channelId);
+				return false;
+			}
+		} else {// 不是好友,判断是否设置了拒绝陌生人聊天
+			boolean b = checkStrangeMsg(toUserId);
+			if (b) {
+				// 拒绝陌生人聊天
+				chatService.echoError(fromUserId, "玩家设置了拒绝陌生人消息", channel,
+						channelId);
+				return false;
+			}
+		}
+		// 好友聊天流程
+		// UserSession tsess = OnlineUserSessionManager
+		// .getUserSessionByUserId(fromUserId);
+		// if (tsess == null) {
+		// // 离线消息
+		// }
+		return true;
+
+	}
+
+	/**
+	 * 检查是否设置屏蔽了陌生人消息
+	 * 
+	 * @return true表示不接收陌生人聊天,fals表示接收
+	 */
+	private boolean checkStrangeMsg(long toUserId) {
+		// if (!ChatChannelManager.CHANNEL_PRIVATE.equals(channel)) {
+		// return true;
+		// }
+		UserSession sess = OnlineUserSessionManager
+				.getUserSessionByUserId(toUserId);
+		int status = 0;
+		if (sess == null) {
+			UserChat userChat = logOutService.getUserChat(toUserId);
+			if (userChat != null) {
+				status = userChat.getStatu();
+			}
+		} else {
+			Object obj = sess.getAttribute(UserSession.KEY_CHAT_MSG);
+			if (obj != null) {
+				status = Integer.valueOf(obj + "");
+			}
+		}
+		return ChatStatusType.CHAT_STRANGE_MSG.checkOpen(status);
+	}
+
+	/**
+	 * 
+	 * 0 为邮件，1 为私聊频道，2 为世界频道，3 为国家频道，4 // 为联盟频道，5个性签名，6联盟公告
+	 * 
+	 * @param fromUser
+	 * @param toUser
+	 * @param channel
+	 */
+	private void setTlog(ChatUser fromUser, ChatUser toUser, int channel,
+			String context) {
+		if (channel == -1) {
+			return;// 不是定义的频道，不发送日志
+		}
+		String openId = null;
+		String ip = null;
+		// String appid = null;
+		String head = "";
+		int dType = 0;
+		UserSession us = OnlineUserSessionManager
+				.getUserSessionByUserId(fromUser.getUserId());
+		if (us != null) {
+			openId = us.getOpenid();
+			ip = us.getUserip();
+			if (us.getdType() == Constant.DEVIDE_TYPE_IOS) {
+				dType = 0;
+			} else {
+				dType = 1;
+			}
+			if (us.isVistor()) {
+				head = "G_";
+			}
+		}
+		// 微信 0 /手Q 1
+		int ptype = 0;
+		if (Constant.PLATFORM_TYPE == 1) {
+			ptype = 1;
+		}
+		// <entry name="vGameSvrId" type="string" size="25" desc="登录的游戏服务端编号" />
+		// <entry name="dtEventTime" type="datetime" desc="游戏事件的时间, 格式
+		// YYYY-MM-DD
+		// HH:MM:SS" />
+		// <entry name="vGameAppID" type="string" size="32" desc="游戏APPID" />
+		// <entry name="vOpenID" type="string" size="64" desc="用户OPENID号" />
+		// <entry name="iPlatID" type="int" desc="ios 0 /android 1" />
+		// <entry name="iAreaID" type="int" desc="微信 0 /手Q 1"/>
+		// <entry name="iZoneID" type="int" desc="小区号id"/>
+		// <entry name="iPlayerCountry" type="int" desc="发送方阵营编号"/>
+		// <entry name="iPelayeLevel" type="int" desc="发送方等级"/>
+		// <entry name="PlayeBattlePoint" type="int" desc="发送方战斗力"/>
+		// <entry name="vUserIP" type="string" size="15" desc="发送信息玩家ip地址" />
+		// <entry name="vReceiverOpenID" type="string" size="64"
+		// desc="接收方角色OPENID号" />
+		// <entry name="iReceiverPlayerCountry" type="int" desc="接收方阵营编号"/>
+		// <entry name="iReceiverPlayeLevel" type="int" desc="接收方等级"/>
+		// <entry name="iChatType" type="int" desc="信息类型，0 为邮件，1 为私聊频道，2 为世界频道，3
+		// 为国家频道，4
+		// 为联盟频道，5个性签名，6联盟公告" />
+		// <entry name="vTitleContents" type="string" size="64"
+		// desc="邮件标题内容，目前最多能发送单条50字节的信息内容" />
+		// <entry name="vChatContents" type="string" size="530"
+		// desc="信息内容，目前最多能发送单条512字节的信息内容" />
+		AbsLogLineBuffer lb = AbsLogLineBuffer
+				.getBuffer("0", AbsLogLineBuffer.TYPE_TLOG,
+						LogTypeConst.TLOG_TYPE_SecTalkFlow)
+				.append(Constant.SVR_IP).append(new Date())
+				.appendLegacy(head + Constant.getAppId()).append(openId)
+				.append(dType).append(ptype).append(Constant.AREA_ID);
+		lb.append(fromUser.getCountryId()).append(0).append(0).append(ip);
+		String vReceiverOpenID = "0";
+		int iReceiverPlayerCountry = 0;
+		int iReceiverPlayeLevel = 0;
+		if (toUser != null) {// 私聊
+			UserSession toUs = OnlineUserSessionManager
+					.getUserSessionByUserId(toUser.getUserId());
+			vReceiverOpenID = toUs.getOpenid();
+			iReceiverPlayerCountry = toUser.getCountryId();
+		}
+		lb.append(vReceiverOpenID).append(iReceiverPlayerCountry)
+				.append(iReceiverPlayeLevel);
+		lb.append(channel).append("0").append(context);
+		logService.log(lb);
+
+	}
+
+	private boolean check(ChatMessage chatMessage, ChatUser fromUser,
+			Response response) {
+
+		// 判断是否为空
+		// if (chatMessage == null) {
+		// throw new BaseException(CMD_CHAT_ERROR, "发送消息失败，消息实体没空");
+		// }
+
+		// 判断频道是否开放
+		if (!ChatChannelManager.getInstance().isValidChannel(
+				chatMessage.getChannelType())) {
+
+			chatService.echoError(chatMessage.getFromUserId(), "频道暂未开放。");
+			return false;
+		}
+
+		// // 联盟频道
+		// if (fromUser.getGuildId() <= 0
+		// && ChatChannelManager.CHANNEL_GUILD.equals(chatMessage
+		// .getChannelType())) {
+		// chatService.echoError(chatMessage.getFromUserId(), "您还没有加入联盟",
+		// chatMessage.getChannelType(), chatMessage.getChannelId());
+		// return false;
+		// }
+
+		// 判断聊天内容是否为空
+		// if (chatMessage.getContext() instanceof String) {
+		String context = (String) chatMessage.getContext();
+		if (context == null || context.length() == 0) {
+			chatService.echoError(chatMessage.getFromUserId(), "请输入聊天内容",
+					chatMessage.getChannelType(), chatMessage.getChannelId());
+			return false;
+		} else {
+			if (context.length() > 50) {
+				chatService.echoError(chatMessage.getFromUserId(), "已超过输入上限",
+						chatMessage.getChannelType(),
+						chatMessage.getChannelId());
+
+			}
+		}
+
+		// 替换敏感词汇
+		chatMessage.setContext(sensitiveWordService.replace(context, null,
+				false));
+
+		// }
+
+		// 判断是否被禁言
+
+		// UserSession us = this.getUserSession(response);
+
+		// CacheFacade fade = UtilDB.getFacade();
+		// Object obj = fade.getNoCache(chatBan + userId);
+		// if(obj != null) {
+		// String t = String.class.cast(obj);
+		// long dis = (Long.valueOf(t) - System.currentTimeMillis())/1000;
+		// if(dis <= 0) {
+		// fade.remove(chatBan + userId);
+		// return;
+		// }
+		// long hour = dis / 3600;
+		// dis -= hour * 3600;
+		// long min = dis / 60;
+		// dis -= min * 60;
+		// String s = "您已被禁言，还有" + (hour > 0?hour + "小时":"") + (min > 0?min +
+		// "分":"") + dis + "秒才可以发言";
+		// throw new ManuAppException(s);
+		// }
+
+		// 判断消息发送者是否在接受人的黑名单中
+		// UserSession us = this.getUserSession(response);
+
+		return true;
+	}
+
+	/**
+	 * 加入快捷发送记录 按时间倒序记录
+	 * 
+	 * @param content
+	 */
+	private void addHisRecord(UserSession us, String context,
+			ChatUser fromUser, ChatUser toUser) {
+		List<String> hisRecord = null;
+		String key1 = "HISRECORD";
+		Object obj = us.getAttribute(key1);
+		if (obj == null) {
+			hisRecord = new ArrayList<String>(ChatAction.MSG_MAX);
+			us.addAttribute(key1, hisRecord);
+		} else {
+			hisRecord = (List<String>) obj;
+		}
+
+		if (hisRecord.contains(context)) {
+			// 不重复的10条
+			return;
+		}
+
+		int num = hisRecord.size();
+		if (num >= ChatAction.MSG_MAX) {
+			hisRecord.remove(num - 1);
+		}
+
+		hisRecord.add(0, context);
+	}
+
+	/**
+	 * 记录离线的
+	 * 
+	 * @param channel
+	 * @param fromUserId
+	 * @param toUserId
+	 * @param context
+	 */
+	private void addRecentTimeFriendOffLine(String channel, long fromUserId,
+			long toUserId, String context) {
+		if (channel.equals(ChatChannelManager.CHANNEL_PRIVATE)) {
+			addRecentTimeFriend(fromUserId, toUserId);
+			offlineMsg(fromUserId, toUserId, context);
+		}
+	}
+
+	/**
+	 * 记录最近联系人和离线私聊消息
+	 * 
+	 * @param fromUser
+	 * @param toUser
+	 */
+	private void addRecentTimeFriend(ChatUser fromUser, ChatUser toUser,
+			String context) {
+		if (fromUser == null) {
+			return;
+		}
+
+		if (toUser == null) {
+			return;
+		}
+
+		addRecentTimeFriend(fromUser.getUserId(), toUser.getUserId());// 把消息接收方加入到我的最近联系人里面
+		addRecentTimeFriend(toUser.getUserId(), fromUser.getUserId());// 把消息发送方加入到我最近联系人里面
+		offlineMsg(fromUser.getUserId(), toUser.getUserId(), context);
+	}
+
+	/**
+	 * 记录离线消息。数据只存放在mainserver 里面的内存里面。服务器重启数据丢失
+	 * 
+	 * @param user
+	 */
+	private void offlineMsg(long userId, long friendId, String context) {
+		if (OnlineUserSessionManager.isOnline(friendId)) {
+			return;
+		}
+		if (!OfflineMsgCacheService.canSendOfflineMsg(userId, friendId)) {
+			throw new BaseException("最多只能发送10条离线消息");
+		}
+		OffLineMsg msg = new OffLineMsg(userId, System.currentTimeMillis(),
+				context);
+		OfflineMsgCacheService.cacheOffLineMsg(friendId, msg);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void addRecentTimeFriend(long userId, long friendId) {
+		UserSession sess = OnlineUserSessionManager
+				.getUserSessionByUserId(userId);
+		if (sess == null) {
+			return;
+		}
+
+		List<RecentTimeFriend> list = null;
+		Object obj = sess.getAttribute(UserSession.KEY_RECENT_TIME_FRIEND);
+		if (obj == null) {
+			list = new ArrayList<UserChat.RecentTimeFriend>();
+			sess.addAttribute(UserSession.KEY_RECENT_TIME_FRIEND, list);
+		} else {
+			list = (List<RecentTimeFriend>) obj;
+		}
+		RecentTimeFriend rt = null;
+		int index = 0;
+		for (RecentTimeFriend f : list) {
+			if (f.getUserId() == friendId) {
+				rt = f;
+				break;
+			}
+			index++;
+		}
+
+		int num = commonService.getSysParaIntValue(
+				AppConstants.SYS_CASTLE_RECENT_FRIEND_MAX, 50);
+
+		long now = System.currentTimeMillis();
+		if (rt == null) {
+			rt = new RecentTimeFriend(friendId, now);
+		} else {
+			// 删除原来的
+			list.remove(index);
+			rt.setTimes(now);
+		}
+		list.add(0, rt);
+		int size = list.size();
+
+		if (size > num) {
+			list.remove(num);
+		}
+	}
+
+	/**
+	 * 保存频道设置-10011
+	 * 
+	 * @param params
+	 * @param context
+	 * @return
+	 */
+	public Object setChanelConfig(Object params, Response context) {
+		Request10011Define request = (Request10011Define) params;
+		if (!request.hasChannelConfig()) {
+			throw new BaseException("必须要传配置的内容");
+		}
+		String config = request.getChannelConfig();
+		if (config.equals("")) {
+			throw new BaseException("必须要传配置的内容");
+		}
+
+		String[] array = config.split(",");
+		if (array.length != 4) {
+			throw new BaseException("必须要传合法的配置内容");
+		}
+
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < 4; i++) {
+			if (array[i].equals("") || array[i].equals("0")) {
+				array[i] = "0";
+			} else {
+				array[i] = "1";
+			}
+			sb.append(array[i]);
+			if (i != 3) {
+				sb.append(",");
+			}
+		}
+		String key1 = "CHANNEL_CONFIG";
+		UserSession us = getUserSession(context);
+
+		String tmp = sb.toString();
+		us.addAttribute(key1, tmp);
+
+		Response10011Define.Builder response = Response10011Define.newBuilder();
+		response.setResponseHead(super.getResponseHead(request.getCmd()));
+		response.setChannelConfig(tmp);
+		return response.build();
+	}
+
+	/**
+	 * 10013 取快捷聊天记录请求
+	 * 
+	 * @param obj
+	 * @param response
+	 */
+	public Object getHisRecord(Object params, Response context) {
+		Request10013Define request = (Request10013Define) params;
+
+		UserSession us = getUserSession(context);
+
+		String key1 = "HISRECORD";
+		Object tem = us.getAttribute(key1);
+
+		Response10013Define.Builder response = Response10013Define.newBuilder();
+		response.setResponseHead(super.getResponseHead(request.getCmd()));
+
+		List<String> hisRecord = null;
+		if (tem != null) {
+			hisRecord = (List<String>) tem;
+			if (hisRecord != null && hisRecord.size() > 0) {
+				for (String str : hisRecord) {
+					response.addHisRecord(str);
+				}
+			}
+		}
+		return response.build();
+	}
+
+	/**
+	 * 10015 取得频道设置信息请求, 每次登陆后调用
+	 * 
+	 * @param params
+	 * @param context
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Object getChanelConfig(Object params, Response context) {
+		Request10015Define request = (Request10015Define) params;
+
+		Response10015Define.Builder response = Response10015Define.newBuilder();
+		response.setResponseHead(super.getResponseHead(request.getCmd()));
+
+		UserSession us = getUserSession(context);
+		UserChat userChat = logOutService.getUserChat(us.getUserId());
+
+		String channelConfig = ChatAction.CHANNEL_CONFIG;// "1111"4个频道都显示
+															// "0000"4个都不显示
+
+		List<String> hisRecord = null;// 加入快捷发送记录，最多10条，用于快速发送
+		List<RecentTimeFriend> recentTimeFriend = null;// 最近联系人列表
+		int statu = 0;
+		if (userChat != null) {
+			if (userChat.getConfig() != null
+					&& !userChat.getConfig().equals("")) {
+				channelConfig = userChat.getConfig();
+			}
+
+			if (userChat.getHisRecord() != null) {
+				hisRecord = (List<String>) CompressUtils
+						.decompressAndDeSerialize(userChat.getHisRecord());
+			}
+
+			if (userChat.getRecentTimeFriend() != null) {
+				recentTimeFriend = (List<RecentTimeFriend>) CompressUtils
+						.decompressAndDeSerialize(userChat
+								.getRecentTimeFriend());
+			}
+			statu = userChat.getStatu();
+		}
+
+		us.addAttribute("CHANNEL_CONFIG", channelConfig);
+		us.addAttribute("HISRECORD", hisRecord);
+		us.addAttribute(UserSession.KEY_RECENT_TIME_FRIEND, recentTimeFriend);
+		us.addAttribute(UserSession.KEY_CHAT_MSG, statu);
+
+		response.setChannelConfig(channelConfig);
+		response.setStatu(statu);
+
+		return response.build();
+	}
+
+	// public boolean useItem(UserSession us, Entity item, ChatMessage message)
+	// {
+	// // 这里是用socket调用gameServer还是直接更新数据库？
+	//
+	// // TODO:先用socket 同步调用，如果性能不行，改成本地调用
+	// try {
+	// int itemId = item.getEntId();
+	// // 同步判断，异步更新,效率能好一些
+	// SyncWolfTask task = new SyncWolfTask();
+	// task.setServiceName("treasuryService");
+	// task.setMethodName("hasTreasury");
+	// task.setParams(new Object[] { us.getUserId(), itemId });
+	// boolean hasItem = NodeSessionMgr.sendTask(us.getGameNodeName(),
+	// Boolean.class, task);
+	// if (hasItem) {
+	// NodeSessionMgr
+	// .sendMessage2Node(
+	// us.getGameNodeName(),
+	// "treasuryService",
+	// "deleteItemFromTreasury",
+	// new Object[] {
+	// us.getUserId(),
+	// itemId,
+	// 1,
+	// true,
+	// com.youxigu.dynasty2.log.imp.LogItemAct.LOGITEMACT_16 });
+	// if (itemId == AppConstants.ENT_ITEM_SPEAKER) {
+	// // NodeSessionMgr.sendMessage2Node(us.getGameNodeName(),
+	// // "userDailyActivityService", "addUserDailyActivity",
+	// // new Object[] { us.getUserId(),
+	// // DailyActivity.ACT_CHAT, (byte) 1 });
+	// }
+	// } else {
+	//
+	// chatService.echoError(message.getFromUserId(), "道具不足", message
+	// .getChannelType(), message.getChannelId());
+	//
+	// return false;
+	// }
+	// } catch (Exception e) {
+	// if (e instanceof BaseException) {
+	// throw (BaseException) e;
+	// } else {
+	// throw new BaseException(e.toString());
+	// }
+	// }
+	// return true;
+	// }
+
+}

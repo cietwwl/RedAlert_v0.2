@@ -1,0 +1,114 @@
+package com.youxigu.dynasty2.user.dao;
+
+import java.sql.Timestamp;
+import java.util.List;
+
+import com.youxigu.dynasty2.user.domain.Forum;
+import com.youxigu.dynasty2.user.domain.LvParaLimit;
+import com.youxigu.dynasty2.user.domain.User;
+import com.youxigu.dynasty2.user.domain.UserConsumeLog;
+import com.youxigu.dynasty2.user.domain.UserRechargeLog;
+
+public interface IUserDao {
+
+	void insertUser(User user);
+
+	void updateUser(User user);
+
+	void updateUserMainCastleId(User user);
+	/**
+	 * 取得注册角色数量
+	 * @return
+	 */
+	int getCountUsers();
+	
+	User getUserById(long userId);
+	
+	List<User> getUserByIds(List<Long> uids);
+
+	User getUserByAccId(long accId);
+
+	User getUserByName(String userName);
+
+	/**
+	 * 得到君主等级的各项属性最大值的配置
+	 * 
+	 * @return
+	 */
+	List<LvParaLimit> getLvParaLimits();
+	
+	/**
+	 * 冲值记录
+	 * 
+	 * @param log
+	 */
+	void insertUserRechargeLog(UserRechargeLog log);
+
+	/**
+	 * 查询是否重复订单
+	 * 
+	 * @param userId
+	 * @param orderId
+	 * @return
+	 */
+	List<UserRechargeLog> getOrderIdByRechargeLog(long userId, String orderId);
+	
+	/**
+	 * 摸个时段内充值排名-指定名次区间
+	 * @param startDttm
+	 * @param endDttm
+	 * @param start
+	 * @param size
+	 * @return
+	 */
+	public List<UserRechargeLog> getUserRechargeList(Timestamp startDttm,
+			Timestamp endDttm, int start, int size);
+	
+	/**
+	 * 获取玩家指定时间和平台充值记录
+	 * 
+	 * @param userId
+	 * @param pf
+	 * @param startDttm
+	 * @param endDttm
+	 * @return
+	 */
+	List<UserRechargeLog> getUserRechargeLogs(long userId, String pf,
+			Timestamp startDttm, Timestamp endDttm);
+	
+	/**
+	 * 消费记录
+	 * 
+	 * @param log
+	 */
+	void insertUserConsumeLog(UserConsumeLog log);
+
+	/**
+	 * 取得角色在特定平台指定时间段内的消费总额
+	 * 
+	 * @param userId
+	 * @param pf
+	 * @param startDttm
+	 * @return
+	 */
+	int getUserConsumeLogByDate(long userId, String pf, Timestamp startDttm,
+			Timestamp endDttm);
+
+	/**
+	 * 插入
+	 *
+	 * @param forum
+	 */
+	public void insertForum(Forum forum);
+
+	public List<Forum> getForumList();
+
+	public List<Forum> getForumListByType(int type);
+
+	public void deleteForum(int type);
+	void updateForum(Forum forum);
+
+	Forum getForumById(int forumId);
+	
+	public int statisticsAllUsers(int countryId);
+}

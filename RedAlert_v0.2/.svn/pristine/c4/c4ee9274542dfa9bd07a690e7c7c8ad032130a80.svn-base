@@ -1,0 +1,112 @@
+package com.youxigu.dynasty2.develop.domain;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+/**
+ * 城池资源定义
+ * @author Dagangzi
+ *
+ */
+public class CastleResource implements Serializable {
+	private long casId;
+	private long goldNum; // 金矿数
+	private long ironNum; // 铁矿数
+	private long oilNum; // 油矿数
+	private long uranium;//铀矿
+
+	private long casGoldNum; //城市中未收获金矿数
+	private long casIronNum; //城市中未收获铁矿数
+	private long casOilNum; //城市中未收获油矿数
+	private long casUranium;//城市中未收获铀矿
+
+	private int cashNum;// 使用元宝购买数量
+	private Timestamp lastBuyDttm;// 最后购买时间
+
+	public long getCasId() {
+		return casId;
+	}
+
+	public void setCasId(long casId) {
+		this.casId = casId;
+	}
+
+	public long getGoldNum() {
+		return goldNum;
+	}
+
+	public void setGoldNum(long goldNum) {
+		this.goldNum = Math.max(goldNum, 0);
+	}
+
+	public long getIronNum() {
+		return ironNum;
+	}
+
+	public void setIronNum(long ironNum) {
+		this.ironNum = Math.max(ironNum, 0);
+	}
+
+	public long getOilNum() {
+		return oilNum;
+	}
+
+	public void setOilNum(long oilNum) {
+		this.oilNum = Math.max(oilNum, 0);
+	}
+
+	public long getUranium() {
+		return uranium;
+	}
+
+	public void setUranium(long uranium) {
+		this.uranium = Math.max(uranium, 0);
+	}
+
+	public long getCasGoldNum() {
+		return casGoldNum;
+	}
+
+	public void setCasGoldNum(long casGoldNum) {
+		this.casGoldNum = casGoldNum;
+	}
+
+	public long getCasIronNum() {
+		return casIronNum;
+	}
+
+	public void setCasIronNum(long casIronNum) {
+		this.casIronNum = casIronNum;
+	}
+
+	public long getCasOilNum() {
+		return casOilNum;
+	}
+
+	public void setCasOilNum(long casOilNum) {
+		this.casOilNum = casOilNum;
+	}
+
+	public long getCasUranium() {
+		return casUranium;
+	}
+
+	public void setCasUranium(long casUranium) {
+		this.casUranium = casUranium;
+	}
+
+	public int getCashNum() {
+		return cashNum;
+	}
+
+	public void setCashNum(int cashNum) {
+		this.cashNum = cashNum;
+	}
+
+	public Timestamp getLastBuyDttm() {
+		return lastBuyDttm;
+	}
+
+	public void setLastBuyDttm(Timestamp lastBuyDttm) {
+		this.lastBuyDttm = lastBuyDttm;
+	}
+}

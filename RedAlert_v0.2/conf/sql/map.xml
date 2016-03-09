@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+    <typeAlias alias="mapCell" type="com.youxigu.dynasty2.map.domain.MapCell"/>
+	<select id="getMapCellsByStateId" resultClass="mapCell" shardingParams='[{"paramExpr":"stateId","tableName":"mapcell"}]'>
+		SELECT * FROM mapcell WHERE stateId = #stateId# 
+	</select>
+
+	<update id="updateMapCell" parameterClass="mapCell" shardingParams='[{"paramExpr":"stateId","tableName":"mapcell"}]'>
+		UPDATE mapcell SET casId = #casId#,castType=#castType#,userId=#userId#,guildId=#guildId# WHERE id=#id#
+	</update>
+
+    <typeAlias alias="country" type="com.youxigu.dynasty2.map.domain.Country"/>
+	<select id="listAllCountry" resultClass="country">
+		SELECT * FROM country
+	</select>
+    
+    <typeAlias alias="state" type="com.youxigu.dynasty2.map.domain.State"/>
+	<select id="getStatesByCountryId" resultClass="state">
+		SELECT * FROM state where countryId=#countryId#
+	</select>
+	
+	<typeAlias alias="countryCharacter" type="com.youxigu.dynasty2.map.domain.CountryCharacter"/>
+    <select id="listAllCountryCharacters" resultClass="countryCharacter">
+		SELECT * FROM countrycharacter
+	</select>
+	
+	
+	
+	<!-- 收藏地图坐标配置 -->
+	<typeAlias alias="collectPoint" type="com.youxigu.dynasty2.map.domain.CollectPoint"/>
+	<cacheModel type="MEMCACHED" id="cache_collectPoint" serialize="false" readOnly="false">
+		<flushOnExecute statement="insertCollectPoint">
+            <flushModel flushstatement="getCollectPointByUserId" flushMode="insert" flushpara="userId"/>
+			<flushModel flushstatement="collectPoint" flushMode="insert" flushpara="userId,id"/>
+            <flushModel flushstatement="getCollectPointByType" flushMode="insert" flushpara="userId,collectType"/>
+		</flushOnExecute>
+		
+		<flushOnExecute statement="updateTreasury">
+			<flushModel flushstatement="collectPoint" flushMode="update" flushpara="userId,id"/>
+		</flushOnExecute>
+	
+		<flushOnExecute statement="deleteCollectPoint">
+            <flushModel flushstatement="getCollectPointByUserId" flushMode="delete" flushpara="userId"/>
+			<flushModel flushstatement="getCollectPointByType" flushMode="delete" flushpara="userId,collectType"/>
+			<flushModel flushstatement="collectPoint" flushMode="delete" flushpara="userId,id"/>
+		</flushOnExecute>
+		<property name="class" value="collectPoint"/>
+		<property name="pk" value="userId,id"/>
+	</cacheModel>
+
+	<insert id="insertCollectPoint" parameterClass="collectPoint" shardingParams='[{"paramExpr":"userId","tableName":"collectpoint"}]'>
+		insert into collectpoint (id,userId,name,posX,posY,collectType,createTime) 
+		values (#id#,#userId#,#name#,#posX#,#posY#,#collectType#,#createTime#) 
+	</insert>
+	
+	<select id="getCollectPointById" resultClass="collectPoint" parameterClass="java.util.HashMap" cacheModel="cache_collectPoint" cacheOnlyObject="true"  shardingParams='[{"paramExpr":"userId","tableName":"collectpoint"}]'>
+		SELECT * FROM collectpoint WHERE id = #id# and userId=#userId# 
+	</select>
+	
+	<select id="getCollectPointByType" resultClass="collectPoint" parameterClass="java.util.HashMap" cacheModel="cache_collectPoint" resultIsList="true" shardingParams='[{"paramExpr":"userId","tableName":"collectpoint"}]'>
+		SELECT * FROM collectpoint WHERE userId=#userId# and collectType = #collectType# ORDER BY id desc
+	</select>
+
+	<select id="getCollectPointByUserId" resultClass="collectPoint" parameterClass="long"   cacheModel="cache_collectPoint" resultIsList="true" shardingParams='[{"paramExpr":"userId","tableName":"collectpoint"}]'>
+		SELECT * FROM collectpoint WHERE userId = #userId# ORDER BY id desc
+	</select>
+	
+	<select id="getCollectPointCount" resultClass="int" parameterClass="long"    shardingParams='[{"paramExpr":"userId","tableName":"collectpoint"}]'>
+		SELECT count(id) FROM collectpoint WHERE userId = #userId#
+	</select>
+
+	<update id="updateCollectPoint" parameterClass="collectpoint" asyncUpdate="1" shardingParams='[{"paramExpr":"userId","tableName":"collectpoint"}]'>
+		update collectpoint set name=#name#,posX=#posX#, posY=#posY#,collectType=#collectType#
+		where id=#id#
+	</update>
+	
+	<delete id="deleteCollectPoint" parameterClass="collectpoint" shardingParams='[{"paramExpr":"userId","tableName":"collectpoint"}]'>
+		delete from collectpoint where id = #id# and userId=#userId#
+	</delete>
+	
+	<!-- 记录开放的区块信息 -->
+	<typeAlias alias="openState" type="com.youxigu.dynasty2.map.domain.OpenState"/>
+	<insert id="insertOpenState" parameterClass="openState">
+		insert into openstate (stateId,mapCellId,createTimes) 
+		values (#stateId#,#mapCellId#,#createTimes#) 
+	</insert>
+	<select id="getAllOpenStates" resultClass="openState">
+		SELECT * FROM openstate
+	</select>
+	
+	<select id="getAllOpenStatesById" resultClass="openState" parameterClass="int">
+		SELECT * FROM openstate where stateId = #stateId#
+	</select>
+	
+	<!-- 大地图野怪配置 -->
+	<typeAlias alias="npcAttackConf" type="com.youxigu.dynasty2.map.domain.NPCAttackConf"/>
+	<select id="getNPCAttackConfs" resultClass="npcAttackConf">
+		SELECT * FROM npcattackconf
+	</select>
+</sqlMap>

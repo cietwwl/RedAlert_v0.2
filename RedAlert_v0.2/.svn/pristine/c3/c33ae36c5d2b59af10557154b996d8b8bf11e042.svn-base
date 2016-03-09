@@ -1,0 +1,431 @@
+package com.youxigu.dynasty2.entity.domain;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.youxigu.dynasty2.entity.domain.enumer.ColorType;
+import com.youxigu.dynasty2.hero.domain.HeroFate;
+import com.youxigu.dynasty2.hero.domain.RelifeLimit;
+import com.youxigu.dynasty2.util.BaseException;
+
+/**
+ * 系统武将实体
+ * 
+ * @author Dagangzi
+ *
+ */
+public class SysHero extends Entity {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2302960096136432774L;
+	/**
+	 * 攻击方式
+	 */
+	public static final int ATTACKTYPE_PHYSICAL = 1;// 物理
+	public static final int ATTACKTYPE_MAGIC = 2;// 法术
+
+	private int level;// 武将等级
+	private int gen;// 性别 0 男 1女
+	private String name;// 名字
+	private String picPath;// 头像
+	private int countryId;// 国家id
+	private byte attackType;// 1物攻 2法攻
+	private int evaluate; // 评价 即 武将星级,武将颜色
+	private int armyEntId;// 默认的兵种ID
+	private int heroCardId;// 对应的武将卡Id
+	private int magicAttack;// 法术攻击
+	private int physicalAttack;// 物理攻击
+	private int magicDefend;// 法术防御
+	private int physicalDefend;// 物理防御
+	private int initHp;// 生命
+	private int initMorale;// 士气
+	private int initHit;// 命中
+	private int initDodge;// 闪避
+	private int critDec;// 免爆-决定坦克被攻击时的暴击率
+	private int critAdd;// 暴击-决定坦克攻击时的暴击率
+	private int critDamageAdd;// 暴击伤害-决定坦克攻击时的暴击伤害。（暂定为1.5倍，后期投放属性）
+	private int critDamageDec;// 爆伤减免-决定坦克被攻击时的暴击伤害。（暂定为1.5倍，后期投放属性）
+	protected int skillId1;// 普通攻击技能
+	protected int skillId2;// 合击技能
+	protected int skillId3;// 士气技能
+	protected int skillId4;// 飞机技能
+	protected int skillId5;// 被动技能1
+	protected int skillId6;// 被动技能2
+	private int attackMorale;// 攻击方增加士气
+	private int defendMorale;// 防守方增加士气
+	private String heroDesc;// 描述
+	private String heroFateIds;// 武将的情缘Id列表，逗号分隔的多个
+	private int growing; // 基础成长值
+
+	private int soulEntId;// 对应的坦克碎片id
+	private short soulNum;// 一个坦克对应的坦克碎片数量
+
+	private transient List<Integer> skills;
+	private transient ColorType colorType = null;
+	/**
+	 * 武将相关联的情缘
+	 */
+	private transient List<HeroFate> heroFates;
+
+	/**
+	 * 进阶配置
+	 */
+	private transient List<RelifeLimit> relifeLimits;
+
+	public SysHero() {
+		super();
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	public int getGen() {
+		return gen;
+	}
+
+	public void setGen(int gen) {
+		this.gen = gen;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getPicPath() {
+		return picPath;
+	}
+
+	public void setPicPath(String picPath) {
+		this.picPath = picPath;
+	}
+
+	public int getCountryId() {
+		return countryId;
+	}
+
+	public void setCountryId(int countryId) {
+		this.countryId = countryId;
+	}
+
+	public byte getAttackType() {
+		return attackType;
+	}
+
+	public void setAttackType(byte attackType) {
+		this.attackType = attackType;
+	}
+
+	public int getEvaluate() {
+		return evaluate;
+	}
+
+	public void setEvaluate(int evaluate) {
+		this.evaluate = evaluate;
+	}
+
+	public int getArmyEntId() {
+		return armyEntId;
+	}
+
+	public void setArmyEntId(int armyEntId) {
+		this.armyEntId = armyEntId;
+	}
+
+	public int getHeroCardId() {
+		return heroCardId;
+	}
+
+	public void setHeroCardId(int heroCardId) {
+		this.heroCardId = heroCardId;
+	}
+
+	public int getMagicAttack() {
+		return magicAttack;
+	}
+
+	public void setMagicAttack(int magicAttack) {
+		this.magicAttack = magicAttack;
+	}
+
+	public int getPhysicalAttack() {
+		return physicalAttack;
+	}
+
+	public void setPhysicalAttack(int physicalAttack) {
+		this.physicalAttack = physicalAttack;
+	}
+
+	public int getMagicDefend() {
+		return magicDefend;
+	}
+
+	public void setMagicDefend(int magicDefend) {
+		this.magicDefend = magicDefend;
+	}
+
+	public int getPhysicalDefend() {
+		return physicalDefend;
+	}
+
+	public void setPhysicalDefend(int physicalDefend) {
+		this.physicalDefend = physicalDefend;
+	}
+
+	public int getInitHp() {
+		return initHp;
+	}
+
+	public void setInitHp(int initHp) {
+		this.initHp = initHp;
+	}
+
+	public int getInitMorale() {
+		return initMorale;
+	}
+
+	public void setInitMorale(int initMorale) {
+		this.initMorale = initMorale;
+	}
+
+	public int getInitHit() {
+		return initHit;
+	}
+
+	public void setInitHit(int initHit) {
+		this.initHit = initHit;
+	}
+
+	public int getInitDodge() {
+		return initDodge;
+	}
+
+	public void setInitDodge(int initDodge) {
+		this.initDodge = initDodge;
+	}
+
+	public int getCritDec() {
+		return critDec;
+	}
+
+	public void setCritDec(int critDec) {
+		this.critDec = critDec;
+	}
+
+	public int getCritAdd() {
+		return critAdd;
+	}
+
+	public void setCritAdd(int critAdd) {
+		this.critAdd = critAdd;
+	}
+
+	public int getCritDamageAdd() {
+		return critDamageAdd;
+	}
+
+	public void setCritDamageAdd(int critDamageAdd) {
+		this.critDamageAdd = critDamageAdd;
+	}
+
+	public int getCritDamageDec() {
+		return critDamageDec;
+	}
+
+	public void setCritDamageDec(int critDamageDec) {
+		this.critDamageDec = critDamageDec;
+	}
+
+	public int getSkillId1() {
+		return skillId1;
+	}
+
+	public void setSkillId1(int skillId1) {
+		this.skillId1 = skillId1;
+	}
+
+	public int getSkillId2() {
+		return skillId2;
+	}
+
+	public void setSkillId2(int skillId2) {
+		this.skillId2 = skillId2;
+	}
+
+	public int getSkillId3() {
+		return skillId3;
+	}
+
+	public void setSkillId3(int skillId3) {
+		this.skillId3 = skillId3;
+	}
+
+	public int getSkillId4() {
+		return skillId4;
+	}
+
+	public void setSkillId4(int skillId4) {
+		this.skillId4 = skillId4;
+	}
+
+	public int getSkillId5() {
+		return skillId5;
+	}
+
+	public void setSkillId5(int skillId5) {
+		this.skillId5 = skillId5;
+	}
+
+	public int getSkillId6() {
+		return skillId6;
+	}
+
+	public void setSkillId6(int skillId6) {
+		this.skillId6 = skillId6;
+	}
+
+	public int getAttackMorale() {
+		return attackMorale;
+	}
+
+	public void setAttackMorale(int attackMorale) {
+		this.attackMorale = attackMorale;
+	}
+
+	public int getDefendMorale() {
+		return defendMorale;
+	}
+
+	public void setDefendMorale(int defendMorale) {
+		this.defendMorale = defendMorale;
+	}
+
+	@Override
+	public String getEntityName() {
+		return this.name;
+	}
+
+	public String getHeroDesc() {
+		return heroDesc;
+	}
+
+	public String getHeroFateIds() {
+		return heroFateIds;
+	}
+
+	public void setHeroFateIds(String heroFateIds) {
+		this.heroFateIds = heroFateIds;
+	}
+
+	public void setHeroDesc(String heroDesc) {
+		this.heroDesc = heroDesc;
+	}
+
+	public List<Integer> getSkills() {
+		if (skills == null) {
+			this.skills = new ArrayList<Integer>();
+			if (this.skillId1 > 0) {
+				skills.add(this.skillId1);
+			}
+			if (this.skillId2 > 0) {
+				skills.add(this.skillId2);
+			}
+			if (this.skillId3 > 0) {
+				skills.add(this.skillId3);
+			}
+			if (this.skillId4 > 0) {
+				skills.add(this.skillId4);
+			}
+			if (this.skillId6 > 0) {
+				skills.add(this.skillId6);
+			}
+		}
+		return skills;
+	}
+
+	public void setSkills(List<Integer> skills) {
+		this.skills = skills;
+	}
+
+	public List<HeroFate> getHeroFates() {
+		return heroFates;
+	}
+
+	public void setHeroFates(List<HeroFate> heroFates) {
+		this.heroFates = heroFates;
+	}
+
+	public List<RelifeLimit> getRelifeLimits() {
+		return relifeLimits;
+	}
+
+	public void setRelifeLimits(List<RelifeLimit> relifeLimits) {
+		this.relifeLimits = relifeLimits;
+	}
+
+	public int getGrowing() {
+		return growing;
+	}
+
+	public void setGrowing(int growing) {
+		this.growing = growing;
+	}
+
+	/**
+	 * 获取当前阶的属性加成 1阶就获取index 0 的数据,里面的数据是有序的
+	 * 
+	 * @param relifeNum
+	 * @return
+	 */
+	public RelifeLimit getRelifeLimit(int relifeNum) {
+		if (getRelifeLimits() == null) {
+			return null;
+		}
+		if (relifeNum > getRelifeLimits().size() || relifeNum <= 0) {
+			throw new BaseException("进阶数据越界" + relifeNum + ",sysHeroId="
+					+ getEntId());
+		}
+		return getRelifeLimits().get(relifeNum - 1);
+	}
+
+	public void check() {
+		colorType = ColorType.valueOf(getEvaluate());
+		if (colorType == null) {
+			throw new IllegalArgumentException("物品颜色配置错误color:" + getEvaluate());
+		}
+
+		if (getHeroCardId() <= 0) {
+			throw new IllegalArgumentException("未配置坦克对应的坦克碎片:" + getEntId());
+		}
+	}
+
+	public ColorType getColorType() {
+		return colorType;
+	}
+
+	public int getSoulEntId() {
+		return soulEntId;
+	}
+
+	public void setSoulEntId(int soulEntId) {
+		this.soulEntId = soulEntId;
+	}
+
+	public short getSoulNum() {
+		return soulNum;
+	}
+
+	public void setSoulNum(short soulNum) {
+		this.soulNum = soulNum;
+	}
+
+}

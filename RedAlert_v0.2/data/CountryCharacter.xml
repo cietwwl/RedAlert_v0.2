@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+
+<CountryCharacter id="1" countryId="1" sex="0" icon="banshen1" />
+<CountryCharacter id="2" countryId="1" sex="0" icon="banshen1" />
+<CountryCharacter id="3" countryId="1" sex="0" icon="banshen1" />
+<CountryCharacter id="4" countryId="1" sex="1" icon="banshen4" />
+<CountryCharacter id="5" countryId="1" sex="1" icon="banshen4" />
+<CountryCharacter id="6" countryId="1" sex="1" icon="banshen4" />
+<CountryCharacter id="7" countryId="2" sex="0" icon="banshen2" />
+<CountryCharacter id="8" countryId="2" sex="0" icon="banshen2" />
+<CountryCharacter id="9" countryId="2" sex="0" icon="banshen2" />
+<CountryCharacter id="10" countryId="2" sex="1" icon="banshen5" />
+<CountryCharacter id="11" countryId="2" sex="1" icon="banshen5" />
+<CountryCharacter id="12" countryId="2" sex="1" icon="banshen5" />
+<CountryCharacter id="13" countryId="3" sex="0" icon="banshen3" />
+<CountryCharacter id="14" countryId="3" sex="0" icon="banshen3" />
+<CountryCharacter id="15" countryId="3" sex="0" icon="banshen3" />
+<CountryCharacter id="16" countryId="3" sex="1" icon="banshen6" />
+<CountryCharacter id="17" countryId="3" sex="1" icon="banshen6" />
+<CountryCharacter id="18" countryId="3" sex="1" icon="banshen6" />
+
+
+
+
+
+
+
+
+</dataset>

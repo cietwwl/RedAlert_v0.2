@@ -1,0 +1,178 @@
+package com.youxigu.dynasty2.user.dao.impl;
+
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.manu.core.base.BaseDao;
+import com.youxigu.dynasty2.asyncdb.service.impl.IDUtil;
+import com.youxigu.dynasty2.user.dao.IUserDao;
+import com.youxigu.dynasty2.user.domain.Forum;
+import com.youxigu.dynasty2.user.domain.LvParaLimit;
+import com.youxigu.dynasty2.user.domain.User;
+import com.youxigu.dynasty2.user.domain.UserConsumeLog;
+import com.youxigu.dynasty2.user.domain.UserRechargeLog;
+
+public class UserDao extends BaseDao implements IUserDao {
+	private static final String ID_TYPE = "USER";
+
+	@Override
+	public User getUserById(long userId) {
+		return (User) this.getSqlMapClientTemplate().queryForObject(
+				"getUserById", userId);
+	}
+	
+	@Override
+	public List<User> getUserByIds(List<Long> uids) {
+		return this.getSqlMapClientTemplate()
+				.queryForList("getUserByIds", uids);
+	}
+
+	@Override
+	public User getUserByName(String userName) {
+		return (User) this.getSqlMapClientTemplate().queryForObject(
+				"getUserByName", userName);
+	}
+
+	@Override
+	public User getUserByAccId(long accId) {
+		return (User) this.getSqlMapClientTemplate().queryForObject(
+				"getUserByAccId", accId);
+	}
+
+	@Override
+	public void insertUser(User user) {
+		// if(user.getUserId()<=0){
+		user.setUserId(IDUtil.getNextId(ID_TYPE));
+		// }
+		this.getSqlMapClientTemplate().insert("insertUser", user);
+
+	}
+
+	@Override
+	public void updateUser(User user) {
+		this.getSqlMapClientTemplate().update("updateUser", user);
+
+	}
+
+	@Override
+	public void updateUserMainCastleId(User user) {
+		this.getSqlMapClientTemplate().update("updateUser", user);
+
+	}
+
+	@Override
+	public int getCountUsers() {
+		return (Integer) this.getSqlMapClientTemplate().queryForObject(
+				"getCountUsers");
+	}
+
+	@Override
+	public List<LvParaLimit> getLvParaLimits() {
+		return this.getSqlMapClientTemplate().queryForList("listLvParaLimits");
+	}
+
+	@Override
+	public void insertUserRechargeLog(UserRechargeLog log) {
+		this.getSqlMapClientTemplate().insert("insertUserRechargeLog", log);
+	}
+	
+	@Override
+	public List<UserRechargeLog> getUserRechargeList(Timestamp startDttm,
+			Timestamp endDttm, int start, int size) {
+		Map<String, Object> paramet = new HashMap<String, Object>(4);
+		paramet.put("startDttm", startDttm);
+		paramet.put("endDttm", endDttm);
+		paramet.put("start", start);
+		paramet.put("size", size);
+		return super.getSqlMapClientTemplate().queryForList(
+				"getUserRechargeList", paramet);
+	}
+
+	@Override
+	public List<UserRechargeLog> getOrderIdByRechargeLog(long userId, String orderId) {
+		Map<String, Object> params = new HashMap<String, Object>(2);
+		params.put("userId", userId);
+		params.put("orderId", orderId);
+		return this.getSqlMapClientTemplate().queryForList(
+				"getUserRechargeLog", params);
+	}
+	
+	@Override
+	public List<UserRechargeLog> getUserRechargeLogs(long userId, String pf,
+			Timestamp startDttm, Timestamp endDttm) {
+		// TODO Auto-generated method stub
+		Map<String, Object> params = new HashMap<String, Object>(4);
+		params.put("userId", userId);
+		params.put("pf", pf);
+		params.put("startDttm", startDttm);
+		params.put("endDttm", endDttm);
+		return this.getSqlMapClientTemplate().queryForList(
+				"getUserRechargeListByDate", params);
+	}
+
+	@Override
+	public void insertUserConsumeLog(UserConsumeLog log) {
+		this.getSqlMapClientTemplate().insert("insertUserConsumeLog", log);
+	}
+
+	@Override
+	public int getUserConsumeLogByDate(long userId, String pf, Timestamp startDttm, Timestamp endDttm) {
+		Map<String, Object> params = new HashMap<String, Object>(4);
+		params.put("userId", userId);
+		params.put("pf", pf);
+		params.put("startDttm", startDttm);
+		params.put("endDttm", endDttm);
+		Object tmp = this.getSqlMapClientTemplate().queryForObject(
+				"getUserConsumeLogByDate", params);
+		if (tmp != null) {
+			return (Integer) tmp;
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public void deleteForum(int type) {
+		super.getSqlMapClientTemplate().delete("deleteForum", type);
+
+	}
+
+	@Override
+	public List<Forum> getForumList() {
+		return super.getSqlMapClientTemplate().queryForList("getForumList");
+	}
+
+	@Override
+	public List<Forum> getForumListByType(int type) {
+		return super.getSqlMapClientTemplate().queryForList("getForumListByType", type);
+	}
+
+	@Override
+	public void insertForum(Forum forum) {
+		super.getSqlMapClientTemplate().insert("insertForum", forum);
+	}
+
+	@Override
+	public void updateForum(Forum forum) {
+		super.getSqlMapClientTemplate().update("updateForum", forum);
+
+	}
+
+	@Override
+	public Forum getForumById(int forumId) {
+		return (Forum) super.getSqlMapClientTemplate().queryForObject(
+				"getForumById", forumId);
+	}
+	
+	@Override
+	public int statisticsAllUsers(int countryId) {
+		Object obj = this.getSqlMapClientTemplate().queryForObject("statisticsAllUsers",countryId);
+		if(obj==null){
+			return 0;
+		}
+		return Integer.class.cast(obj);
+	}
+
+}

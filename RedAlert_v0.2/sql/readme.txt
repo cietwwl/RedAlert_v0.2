@@ -1,0 +1,47 @@
+数据格式，保存为。txt文件
+"11400600","1140","600","1","0","0","1"
+"11400601","1140","601","1","0","0","1"
+
+
+
+字段值用""括起来，智志坚用,分割
+
+mapcell结构
+id,posX,posY,stateId,casId,castType,countryId
+"11400600","1140","600","1","0","0","1"
+
+id=id=posX*10000+posY
+stateId区id
+casId 默认0
+castleType 默认0
+countryId 国家id
+
+state区
+stateId,countryId,stateName,status,level
+"1","1","A国超新手区","1","10"
+
+stateId;//郡id
+countryId;//国家id
+stateName;//郡名
+status;//未开放,已开放,已满
+
+
+
+
+LOAD DATA INFILE '/usr/local/maps/MapCell001.txt' IGNORE INTO TABLE redalert.mapcell_1 CHARACTER SET utf8 FIELDS TERMINATED BY '\,' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/usr/local/maps/MapCell002.txt' IGNORE INTO TABLE redalert.mapcell_2 CHARACTER SET utf8 FIELDS TERMINATED BY '\,' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/usr/local/maps/MapCell003.txt' IGNORE INTO TABLE redalert.mapcell_3 CHARACTER SET utf8 FIELDS TERMINATED BY '\,' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/usr/local/maps/MapCell004.txt' IGNORE INTO TABLE redalert.mapcell_4 CHARACTER SET utf8 FIELDS TERMINATED BY '\,' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/usr/local/maps/MapCell005.txt' IGNORE INTO TABLE redalert.mapcell_5 CHARACTER SET utf8 FIELDS TERMINATED BY '\,' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/usr/local/maps/MapCell006.txt' IGNORE INTO TABLE redalert.mapcell_6 CHARACTER SET utf8 FIELDS TERMINATED BY '\,' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/usr/local/maps/MapCell007.txt' IGNORE INTO TABLE redalert.mapcell_7 CHARACTER SET utf8 FIELDS TERMINATED BY '\,' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/usr/local/maps/MapCell008.txt' IGNORE INTO TABLE redalert.mapcell_8 CHARACTER SET utf8 FIELDS TERMINATED BY '\,' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/usr/local/maps/MapCell009.txt' IGNORE INTO TABLE redalert.mapcell_9 CHARACTER SET utf8 FIELDS TERMINATED BY '\,' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/usr/local/maps/MapCell010.txt' IGNORE INTO TABLE redalert.mapcell_10 CHARACTER SET utf8 FIELDS TERMINATED BY '\,' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/usr/local/maps/MapCell011.txt' IGNORE INTO TABLE redalert.mapcell_11 CHARACTER SET utf8 FIELDS TERMINATED BY '\,' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/usr/local/maps/MapCell012.txt' IGNORE INTO TABLE redalert.mapcell_12 CHARACTER SET utf8 FIELDS TERMINATED BY '\,' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/usr/local/maps/MapCell013.txt' IGNORE INTO TABLE redalert.mapcell_13 CHARACTER SET utf8 FIELDS TERMINATED BY '\,' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/usr/local/maps/MapCell014.txt' IGNORE INTO TABLE redalert.mapcell_14 CHARACTER SET utf8 FIELDS TERMINATED BY '\,' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/usr/local/maps/MapCell015.txt' IGNORE INTO TABLE redalert.mapcell_15 CHARACTER SET utf8 FIELDS TERMINATED BY '\,' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\r\n';
+
+LOAD DATA INFILE '/usr/local/maps/State.txt' IGNORE INTO TABLE redalert.state CHARACTER SET utf8 FIELDS TERMINATED BY '\,' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\r\n';

@@ -1,0 +1,81 @@
+package com.youxigu.dynasty2.map.domain;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.youxigu.dynasty2.util.BaseException;
+
+/**
+ * 国家定义
+ * 
+ * @author Administrator
+ * 
+ */
+public class Country implements java.io.Serializable {
+	private static final long serialVersionUID = 1L;
+	private int countryId;// 国家id
+	private String countryName;// 国家名
+	private String iconPath;
+	private String maleIcon;// 男头像
+	private String feMaleIcon;// 女头像
+	private transient Map<Integer, CountryCharacter> chars = new HashMap<Integer, CountryCharacter>();
+
+	public void addCountryCharacter(CountryCharacter ch) {
+		if (ch.getCountryId() != countryId) {
+			// throw new BaseException("角色信息不属于这个国家" + ch.getId() +
+			// ",countryId="
+			// + countryId);
+			return;
+		}
+		if (chars.containsKey(ch.getId())) {
+			throw new BaseException("数据id重复" + ch.getId());
+		}
+		ch.init(this);
+		chars.put(ch.getId(), ch);
+	}
+
+	public CountryCharacter getCountryCharacter(int id) {
+		return chars.get(id);
+	}
+
+	public int getCountryId() {
+		return countryId;
+	}
+
+	public void setCountryId(int countryId) {
+		this.countryId = countryId;
+	}
+
+	public String getCountryName() {
+		return countryName;
+	}
+
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
+	}
+
+	public String getIconPath() {
+		return iconPath;
+	}
+
+	public void setIconPath(String iconPath) {
+		this.iconPath = iconPath;
+	}
+
+	public String getMaleIcon() {
+		return maleIcon;
+	}
+
+	public void setMaleIcon(String maleIcon) {
+		this.maleIcon = maleIcon;
+	}
+
+	public String getFeMaleIcon() {
+		return feMaleIcon;
+	}
+
+	public void setFeMaleIcon(String feMaleIcon) {
+		this.feMaleIcon = feMaleIcon;
+	}
+
+}

@@ -1,0 +1,78 @@
+package com.youxigu.dynasty2.combat.service;
+
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+import com.youxigu.dynasty2.combat.domain.Combat;
+import com.youxigu.dynasty2.combat.proto.CombatMsg;
+
+/**
+ * 出征接口
+ * 
+ * @author Dagangzi
+ *
+ */
+public interface ICombatService {
+	/**
+	 * 取得战斗
+	 * 
+	 * @param combatId
+	 * @return
+	 */
+	@Deprecated
+	Combat getCombat(String combatId);
+
+	CombatMsg.Combat getCombatPf(String combatId);
+
+	@Deprecated
+	Combat getCombat(String combatId, boolean db);
+
+	CombatMsg.Combat getCombatPf(String combatId, boolean db);
+
+	/**
+	 * 保存战斗对象
+	 * 
+	 * @param combat
+	 * @return
+	 */
+	@Deprecated
+	void saveCombat(Combat combat);
+
+	void saveCombatPf(Combat combat);
+
+	@Deprecated
+	void saveCombat(Combat combat, boolean db);
+
+	void saveCombatPf(Combat combat, boolean db);
+
+	/**
+	 * 删除一场战斗
+	 * 
+	 * @param combatId
+	 */
+	void deleteCombat(String combatId, boolean onlyDB);
+
+	/**
+	 * 每天执行的删除过期的战斗数据
+	 */
+	void cleanCombat();
+
+	/**
+	 * 由于可能是多场战斗，该方法没有事务，afterService.doSaveAfterCombat()为一个独立的事务
+	 * 
+	 * TODO：这里会存在问题：当玩家掐秒同时进攻一个人的时候，取防守方数据可能会有问题
+	 */
+	void execCombat(Armyout armyout);
+
+	/**
+	 * 出征返回
+	 * @param armyout
+	 * @param outType 回城类型 返回 遣返 撤退
+	 * @param combatId 发生战斗后的combaId
+	 * @return
+	 */
+	Armyout doStartArmyoutBackJob(Armyout armyout);
+
+	Armyout doStartArmyoutBackJob(Armyout armyout, int outType);
+
+	Armyout doStartArmyoutBackJob(Armyout armyout, int outType,
+			String combatId);
+}

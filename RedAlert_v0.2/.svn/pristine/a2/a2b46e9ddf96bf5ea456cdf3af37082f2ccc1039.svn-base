@@ -1,0 +1,140 @@
+package com.youxigu.dynasty2.risk.service;
+
+import java.util.List;
+
+import com.youxigu.dynasty2.risk.domain.RiskParentScene;
+import com.youxigu.dynasty2.risk.domain.RiskScene;
+import com.youxigu.dynasty2.risk.domain.UserRiskData;
+import com.youxigu.dynasty2.risk.domain.UserRiskScene;
+import com.youxigu.dynasty2.risk.enums.RiskType;
+import com.youxigu.dynasty2.risk.proto.RiskMsg.Response54005Define;
+import com.youxigu.dynasty2.risk.proto.RiskParentSceneInfo;
+import com.youxigu.dynasty2.risk.proto.RiskSceneInfo;
+
+public interface IRiskService {
+	/**
+	 * 小关卡战斗
+	 * 
+	 * @param userId
+	 * @param pId
+	 *            大场景Id
+	 * @param sceneId
+	 *            小场景Id
+	 * @param difficulty
+	 *            难度
+	 * @return
+	 */
+	RiskSceneInfo doCombat(long userId, int id, int qqFlag);
+
+	/**
+	 * 挂机
+	 * 
+	 * @param userId
+	 * @param pId
+	 *            大场景Id
+	 * @param mu
+	 *            true表示扫荡10次否则1次
+	 * @return
+	 */
+	Response54005Define.Builder doAutoCombat(long userId, List<Integer> ids,
+			boolean mu, int qqFlag);
+
+	/**
+	 * 领取星数奖励
+	 * 
+	 * @param userId
+	 * @param pId
+	 * @return
+	 */
+	void doGainStarAward(long userId, int pId, byte idx);
+
+	/**
+	 * 获取某个章节下面总共获得了多少星
+	 * 
+	 * @param pid
+	 * @return
+	 */
+	int doGetTotalStar(long userId, int pid);
+
+	/**
+	 * 判断这个章节是否都通过
+	 * 
+	 * @param pid
+	 * @return
+	 */
+	public boolean isPassAll(long userId, int pid);
+
+	/**
+	 * 取得玩家冒险关卡数据，数据是升序排列
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	List<UserRiskScene> getUserRiskScenes(long userId);
+
+	/**
+	 * 获取指定类型的关卡
+	 * 
+	 * @param userId
+	 * @param type
+	 * @return
+	 */
+	List<UserRiskScene> getUserRiskScenes(long userId, RiskType type);
+
+	UserRiskScene getUserRiskScene(long userId, int parentId);
+
+	/**
+	 * 领取首通奖励
+	 * 
+	 * @param userId
+	 */
+	void doFirstBonus(long userId, int id);
+
+	/**
+	 * 清除每日进入次数
+	 * 
+	 * @param userId
+	 * @param pId
+	 * @param sceneId
+	 */
+	int doClearJoinNum(long userId, int sceneId);
+
+	RiskParentScene getRiskParentScene(int pId);
+
+	RiskScene getRiskScene(int sceneId);
+
+	UserRiskData getUserRiskData(long userId);
+
+	/**
+	 * 判断是否可以重置失败次数
+	 * 
+	 * @param src
+	 * @return
+	 */
+	boolean canRestFailNum(int version, int src);
+
+	/**
+	 * 获取某个章节下的详细信息
+	 * 
+	 * @param userId
+	 * @param pid
+	 */
+	RiskParentSceneInfo doGetOneRiskScene(long userId, int pid);
+
+	/**
+	 * 获取指定章节下的所有关卡信息
+	 * 
+	 * @param userId
+	 * @param type
+	 * @return
+	 */
+	List<UserRiskScene> getUserRiskScenes(long userId, int riskId);
+
+	/**
+	 * 获取大章节下的所有小章节
+	 * 
+	 * @param riskId
+	 * @return
+	 */
+	public List<RiskParentScene> getRiskParentSceneByRiskId(int riskId);
+}

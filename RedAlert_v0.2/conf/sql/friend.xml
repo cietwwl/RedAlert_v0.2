@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+	<!-- ================================friend start============================================-->
+	<typeAlias alias="friend" type="com.youxigu.dynasty2.friend.domain.Friend" />
+    <cacheModel type="MEMCACHED" id="cache_friend" serialize="false" readOnly="false">
+    <flushInterval hours="6"/>
+        <flushOnExecute statement="insertFriend">
+            <flushModel flushstatement="friend" flushMode="insert" flushpara="userId,id"/>
+<!--            <flushModel flushstatement="getFriendByFriendUserId" flushMode="insert" flushpara="userId,friendUserId"/>-->
+            <flushModel flushstatement="getAllFriendByUserId" flushMode="insert" flushpara="userId"/>
+        </flushOnExecute>
+        <flushOnExecute statement="updateFriend">
+            <flushModel flushstatement="friend" flushMode="update" flushpara="userId,id"/>
+        </flushOnExecute>
+        <flushOnExecute statement="deleteFriend">
+<!--            <flushModel flushstatement="getFriendByFriendUserId" flushMode="delete" flushpara="userId,friendUserId"/>-->
+            <flushModel flushstatement="getAllFriendByUserId" flushMode="delete" flushpara="userId"/>
+            <flushModel flushstatement="friend" flushMode="delete" flushpara="userId,id"/>
+        </flushOnExecute>
+        <property name="class" value="friend"/>
+        <property name="pk" value="userId,id"/>
+    </cacheModel>
+    
+    <insert id="insertFriend" parameterClass="friend" shardingParams='[{"paramExpr":"userId","tableName":"friend"}]'>
+        INSERT INTO friend (userId,friendUserId,friendUserName,friendMainCasId,groupId,addTime,note) 
+        VALUES (#userId#,#friendUserId#,#friendUserName#,#friendMainCasId#,#groupId#,#addTime#,#note#)
+        <selectKey keyProperty="id" resultClass="int">
+          SELECT last_insert_Id() 
+        </selectKey>
+    </insert>
+    
+    <update id="updateFriend" parameterClass="friend" shardingParams='[{"paramExpr":"userId","tableName":"friend"}]' asyncUpdate="9">
+        UPDATE friend SET userId = #userId#,friendUserId = #friendUserId#,friendUserName = #friendUserName#,
+        		friendMainCasId = #friendMainCasId#,groupId = #groupId#,addTime = #addTime#, 
+        		note= #note#
+        WHERE id = #id#
+    </update>
+    
+    <delete id="deleteFriend" parameterClass="friend" shardingParams='[{"paramExpr":"userId","tableName":"friend"}]'>
+        DELETE FROM friend WHERE id = #id# 
+    </delete>
+    
+    <select id="getFriendByFriendUserId" resultClass="friend" parameterClass="java.util.Map" cacheModel="cache_friend" shardingParams='[{"paramExpr":"userId","tableName":"friend"}]'>
+        SELECT * FROM friend WHERE userId = #userId# AND friendUserId = #friendUserId#
+    </select>
+    
+    <!-- SELECT * FROM friend WHERE userId = #userId# -->
+    <select id="getAllFriendByUserId" resultClass="friend" parameterClass="long" cacheModel="cache_friend" resultIsList="true" shardingParams='[{"paramExpr":"userId","tableName":"friend"}]' sorted="true">
+        SELECT f.* FROM friend f,user u 
+        WHERE f.friendUserId = u.userId AND f.userId = #userId# 
+        ORDER BY u.usrLv DESC
+    </select>
+    
+    <!-- ================================friendApp start============================================-->
+  <typeAlias alias="friendApp" type="com.youxigu.dynasty2.friend.domain.FriendApp" />
+    <cacheModel type="MEMCACHED" id="cache_friendApp" serialize="false" readOnly="false">
+        <flushOnExecute statement="insertFriendApp">
+            <flushModel flushstatement="friendApp" flushMode="insert" flushpara="id"/>
+            <flushModel flushstatement="getAllFriendAppByFriendUserId" flushMode="insert" flushpara="friendUserId"/>
+            <flushModel flushstatement="getAllFriendAppByUserId" flushMode="insert" flushpara="userId"/>
+<!--            <flushModel flushstatement="getFriendAppByUserIdAndFriendId" flushMode="insert" flushpara="userId,friendUserId"/>-->
+        </flushOnExecute>
+        <flushOnExecute statement="deleteFriendApp">
+            <flushModel flushstatement="getAllFriendAppByFriendUserId" flushMode="delete" flushpara="friendUserId"/>
+            <flushModel flushstatement="getAllFriendAppByUserId" flushMode="delete" flushpara="userId"/>
+<!--            <flushModel flushstatement="getFriendAppByUserIdAndFriendId" flushMode="delete" flushpara="userId,friendUserId"/>-->
+            <flushModel flushstatement="friendApp" flushMode="delete" flushpara="id"/>
+        </flushOnExecute>
+        <property name="class" value="friendApp"/>
+        <property name="pk" value="id"/>
+    </cacheModel>
+    
+    <insert id="insertFriendApp" parameterClass="friendApp">
+        INSERT INTO friendapp (userId,userName,friendUserId,friendUserName,addTime) VALUES (#userId#,#userName#,#friendUserId#,#friendUserName#,#addTime#)
+        <selectKey keyProperty="id" resultClass="int">
+          SELECT last_insert_Id() 
+        </selectKey>
+    </insert>
+    
+    <delete id="deleteFriendApp" parameterClass="friendApp">
+        DELETE FROM friendapp WHERE id = #id# 
+    </delete>
+    
+    <delete id="cleanFriApp" parameterClass="int">
+        DELETE FROM friendapp WHERE (TO_DAYS(NOW()) - TO_DAYS(addTime)) >= #day#
+    </delete>
+    
+    <select id="getAllFriendAppByFriendUserId" resultClass="friendApp" parameterClass="long" cacheModel="cache_friendApp" resultIsList="true">
+        SELECT * FROM friendapp WHERE friendUserId = #friendUserId#
+    </select>
+    
+    <select id="getAllFriendAppByUserId" resultClass="friendApp" parameterClass="long" cacheModel="cache_friendApp" resultIsList="true">
+        SELECT * FROM friendapp WHERE userId = #userId#
+    </select>
+    
+    <select id="getFriendAppByUserIdAndFriendId" resultClass="friendApp" parameterClass="java.util.Map" cacheModel="cache_friendApp">
+        SELECT * FROM friendapp WHERE userId = #userId# AND friendUserId = #friendUserId#
+    </select>
+ 
+	<!--好友推荐配数-->
+	<typeAlias alias="friendRecommend" type="com.youxigu.dynasty2.friend.domain.FriendRecommend" />
+     <select id="getFriendRecommends" resultClass="friendRecommend" >
+        SELECT * FROM friendrecommend order by usrLv;
+    </select>
+
+     <select id="getFriendRecommendUsers" resultClass="long" parameterClass="java.util.Map"  >
+        SELECT userId FROM user where usrLv&gt;=#minLv# and usrLv&lt;=#maxLv# order by userId desc limit #num#
+    </select>
+    
+        <!-- ================================friendHp start============================================-->
+  <typeAlias alias="friendHp" type="com.youxigu.dynasty2.friend.domain.FriendHp" />
+    <cacheModel type="MEMCACHED" id="cache_friendHp" serialize="false" readOnly="false">
+        <flushOnExecute statement="insertFriendHp">
+            <flushModel flushstatement="friendHp" flushMode="insert" flushpara="userId"/>
+        </flushOnExecute>
+        <flushOnExecute statement="updateFriendHp">
+            <flushModel flushstatement="friendHp" flushMode="update" flushpara="userId"/>
+        </flushOnExecute>
+        <property name="class" value="friendHp"/>
+        <property name="pk" value="userId"/>
+    </cacheModel>
+    
+    <insert id="insertFriendHp" parameterClass="friendHp">
+        INSERT INTO friendhp (userId,giftUserIds,giveMeUserIds,receiveUserIds,lastTime) 
+        VALUES (#userId#,#giftUserIds#,#giveMeUserIds#,#receiveUserIds#,#lastTime#)
+    </insert>
+    
+    <update id="updateFriendHp" parameterClass="friendHp" asyncUpdate="9">
+        UPDATE friendhp SET giftUserIds = #giftUserIds#,giveMeUserIds = #giveMeUserIds#,
+        		receiveUserIds = #receiveUserIds#,lastTime = #lastTime# 
+        WHERE userId = #userId#
+    </update>
+    
+    
+    <select id="getFriendHp" resultClass="friendHp" parameterClass="long" cacheModel="cache_friendHp" cacheOnlyObject="true">
+        SELECT * FROM friendhp WHERE userId = #userId# 
+    </select>
+</sqlMap>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+	<typeAlias alias="sysPara" type="com.youxigu.dynasty2.common.domain.SysPara" />
+	<typeAlias alias="enumer" type="com.youxigu.dynasty2.common.domain.Enumer" />
+	
+	
+<!--
+	<cacheModel type="MEMCACHED" id="cache_sysPara" serialize="false" readOnly="false">
+		<flushOnExecute statement="updateSysParaById">
+			<flushModel flushstatement="sysPara" flushMode="update" flushpara="paraId"/>
+		</flushOnExecute>
+		<property name="class" value="sysPara"/>
+		<property name="pk" value="paraId"/>
+	</cacheModel>
+-->
+	<select id="listSysPara" resultClass="sysPara">
+		SELECT * FROM syspara
+	</select>
+
+	<select id="getSysParaById" resultClass="sysPara" parameterClass="java.lang.String">
+		SELECT * FROM syspara WHERE paraId = #paraId#
+	</select>
+
+	<update id="updateSysParaById" parameterClass="sysPara">
+		UPDATE syspara SET paraValue = #paraValue# WHERE paraId = #paraId#
+	</update>
+
+
+	<select id="listSysPara_gm" resultClass="sysPara">
+		SELECT * FROM syspara_gm
+	</select>
+
+	<select id="getSysParaById_gm" resultClass="sysPara" parameterClass="java.lang.String">
+		SELECT * FROM syspara_gm WHERE paraId = #paraId#
+	</select>
+
+	<update id="updateSysParaById_gm" parameterClass="sysPara">
+		UPDATE syspara_gm SET paraValue = #paraValue# WHERE paraId = #paraId#
+	</update>
+
+	<update id="insertSyspara_gm" parameterClass="sysPara">
+		insert into syspara_gm(paraId,paraGroup,paraType,paraValue,paraName,paraDesc) values(#paraId#,#paraGroup#,#paraType#,#paraValue#,#paraName#,#paraDesc#) ON DUPLICATE KEY UPDATE paraValue = #paraValue#
+	</update>
+
+	<delete id="deleteSameSyspara_gm" parameterClass="java.lang.String" >
+		delete from syspara_gm where paraId = #paraId#
+	</delete>
+
+	<select id="listEnumer" resultClass="enumer">
+		SELECT * FROM enumer ORDER BY orderBy
+	</select>
+
+
+	<select id="getWeightValueConf"  resultClass="java.util.HashMap" >
+    	SELECT * from weightvalueconf
+    </select>
+
+<!--	<typeAlias alias="fastBuildConsume" type="com.youxigu.dynasty2.common.domain.FastBuildConsume" />-->
+<!--	<select id="getFastBuildConsumes"  resultClass="fastBuildConsume" >-->
+<!--    	SELECT * from fastbuildconsume order by type,point-->
+<!--    </select>-->
+<!---->
+<!--	<typeAlias alias="onlineUser" type="com.youxigu.dynasty2.common.domain.OnlineUser" />-->
+<!--	<select id="getOnlineUser"  resultClass="onlineUser" parameterClass="java.util.HashMap" >-->
+<!--    	SELECT * from tbrealonline where dtStatTime between #start# and #end#-->
+<!--    </select>-->
+    
+
+<!--	<typeAlias alias="pointAward" type="com.youxigu.dynasty2.common.domain.PointAward" />-->
+<!---->
+<!--    <select id="getPointAwards" resultClass="pointAward" >-->
+<!--        SELECT * FROM pointaward order by point,id-->
+<!--    </select>-->
+    
+    
+<!--    <typeAlias alias="gifResource" type="com.youxigu.dynasty2.develop.domain.GifResource" />-->
+<!---->
+<!--    <select id="listGifResource" resultClass="gifResource" >-->
+<!--        SELECT * FROM gifresource order by id-->
+<!--    </select>-->
+    
+	<!--服务器开服信息-->
+	<typeAlias alias="serverInfo" type="com.youxigu.dynasty2.common.domain.ServerInfo" />
+	<insert id="insertServerInfo" parameterClass="serverInfo">
+		insert ignore into serverinfo(serverId,dttm,serverName,interServer,interServer2) values (#serverId#,#dttm#,#serverName#,#interServer#,#interServer2#);
+	</insert>
+	<update id="updateServerInfo" parameterClass="serverInfo">
+		UPDATE serverinfo SET dttm = #dttm#,serverName=#serverName#,interServer=#interServer#,interServer2=#interServer2# WHERE serverId = #serverId#
+	</update>
+    <select id="getServerInfo" resultClass="serverInfo" parameterClass="string" >
+        SELECT * FROM serverinfo where serverId=#serverId#
+    </select>
+    <select id="getServerInfos" resultClass="serverInfo">
+        SELECT * FROM serverinfo
+    </select>
+
+	<!--功能解锁表-->
+<!--	<typeAlias alias="funcUnLock" type="com.youxigu.dynasty2.common.domain.FuncUnLock" />-->
+<!--    <select id="getFuncUnLocks" resultClass="funcUnLock" >-->
+<!--        SELECT * FROM funcunlock-->
+<!--    </select>-->
+  	
+  	<!--  聊天快捷配置 begin --> 
+	<typeAlias alias="userChat" type="com.youxigu.dynasty2.user.domain.UserChat"/>
+	<select id="getUserChat" resultClass="userChat" parameterClass="long">
+		SELECT * FROM userchat WHERE userId = #userId#
+	</select>
+	<insert id="insertUserChat" parameterClass="userChat" >
+		INSERT INTO userchat(userId, config, hisRecord,recentTimeFriend,statu) 
+				VALUES(#userId#, #config#, #hisRecord#,#recentTimeFriend#,#statu#) 
+			    ON DUPLICATE KEY UPDATE config = #config#, hisRecord = #hisRecord#,recentTimeFriend=#recentTimeFriend#,statu=#statu#
+	</insert>
+  	
+</sqlMap>

@@ -1,0 +1,1372 @@
+package com.youxigu.dynasty2.risk.service.impl;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
+
+import com.manu.util.Util;
+import com.youxigu.dynasty2.chat.proto.CommonHead.ItemInfo;
+import com.youxigu.dynasty2.combat.domain.Combat;
+import com.youxigu.dynasty2.combat.domain.CombatConstants;
+import com.youxigu.dynasty2.combat.domain.CombatTeam;
+import com.youxigu.dynasty2.combat.domain.action.AbstractCombatAction;
+import com.youxigu.dynasty2.combat.domain.action.StoryAction;
+import com.youxigu.dynasty2.combat.service.IAtferCombatService;
+import com.youxigu.dynasty2.combat.service.ICombatEngine;
+import com.youxigu.dynasty2.combat.service.ICombatTeamService;
+import com.youxigu.dynasty2.common.AppConstants;
+import com.youxigu.dynasty2.common.service.ICommonService;
+import com.youxigu.dynasty2.entity.domain.DropPackEntity;
+import com.youxigu.dynasty2.entity.domain.DropPackItem;
+import com.youxigu.dynasty2.entity.domain.DroppedEntity;
+import com.youxigu.dynasty2.entity.domain.Entity;
+import com.youxigu.dynasty2.entity.domain.Item;
+import com.youxigu.dynasty2.entity.domain.enumer.ItemType;
+import com.youxigu.dynasty2.entity.service.IEntityService;
+import com.youxigu.dynasty2.hero.domain.Hero;
+import com.youxigu.dynasty2.hero.domain.Troop;
+import com.youxigu.dynasty2.hero.service.IHeroService;
+import com.youxigu.dynasty2.hero.service.ITroopService;
+import com.youxigu.dynasty2.log.ILogService;
+import com.youxigu.dynasty2.log.LogBeanFactory;
+import com.youxigu.dynasty2.log.LogTypeConst;
+import com.youxigu.dynasty2.log.imp.BattleLog;
+import com.youxigu.dynasty2.log.imp.LogBattleAct;
+import com.youxigu.dynasty2.log.imp.LogCashAct;
+import com.youxigu.dynasty2.log.imp.LogHpAct;
+import com.youxigu.dynasty2.log.imp.LogItemAct;
+import com.youxigu.dynasty2.log.imp.LogUserExpAct;
+import com.youxigu.dynasty2.mission.domain.Mission;
+import com.youxigu.dynasty2.mission.service.IMissionService;
+import com.youxigu.dynasty2.npc.domain.NPCDefine;
+import com.youxigu.dynasty2.npc.service.INPCService;
+import com.youxigu.dynasty2.risk.dao.IRiskDao;
+import com.youxigu.dynasty2.risk.domain.OneRisk;
+import com.youxigu.dynasty2.risk.domain.Risk;
+import com.youxigu.dynasty2.risk.domain.RiskParentScene;
+import com.youxigu.dynasty2.risk.domain.RiskScene;
+import com.youxigu.dynasty2.risk.domain.UserRiskData;
+import com.youxigu.dynasty2.risk.domain.UserRiskScene;
+import com.youxigu.dynasty2.risk.enums.RiskType;
+import com.youxigu.dynasty2.risk.proto.OneRiskInfo;
+import com.youxigu.dynasty2.risk.proto.RiskMsg.QuickRiskInfo;
+import com.youxigu.dynasty2.risk.proto.RiskMsg.Response54005Define;
+import com.youxigu.dynasty2.risk.proto.RiskParentSceneInfo;
+import com.youxigu.dynasty2.risk.proto.RiskSceneInfo;
+import com.youxigu.dynasty2.risk.service.IRiskService;
+import com.youxigu.dynasty2.treasury.service.ITreasuryService;
+import com.youxigu.dynasty2.user.domain.Account;
+import com.youxigu.dynasty2.user.domain.User;
+import com.youxigu.dynasty2.user.service.IAccountService;
+import com.youxigu.dynasty2.user.service.IUserService;
+import com.youxigu.dynasty2.util.BaseException;
+import com.youxigu.dynasty2.util.EffectValue;
+import com.youxigu.dynasty2.util.StringUtils;
+import com.youxigu.dynasty2.util.TimeUtils;
+import com.youxigu.wolf.net.OnlineUserSessionManager;
+import com.youxigu.wolf.net.UserSession;
+
+public class RiskService implements IRiskService, ApplicationListener {
+	private Logger log = LoggerFactory.getLogger(RiskService.class);
+
+	private static final String MEMCACHE_RISK_KEY_NAME = "RISK_C_";
+	private IRiskDao riskDao;
+	private ICommonService commonService;
+	private IUserService userService;
+	private IHeroService heroService;
+	private ITroopService troopService;
+	private ICombatTeamService npcCombatTeamService;
+	private ICombatTeamService playerCombatTeamService;
+
+	private ICombatEngine combatEngine;
+	private IEntityService entityService;
+	private IAtferCombatService afterCombatService;
+	private IMissionService missionService;
+
+	private ILogService logService;
+	private IAccountService accountService;
+	private ITreasuryService treasuryService;
+	private INPCService npcService;
+
+	private Map<Integer, Risk> riskMaps = null;// 大章节
+	private Map<Integer, RiskParentScene> riskParentSceneMaps = null;// 大章节下的小章节
+	private Map<Integer, RiskScene> riskSceneMaps = null;// 小章节里面的小关卡
+	private List<Integer> restFailNumTimes = null;
+	/** 记录那些物品掉落的时候需要记录掉落次数 **/
+	private EnumMap<ItemType, ItemType> probabilityMaps = null;
+
+	/** 按照关卡难度分的 */
+	// private EnumMap<RiskType, List<RiskParentScene>> riskTypeMap = null;
+
+	public void setRiskDao(IRiskDao riskDao) {
+		this.riskDao = riskDao;
+	}
+
+	public void setNpcService(INPCService npcService) {
+		this.npcService = npcService;
+	}
+
+	public void setAccountService(IAccountService accountService) {
+		this.accountService = accountService;
+	}
+
+	public void setUserService(IUserService userService) {
+		this.userService = userService;
+	}
+
+	public void setHeroService(IHeroService heroService) {
+		this.heroService = heroService;
+	}
+
+	public void setCommonService(ICommonService commonService) {
+		this.commonService = commonService;
+	}
+
+	public void setTroopService(ITroopService troopService) {
+		this.troopService = troopService;
+	}
+
+	public void setNpcCombatTeamService(ICombatTeamService npcCombatTeamService) {
+		this.npcCombatTeamService = npcCombatTeamService;
+	}
+
+	public void setPlayerCombatTeamService(
+			ICombatTeamService playerCombatTeamService) {
+		this.playerCombatTeamService = playerCombatTeamService;
+	}
+
+	public void setCombatEngine(ICombatEngine combatEngine) {
+		this.combatEngine = combatEngine;
+	}
+
+	public void setEntityService(IEntityService entityService) {
+		this.entityService = entityService;
+	}
+
+	public void setAfterCombatService(IAtferCombatService afterCombatService) {
+		this.afterCombatService = afterCombatService;
+	}
+
+	public void setTreasuryService(ITreasuryService treasuryService) {
+		this.treasuryService = treasuryService;
+	}
+
+	public void setMissionService(IMissionService missionService) {
+		this.missionService = missionService;
+	}
+
+	public void setLogService(ILogService logService) {
+		this.logService = logService;
+	}
+
+	public void init() {
+		// 获取所有的章节信息
+		List<Risk> risks = riskDao.getRisks();
+		if (risks == null || risks.isEmpty()) {
+			throw new BaseException("未配置章节信息");
+		}
+		riskMaps = new HashMap<Integer, Risk>();
+		for (Risk r : risks) {
+			riskMaps.put(r.getId(), r);
+		}
+
+		List<RiskParentScene> riskParentScenes = riskDao.getRiskParentScenes();
+
+		riskParentSceneMaps = new HashMap<Integer, RiskParentScene>(
+				riskParentScenes.size());
+		riskSceneMaps = new HashMap<Integer, RiskScene>(
+				riskParentScenes.size() * 15);
+		// riskTypeMap = new EnumMap<RiskType, List<RiskParentScene>>(
+		// RiskType.class);
+
+		for (RiskParentScene p : riskParentScenes) {
+			int pid = p.getId();
+			Risk risk = riskMaps.get(p.getParentsceneid());
+			p.init(risk);
+			riskParentSceneMaps.put(pid, p);
+
+			risk.addRiskParentScene(p);
+
+			List<RiskScene> riskScenes = riskDao.getRiskScenes(pid);
+			p.setScenes(riskScenes);
+
+			int i = 0;
+			for (RiskScene r : riskScenes) {
+				r.init();
+				r.setSeqId(i);// 重新设置顺序
+				r.setParent(p);
+				riskSceneMaps.put(r.getSceneId(), r);
+				i++;
+			}
+
+			// 设置上关联关系
+			for (RiskScene r : riskScenes) {
+				Integer prevSceneId = r.getPrevSceneId();
+				RiskScene prev = riskSceneMaps.get(prevSceneId);
+				if (prev != null) {
+					r.setPrev(prev);
+					prev.setNext(r);
+				}
+			}
+
+			// 设置难度的关联关系
+			// List<RiskParentScene> ls = riskTypeMap.get(p.getRiskType());
+			// if (ls == null) {
+			// ls = new ArrayList<RiskParentScene>();
+			// riskTypeMap.put(p.getRiskType(), ls);
+			// }
+			// ls.add(p);
+		}
+
+		// for (Entry<RiskType, List<RiskParentScene>> en :
+		// riskTypeMap.entrySet()) {
+		// java.util.Collections.sort(en.getValue(),
+		// new Comparator<RiskParentScene>() {
+		//
+		// @Override
+		// public int compare(RiskParentScene o1,
+		// RiskParentScene o2) {
+		// return o1.getPrevSceneId() - o2.getPrevSceneId();
+		// }
+		// });
+		// }
+
+		/**
+		 * RiskScene prev = null; if (prev != null) { r.setPrev(prev);
+		 * prev.setNext(r); } prev = r;
+		 */
+		for (RiskParentScene p : riskParentScenes) {
+			int pid = p.getPrevSceneId();
+			if (pid != 0) {
+				p.setReqRiskParentScene(riskParentSceneMaps.get(pid));
+			}
+		}
+
+		// 获取重置失败次数的 时间点
+		String tm = commonService.getSysParaValue(
+				AppConstants.SYS_RISK_REST_FAIL_NUM_TIME, "2;6;10;14;18;22");
+		if (StringUtils.isEmpty(tm)) {
+			throw new BaseException("重置关卡失败次数时间点未配置");
+		}
+		String tms[] = tm.split(";");
+		restFailNumTimes = new ArrayList<Integer>();
+		for (String t : tms) {
+			int ts = Integer.valueOf(t);
+			// if (restFailNumTimes.containsKey(ts)) {
+			// throw new BaseException("重置关卡失败次数时间点配置重复" + tm);
+			// }
+			restFailNumTimes.add(processRestFailNumTimes(ts, 0, 0));
+		}
+		Collections.sort(restFailNumTimes);// 默认升序排列
+
+		probabilityMaps = new EnumMap<ItemType, ItemType>(ItemType.class);
+		probabilityMaps.put(ItemType.ITEM_TYPE_EQUIP_DEBRIS,
+				ItemType.ITEM_TYPE_EQUIP_DEBRIS);
+		probabilityMaps.put(ItemType.ITEM_TYPE_HERO_SOUL,
+				ItemType.ITEM_TYPE_HERO_SOUL);
+
+	}
+
+	/**
+	 * 对小时和分钟做下处理
+	 * 
+	 * @param ts小时
+	 * @param m
+	 *            分钟
+	 * @param s
+	 *            秒
+	 * @return
+	 */
+	private int processRestFailNumTimes(int ts, int m, int s) {
+		return ts * 10000 + m * 100 + s;
+	}
+
+	@Override
+	public void onApplicationEvent(ApplicationEvent event) {
+		if (event instanceof ContextRefreshedEvent) {
+			init();
+		}
+
+	}
+
+	private int getMaxJoinNum(int num) {
+		int sysNum = commonService.getSysParaIntValue(
+				AppConstants.SYS_RISK_JOIN_NUM, 0);
+		if (sysNum > num) {
+			return sysNum;
+		}
+		return num;
+	}
+
+	private int getUserExpQQEffectPercent(int qqFlag) {
+		int percent = 0;
+		if ((qqFlag & Account.QQ_VIP) == Account.QQ_VIP
+				|| (qqFlag & Account.QQ_VIP_YEAR) == Account.QQ_VIP_YEAR
+				|| (qqFlag & Account.QQ_SUPER) == Account.QQ_SUPER
+				|| (qqFlag & Account.WX_VIP) == Account.WX_VIP) {
+			percent = commonService.getSysParaIntValue(
+					AppConstants.SYS_RISK_USEREXP_QQ_EFFECT, 0);
+
+		}
+		return percent;
+	}
+
+	@Override
+	public boolean isPassAll(long userId, int pid) {
+		UserRiskScene userScene = getUserRiskScene(userId, pid);
+		if (userScene == null) {
+			return false;
+		}
+		// RiskParentScene parent = getRiskParentScene(pid);
+		// List<RiskScene> childs = parent.getScenes();
+		// boolean pass = true;
+		// for (RiskScene rs : childs) {
+		// int seq = rs.getSeqId();
+		// OneRisk stageInfo = userScene.getStageInfoByIndex(seq);
+		// if (!stageInfo.isPass()) {
+		// pass = false;
+		// break;
+		// }
+		// }
+		return userScene.isPassAll();
+	}
+
+	@Override
+	public RiskSceneInfo doCombat(long userId, int id, int qqFlag) {
+		// 当前小关卡
+		RiskScene scene = riskSceneMaps.get(id);
+		if (scene == null) {
+			throw new BaseException("关卡不存在" + id);
+		}
+		User user = userService.lockGetUser(userId);
+
+		if (scene.getParent().getRiskType().isElite()) {
+			int level = commonService.getSysParaIntValue(
+					AppConstants.SYS_RISK_OPEN_LEVEL, 1);
+			if (level > user.getUsrLv()) {
+				throw new BaseException("精英关卡" + level + "级后开放");
+			}
+
+		}
+
+		RiskParentScene parentScene = scene.getParent();
+		// 关卡索引号
+		int idx = scene.getSeqId();
+		int maxCanJoinNum = getMaxJoinNum(scene.getMaxJoinNum());
+		// 前置关卡
+		RiskScene prevScene = scene.getPrev();
+
+		if (user.getUsrLv() < parentScene.getReqUserLv()) {
+			throw new BaseException("君主等级不足");
+		}
+
+		int hpPoint = user.getHpPoint();
+		int decPoint = scene.getHpPoint();
+		if (hpPoint < decPoint) {
+			throw new BaseException("体力不足");
+		}
+
+		// 前置大场景
+		RiskParentScene reqParentScene = parentScene.getReqRiskParentScene();
+		// 角色前置场景数据
+		UserRiskScene prev = null;
+		if (reqParentScene != null) {
+			prev = riskDao.getUserRiskScene(userId, reqParentScene.getId());
+			if (prev == null || !isPassAll(userId, reqParentScene.getId())) {
+				throw new BaseException("必须先通关[" + reqParentScene.getName()
+						+ "]");
+			}
+		}
+
+		// 角色当前场景数据
+		UserRiskScene curr = riskDao.getUserRiskScene(userId,
+				scene.getParentId());
+		if (prevScene != null) {
+			if (prevScene.getParent() == parentScene) {
+				if (curr == null) {
+					throw new BaseException("前置关卡未通关");
+				}
+				OneRisk one = curr.getStageInfoByIndex(prevScene.getSeqId());
+				if (one == null) {
+					throw new BaseException("前置关卡未通关");
+				}
+				if (!one.isPass()) {
+					throw new BaseException("前置关卡未通关");
+				}
+			} else {
+				if (prevScene.getParent() != reqParentScene) {
+					prev = riskDao.getUserRiskScene(userId,
+							prevScene.getParentId());
+				}
+				if (prev == null) {
+					throw new BaseException("前置关卡未通关.");
+				}
+				OneRisk one = prev.getStageInfoByIndex(prevScene.getSeqId());
+				if (one == null) {
+					throw new BaseException("前置关卡未通关");
+				}
+
+				if (!one.isPass()) {
+					throw new BaseException("前置关卡未通关");
+				}
+			}
+		}
+
+		OneRisk currStageInfo = null;
+		// 判断前一小关是否通关
+		if (curr != null) {
+			currStageInfo = curr.getStageInfoByIndex(idx);
+		}
+
+		int currDay = TimeUtils.getVersionOfToday(System.currentTimeMillis());
+		if (currStageInfo == null) {
+			currStageInfo = new OneRisk(scene.getSceneId(), currDay, 0, "");
+		}
+
+		if (currStageInfo.isEmpty()) {
+			currStageInfo.setId(scene.getSceneId());
+		}
+
+		// 判断失败次数
+		if (currStageInfo.getFailNum() >= scene.getFailNum()) {
+			throw new BaseException("失败次数过多");
+		}
+
+		if (currStageInfo.getJoinNum() >= maxCanJoinNum) {
+			throw new BaseException("已经达到本关今日最大过关次数");
+		}
+
+		// 开始战斗
+
+		Combat combat = null;
+		CombatTeam defenceTeam = null;
+		CombatTeam attackTeam = null;
+
+		AbstractCombatAction storyAction1 = null;
+		AbstractCombatAction storyAction2 = null;
+		// 判断是否要加入剧情场景
+
+		if (!currStageInfo.isPass()/* parentScene.getRiskType().isNormal() && *//*
+																				 * &&
+																				 * currStageInfo
+																				 * .
+																				 * getVersion
+																				 * (
+																				 * )
+																				 * ==
+																				 * 0
+																				 */) {
+			// 1星小场景，还没有打过,场景有剧情，则需要加载场景战斗
+			// 防守NPC
+			int defNpc = scene.getSceneNpc2();
+			if (defNpc == 0) {
+				defNpc = scene.getNpcId();
+			}
+			defenceTeam = npcCombatTeamService.getCombatTeam(defNpc);
+			// 进攻NPC
+			int atkNpc = scene.getSceneNpc1();
+			if (atkNpc != 0) {
+				attackTeam = npcCombatTeamService.getCombatTeam(atkNpc, false);
+				String teamName = attackTeam.getTeamName();
+				if (teamName == null || teamName.length() == 0) {
+					// attackTeam.setUserId(userId);
+					// attackTeam.setCasId(user.getMainCastleId());
+					attackTeam.setTeamName(user.getUserName());
+					attackTeam.setLevel(user.getUsrLv());
+				}
+			}
+			// 对话场景
+			int storyId = scene.getStoryId1();
+			if (storyId != 0) {
+
+				storyAction1 = new StoryAction(CombatConstants.ACTION_STORY,
+						null, storyId);
+			}
+			storyId = scene.getStoryId2();
+			if (storyId != 0) {
+				storyAction2 = new StoryAction(CombatConstants.ACTION_STORY,
+						null, storyId);
+			}
+		} else {
+			defenceTeam = npcCombatTeamService.getCombatTeam(scene.getNpcId());
+		}
+		if (defenceTeam == null) {
+			throw new BaseException("NPC定义不存在");
+		}
+		// 处理加成属性
+		Map<String, com.youxigu.dynasty2.util.EffectValue> vs = scene
+				.getAttrValues();
+		for (Entry<String, EffectValue> en : vs.entrySet()) {
+			defenceTeam.addEffect(en.getKey(), en.getValue());
+		}
+
+		if (attackTeam == null) {
+			// 开始战斗
+			heroService.lockHero(userId);
+			long troopId = user.getTroopId();
+
+			Troop troop = troopService.getTroopById(userId, troopId);
+			if (troop == null) {
+				throw new BaseException("军团不存在");
+			}
+			if (!troop.getRealStatus().isCombat()) {
+				throw new BaseException("军团不在空闲状态");
+			}
+			Hero[] heros = troop.getHeros();
+			for (Hero hero : heros) {
+				if (hero != null) {
+					if (!hero.idle()) {
+						throw new BaseException("军团中有武将不是空闲状态");
+					}
+				}
+			}
+			// if (user.isAutoResumeArmy(User.RESUMR_ARMY_AUTO_RISK)) {
+			// heroService.doFillUpHeroArmy(user, heros);
+			// }
+			if (scene.getNpcId2() > 0) {
+				NPCDefine assistNpc = npcService
+						.getNPCDefine(scene.getNpcId2());
+				attackTeam = playerCombatTeamService.getCombatTeamByUser(user,
+						troop, assistNpc, false, true);
+			} else {
+				attackTeam = playerCombatTeamService.getCombatTeamByUser(user,
+						troop, false, true);
+			}
+		}
+
+		// 攻击方
+		if (attackTeam == null) {
+			throw new BaseException("没有进攻队伍");
+		}
+
+		if (log.isDebugEnabled()) {
+			log.debug("{} 开始冒险[{}]关。", user.getUserName(), scene.getName());
+		}
+		// CombatConstants.OUT_TYPE_DEFAULT, CombatConstants.SCORETYPE_ROUND
+		combat = new Combat(CombatConstants.COMBAT_TYPE_RISK,
+				CombatConstants.SCORETYPE_UNITLIVE, attackTeam, defenceTeam,
+				null);
+
+		combatEngine.execCombat(combat);
+
+		// 加上场景对话给前台
+		if (storyAction1 != null) {
+			// combat.getPrevActions() 不可能为null
+			combat.getPrevActions().add(0, storyAction1);
+		}
+		if (storyAction2 != null) {
+			// getLastSubActions() 不可能为null
+			combat.getLastSubActions().add(storyAction2);
+		}
+
+		String combatId = MEMCACHE_RISK_KEY_NAME + userId;
+		combat.setCombatId(combatId);
+
+		Map<String, Object> params1 = new HashMap<String, Object>(2);
+		params1.put("user", user);
+		// 战后恢复兵
+		afterCombatService.doSaveAfterCombat(combat, true, params1);
+
+		RiskSceneInfo res = new RiskSceneInfo(combatId);
+		res.setWin(false);
+
+		boolean win = combat.getWinType() == CombatConstants.WIN_ATK ? true
+				: false;
+		if (win) {
+			res.setWin(true);
+			currStageInfo.setVersion(currDay);
+			currStageInfo.addJoinNum();
+			// 胜利，修改关卡攻打次数数据，发奖励
+			currStageInfo.setStar(attackTeam.getScore());
+
+			if (curr == null) {
+				curr = new UserRiskScene(userId, scene.getParentId());
+				curr.setStageInfoByIndex(currStageInfo, idx);
+				riskDao.createUserRiskScene(curr);
+			} else {
+				curr.setStageInfoByIndex(currStageInfo, idx);
+				riskDao.updateUserRiskScene(curr);
+			}
+
+			// 通知任务
+			missionService.notifyMissionModule(user, Mission.QCT_TYPE_PASSONE,
+					currStageInfo.getId(), attackTeam.getScore());
+
+			// 扣除体力
+			userService.doCostHpPoint(userId, decPoint, LogHpAct.RISK_COST);
+			// 发奖励
+
+			// 君主经验
+			int userExp = scene.getUserExp();
+			if (userExp > 0) {
+				userExp = this.getAdditionUserExp(userExp, user, qqFlag);
+
+				if (user.getUsrLv() < User.MAX_LV) {
+					userService.doUpdateUserHonor(user, userExp,
+							LogUserExpAct.User_EXP_8);
+				} else {
+					userService.doUpdateUser(user);
+				}
+			} else {
+				userService.doUpdateUser(user);
+			}
+			res.setUserExp(userExp);
+
+			// 掉落物品
+			dropPackItem(userId, scene, user, currStageInfo, res);
+
+		} else {
+			// 判断是否刷新过失败次数
+			currStageInfo.setVersion(currDay);
+			boolean r = canRestFailNum(currDay, currStageInfo.getRestFailHour());
+			currStageInfo.refresh(r);
+			currStageInfo.addFailNum();
+
+		}
+
+		// 下面代码不能删除掉。。因为物品累计掉落次数数据有修改。所以最后保存一次数据
+		if (curr == null) {
+			curr = new UserRiskScene();
+			curr.setUserId(userId);
+			curr.setPid(scene.getParentId());
+			curr.setStageInfoByIndex(currStageInfo, idx);
+			riskDao.createUserRiskScene(curr);
+		} else {
+			curr.setStageInfoByIndex(currStageInfo, idx);
+			riskDao.updateUserRiskScene(curr);
+		}
+		OneRiskInfo io = new OneRiskInfo(currStageInfo.getId(),
+				attackTeam.getScore(), currStageInfo.getJoinNum(),
+				currStageInfo.getFailNum(), currStageInfo.getRestNum(),
+				currStageInfo.isFirstBonus());
+		res.setRisk(io);
+		// if (uc == null) {
+		// uc = new UserCount();
+		// uc.setUserId(userId);
+		// uc.setType(UserCount.TYPE_RISK_DAILY_MAX);
+		// uc.setNum(currDailyNum);
+		// uc.setLastDttm(new Timestamp(now));
+		// userService.createUserCount(uc);
+		// } else {
+		// uc.setNum(currDailyNum);
+		// uc.setLastDttm(new Timestamp(now));
+		// userService.updateUserCount(uc);
+		// }
+		// userDailyActivityService.addUserDailyActivity(userId,
+		// DailyActivity.ACT_RISK, (byte) 1);
+		setRiskTLog(LogTypeConst.TYPE_RISK_JOIN, userId, user.getUsrLv(),
+				user.getUserName(), scene, (byte) 0, win, id);
+		return res;
+	}
+
+	private void dropPackItem(long userId, RiskScene scene, User user,
+			OneRisk currStageInfo, RiskSceneInfo res) {
+
+		int dropPackId = scene.getDropPackId();
+		if (dropPackId > 0) {
+			List<DroppedEntity> dropItems = dropItem(user, dropPackId, 1,
+					"RISK_1");
+			if (dropItems != null) {
+				res.addItems(dropItems);
+			}
+			// 判断必掉物品
+			List<DroppedEntity> r = specificDropItem(userId, currStageInfo,
+					dropPackId, dropItems);
+			if (r != null) {
+				res.addItems(r);
+			}
+		}
+
+		// 开启运营掉落
+		if (scene.getOperateDropPackId() > 0) {
+			List<DroppedEntity> dropItems = dropItem(user,
+					scene.getOperateDropPackId(), 1, "RISK_1");
+			if (dropItems != null) {
+				res.addItems(dropItems);
+			}
+		}
+
+	}
+
+	/**
+	 * 判断必掉物品
+	 * 
+	 * @param userId
+	 * @param currStageInfo
+	 * @param dropPackId
+	 * @param dropItems
+	 */
+	private List<DroppedEntity> specificDropItem(long userId,
+			OneRisk currStageInfo, int dropPackId, List<DroppedEntity> dropItems) {
+		// 记录掉落包里面的所有物品，不包括掉落包
+		Map<Integer, DropPackItem> dps = new HashMap<Integer, DropPackItem>();
+		// 记录概率掉落
+		saveProbability(dropPackId, currStageInfo, dps);
+		int max = commonService.getSysParaIntValue(
+				AppConstants.SYS_RISK_DROP_MAX_NUM, 10);
+
+		if (dropItems != null) {
+			// 判断是否已经掉落过了
+			for (DroppedEntity info : dropItems) {// 清除已经掉落的物品
+				currStageInfo.restDropItem(info.getEntId());
+			}
+		}
+		List<DroppedEntity> rdropItems = new ArrayList<DroppedEntity>();
+
+		List<Integer> items = currStageInfo.getDrops(max);
+		for (int itemId : items) {
+			DropPackItem it = dps.get(itemId);
+			if (it == null) {
+				throw new BaseException("获取必掉物品数据错误" + itemId + ",dropPackId="
+						+ dropPackId);
+			}
+			int num = getRandomNum(it.getMaxValue2(), it.getMinValue());
+			// 达到到条件。必须掉落物品
+			treasuryService.addItemToTreasury(userId, itemId, num, 1, 0, false,
+					true, LogItemAct.LOGITEMACT_68);
+			currStageInfo.restDropItem(itemId);
+			rdropItems.add(new DroppedEntity(itemId, num));
+		}
+		return rdropItems;
+	}
+
+	/**
+	 * 参考掉落包的物品随机来做的,随机一个特定物品的数量，这个方法在关卡里面使用
+	 * 
+	 * @param itemId
+	 * @return
+	 */
+	private int getRandomNum(int max, int min) {
+		return max > min ? Util.randInt(max - min + 1) + min : min;
+	}
+
+	/**
+	 * 记录下物品的掉落次数
+	 * 
+	 * @param dropPackId
+	 * @param dropItems
+	 * @param currStageInfo
+	 */
+	private void saveProbability(int dropPackId, OneRisk currStageInfo,
+			Map<Integer, DropPackItem> dps) {
+		Entity entity = entityService.getEntity(dropPackId);
+		if (entity instanceof DropPackEntity) {
+			DropPackEntity dpe = (DropPackEntity) entity;
+			List<DropPackItem> dpes = dpe.getItems();
+			for (DropPackItem d : dpes) {
+				Entity en = entityService.getEntity(d.getDropEntId());
+				if (en instanceof DropPackEntity) {
+					// 再走一遍
+					saveProbability(d.getDropEntId(), currStageInfo, dps);
+				}
+				if (en instanceof Item) {
+					Item it = (Item) en;
+					if (probabilityMaps.containsKey(it.getItemType())) {
+						currStageInfo.addItem(en.getEntId());
+						dps.put(d.getDropEntId(), d);
+					}
+					continue;
+				}
+				throw new BaseException("不支持的类型");
+			}
+
+		}
+	}
+
+	/**
+	 * 获得加成后的
+	 * 
+	 * @param baseExp
+	 * @param user
+	 * @param qqFlag
+	 * @return
+	 */
+	private int getAdditionUserExp(int baseExp, User user, int qqFlag) {
+		int percent = getUserExpQQEffectPercent(qqFlag);
+		// EffectValue vue = operateActivityService
+		// .getEffectValue(ActivityEffect.RISK_REWARD_EXP);
+		// percent += vue.getPerValue();
+		if (percent > 0) {
+			baseExp = (int) (baseExp * (100 + percent) / 100d);
+		}
+		return baseExp;
+	}
+
+	@Override
+	public Response54005Define.Builder doAutoCombat(long userId,
+			List<Integer> ids, boolean mu, int qqFlag) {
+		if (ids.isEmpty()) {
+			throw new BaseException("没有扫荡的关卡");
+		}
+		int num = 1;
+		if (mu) {
+			num = 10;
+		}
+		User user = userService.lockGetUser(userId);
+
+		// 获取累计需要消耗的体力
+		Map<Integer, RiskScene> map = new HashMap<Integer, RiskScene>();
+		for (int i : ids) {
+			if (map.containsKey(i)) {
+				throw new BaseException("扫荡的关卡数据重复" + i);
+			}
+			RiskScene scene = riskSceneMaps.get(i);
+			if (scene == null) {
+				throw new BaseException("关卡不存在" + i);
+			}
+
+			UserRiskScene us = getUserRiskScene(userId, scene.getParentId());
+			if (us == null) {
+				throw new BaseException("关卡玩家没挑战过" + i);
+			}
+
+			OneRisk or = us.getStageInfoByIndex(scene.getSeqId());
+			if (or == null || !or.canAutoCombat()) {
+				throw new BaseException("不是3星不能扫荡" + i);
+			}
+			int maxCanJoinNum = getMaxJoinNum(scene.getMaxJoinNum());
+			if (or.getJoinNum() > maxCanJoinNum) {
+				throw new BaseException("已经超过最大挑战次数了，不能扫荡" + i);
+			}
+			if (us.isUpdate()) {
+				riskDao.updateUserRiskScene(us);
+			}
+			map.put(i, scene);
+		}
+		Response54005Define.Builder res = Response54005Define.newBuilder();
+
+		int version = TimeUtils.getVersionOfToday(System.currentTimeMillis());
+
+		Collection<RiskScene> risks = map.values();
+		boolean hasPoint = true;
+		int sumPoint = user.getHpPoint();
+		int sumUserExp = 0;
+		for (int i = 0; i < num; i++) {
+			QuickRiskInfo.Builder rqinfo = QuickRiskInfo.newBuilder();
+			int exp = 0;
+			Map<Integer, Integer> items = new HashMap<Integer, Integer>();
+
+			for (RiskScene rk : risks) {
+				UserRiskScene us = getUserRiskScene(userId, rk.getParentId());
+				OneRisk or = us.getStageInfoByIndex(rk.getSeqId());
+				// 判断次数
+				int maxCanJoinNum = getMaxJoinNum(rk.getMaxJoinNum());
+				if (or.getJoinNum() >= maxCanJoinNum) {
+					break;
+				}
+				// 判断体力
+				int decPoint = rk.getHpPoint();
+				if (sumPoint < decPoint) {
+					hasPoint = false;
+					break;
+				}
+				sumPoint -= decPoint;
+
+				sumUserExp += rk.getUserExp();
+				exp += rk.getUserExp();
+
+				or.setVersion(version);
+				or.addJoinNum();
+				us.setStageInfoByIndex(or, rk.getSeqId());
+
+				// 运营礼包掉落
+				if (rk.getOperateDropPackId() > 0) {
+					List<DroppedEntity> dropItems = dropItem(user,
+							rk.getOperateDropPackId(), 1, "RISK_1");
+					if (dropItems != null) {
+						for (DroppedEntity d : dropItems) {
+							Integer count = items.get(d.getEntId());
+							if (count == null) {
+								count = 0;
+							}
+							count += d.getNum();
+							items.put(d.getEntId(), count);
+						}
+					}
+				}
+
+				int dropPackId = rk.getDropPackId();
+				List<DroppedEntity> dropItems = dropItem(user, dropPackId, 1,
+						"RISK_1");
+				if (dropItems != null) {
+					for (DroppedEntity d : dropItems) {
+						Integer count = items.get(d.getEntId());
+						if (count == null) {
+							count = 0;
+						}
+						count += d.getNum();
+						items.put(d.getEntId(), count);
+					}
+				}
+
+				// 判断必掉物品
+				dropItems = specificDropItem(userId, or, dropPackId, dropItems);
+				if (dropItems != null) {
+					for (DroppedEntity d : dropItems) {
+						Integer count = items.get(d.getEntId());
+						if (count == null) {
+							count = 0;
+						}
+						count += d.getNum();
+						items.put(d.getEntId(), count);
+					}
+				}
+
+				riskDao.updateUserRiskScene(us);
+
+			}
+			rqinfo.setUserExp(exp);
+			for (Entry<Integer, Integer> en : items.entrySet()) {
+				ItemInfo.Builder it = ItemInfo.newBuilder();
+				it.setEntId(en.getKey());
+				it.setNum(en.getValue());
+				rqinfo.addItems(it.build());
+			}
+			res.addQinfos(rqinfo.build());
+
+			if (!hasPoint) {
+				break;
+			}
+		}
+
+		userService.doCostHpPoint(userId, user.getHpPoint() - sumPoint,
+				LogHpAct.RISK_COST);
+		// 君主经验
+		if (sumUserExp > 0) {
+			sumUserExp = this.getAdditionUserExp(sumUserExp, user, qqFlag);
+
+			if (user.getUsrLv() < User.MAX_LV) {
+				userService.doUpdateUserHonor(user, sumUserExp,
+						LogUserExpAct.User_EXP_8);
+			} else {
+				userService.doUpdateUser(user);
+			}
+		} else {
+			userService.doUpdateUser(user);
+		}
+
+		for (RiskScene rk : risks) {
+			UserRiskScene us = getUserRiskScene(userId, rk.getParentId());
+			OneRisk or = us.getStageInfoByIndex(rk.getSeqId());
+			if (us.isUpdate()) {
+				riskDao.updateUserRiskScene(us);
+			}
+			OneRiskInfo io = new OneRiskInfo(or.getId(), or.getStar(),
+					or.getJoinNum(), or.getFailNum(), or.getRestNum(),
+					or.isFirstBonus());
+			res.addRinfos(io.toRiskSceneInfo());
+			setRiskTLog(LogTypeConst.TYPE_RISK_JOIN10, userId, user.getUsrLv(),
+					user.getUserName(), rk, (byte) 0, true, rk.getSceneId());
+		}
+		return res;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<DroppedEntity> dropItem(User user, int dropEntId, int num,
+			String action) {
+		List<DroppedEntity> retuDatas = null;
+		if (dropEntId != 0) {
+			Entity entity = entityService.getEntity(dropEntId);
+			if (entity != null) {
+				// EffectValue effectValue = operateActivityService
+				// .getEffectValue(ActivityEffectType.RISK_REWARD_ITEM);
+				if (entity instanceof DropPackEntity
+						&& ((DropPackEntity) entity).getChildType() != Item.ITEM_TYPE_BOX_DROP) {
+					// 如果领取的是星级奖励。到加成
+					// if (action.equals("RISK_Star")) {
+					// effectValue.setAbsValue(0);
+					// effectValue.setPerValue(0);
+					// }
+					Map<String, Object> params = new HashMap<String, Object>();
+					params.put("user", user);
+					params.put(
+							"iAction",
+							com.youxigu.dynasty2.log.imp.LogItemAct.LOGITEMACT_67);
+					params.put("num", num);
+					params.put("notUpdate", 1);
+
+					Map<String, Object> dropItems = entityService.doAction(
+							entity, Entity.ACTION_USE, params);
+					if (dropItems != null && dropItems.size() > 0) {
+						Map<Integer, DroppedEntity> datas = (Map<Integer, DroppedEntity>) dropItems
+								.get("items");
+						if (datas != null) {
+							Collection<DroppedEntity> dropedEntitys = datas
+									.values();
+							if (dropedEntitys != null
+									&& dropedEntitys.size() > 0) {
+
+								retuDatas = new ArrayList<DroppedEntity>();
+								Iterator<DroppedEntity> itl = dropedEntitys
+										.iterator();
+
+								while (itl.hasNext()) {
+									DroppedEntity drop = itl.next();
+
+									// int count = (int) (drop.getNum()
+									// * (100f + effectValue.getPerValue()) /
+									// 100f);
+									int count = drop.getNum();
+
+									DroppedEntity ifo = new DroppedEntity(
+											drop.getEntId(), count);
+									retuDatas.add(ifo);
+									treasuryService
+											.addItemToTreasury(
+													user.getUserId(),
+													drop.getEntId(),
+													count,
+													1,
+													-1,
+													false,
+													true,
+													com.youxigu.dynasty2.log.imp.LogItemAct.LOGITEMACT_66);
+
+								}
+							}
+						}
+					}
+
+				} else {
+					// 直接掉道具
+					// int count = (int) (1 * (100f + effectValue.getPerValue())
+					// / 100f);
+					int count = 1;
+					treasuryService
+							.addItemToTreasury(
+									user.getUserId(),
+									dropEntId,
+									count,
+									1,
+									-1,
+									false,
+									true,
+									com.youxigu.dynasty2.log.imp.LogItemAct.LOGITEMACT_66);
+					retuDatas = new ArrayList<DroppedEntity>(1);
+
+					DroppedEntity ifo = new DroppedEntity(dropEntId, count);
+					retuDatas.add(ifo);
+				}
+			} else {
+				throw new BaseException("掉落包不存在" + dropEntId);
+			}
+		}
+		return retuDatas;
+	}
+
+	@Override
+	public List<UserRiskScene> getUserRiskScenes(long userId) {
+		return riskDao.getUserRiskScenes(userId);
+	}
+
+	@Override
+	public List<UserRiskScene> getUserRiskScenes(long userId, RiskType type) {
+		List<UserRiskScene> urs = getUserRiskScenes(userId);
+
+		List<UserRiskScene> rt = new ArrayList<UserRiskScene>();
+		if (urs == null || urs.isEmpty()) {
+			return rt;
+		}
+		for (UserRiskScene u : urs) {
+			RiskParentScene p = getRiskParentScene(u.getPid());
+			if (p.getRiskType().equals(type)) {
+				rt.add(u);
+			}
+		}
+		return rt;
+	}
+
+	@Override
+	public List<UserRiskScene> getUserRiskScenes(long userId, int riskId) {
+		if (!riskMaps.containsKey(riskId)) {
+			throw new BaseException("章节id错误" + riskId);
+		}
+
+		List<UserRiskScene> urs = getUserRiskScenes(userId);
+		List<UserRiskScene> rt = new ArrayList<UserRiskScene>();
+		if (urs == null || urs.isEmpty()) {
+			return rt;
+		}
+
+		for (UserRiskScene u : urs) {
+			RiskParentScene p = getRiskParentScene(u.getPid());
+			if (p.getParentsceneid() == riskId) {
+				rt.add(u);
+			}
+		}
+		return rt;
+	}
+
+	@Override
+	public UserRiskScene getUserRiskScene(long userId, int parentId) {
+		return riskDao.getUserRiskScene(userId, parentId);
+	}
+
+	@Override
+	public int doGetTotalStar(long userId, int pid) {
+		UserRiskScene userScene = getUserRiskScene(userId, pid);
+		if (userScene == null) {
+			return 0;
+		}
+		int totalStar = 0;
+		RiskParentScene parent = getRiskParentScene(pid);
+		List<RiskScene> childs = parent.getScenes();
+		for (RiskScene rs : childs) {
+			int seq = rs.getSeqId();
+			// 0=小关卡Id,1=小关卡星数,2=本日参加次数，3=最后参加的天（年内）
+			OneRisk stageInfo = userScene.getStageInfoByIndex(seq);
+			if (stageInfo == null) {
+				continue;
+			}
+			totalStar += stageInfo.getStar();
+		}
+
+		if (userScene.isUpdate()) {
+			riskDao.updateUserRiskScene(userScene);
+		}
+		return totalStar;
+	}
+
+	@Override
+	public void doGainStarAward(long userId, int pId, byte idx) {
+		RiskParentScene parentScene = riskParentSceneMaps.get(pId);
+		if (parentScene == null) {
+			throw new BaseException("数据错误");
+		}
+		int reqStar = 0;
+		int awardEntId = 0;
+		if (idx == 0) {
+			reqStar = parentScene.getStar1();
+			awardEntId = parentScene.getAward1();
+		} else if (idx == 1) {
+			reqStar = parentScene.getStar2();
+			awardEntId = parentScene.getAward2();
+		} else {
+			reqStar = parentScene.getStar3();
+			awardEntId = parentScene.getAward3();
+		}
+		if (awardEntId == 0) {
+			throw new BaseException("没有找到对应的奖励");
+		}
+		User user = userService.lockGetUser(userId);
+		UserRiskScene urs = riskDao.getUserRiskScene(userId, pId);
+		if (urs == null) {
+			throw new BaseException("没有关卡记录数据" + pId);
+		}
+
+		boolean award = urs.isStarAward(idx);
+		if (award) {
+			throw new BaseException("奖励已经领取过了");
+		}
+		int totalStar = doGetTotalStar(userId, pId);
+		if (totalStar < reqStar) {
+			throw new BaseException("星数不足，不能领取该奖励");
+		}
+		urs.setStarAward(idx);
+		riskDao.updateUserRiskScene(urs);
+
+		// 发放奖励
+		dropItem(user, awardEntId, 1, "RISK_Star");
+
+		String via = null;
+		UserSession us = OnlineUserSessionManager
+				.getUserSessionByUserId(userId);
+		if (us != null) {
+			via = us.getVia();
+		} else {
+			Account account = accountService.getAccount(user.getAccId());
+			via = account.getVia();
+		}
+		// tlog
+		logService.log(LogBeanFactory.buildRiskAwardLog(user, pId, idx, via));
+	}
+
+	@Override
+	public RiskParentScene getRiskParentScene(int pId) {
+		return riskParentSceneMaps.get(pId);
+	}
+
+	@Override
+	public RiskScene getRiskScene(int sceneId) {
+		return riskSceneMaps.get(sceneId);
+	}
+
+	@Override
+	public UserRiskData getUserRiskData(long userId) {
+		return riskDao.getUserRiskData(userId);
+	}
+
+	@Override
+	public void doFirstBonus(long userId, int id) {
+		RiskScene scene = getRiskScene(id);
+		if (scene == null) {
+			throw new BaseException("参数错误");
+		}
+		User user = userService.lockGetUser(userId);
+		UserRiskScene userScene = getUserRiskScene(userId, scene.getParentId());
+		if (userScene == null) {
+			throw new BaseException("参数错误,数据不存在");
+		}
+		OneRisk stageInfo = userScene.getStageInfoByIndex(scene.getSeqId());
+		if (stageInfo == null) {
+			throw new BaseException("关卡未通过");
+		}
+		if (stageInfo.isFirstBonus()) {
+			throw new BaseException("首通奖励 已经领取");
+		}
+		if (scene.getFirstBonus() <= 0) {
+			throw new BaseException("未配置首通奖励 ");
+		}
+		// 给奖励
+		dropItem(user, scene.getFirstBonus(), 1, "");
+
+		stageInfo.setFirstBonus(true);
+		userScene.setStageInfoByIndex(stageInfo, scene.getSeqId());
+		riskDao.updateUserRiskScene(userScene);
+	}
+
+	@Override
+	public int doClearJoinNum(long userId, int sceneId) {
+		int cash = commonService.getSysParaIntValue(
+				AppConstants.SYS_RISK_CLEAR_CASH, 10);
+		// 当前小关卡
+		RiskScene scene = riskSceneMaps.get(sceneId);
+		if (scene == null) {
+			throw new BaseException("重置次数参数错误" + sceneId);
+		}
+		// 关卡索引号
+		User user = userService.lockGetUser(userId);
+		UserRiskScene uscene = getUserRiskScene(userId, scene.getParentId());
+		if (uscene == null) {
+			throw new BaseException("关卡未开启");
+		}
+
+		int count = scene.getRestVipNum(user.getVip());
+
+		OneRisk or = uscene.getStageInfoByIndex(scene.getSeqId());
+		if (or == null || !or.isPass()) {
+			throw new BaseException("关卡未开启");
+		}
+		if (!or.canRest(count)) {
+			throw new BaseException("已经达到最大重置次数");
+		}
+		// 扣元宝
+		userService.doConsumeCash(user, cash,
+				LogCashAct.MAOXIAN_RISK_CLEAR_ACTION, true);
+		or.addRestNum();
+
+		uscene.setStageInfoByIndex(or, scene.getSeqId());
+		riskDao.updateUserRiskScene(uscene);
+		return or.getRestNum();
+	}
+
+	/**
+	 * 冒险TLOG
+	 */
+	private void setRiskTLog(String logType, long userId, int usLv,
+			String userName, RiskScene scene, byte difficulty, boolean win,
+			int battleId) {
+		User user = userService.getUserById(userId);
+		// Account account = accountService.getAccount(user.getAccId());
+		String via = null;
+		UserSession us = OnlineUserSessionManager
+				.getUserSessionByUserId(userId);
+		if (us != null) {
+			via = us.getVia();
+		} else {
+			Account account = accountService.getAccount(user.getAccId());
+			via = account.getVia();
+		}
+
+		logService.log(LogBeanFactory.buildRiskLog(user, logType, scene,
+				difficulty, win, battleId, via));
+		BattleLog.setTlogBattle(user, LogBattleAct.PVE, win, battleId,
+				difficulty);
+	}
+
+	@Override
+	public boolean canRestFailNum(int version, int src) {
+		int nowVersion = TimeUtils
+				.getVersionOfToday(System.currentTimeMillis());
+		Calendar _calendar = Calendar.getInstance();
+		int now = _calendar.get(Calendar.HOUR_OF_DAY);
+		int m = _calendar.get(Calendar.MINUTE);
+		int s = _calendar.get(Calendar.SECOND);
+		now = processRestFailNumTimes(now, m, s);
+		if (version == nowVersion) {
+			src = processRestFailNumTimes(src, 0, 0);
+		} else {// 主要是 0 点 那个时间点的判断,跨天的，肯定没重置过
+			src = processRestFailNumTimes(0, 0, 0);// 表示还没重置
+		}
+		int rt = 0;
+		// 判断最近一个重置时间点
+		for (int i = restFailNumTimes.size() - 1; i >= 0; i--) {
+			int t = restFailNumTimes.get(i);
+			if (t <= now) {
+				rt = t;
+				break;
+			}
+		}
+		// int[] r = new int[] { src, rt };
+		if (src < rt) {
+			// 表示玩家还没重置了，可以重置
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public RiskParentSceneInfo doGetOneRiskScene(long userId, int pid) {
+		UserRiskScene userScene = getUserRiskScene(userId, pid);
+		RiskParentSceneInfo res = new RiskParentSceneInfo(pid);
+		if (userScene == null) {
+			return res;
+		}
+		int totalStar = 0;// 每一大关获得得星数
+		RiskParentScene parent = getRiskParentScene(userScene.getPid());
+		List<RiskScene> childs = parent.getScenes();
+		boolean pass = true;// 本大关卡是否通关
+		for (RiskScene rs : childs) {
+			int seq = rs.getSeqId();
+			OneRisk stageInfo = userScene.getStageInfoByIndex(seq);
+			if (stageInfo == null) {
+				continue;
+			}
+			if (!stageInfo.isPass()) {
+				pass = false;
+			} else {
+				totalStar += stageInfo.getStar();
+			}
+			res.addInfos(stageInfo);
+		}
+		if (userScene.isUpdate()) {
+			riskDao.updateUserRiskScene(userScene);
+		}
+		res.setStarBonus(userScene.getStarAward());
+		res.setSumStar(totalStar);
+		res.setPass(pass);
+		return res;
+	}
+
+	@Override
+	public List<RiskParentScene> getRiskParentSceneByRiskId(int riskId) {
+		Risk risk = riskMaps.get(riskId);
+		if (risk == null) {
+			return null;
+		}
+		return risk.getRiskParentScene();
+	}
+}

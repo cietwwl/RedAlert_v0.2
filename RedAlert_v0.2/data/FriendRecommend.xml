@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--系统参数:table:SysPara-->
+<dataset>
+
+<FriendRecommend id="1" usrLv="1" minLv="1" maxLv="10" />
+<FriendRecommend id="2" usrLv="10" minLv="1" maxLv="15" />
+<FriendRecommend id="3" usrLv="15" minLv="5" maxLv="20" />
+<FriendRecommend id="4" usrLv="20" minLv="10" maxLv="25" />
+<FriendRecommend id="5" usrLv="25" minLv="15" maxLv="30" />
+<FriendRecommend id="6" usrLv="30" minLv="20" maxLv="35" />
+<FriendRecommend id="7" usrLv="35" minLv="25" maxLv="40" />
+<FriendRecommend id="8" usrLv="40" minLv="30" maxLv="45" />
+<FriendRecommend id="9" usrLv="45" minLv="35" maxLv="50" />
+<FriendRecommend id="10" usrLv="50" minLv="40" maxLv="55" />
+<FriendRecommend id="11" usrLv="55" minLv="45" maxLv="60" />
+<FriendRecommend id="12" usrLv="60" minLv="50" maxLv="65" />
+<FriendRecommend id="13" usrLv="65" minLv="55" maxLv="70" />
+<FriendRecommend id="14" usrLv="70" minLv="60" maxLv="75" />
+<FriendRecommend id="15" usrLv="75" minLv="65" maxLv="80" />
+<FriendRecommend id="16" usrLv="80" minLv="70" maxLv="85" />
+<FriendRecommend id="17" usrLv="85" minLv="75" maxLv="90" />
+<FriendRecommend id="18" usrLv="90" minLv="80" maxLv="95" />
+<FriendRecommend id="19" usrLv="95" minLv="85" maxLv="100" />
+<FriendRecommend id="20" usrLv="100" minLv="90" maxLv="100" />
+
+
+
+
+</dataset>

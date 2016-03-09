@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--系统参数:table:SysPara-->
+<dataset>
+<MysticShop shopId="1" vipFreeCount="0,5:1,5:2,5:3,5:4,5:5,5:6,5:7,5:8,5:9,5:10,5:11,5:12,5" vipdaytime="0,3:1,5:2,6:3,7:4,8:5,9:6,10:7,11:8,12:9,13:10,14:11,15:12,16" cashCost="50,60,70,80,90,100" num="6" itemId="1030101" type="1" freashTime="12:00:18:00:21:00" />
+<MysticShop shopId="2" vipFreeCount="0,5:1,5:2,5:3,5:4,5:5,5:6,5:7,5:8,5:9,5:10,5:11,5:12,6" vipdaytime="0,3:1,5:2,6:3,7:4,8:5,9:6,10:7,11:8,12:9,13:10,14:11,15:12,17" cashCost="50,60,70,80,90,101" num="6" itemId="1030101" type="2" freashTime="12:00:18:00:21:01" />
+<MysticShop shopId="3" vipFreeCount="0,5:1,5:2,5:3,5:4,5:5,5:6,5:7,5:8,5:9,5:10,5:11,5:12,7" vipdaytime="0,3:1,5:2,6:3,7:4,8:5,9:6,10:7,11:8,12:9,13:10,14:11,15:12,18" cashCost="50,60,70,80,90,102" num="6" itemId="1030101" type="3" freashTime="12:00:18:00:21:02" />
+
+
+
+
+
+<MysticShopItem shopItemId="1" type="1" level="0-20" itemId="1010145" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="100" />
+<MysticShopItem shopItemId="2" type="1" level="0-20" itemId="1010146" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="100" />
+<MysticShopItem shopItemId="3" type="1" level="0-20" itemId="1010147" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="100" />
+<MysticShopItem shopItemId="4" type="1" level="0-20" itemId="1010148" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="100" />
+<MysticShopItem shopItemId="5" type="1" level="0-20" itemId="1010149" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="100" />
+<MysticShopItem shopItemId="6" type="1" level="0-20" itemId="1010150" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="100" />
+<MysticShopItem shopItemId="7" type="1" level="0-20" itemId="1010151" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="8" type="1" level="0-20" itemId="1010152" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="9" type="1" level="0-20" itemId="1010153" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="10" type="1" level="0-20" itemId="1010154" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="11" type="1" level="0-20" itemId="1010155" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="12" type="1" level="0-20" itemId="1010156" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="13" type="1" level="0-20" itemId="1010157" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="14" type="1" level="0-20" itemId="1010158" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="15" type="1" level="0-20" itemId="1010159" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="16" type="1" level="0-20" itemId="1010160" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="17" type="1" level="0-20" itemId="1010161" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="18" type="1" level="0-20" itemId="1010162" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="19" type="1" level="0-20" itemId="1010163" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="20" type="1" level="0-20" itemId="1010164" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="21" type="1" level="0-20" itemId="1010165" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="22" type="1" level="0-20" itemId="1010166" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="23" type="1" level="0-20" itemId="1010167" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="24" type="1" level="0-20" itemId="1010168" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="25" type="1" level="21-100" itemId="1010151" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="26" type="1" level="21-100" itemId="1010152" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="27" type="1" level="21-100" itemId="1010153" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="28" type="1" level="21-100" itemId="1010154" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="29" type="1" level="21-100" itemId="1010155" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="30" type="1" level="21-100" itemId="1010156" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="31" type="1" level="21-100" itemId="1010157" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="32" type="1" level="21-100" itemId="1010158" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="33" type="1" level="21-100" itemId="1010159" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="34" type="1" level="21-100" itemId="1010160" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="35" type="1" level="21-100" itemId="1010161" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="36" type="1" level="21-100" itemId="1010162" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="37" type="1" level="21-100" itemId="1010163" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="38" type="1" level="21-100" itemId="1010164" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="39" type="1" level="21-100" itemId="1010165" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="40" type="1" level="21-100" itemId="1010166" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="41" type="1" level="21-100" itemId="1010167" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="42" type="1" level="21-100" itemId="1010168" itemNum="1" costType="2" costNum="50" wight1="100" wightNum="3" wight2="500" />
+<MysticShopItem shopItemId="43" type="2" level="0-30" itemId="1007001" itemNum="1" costType="1" costNum="10000" wight1="100" wightNum="5" wight2="100" />
+<MysticShopItem shopItemId="44" type="2" level="0-30" itemId="1007002" itemNum="2" costType="1" costNum="10000" wight1="100" wightNum="5" wight2="100" />
+<MysticShopItem shopItemId="45" type="2" level="0-30" itemId="1007003" itemNum="3" costType="1" costNum="10000" wight1="100" wightNum="5" wight2="100" />
+<MysticShopItem shopItemId="46" type="2" level="0-30" itemId="1007004" itemNum="4" costType="1" costNum="10000" wight1="100" wightNum="5" wight2="100" />
+<MysticShopItem shopItemId="47" type="2" level="0-30" itemId="1007005" itemNum="5" costType="1" costNum="10000" wight1="100" wightNum="5" wight2="100" />
+<MysticShopItem shopItemId="48" type="2" level="0-30" itemId="1007006" itemNum="6" costType="1" costNum="10000" wight1="100" wightNum="5" wight2="100" />
+<MysticShopItem shopItemId="49" type="2" level="0-30" itemId="1008003" itemNum="7" costType="2" costNum="200" wight1="200" wightNum="5" wight2="500" />
+<MysticShopItem shopItemId="50" type="2" level="0-30" itemId="1008004" itemNum="8" costType="2" costNum="200" wight1="200" wightNum="5" wight2="500" />
+<MysticShopItem shopItemId="51" type="2" level="0-30" itemId="1008005" itemNum="9" costType="2" costNum="200" wight1="200" wightNum="5" wight2="500" />
+<MysticShopItem shopItemId="52" type="2" level="0-30" itemId="1008006" itemNum="10" costType="2" costNum="200" wight1="200" wightNum="5" wight2="500" />
+<MysticShopItem shopItemId="53" type="2" level="31-100" itemId="1007001" itemNum="1" costType="1" costNum="10000" wight1="100" wightNum="5" wight2="100" />
+<MysticShopItem shopItemId="54" type="2" level="31-100" itemId="1007002" itemNum="2" costType="1" costNum="10000" wight1="100" wightNum="5" wight2="100" />
+<MysticShopItem shopItemId="55" type="2" level="31-100" itemId="1007003" itemNum="3" costType="1" costNum="10000" wight1="100" wightNum="5" wight2="100" />
+<MysticShopItem shopItemId="56" type="2" level="31-100" itemId="1007004" itemNum="4" costType="1" costNum="10000" wight1="100" wightNum="5" wight2="100" />
+<MysticShopItem shopItemId="57" type="2" level="31-100" itemId="1007005" itemNum="5" costType="1" costNum="10000" wight1="100" wightNum="5" wight2="100" />
+<MysticShopItem shopItemId="58" type="2" level="31-100" itemId="1007006" itemNum="6" costType="1" costNum="10000" wight1="100" wightNum="5" wight2="100" />
+<MysticShopItem shopItemId="59" type="2" level="31-100" itemId="1008003" itemNum="7" costType="2" costNum="200" wight1="200" wightNum="5" wight2="500" />
+<MysticShopItem shopItemId="60" type="2" level="31-100" itemId="1008004" itemNum="8" costType="2" costNum="200" wight1="200" wightNum="5" wight2="500" />
+<MysticShopItem shopItemId="61" type="2" level="31-100" itemId="1008005" itemNum="9" costType="2" costNum="200" wight1="200" wightNum="5" wight2="500" />
+<MysticShopItem shopItemId="62" type="2" level="31-100" itemId="1008006" itemNum="10" costType="2" costNum="200" wight1="200" wightNum="5" wight2="500" />
+<MysticShopItem shopItemId="63" type="2" level="31-100" itemId="1009005" itemNum="11" costType="2" costNum="200" wight1="300" wightNum="5" wight2="1000" />
+<MysticShopItem shopItemId="64" type="2" level="31-100" itemId="1009006" itemNum="12" costType="2" costNum="200" wight1="300" wightNum="5" wight2="1000" />
+<MysticShopItem shopItemId="65" type="3" level="0-100" itemId="1020141" itemNum="1" costType="1" costNum="100" wight1="100" wightNum="3" wight2="100" />
+<MysticShopItem shopItemId="66" type="3" level="0-100" itemId="1020142" itemNum="2" costType="1" costNum="101" wight1="100" wightNum="3" wight2="100" />
+<MysticShopItem shopItemId="67" type="3" level="0-100" itemId="1020143" itemNum="3" costType="1" costNum="102" wight1="100" wightNum="3" wight2="100" />
+<MysticShopItem shopItemId="68" type="3" level="0-100" itemId="1020151" itemNum="4" costType="1" costNum="103" wight1="100" wightNum="3" wight2="100" />
+<MysticShopItem shopItemId="69" type="3" level="0-100" itemId="1020152" itemNum="5" costType="1" costNum="104" wight1="100" wightNum="3" wight2="100" />
+<MysticShopItem shopItemId="70" type="3" level="0-100" itemId="1020153" itemNum="6" costType="1" costNum="105" wight1="100" wightNum="3" wight2="100" />
+<MysticShopItem shopItemId="71" type="3" level="0-100" itemId="1020161" itemNum="7" costType="1" costNum="106" wight1="100" wightNum="3" wight2="200" />
+<MysticShopItem shopItemId="72" type="3" level="0-100" itemId="1020162" itemNum="8" costType="1" costNum="107" wight1="100" wightNum="3" wight2="200" />
+<MysticShopItem shopItemId="73" type="3" level="0-100" itemId="1020163" itemNum="9" costType="1" costNum="108" wight1="100" wightNum="3" wight2="200" />
+<MysticShopItem shopItemId="74" type="3" level="0-100" itemId="1020171" itemNum="10" costType="1" costNum="109" wight1="100" wightNum="3" wight2="200" />
+<MysticShopItem shopItemId="75" type="3" level="0-100" itemId="1020172" itemNum="11" costType="1" costNum="110" wight1="100" wightNum="3" wight2="200" />
+<MysticShopItem shopItemId="76" type="3" level="0-100" itemId="1020173" itemNum="12" costType="1" costNum="111" wight1="100" wightNum="3" wight2="200" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</dataset>

@@ -1,0 +1,38 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:flex="http://www.springframework.org/schema/flex"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+	
+    <!--[前台缓存用]显示背包道具列表 -61001 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="61001" />
+		<property name="bean" ref="treasuryAction" />
+		<property name="methodName" value="loadTreasuryViewByUserId" />
+	</bean>
+  
+    <!--丢弃道具 61003 -->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+      <property name="cmd" value="61003" />
+      <property name="bean" ref="treasuryAction" />
+      <property name="methodName" value="delItem" />
+    </bean>
+    
+    <!--使用道具 61005 -->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+      <property name="cmd" value="61005" />
+      <property name="bean" ref="treasuryAction" />
+      <property name="methodName" value="useItem" />
+    </bean>
+    
+    <!-- 61007 查看道具： 用在聊天频道显示某个人发送的道具信息 -->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+      <property name="cmd" value="61007" />
+      <property name="bean" ref="treasuryAction" />
+      <property name="methodName" value="getTreasury" />
+    </bean>
+   
+</beans>
+

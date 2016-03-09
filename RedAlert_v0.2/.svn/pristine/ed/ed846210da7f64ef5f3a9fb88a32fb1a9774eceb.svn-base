@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+
+
+	<insert id="tlog_login" parameterClass="java.util.Map">
+		INSERT INTO loginlog(logType,accId,openid,pf,dttm,loginIp,onlinetime,eventId) VALUES (#0#,#1#,#2#,#3#,#4#,#5#,#6#,#7#)
+	</insert>
+
+	<insert id="tlog_item" parameterClass="java.util.Map">
+		INSERT INTO itemlog(logType,userId,itemId,tId,oldNum,num,reason,dttm,eventId) VALUES (#0#,#1#,#2#,#3#,#4#,#5#,#6#,#7#,#8#)
+	</insert>
+
+
+	<insert id="tlog_cash" parameterClass="java.util.Map">
+		INSERT INTO cashlog(logType,userId,cashType,oldNum,num,reason,dttm,eventId) VALUES  (#0#,#1#,#2#,#3#,#4#,#5#,#6#,#7#)
+	</insert>
+
+
+	<insert id="tlog_actionCount" parameterClass="java.util.Map">
+		INSERT INTO actioncountlog(logType,userId,userLv,num,dttm,eventId) VALUES  (#0#,#1#,#2#,#3#,#4#,#5#)
+	</insert>
+
+	<insert id="tlog_guildactionlog" parameterClass="java.util.Map">
+		INSERT INTO guildactionlog(logType,guildId,guildLv,userId,userLv,dttm,eventId) VALUES  (#0#,#1#,#2#,#3#,#4#,#5#,#6#)
+	</insert>
+
+	<insert id="tlog_guildmergelog" parameterClass="java.util.Map">
+		INSERT INTO guildmergelog(logType,guildId,guildLv,mGuildId,mGuildLv,userId,dttm,eventId) VALUES  (#0#,#1#,#2#,#3#,#4#,#5#,#6#,#7#)
+
+	</insert>
+
+	<insert id="tlog_guilddonatelog" parameterClass="java.util.Map">
+		INSERT INTO guilddonatelog(logType,guildId,guildLv,userId,userLv,num,dttm,eventId) VALUES  (#0#,#1#,#2#,#3#,#4#,#5#,#6#,#7#)
+	</insert>
+
+
+	<insert id="tlog_missionlog" parameterClass="java.util.Map">
+		INSERT INTO missionlog(logType,userId,userLv,missionId,flag,dttm,eventId) VALUES  (#0#,#1#,#2#,#3#,#4#,#5#,#6#)
+	</insert>
+  
+    <insert id="tlog_usertasklog" parameterClass="java.util.Map">
+        INSERT INTO usertasklog(logType,userId,userLv,taskId,flag,star,dttm,eventId) VALUES  (#0#,#1#,#2#,#3#,#4#,#5#,#6#,#7#)
+    </insert>
+
+    <insert id="tlog_heroinheritlog" parameterClass="java.util.Map">
+        INSERT INTO heroinheritlog(logType,userId,userLv,heroId,heroLv,heroLvTo,reLifeNum,reLifeNumTo,exp,expTo,toHeroId,toHeroLv,toHeroLvTo,toReLifeNum,toReLifeNumTo,toExp,toEexpTo,dttm,eventId) VALUES  (#0#,#1#,#2#,#3#,#4#,#5#,#6#,#7#,#8#,#9#,#10#,#11#,#12#,#13#,#14#,#15#,#16#,#17#,#18#)
+
+    </insert>
+	
+	<insert id="tlog_heroarmytranslog" parameterClass="java.util.Map">
+        INSERT INTO heroarmytranslog(logType,userId,userLv,heroId,armyEntId,armyEntIdTo,toHeroId,toArmyEntId,toArmyEntIdTo,dttm,eventId) VALUES  (#0#,#1#,#2#,#3#,#4#,#5#,#6#,#7#,#8#,#9#,#10#)
+    </insert>
+    
+    <insert id="tlog_changecountrylog" parameterClass="java.util.Map">
+        INSERT INTO changecountrylog(logType,userId,userLv,oldCountryId,newCountryId,dttm,eventId) VALUES (#0#,#1#,#2#,#3#,#4#,#5#,#6#)
+    </insert>
+	
+
+    <insert id="tlog_demolog" parameterClass="java.util.Map">
+        INSERT INTO demolog(logType,accId,openid,step,dttm,eventId) VALUES (#0#,#1#,#2#,#3#,#4#,#5#)
+    </insert>
+ </sqlMap>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+<sqlMap namespace="ServerInfo">
+	<!--========================================================= tower start============================================== -->
+	<typeAlias alias="tower" type="com.youxigu.dynasty2.tower.domain.Tower"/>
+
+	<select id="getTowers" resultClass="tower">
+		SELECT * FROM tower order by stageId asc
+	</select>
+
+	<typeAlias alias="towerSectionBonus" type="com.youxigu.dynasty2.tower.domain.TowerSectionBonus"/>
+
+	<select id="getTowerSectionBonuses" resultClass="TowerSectionBonus">
+		SELECT * FROM towersectionbonus
+	</select>
+
+    <!--========================================================= towerUser start============================================== -->
+	<typeAlias alias="towerUser" type="com.youxigu.dynasty2.tower.domain.TowerUser"/>
+
+	<cacheModel type="MEMCACHED" id="cache_towerUser" serialize="false" readOnly="false">
+		<flushOnExecute statement="insertTowerUser">
+			<flushModel flushstatement="towerUser" flushMode="insert" flushpara="userId"/>
+		</flushOnExecute>
+		<flushOnExecute statement="updateTowerUser">
+			<flushModel flushstatement="towerUser" flushMode="update" flushpara="userId"/>
+		</flushOnExecute>
+
+		<property name="class" value="towerUser"/>
+		<property name="pk" value="userId"/>
+	</cacheModel>
+
+	<insert id="insertTowerUser" parameterClass="towerUser">
+		INSERT INTO toweruser(userId,stageId,joinStatus,reliveTimes,freeJoinTime,
+        itemJoinTime,lastJoinDttm,topStageId,topDttm,score,winItemId,
+        seasonWinItemId,combatId) values(#userId#,#stageId#,#joinStatus#,#reliveTimes#,
+        #freeJoinTime#,#itemJoinTime#,#lastJoinDttm#,#topStageId#,#topDttm#,#score#,
+        #winItemId#,#seasonWinItemId#,#combatId#)
+	</insert>
+
+	<update id="updateTowerUser" parameterClass="towerUser" asyncUpdate="10">
+	    UPDATE toweruser set stageId=#stageId#,joinStatus=#joinStatus#,reliveTimes=#reliveTimes#,
+        freeJoinTime=#freeJoinTime#,itemJoinTime=#itemJoinTime#,lastJoinDttm=#lastJoinDttm#,
+        topStageId=#topStageId#,topDttm=#topDttm#,score=#score#,winItemId=#winItemId#,
+        seasonWinItemId=#seasonWinItemId#,combatId=#combatId# where userId=#userId#
+	</update>
+
+	<select id="getTowerUser" resultClass="towerUser" parameterClass="Long" cacheModel="cache_towerUser" cacheOnlyObject="true">
+		SELECT * FROM toweruser WHERE userId = #userId#
+	</select>
+
+</sqlMap>

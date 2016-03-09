@@ -1,0 +1,249 @@
+package com.youxigu.dynasty2.entity.service.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.youxigu.dynasty2.entity.domain.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.manu.core.ServiceLocator;
+import com.youxigu.dynasty2.common.AppConstants;
+import com.youxigu.dynasty2.entity.dao.IEntityDao;
+import com.youxigu.dynasty2.entity.domain.effect.EffectDefine;
+import com.youxigu.dynasty2.entity.domain.effect.EffectTypeDefine;
+import com.youxigu.dynasty2.entity.domain.effect.EntityEffect;
+import com.youxigu.dynasty2.entity.service.IEffectRender;
+import com.youxigu.dynasty2.entity.service.IEntityFactoryService;
+import com.youxigu.dynasty2.entity.service.IEntityService;
+import com.youxigu.dynasty2.util.BaseException;
+import com.youxigu.dynasty2.util.StringUtils;
+
+/**
+ * 实体service工厂接口的实现类<br>
+ * 这个抽象类做了两件事 :<BR>
+ * 1.IEntityFactoryService接口的getEntity方法<BR>
+ * 2.申明了抽象方法loadEntity，留给子类XXEntityFactoryService取具体实现
+ * 
+ */
+public abstract class AbstractEntityFactoryService<T extends Entity> implements IEntityFactoryService<T> {
+	public static final Logger log = LoggerFactory.getLogger(AbstractEntityFactoryService.class);
+
+	protected static Map<Integer, List<EntityConsume>> entityConsumeMaps;
+	protected static Map<Integer, List<EntityLimit>> entityLimitMaps;
+
+	protected static Map<Integer, List<EffectDefine>> effectDefineMaps;
+
+	protected static Map<Integer, List<DropPackItem>> dropPackItemMaps;
+
+	protected IEntityDao entityDao;
+
+	public void init() {
+		if (effectDefineMaps != null) {
+			//这是实体类的父类容易被多次加载
+			return;
+		}
+        List<EntityConsumeEx> entityConsumes = entityDao.getAllEntityConsumes();
+        entityConsumeMaps = new HashMap<Integer, List<EntityConsume>>(entityConsumes.size());
+        for (EntityConsumeEx data : entityConsumes) {
+            List<EntityConsume> consumes = data.toEntityConsumes();
+            for (EntityConsume consume : consumes) {
+                Integer key = consume.getEntId();
+                List<EntityConsume> subs = entityConsumeMaps.get(key);
+                if (subs == null) {
+                    subs = new ArrayList<EntityConsume>();
+                    entityConsumeMaps.put(key, subs);
+                }
+                subs.add(consume);
+            }
+        }
+
+		List<EntityLimit> entityLimits = entityDao.getAllEntityLimits();
+		entityLimitMaps = new HashMap<Integer, List<EntityLimit>>(entityLimits.size());
+		for (EntityLimit data : entityLimits) {
+			Integer key = data.getEntId();
+			List<EntityLimit> subs = entityLimitMaps.get(key);
+			if (subs == null) {
+				subs = new ArrayList<EntityLimit>();
+				entityLimitMaps.put(key, subs);
+			}
+			subs.add(data);
+		}
+
+		List<EffectDefine> datas = entityDao.getAllEffectDefines();
+		Map<Integer, EffectDefine> dataMaps = new HashMap<Integer, EffectDefine>(datas.size());
+		for (EffectDefine e : datas) {
+			dataMaps.put(e.getEffId(), e);
+		}
+
+		List<EntityEffect> entityEffects = entityDao.getAllEntityEffects();
+		effectDefineMaps = new HashMap<Integer, List<EffectDefine>>(entityEffects.size());
+		for (EntityEffect ee : entityEffects) {
+			Integer entId = ee.getEntId();
+			List<EffectDefine> list = effectDefineMaps.get(entId);
+			if (list == null) {
+				list = new ArrayList<EffectDefine>();
+				effectDefineMaps.put(entId, list);
+			}
+			Integer effId = ee.getEffId();
+			EffectDefine e = dataMaps.get(effId);
+			if (e != null) {
+				list.add(e);
+			}
+		}
+		dataMaps.clear();
+
+		List<DropPackItem> dropItems = entityDao.getDropPackItems();
+		dropPackItemMaps = new HashMap<Integer, List<DropPackItem>>();
+		for (DropPackItem item : dropItems) {
+			Integer entId = item.getEntId();
+			List<DropPackItem> subs = dropPackItemMaps.get(entId);
+			if (subs == null) {
+				subs = new ArrayList<DropPackItem>();
+				dropPackItemMaps.put(entId, subs);
+			}
+			subs.add(item);
+		}
+	}
+
+	public void setEntityDao(IEntityDao entityDao) {
+		this.entityDao = entityDao;
+	}
+
+	/**
+	 * 取得实体定义-效果-消耗-约束
+	 */
+	@Override
+	public T getEntity(int entityId, String entityType, Map<String, Object> context) {
+		if (effectDefineMaps == null) {
+			synchronized (AbstractEntityFactoryService.class) {
+				if (effectDefineMaps == null) {
+					//TODO 子类的中不能有同名的init方法，否则该类中init方法不会被执行
+					init();
+				}
+			}
+		}
+		// 这时候执行的是子类XXXEntityFactoryService里面的loadEntity方法,这个方法会到相应的实体(building-item等)表里取数据
+		T entity = loadEntity(entityId, entityType, context);
+		if (entity != null) {// 取到后，为该实体定义容量-消耗-约束
+			entity.setConsumes(entityConsumeMaps.get(entityId));
+			entity.setLimits(entityLimitMaps.get(entityId));
+
+			List<EffectDefine> effects = effectDefineMaps.get(entityId);
+			entity.setEffects(effects);
+
+			@SuppressWarnings("unchecked")
+			Map<String, IEffectRender> renders = (Map<String, IEffectRender>) context.get("effectRenders");
+			if (effects != null) {
+				@SuppressWarnings("unchecked")
+				Map<String, EffectTypeDefine> types = (Map<String, EffectTypeDefine>) context.get("effectTypes");
+				if (types != null) {
+					for (EffectDefine effect : effects) {
+						effect.setEffectType(types.get(effect.getEffTypeId()));
+					}
+				}
+
+				if (renders != null) {
+					for (EffectDefine effect : effects) {
+						IEffectRender render = null;
+						if (!StringUtils.isEmpty(effect.getServiceName())) {
+							render = renders.get(effect.getServiceName());
+							if (render == null) {
+								try {
+									render = (IEffectRender) ServiceLocator.getSpringBean(effect.getServiceName());
+								} catch (Exception e) {
+								}
+							}
+						}
+						if (render == null) {
+							render = renders.get(String.valueOf(effect.getEffId()));
+						}
+						if (render == null) {
+							render = renders.get(String.valueOf(effect.getEffTypeId()));
+						}
+						effect.setRender(render);
+					}
+				}
+			}
+
+		}
+		return entity;
+	}
+
+	// 这个是留给子实体去实现的方法，目的是load到不同的实体(item-building-army-technology-resource-party)
+	public abstract T loadEntity(int entityId, String entityType, Map<String, Object> context);
+
+	@Override
+	public void afterLoad(T entity, IEntityService entityService) {
+		// do nothing
+	}
+
+	/**
+	 * 根据实体子类型获得实体列表
+	 * 
+	 * @param type
+	 * @return
+	 */
+	@Override
+	public List<T> getEntityByTypes(String subType, IEntityService entityService) {
+		throw new BaseException("must implements by sub class");
+	}
+
+	/**
+	 * 创建实体，导入数据库实体使用
+	 */
+	@Override
+	public void createEntity(T entity, IEntityService entityService) {
+		// table Entity
+		int entId = entity.getEntId();
+		if (entId < AppConstants.ENT_DYNAMIC_ID_MIN || entId > AppConstants.ENT_DYNAMIC_ID_MAX) {
+			throw new BaseException("实体ID超过可配置范围");
+		}
+		if (entityService.getEntity(entId) != null) {
+			log.error("entityId已经存在:{}", entId);
+			return;
+		}
+		entityDao.createEntity(entity);
+
+        List<EntityConsume> consumes = entity.getConsumes();
+        if (consumes != null) {
+            int id = entId * 10;
+            for (EntityConsume ec : consumes) {
+                //将EntityConsume转为数据库操作对象EntityConsumeEx
+                EntityConsumeEx ecex = new EntityConsumeEx();
+                ecex.setId(id);
+                ecex.setEntId(ec.getEntId());
+                ecex.setLevel(ec.getLevel());
+                ecex.setNeedEntId(String.valueOf(ec.getNeedEntId()));
+                ecex.setNeedEntNum(String.valueOf(ec.getNeedEntNum()));
+
+                entityDao.createEntityConsume(ecex);
+                id++;
+            }
+        }
+
+		List<EntityLimit> limits = entity.getLimits();
+		if (limits != null) {
+			int id = entId * 10;
+			for (EntityLimit ec : limits) {
+				ec.setId(id);
+				entityDao.createEntityLimit(ec);
+				id++;
+			}
+		}
+
+		List<EffectDefine> effectDefines = entity.getEffects();
+		if (effectDefines != null) {
+			int id = entId * 10;
+			for (EffectDefine edc : effectDefines) {
+				edc.setEffId(id);
+				entityDao.createEffectDefine(edc);
+				entityDao.createEntityEffect(entity.getEntId(), edc.getEffId());
+				id++;
+			}
+		}
+
+	}
+}

@@ -1,0 +1,43 @@
+package com.youxigu.dynasty2.tips.domain;
+/**
+ * 效果图标：策划配数
+ * @author Administrator
+ *
+ */
+public class BuffDefine implements java.io.Serializable {
+    private static final long serialVersionUID = 8211779197514833022L;
+
+    public final static String NEWER = "NEWER";//新手
+    public final static String FORBIDTALK = "forbid_chat";//禁言
+    //    public final static String QQ_GUANJIA = "GUANJIA";//QQ管家
+    //    public final static String REBUILD = "REBUILD";//重建
+    //    public final static String HUSHEN = "HUSHEN";//护神
+    private int buffId;
+    private String buffName;
+    private int itemId;
+
+    public int getBuffId() {
+        return buffId;
+    }
+
+    public void setBuffId(int buffId) {
+        this.buffId = buffId;
+    }
+
+    public String getBuffName() {
+        return buffName;
+    }
+
+    public void setBuffName(String buffName) {
+        this.buffName = buffName;
+    }
+
+    public int getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
+    }
+}
+

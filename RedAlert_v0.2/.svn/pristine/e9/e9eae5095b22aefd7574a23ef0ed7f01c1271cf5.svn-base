@@ -1,0 +1,166 @@
+package com.youxigu.dynasty2.map.service.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.youxigu.dynasty2.map.dao.IMapDao;
+import com.youxigu.dynasty2.map.domain.Country;
+import com.youxigu.dynasty2.map.domain.CountryCharacter;
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.map.domain.State;
+import com.youxigu.dynasty2.map.domain.StateCache;
+import com.youxigu.dynasty2.map.domain.action.LoadMapAction;
+import com.youxigu.dynasty2.map.service.ICommandDistatcher;
+import com.youxigu.dynasty2.map.service.IMapService;
+import com.youxigu.wolf.net.NodeSessionMgr;
+
+/**
+ * 大地图坐标缓存类
+ * 
+ * @author LK run on mainServer
+ * @date 2016年2月17日
+ */
+public class MapService implements IMapService {
+	public static final Logger log = LoggerFactory.getLogger(MapService.class);
+
+	private Map<Integer, Country> countryMaps = new HashMap<Integer, Country>();// 国家
+	private Map<Integer, State> stateMaps = new HashMap<Integer, State>();// 区
+	private Map<Integer, MapCell> ALL_CELLS = new ConcurrentHashMap<Integer, MapCell>();// 所有坐标
+	private Map<Integer, StateCache> STATE_CELLS = new ConcurrentHashMap<Integer, StateCache>();// 区下的所有坐标
+
+	private IMapDao mapDao;
+	private ICommandDistatcher commandDistatcher;
+
+	public void setMapDao(IMapDao mapDao) {
+		this.mapDao = mapDao;
+	}
+
+	public void setCommandDistatcher(ICommandDistatcher commandDistatcher) {
+		this.commandDistatcher = commandDistatcher;
+	}
+
+	/**
+	 * 加载配数
+	 */
+	private void loadConf() {
+		// 放在前面执行。。。保证nodeserver也初始化国家信息
+		List<Country> countrys = mapDao.getCountrys();
+		if (countrys != null && countrys.size() > 0) {
+			// 加载所有国家可以创建的角色
+			List<CountryCharacter> cc = mapDao.getCountryCharacters();
+			for (Country country : countrys) {
+				// 国家
+				countryMaps.put(country.getCountryId(), country);
+
+				// 国家关联的角色创建信息
+				for (CountryCharacter c : cc) {
+					country.addCountryCharacter(c);
+				}
+
+				// 区
+				List<State> states = mapDao
+						.getStatesByCountryId(country.getCountryId());
+				if (states != null && states.size() > 0) {
+					for (State state : states) {
+						state.setCountry(country);
+						stateMaps.put(state.getStateId(), state);
+					}
+				}
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * 初始化service
+	 */
+	public void init() {
+		// 加载策划配数
+		this.loadConf();
+
+		// 只在mainserver上加载
+		String str = System.getProperty(NodeSessionMgr.SERVER_TYPE_KEY);
+		if (str == null) {
+			return;
+		}
+		int serverType = Integer.parseInt(str);
+		if (serverType != NodeSessionMgr.SERVER_TYPE_MAIN) {
+			return;
+		}
+
+		log.info("加载 国家、郡城数据......");
+		if (ALL_CELLS != null) {
+			ALL_CELLS.clear();
+		}
+		if (STATE_CELLS != null) {
+			STATE_CELLS.clear();
+		}
+
+		// 使用15个线程分区加载地图坐标
+		if (stateMaps != null && stateMaps.size() > 0) {
+			Iterator<Map.Entry<Integer, State>> itl = stateMaps.entrySet()
+					.iterator();
+			while (itl.hasNext()) {
+				Map.Entry<Integer, State> ent = itl.next();
+				State state = ent.getValue();
+				commandDistatcher.putCommander(state.getStateId() - 1,
+						new LoadMapAction(state, ALL_CELLS, STATE_CELLS));
+			}
+		}
+	}
+
+	@Override
+	public State getStateById(int stateId) {
+		return stateMaps.get(stateId);
+	}
+
+	@Override
+	public Country getCountryById(int countryId) {
+		return countryMaps.get(countryId);
+	}
+
+	@Override
+	public void updateMapCell(MapCell mapCell) {
+		ThreadLocalMapCellCache.addData(mapCell.clone());
+	}
+
+	@Override
+	public void updateMapCell(List<MapCell> mapCells) {
+		if (mapCells != null && mapCells.size() > 0) {
+			List<MapCell> _mapCells = new ArrayList<MapCell>(mapCells.size());
+
+			for (MapCell mapCell : mapCells) {
+				_mapCells.add(mapCell.clone());
+			}
+			ThreadLocalMapCellCache.addAll(_mapCells);
+		}
+	}
+
+	@Override
+	public MapCell getMapCell(int id) {
+		return ALL_CELLS.get(id);
+	}
+
+	@Override
+	public Map<Integer, MapCell> getMapCellsByStateId(int stateId) {
+		StateCache stateCache = STATE_CELLS.get(stateId);
+		if (stateCache != null) {
+			return stateCache.getCells();
+		}
+		return null;
+	}
+
+	@Override
+	public StateCache getStateCacheByStateId(int stateId) {
+		return STATE_CELLS.get(stateId);
+	}
+}

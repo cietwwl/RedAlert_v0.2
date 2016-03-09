@@ -1,0 +1,28 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+
+
+	<bean id="armyoutDao" class="com.youxigu.dynasty2.armyout.dao.impl.ArmyoutDao" >
+		<property name="sqlMapClientTemplate"><ref bean="sqlMapClientTemplate" /></property>
+	</bean>
+	
+	<bean id="armyoutService" class="com.youxigu.dynasty2.armyout.service.impl.ArmyoutService" >
+		<property name="armyoutDao"><ref bean="armyoutDao" /></property>
+<!-- 		<property name="mapService"><ref bean="mapService" /></property> -->
+<!-- 		<property name="commandDistatcher"><ref bean="commandDistatcher" /></property> -->
+		<property name="commonService"><ref bean="commonService" /></property>
+	</bean>
+	
+	<bean id="spyStrategyService" class="com.youxigu.dynasty2.armyout.service.impl.SpyStrategyService" parent = "strategyCommander">
+	</bean>
+
+</beans>
+
+

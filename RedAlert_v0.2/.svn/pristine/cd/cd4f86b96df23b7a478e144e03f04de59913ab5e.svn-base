@@ -1,0 +1,226 @@
+package com.youxigu.dynasty2.combat.service.impl;
+
+import com.youxigu.dynasty2.combat.domain.CombatTeam;
+import com.youxigu.dynasty2.combat.domain.NPCHeroCombatUnit;
+import com.youxigu.dynasty2.combat.domain.PlayHeroCombatUint;
+import com.youxigu.dynasty2.combat.service.ICombatTeamService;
+import com.youxigu.dynasty2.hero.domain.Hero;
+import com.youxigu.dynasty2.hero.domain.Troop;
+import com.youxigu.dynasty2.hero.enums.TroopGridPosition;
+import com.youxigu.dynasty2.hero.service.ITroopService;
+import com.youxigu.dynasty2.npc.domain.NPCDefine;
+import com.youxigu.dynasty2.npc.domain.NPCHero;
+import com.youxigu.dynasty2.npc.domain.NPCTroop;
+import com.youxigu.dynasty2.user.domain.User;
+import com.youxigu.dynasty2.util.BaseException;
+
+/**
+ * 玩家队伍构造器
+ */
+public class PlayerCombatTeamService implements ICombatTeamService {
+	private ITroopService troopService;
+
+	public void setTroopService(ITroopService troopService) {
+		this.troopService = troopService;
+	}
+
+	@Override
+	public CombatTeam getCombatTeam(long casId) {
+		throw new BaseException("not support........");
+	}
+
+	@Override
+	public CombatTeam getCombatTeam(long casId, boolean isDefender) {
+		throw new BaseException("not support........");
+	}
+
+	@Override
+	public CombatTeam getCombatTeamByUser(User user, Troop troop,
+			boolean isDefender, boolean fullArmy) {
+		return this
+				.getCombatTeamByUser(user, troop, null, isDefender, fullArmy);
+	}
+
+	@Override
+	public CombatTeam getCombatTeamByUser(User user, Troop troop,
+			NPCDefine npc, boolean isDefender, boolean fullArmy) {
+		long userId = user.getUserId();
+
+		CombatTeam team = new CombatTeam(CombatTeam.TEAM_TYPE_PLAYERHERO);
+
+		Hero[] heros = null;
+		int[] pos = new int[6];
+		int num = 6;
+		if (troop != null) {
+			if (fullArmy) {
+				heros = troop.getFullArmyHeros();
+			} else {
+				heros = troop.getHeros();
+			}
+
+			int index = 0;
+			for (Hero hero : heros) {
+				if (hero != null) {
+					team.addUint(new PlayHeroCombatUint(heros[index], index + 1));
+					num = num - 1;
+				}
+				index = index + 1;
+			}
+		}
+
+		if (npc != null) {
+			NPCTroop npcTroop = npc.getTroop();
+			if (npcTroop != null && num > 0) {
+				NPCHero[] npcHeros = npcTroop.getHeros();
+				for (NPCHero npcHero : npcHeros) {
+					if (num <= 0) {
+						break;
+					}
+					if (npcHero == null) {
+						continue;
+					}
+
+					for (int i = 0; i < pos.length; i++) {
+						if (pos[i] == 0) {
+							team.addUint(new NPCHeroCombatUnit(npcHero, i + 1));
+
+							pos[i] = 1;
+							num = num - 1;
+							break;
+						}
+					}
+				}
+			}
+		}
+		setTeam(user, userId, team);
+		return team;
+	}
+
+	private void setTeam(User user, long userId, CombatTeam team) {
+		team.setUserId(userId);
+		team.setTeamName(user.getUserName());
+		team.setIcon(user.getIcon());
+		team.setCasId(user.getMainCastleId());
+		team.setLevel(user.getUsrLv());
+		// if (troop != null) {
+		// team.setTroopId(troop.getTroopId());
+		// team.setTroopName(troop.getName());
+		// team.setTeamPower((int) troopService.getTroopCombatPower(troop,
+		// fullArmy));
+		// }
+		//
+		// // 设置联盟
+		// if (user.getGuildId() != 0) {
+		// team.setGuild(guildService.getGuildById(user.getGuildId()));
+		// }
+	}
+
+	@Override
+	public CombatTeam getNextDefenceCombatTeam(long casId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public CombatTeam getCombatTeamByUserFilter(User user, Troop troop,
+			NPCDefine npc, boolean isDefender, boolean fullArmy) {
+		long userId = user.getUserId();
+		CombatTeam team = new CombatTeam(CombatTeam.TEAM_TYPE_PLAYERHERO);
+		Hero[] heros = new Hero[TroopGridPosition.MAX_TROOP_GRID];
+		int num = TroopGridPosition.MAX_TROOP_GRID;
+		if (troop != null) {
+			Hero[] srcHeros = null;
+			if (fullArmy) {
+				srcHeros = troop.getFullArmyHeros();
+			} else {
+				srcHeros = troop.getHeros();
+			}
+			if (srcHeros == null) {
+				srcHeros = new Hero[TroopGridPosition.MAX_TROOP_GRID];
+			}
+
+			for (int i = 0; i < TroopGridPosition.MAX_TROOP_GRID; i++) {// 拷贝heros，因为下面会修改heros的数组引用,重置为null
+				heros[i] = srcHeros[i];
+			}
+		}
+
+		NPCHero npcHeros[] = null;
+		NPCTroop npcTroop = npc.getTroop();
+		if (npcTroop != null && num > 0) {
+			npcHeros = npcTroop.getHeros();
+		}
+		if (npcHeros == null) {
+			npcHeros = new NPCHero[TroopGridPosition.MAX_TROOP_GRID];
+		}
+		boolean mainHero = false;// 标记君主坦克是否已经放入team里面
+		boolean[] pos = new boolean[TroopGridPosition.MAX_TROOP_GRID];
+		for (int i = 0; i < TroopGridPosition.MAX_TROOP_GRID; i++) {
+			Hero hero = heros[i];
+			NPCHero npcHero = npcHeros[i];
+			if (hero == null && npcHero == null) {
+				continue;
+			}
+			// 1. 有一个为null
+			if (hero == null && npcHero != null) {
+				team.addUint(new NPCHeroCombatUnit(npcHero, i + 1));
+				num = num - 1;
+				pos[i] = true;
+				continue;
+			}
+			if (hero != null && npcHero == null) {
+				if (troop.isMainHero(hero.getHeroId())) {
+					mainHero = true;
+				}
+				team.addUint(new PlayHeroCombatUint(hero, i + 1));
+				heros[i] = null;// 重置
+				num = num - 1;
+				pos[i] = true;
+				continue;
+			}
+
+			// 2. 两个都不为null
+			if (mainHero) {
+				// 剔除上阵坦克,把npc放入team里面
+				team.addUint(new NPCHeroCombatUnit(npcHero, i + 1));
+				num = num - 1;
+				pos[i] = true;
+				continue;
+			} else {
+				// 君主坦克没有上阵,判断是不是君主坦克
+				if (troop.isMainHero(hero.getHeroId())) {// 放入君主坦克
+					mainHero = true;
+					team.addUint(new PlayHeroCombatUint(hero, i + 1));
+					heros[i] = null;// 重置
+					num = num - 1;
+					pos[i] = true;
+				} else {// 放入npc
+					team.addUint(new NPCHeroCombatUnit(npcHero, i + 1));
+					num = num - 1;
+					pos[i] = true;
+				}
+				continue;
+			}
+		}
+		if (num > 0) {
+			// 补充坦克上阵
+			for (Hero h : heros) {
+				if (num <= 0) {
+					break;
+				}
+				if (h == null) {
+					continue;
+				}
+				for (int i = 0; i < TroopGridPosition.MAX_TROOP_GRID; i++) {
+					if (pos[i]) {
+						continue;
+					}
+					team.addUint(new PlayHeroCombatUint(h, i + 1));
+					num = num - 1;
+					pos[i] = true;
+				}
+			}
+		}
+		setTeam(user, userId, team);
+		return team;
+	}
+}

@@ -1,0 +1,475 @@
+package com.youxigu.dynasty2.hero.domain;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+
+import com.manu.core.ServiceLocator;
+import com.youxigu.dynasty2.hero.enums.TroopGridPosition;
+import com.youxigu.dynasty2.hero.enums.TroopIdle;
+import com.youxigu.dynasty2.hero.enums.TroopType;
+import com.youxigu.dynasty2.hero.service.IHeroService;
+import com.youxigu.dynasty2.hero.service.ITroopGridService;
+import com.youxigu.dynasty2.hero.service.ITroopService;
+import com.youxigu.dynasty2.util.BaseException;
+
+/**
+ * 一个军团对应12格子,目前使用了6个格子（表示上阵的6个武将）
+ * 
+ * 
+ */
+public class Troop implements Serializable {
+	private static final long serialVersionUID = 1L;
+	private long troopId;
+	private String name;// 军团名称
+	private long userId;// 玩家编号
+	private long mainHeroId;// 君主坦克id，只有第一军团有..其他军团没有。。君主坦克不能上下阵。不能交换
+	private int indexs;// 军团顺序 1 2 3 (1表示主力军团)
+	/**
+	 * 对于要启动job的战斗，会将Troop的状态置为STATUS_OUT,<br>
+	 * 由于job可能出异常，导致troop永远都锁住，这里设置预计的返回时间（注：这个时间未必准确）,
+	 * 到达这个时间，则自动置troop的状态为IDLE,同时也更新hero的状态 只有在status =STATUS_OUT时才有效
+	 * 每次设置status =STATUS_OUT的时候要设置这个时间
+	 */
+	private Timestamp freeDttm;//
+	private int status;// 状态
+
+	private long troopGridId1;// 军团里面默认的六个格子
+	private long troopGridId2;
+	private long troopGridId3;
+	private long troopGridId4;
+	private long troopGridId5;
+	private long troopGridId6;
+
+	// 这里用数组保存，数组顺序决定阵型中的位置
+	private transient Hero[] heros;
+	private transient Hero[] FullArmyheros;
+
+	private transient IHeroService heroService;
+	private transient ITroopGridService troopGridService;
+
+	private transient TroopGrid[] troopGrids = null;
+
+	public Troop() {
+		super();
+	}
+
+	public Troop(String name, long userId, long mainHeroId, TroopType tp) {
+		super();
+		this.name = name;
+		this.userId = userId;
+		this.mainHeroId = mainHeroId;
+		this.indexs = tp.getIndex();
+		for (TroopGridPosition tgp : TroopGridPosition.values()) {
+			// 初始化6个格子都为0
+			tgp.setTroopGridId(this, 0);
+		}
+		setStatus(TroopIdle.STATUS_IDLE.getIndex());
+	}
+
+	public long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(long userId) {
+		this.userId = userId;
+	}
+
+	public long getTroopId() {
+		return troopId;
+	}
+
+	public void setTroopId(long troopId) {
+		this.troopId = troopId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public TroopIdle getStatusEnum() {
+		return TroopIdle.valueOf(status);
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public TroopIdle getRealStatus() {
+		if (freeDttm != null && freeDttm.getTime() < System.currentTimeMillis()) {
+			return TroopIdle.STATUS_IDLE;
+		}
+		return getStatusEnum();
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public Timestamp getFreeDttm() {
+		return freeDttm;
+	}
+
+	public void setFreeDttm(Timestamp freeDttm) {
+		this.freeDttm = freeDttm;
+	}
+
+	/**
+	 * 是否可以出征
+	 * 
+	 * @return true表示可以出征
+	 */
+	public boolean canArmyOut() {
+		if (!getStatusEnum().isCombat()) {
+			return false;
+		}
+		Hero[] heros = getHeros();
+		if (heros == null || heros.length == 0) {
+			return false;
+		}
+		for (Hero hero : heros) {
+			if (hero == null) {
+				continue;
+			}
+			if (!hero.idle()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * 获取一个空的军团格子位置
+	 * 
+	 * @return
+	 */
+	public TroopGridPosition getEmptyTroopGridPosition() {
+		TroopGridPosition[] tps = TroopGridPosition.values();
+		for (TroopGridPosition tp : tps) {
+			long id = tp.getTroopGridId(this);
+			if (id > 0) {
+				continue;
+			}
+			return tp;
+		}
+		return null;
+	}
+
+	/**
+	 * 是否可以防守
+	 * 
+	 * @return
+	 */
+	public boolean canDefence() {
+		if (!getStatusEnum().isCombat()) {
+			return false;
+		}
+
+		Hero[] heros = getHeros();
+		for (Hero hero : heros) {
+			if (!hero.idle()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private IHeroService getHeroService() {
+		if (heroService == null) {
+			heroService = (IHeroService) ServiceLocator
+					.getSpringBean("heroService");
+		}
+		return heroService;
+	}
+
+	private ITroopGridService getTroopGridService() {
+		if (troopGridService == null) {
+			troopGridService = (ITroopGridService) ServiceLocator
+					.getSpringBean("troopGridService");
+		}
+		return troopGridService;
+	}
+
+	/**
+	 * 根据格子id获取格子里面的武将
+	 * 
+	 * @return
+	 */
+	public Hero getHero(long troopGridId) {
+		if (troopGridId > 0) {
+			TroopGrid tg = getTroopGridService().getTroopGrid(getUserId(),
+					troopGridId);
+			if (tg == null) {
+				return null;
+			}
+			return getHeroService()
+					.getHeroByHeroId(getUserId(), tg.getHeroId());
+		}
+		return null;
+	}
+
+	public Hero[] getHeros() {
+		if (this.heros == null) {
+			heros = new Hero[ITroopService.MAX_HERO];
+			heros[0] = getHero(troopGridId1);
+			heros[1] = getHero(troopGridId2);
+			heros[2] = getHero(troopGridId3);
+			heros[3] = getHero(troopGridId4);
+			heros[4] = getHero(troopGridId5);
+			heros[5] = getHero(troopGridId6);
+		}
+		return heros;
+	}
+
+	/**
+	 * 获取满兵的hero
+	 * 
+	 * @param troopGridId
+	 * @return
+	 */
+	private Hero getFullArmyHero(long troopGridId) {
+		FullArmyHero h = null;
+		Hero tmp = getHero(troopGridId);
+		if (tmp != null) {
+			h = new FullArmyHero(tmp);
+		}
+		return h;
+	}
+
+	/**
+	 * true表示主力军团
+	 * 
+	 * @return
+	 */
+	public boolean isMainTroop() {
+		return TroopType.valueOf(getIndexs()).isMainTroop();
+	}
+
+	/**
+	 * true是君主坦克
+	 * 
+	 * @param heroId
+	 * @return
+	 */
+	public boolean isMainHero(long heroId) {
+		return heroId == mainHeroId;
+	}
+
+	public Hero[] getFullArmyHeros() {
+		if (this.FullArmyheros == null) {
+			this.FullArmyheros = new Hero[ITroopService.MAX_HERO];
+			this.FullArmyheros[0] = getFullArmyHero(troopGridId1);
+			this.FullArmyheros[1] = getFullArmyHero(troopGridId2);
+			this.FullArmyheros[2] = getFullArmyHero(troopGridId3);
+			this.FullArmyheros[3] = getFullArmyHero(troopGridId4);
+			this.FullArmyheros[4] = getFullArmyHero(troopGridId5);
+			this.FullArmyheros[5] = getFullArmyHero(troopGridId6);
+		}
+		return this.FullArmyheros;
+	}
+
+	public TroopGrid getTroopGrid(long troopGridId) {
+		if (troopGridId > 0) {
+			TroopGrid tg = getTroopGridService().getTroopGrid(getUserId(),
+					troopGridId1);
+			return tg;
+		}
+		return null;
+	}
+
+	public TroopGrid[] getTroopGrids() {
+		if (troopGrids == null) {
+			this.troopGrids = new TroopGrid[TroopGridPosition.MAX_TROOP_GRID];
+			this.troopGrids[0] = getTroopGrid(troopGridId1);
+			this.troopGrids[1] = getTroopGrid(troopGridId2);
+			this.troopGrids[2] = getTroopGrid(troopGridId3);
+			this.troopGrids[3] = getTroopGrid(troopGridId4);
+			this.troopGrids[4] = getTroopGrid(troopGridId5);
+			this.troopGrids[5] = getTroopGrid(troopGridId6);
+		}
+		return this.troopGrids;
+	}
+
+	public TroopGrid getMainTroopGrid() {
+		if (!isMainTroop()) {
+			return null;
+		}
+		Hero hero = getHeroService().getHeroByHeroId(userId, getMainHeroId());
+		if (!hero.isCommander()) {
+			throw new BaseException("数据异常不是指挥官武将 troopId=" + troopId
+					+ ",heroId=" + getMainHeroId());
+		}
+		return getTroopGrid(hero.getTroopGridId());
+	}
+
+	/**
+	 * 获取已经上阵的武将数量
+	 * 
+	 * @return
+	 */
+	public int getHeroNum() {
+		// 有格子id。。就表示有武将上阵...因为我们的武将是不能下阵的
+		int num = 0;
+		if (troopGridId1 != 0) {
+			num++;
+		}
+		if (troopGridId2 != 0) {
+			num++;
+		}
+		if (troopGridId3 != 0) {
+			num++;
+		}
+		if (troopGridId4 != 0) {
+			num++;
+		}
+		if (troopGridId5 != 0) {
+			num++;
+		}
+		if (troopGridId6 != 0) {
+			num++;
+		}
+		return num;
+
+	}
+
+	/**
+	 * 剩余分钟数
+	 * 
+	 * @return
+	 */
+	public int getRemainMinite() {
+		if (this.getFreeDttm() != null) {
+			return Math.max(1, (int) ((this.getFreeDttm().getTime() - System
+					.currentTimeMillis()) / 60000));
+		} else {
+			return 0;
+		}
+	}
+
+	public long getMainHeroId() {
+		return mainHeroId;
+	}
+
+	public void setMainHeroId(long mainHeroId) {
+		this.mainHeroId = mainHeroId;
+	}
+
+	public long getTroopGridId1() {
+		return troopGridId1;
+	}
+
+	public void setTroopGridId1(long troopGridId1) {
+		this.troopGridId1 = troopGridId1;
+	}
+
+	public long getTroopGridId2() {
+		return troopGridId2;
+	}
+
+	public void setTroopGridId2(long troopGridId2) {
+		this.troopGridId2 = troopGridId2;
+	}
+
+	public long getTroopGridId3() {
+		return troopGridId3;
+	}
+
+	public void setTroopGridId3(long troopGridId3) {
+		this.troopGridId3 = troopGridId3;
+	}
+
+	public long getTroopGridId4() {
+		return troopGridId4;
+	}
+
+	public void setTroopGridId4(long troopGridId4) {
+		this.troopGridId4 = troopGridId4;
+	}
+
+	public long getTroopGridId5() {
+		return troopGridId5;
+	}
+
+	public void setTroopGridId5(long troopGridId5) {
+		this.troopGridId5 = troopGridId5;
+	}
+
+	public long getTroopGridId6() {
+		return troopGridId6;
+	}
+
+	public void setTroopGridId6(long troopGridId6) {
+		this.troopGridId6 = troopGridId6;
+	}
+
+	public int getIndexs() {
+		return indexs;
+	}
+
+	public void setIndexs(int indexs) {
+		this.indexs = indexs;
+	}
+
+	public TroopType getTroopType() {
+		return TroopType.valueOf(getIndexs());
+	}
+
+	/**
+	 * 判断军团上面是否有这个格子了
+	 * 
+	 * @param troopGridId
+	 * @return
+	 */
+	public boolean hasTroopGrid(long troopGridId) {
+		if (troopGridId == troopGridId1 || troopGridId == troopGridId2
+				|| troopGridId == troopGridId3 || troopGridId == troopGridId4
+				|| troopGridId == troopGridId5 || troopGridId == troopGridId6) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 判断格子上面是否有武将
+	 * 
+	 * @return true 表示已经有武将上阵
+	 */
+	public boolean hasHero(TroopGridPosition ps) {
+		long id = ps.getTroopGridId(this);
+		return id > 0;
+	}
+
+	public long getTroopGridId(TroopGridPosition ps) {
+		return ps.getTroopGridId(this);
+	}
+
+	public void setTroopGridId(TroopGridPosition ps, long troopGridId) {
+		ps.setTroopGridId(this, troopGridId);
+	}
+
+	public TroopGridPosition getTroopGridPosition(long troopGridId) {
+		TroopGridPosition tps[] = TroopGridPosition.values();
+		for (TroopGridPosition p : tps) {
+			long id = getTroopGridId(p);
+			if (id == troopGridId) {
+				return p;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 重置所有军团绑定的格子
+	 */
+	public void restTroopGrids() {
+		this.troopGridId1 = 0;
+		this.troopGridId2 = 0;
+		this.troopGridId3 = 0;
+		this.troopGridId4 = 0;
+		this.troopGridId5 = 0;
+		this.troopGridId6 = 0;
+	}
+}

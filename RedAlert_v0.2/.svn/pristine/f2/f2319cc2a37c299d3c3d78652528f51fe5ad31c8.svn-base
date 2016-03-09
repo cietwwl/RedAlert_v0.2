@@ -1,0 +1,34 @@
+package com.youxigu.dynasty2.armyout.domain.action;
+
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+import com.youxigu.dynasty2.armyout.domain.Strategy;
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.map.domain.action.TimeAction;
+import com.youxigu.dynasty2.user.domain.User;
+
+/**
+ * pvp出征
+ * 
+ * @author LK
+ * @date 2016年2月29日
+ */
+public class PVPOutAction extends TimeAction {
+	public MapCell fromCell;
+	public MapCell toCell;
+	public Armyout armyout;
+	public User fromUser;
+	public Strategy strategy;
+
+	public PVPOutAction(MapCell fromCell, MapCell toCell, Armyout armyout,
+			User fromUser, Strategy strategy,
+			long time) {
+		super.time = time;
+		// 这里相当于cmd=0，走<entry key="0"><ref bean="strategyCommander"/></entry>
+		this.fromCell = fromCell;
+		this.toCell = toCell;
+		this.fromUser = fromUser;
+		this.strategy = strategy;
+		this.armyout = armyout;
+		this.armyout.parent = this;// 设置所属的行为
+	}
+}

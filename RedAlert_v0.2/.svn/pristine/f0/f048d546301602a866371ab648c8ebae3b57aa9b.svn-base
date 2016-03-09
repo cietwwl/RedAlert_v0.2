@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+	
+	<typeAlias alias="message" type="com.youxigu.dynasty2.mail.domain.MailMessage" />
+
+	<cacheModel type="MEMCACHED" id="cache_mailMessage" cacheMode="remote" serialize="false" readOnly="false">
+		<flushInterval hours="12"/>
+		<flushOnExecute statement="insertMessage">
+			<flushModel flushstatement="getUserMessages" flushMode="insert" flushpara="receiveUserId" />
+			<flushModel flushstatement="message" flushMode="insert" flushpara="receiveUserId,messageId"/>
+		</flushOnExecute>
+		<flushOnExecute statement="updateMessage">
+			<flushModel flushstatement="message" flushMode="update" flushpara="receiveUserId,messageId"/>
+		</flushOnExecute>
+
+		<flushOnExecute statement="deleteMessage">
+			<flushModel flushstatement="getUserMessages" flushMode="delete" flushpara="receiveUserId"/>
+			<flushModel flushstatement="message" flushMode="delete" flushpara="receiveUserId,messageId"/>
+		</flushOnExecute>
+		<property name="class" value="message"/>
+		<property name="pk" value="receiveUserId,messageId"/>
+	</cacheModel>
+
+	<insert id="insertMessage" parameterClass="message" shardingParams='[{"paramExpr":"receiveUserId","tableName":"message"}]'>
+		insert into message(sendUserId,receiveUserId,sendDttm,readDttm,comment,title,status,messageType, map, entityId0, itemNum0,entityId1, itemNum1, entityId2, itemNum2,  entityId3, itemNum3,entityId4, itemNum4,entityId5, itemNum5,status0,isGift)
+		              values (#sendUserId#,#receiveUserId#,#sendDttm#,#readDttm#,#comment#,#title#,#status#,#messageType#,#map#,#entityId0#,#itemNum0#,#entityId1#,#itemNum1#,#entityId2#,#itemNum2#,#entityId3#,#itemNum3#,#entityId4#,#itemNum4#,#entityId5#,#itemNum5#,#status0#,#isGift#)
+		<selectKey resultClass="int" keyProperty="messageId">
+			SELECT last_insert_Id() 
+		</selectKey>
+	</insert>
+
+	<update id="updateMessage" parameterClass="message" shardingParams='[{"paramExpr":"receiveUserId","tableName":"message"}]' asyncUpdate="6">
+    	update message set status = #status#, readDttm=now(), status0 = #status0#,
+        entityId0=#entityId0#, entityId1=#entityId1#, entityId2=#entityId2#, entityId3=#entityId3#, entityId4=#entityId4#, entityId5=#entityId5#
+        where messageId = #messageId# and receiveUserId=#receiveUserId#
+	</update>
+
+	<delete id="deleteMessage" parameterClass="message" shardingParams='[{"paramExpr":"receiveUserId","tableName":"message"}]' >
+    	delete from message where messageId = #messageId#
+	</delete>
+
+	<select id="getMessageById" parameterClass="java.util.HashMap"  resultClass="message" shardingParams='[{"paramExpr":"receiveUserId","tableName":"message"}]' cacheModel="cache_mailMessage" cacheOnlyObject="true">
+		select * from message where messageId = #messageId#
+  	</select>
+
+	<select id="getUserMessages" parameterClass="long"  resultClass="message" cacheModel="cache_mailMessage"  resultIsList="true" shardingParams='[{"paramExpr":"receiveUserId","tableName":"message"}]'>
+		select * from message
+		where receiveUserId = #receiveUserId#
+  	</select>
+
+	<delete id="deleteOverDueMessage" parameterClass="java.util.HashMap" shardingParams='[{"paramExpr":"shardNum","tableName":"message"}]'>
+		delete from message where status0=0 and (TO_DAYS(NOW()) - TO_DAYS(sendDttm)) > #day#
+	</delete>
+	
+	<delete id="deleteOverDueAppendixMessage" parameterClass="java.util.HashMap" shardingParams='[{"paramExpr":"shardNum","tableName":"message"}]'>
+		delete from message where status0 !=0 and (TO_DAYS(NOW()) - TO_DAYS(sendDttm)) > #day#
+	</delete>
+	
+</sqlMap>

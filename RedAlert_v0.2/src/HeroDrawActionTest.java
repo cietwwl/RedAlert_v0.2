@@ -1,0 +1,47 @@
+import com.youxigu.dynasty2.hero.enums.HeroDrawType;
+import com.youxigu.dynasty2.hero.proto.HeroMsg.Request33101Define;
+import com.youxigu.dynasty2.hero.proto.HeroMsg.Request33103Define;
+import com.youxigu.dynasty2.user.proto.UserMsg.Response10003Define;
+
+public class HeroDrawActionTest extends ClientServerTestCase {
+
+	public void showBar() {
+		Request33101Define.Builder req = Request33101Define.newBuilder();
+		req.setCmd(33101);
+		request(req.build());
+	}
+
+	public void buiBarHireHero(HeroDrawType type, boolean ten) {
+		Request33103Define.Builder req = Request33103Define.newBuilder();
+		req.setCmd(33103);
+		req.setTen(ten);
+		req.setType(type.getIndex());
+		request(req.build());
+	}
+
+	public static void main(String[] args) throws Exception {
+		HeroDrawActionTest test = new HeroDrawActionTest();
+		// String accId = "mazhen";
+		String accId = "700";
+		HeroDrawActionTest client = (HeroDrawActionTest) test
+				.startClient("192.168.1.89", 8739, accId, "admin", "123456",
+						test.getClass());
+		try {
+			Response10003Define response10003Define = (Response10003Define) client
+					.requestgetUser(client.sid);
+			if (response10003Define.getUserId() < 0) {
+				client.requestCreateUser(accId, 100000021);
+			}
+			// client.showBar();
+			// client.buiBarHireHero(HeroDrawType.HERO_DRAW_TYPE1, false);
+			// for (int i = 0; i < 7; i++) {
+			// client.buiBarHireHero(HeroDrawType.HERO_DRAW_TYPE1, false);
+			// }
+			// client.buiBarHireHero(HeroDrawType.HERO_DRAW_TYPE1, true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			// client.close();
+		}
+	}
+}

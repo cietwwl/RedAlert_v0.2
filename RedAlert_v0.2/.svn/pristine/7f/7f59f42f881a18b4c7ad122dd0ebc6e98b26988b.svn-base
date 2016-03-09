@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+<!--========================================================= init（初始化） start============================================== -->
+  <typeAlias alias="riskParentScene" type="com.youxigu.dynasty2.risk.domain.RiskParentScene"/>
+  <typeAlias alias="riskScene" type="com.youxigu.dynasty2.risk.domain.RiskScene"/>
+  
+  <select id="getRiskParentScenes" resultClass="riskParentScene">
+        SELECT * FROM riskparentscene order by id
+  </select>
+
+  <select id="getRiskScenes" resultClass="riskScene" parameterClass="int">
+        SELECT * FROM riskscene where parentId=#pId# order by prevSceneId
+  </select>
+  
+   <typeAlias alias="userRiskScene" type="com.youxigu.dynasty2.risk.domain.UserRiskScene"/>
+   <cacheModel type="MEMCACHED" id="cache_userRiskScene" serialize="false" readOnly="false">
+        <flushOnExecute statement="insertUserRiskScene">
+		  <flushModel flushstatement="getUserRiskScenes" flushMode="insert" flushpara="userId"/>
+          <flushModel flushstatement="userRiskScene" flushMode="insert" flushpara="userId,pid"/>
+        </flushOnExecute>
+        <flushOnExecute statement="updateUserRiskScene">
+          <flushModel flushstatement="userRiskScene" flushMode="update" flushpara="userId,pid"/>
+        </flushOnExecute>
+        <property name="class" value="userRiskScene"/>
+        <property name="pk" value="userId,pid"/>
+    </cacheModel>
+
+	<insert id="insertUserRiskScene" parameterClass="userRiskScene" shardingParams='[{"paramExpr":"userId","tableName":"userriskscene"}]' >
+        INSERT INTO userriskscene (userId,pid,starAward,sceneId0,version0,data0,items0,
+        			sceneId1,version1,data1,items1,sceneId2,version2,data2,items2,sceneId3,version3,data3,items3,
+        			sceneId4,version4,data4,items4,sceneId5,version5,data5,items5,sceneId6,version6,data6,items6,
+        			sceneId7,version7,data7,items7,sceneId8,version8,data8,items8,sceneId9,version9,data9,items9,
+        			sceneId10,version10,data10,items10,sceneId11,version11,data11,items11,sceneId12,version12,data12,items12,
+        			sceneId13,version13,data13,items13,sceneId14,version14,data14,items14,flags) 
+        			
+        VALUES (#userId#,#pid#,#starAward#,#sceneId0#,#version0#,#data0#,#items0#,
+        			#sceneId1#,#version1#,#data1#,#items1#,#sceneId2#,#version2#,#data2#,#items2#,#sceneId3#,#version3#,#data3#,#items3#,
+        			#sceneId4#,#version4#,#data4#,#items4#,#sceneId5#,#version5#,#data5#,#items5#,#sceneId6#,#version6#,#data6#,#items6#,
+        			#sceneId7#,#version7#,#data7#,#items7#,#sceneId8#,#version8#,#data8#,#items8#,#sceneId9#,#version9#,#data9#,#items9#,
+        			#sceneId10#,#version10#,#data10#,#items10#,#sceneId11#,#version11#,#data11#,#items11#,#sceneId12#,#version12#,#data12#,#items12#,
+        			#sceneId13#,#version13#,#data13#,#items13#,#sceneId14#,#version14#,#data14#,#items14#,#flags#)
+    </insert> 
+    
+    
+    
+    <update id="updateUserRiskScene" parameterClass="userRiskScene" asyncUpdate="7"  shardingParams='[{"paramExpr":"userId","tableName":"userriskscene"}]'>
+        UPDATE userriskscene 
+        	SET starAward = #starAward#,sceneId0=#sceneId0#,version0=#version0#,data0=#data0#,items0=#items0#,sceneId1=#sceneId1#,version1=#version1#,data1=#data1#,items1=#items1#,sceneId2=#sceneId2#,version2=#version2#,data2=#data2#,items2=#items2#,
+        		sceneId3=#sceneId3#,version3=#version3#,data3=#data3#,items3=#items3#,sceneId4=#sceneId4#,version4=#version4#,data4=#data4#,items4=#items4#,sceneId5=#sceneId5#,version5=#version5#,data5=#data5#,items5=#items5#,
+        		sceneId6=#sceneId6#,version6=#version6#,data6=#data6#,items6=#items6#,sceneId7=#sceneId7#,version7=#version7#,data7=#data7#,items7=#items7#,sceneId8=#sceneId8#,version8=#version8#,data8=#data8#,items8=#items8#,
+        		sceneId9=#sceneId9#,version9=#version9#,data9=#data9#,items9=#items9#,sceneId10=#sceneId10#,version10=#version10#,data10=#data10#,items10=#items10#,sceneId11=#sceneId11#,version11=#version11#,data11=#data11#,items11=#items11#,
+        		sceneId12=#sceneId12#,version12=#version12#,data12=#data12#,items12=#items12#,sceneId13=#sceneId13#,version13=#version13#,data13=#data13#,items13=#items13#,
+        		sceneId14=#sceneId14#,version14=#version14#,data10=#data14#,items14=#items14#,flags=#flags#
+        	where userId=#userId# and pid=#pid#
+    </update>
+    
+    
+    
+    <select id="getUserRiskScenes" resultClass="userRiskScene" parameterClass="long" cacheModel="cache_userRiskScene" resultIsList="true" shardingParams='[{"paramExpr":"userId","tableName":"userriskscene"}]'>
+        SELECT * FROM userriskscene WHERE userId = #userId# ORDER BY pid ASC
+    </select>
+
+    <select id="getUserRiskScene" resultClass="userRiskScene" parameterClass="java.util.Map" cacheModel="cache_userRiskScene" cacheOnlyObject="true"  shardingParams='[{"paramExpr":"userId","tableName":"userriskscene"}]'>
+        SELECT * FROM userriskscene WHERE userId = #userId# and pid=#pid#
+    </select>
+
+  <typeAlias alias="userRiskData" type="com.youxigu.dynasty2.risk.domain.UserRiskData"/>
+   <cacheModel type="MEMCACHED" id="cache_userRiskData" serialize="false" readOnly="false">
+        <flushOnExecute statement="insertUserRiskData">
+          <flushModel flushstatement="userRiskData" flushMode="insert" flushpara="userId"/>
+        </flushOnExecute>
+        <flushOnExecute statement="updateUserRiskData">
+          <flushModel flushstatement="userRiskData" flushMode="update" flushpara="userId"/>
+        </flushOnExecute>
+
+        <property name="class" value="userRiskData"/>
+        <property name="pk" value="userId"/>
+    </cacheModel>
+
+    <insert id="insertUserRiskData" parameterClass="userRiskData" >
+        INSERT INTO userriskdata (userId,cdDttm,cdNum,cdDay,clearJoinNum,clearDay) 
+        	VALUES (#userId#,#cdDttm#,#cdNum#,#cdDay#,#clearJoinNum#,#clearDay#)
+    </insert>
+    
+    <update id="updateUserRiskData" parameterClass="userRiskData" asyncUpdate="7"  >
+        UPDATE userriskdata 
+        	SET cdDttm=#cdDttm#,cdNum=#cdNum#,cdDay=#cdDay#,clearJoinNum=#clearJoinNum#,
+        	clearDay=#clearDay# where userId=#userId#
+    </update>
+    
+    <select id="getUserRiskData" resultClass="userRiskData" parameterClass="long" cacheModel="cache_userRiskData" cacheOnlyObject="true">
+        SELECT * FROM userriskdata WHERE userId = #userId#
+    </select>
+
+
+</sqlMap>

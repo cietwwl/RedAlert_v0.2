@@ -1,0 +1,182 @@
+<project name="project" default="all" basedir=".">
+
+  <property name="src" value="src"/>
+  <property name="bin" value="bin"/>  
+  <property name="lib" value="lib"/>
+  <property name="conf" value="conf"/>
+	<property name="test folder" value="test"/>
+	<property name="report folder" value="report"/>
+
+
+	<!--
+  <property name="dist" value="dist"/>    
+  <property name="ver" value="1.0"/>    
+  <property name="webapp" value="webapp"/>    	
+  <property name="webapp.class" value="${webapp}/WEB-INF/classes"/>    		
+  <property name="webapp.lib" value="${webapp}/WEB-INF/lib"/>    
+  <property name="backend" value="backend"/>
+  -->	
+	
+
+	<!-- 定义工程依赖的jar包存放的位置 -->
+  <path id="lib.path">
+	  	<fileset dir="${lib}">
+	       <include name="**/*.jar"/>
+	    </fileset>
+  	
+  </path>
+	
+	
+
+  <target name="all">
+  <!--
+    <antcall target="clean"/>
+    <antcall target="compile"/>
+    <antcall target="deploy"/>
+	
+
+   
+    <antcall target="distrbute"/>
+   <antcall target="javadoc"/>  
+    <antcall target="all.backend"/>
+  -->
+  	
+  	<antcall target="test compile"/>
+  	<antcall target="test auot junit and report"/>
+  	
+ 	
+  </target>
+
+	<!--target name="clean" description="Clean all output dirs ">
+		<delete dir="${bin}"/>
+		<delete dir="${webapp.class}"/>
+		<delete dir="${webapp.lib}"/>
+		<delete dir="${report}"/>
+		<echo>清除编译文件 成功!</echo>
+	</target>
+
+	<target name="compile">
+	    <mkdir dir="${bin}"/>	
+
+		<javac srcdir="${src}" destdir="${bin}" classpathref="lib.path" debug="on" source="1.6" encoding="utf-8"/>
+
+	 	<copy todir="${bin}">
+	 	   <fileset dir="${src}">
+		       <include name="*.properties"/>
+		       <include name="*.xml"/>
+		       <include name="*.DTD"/>
+	 	   </fileset>
+	 	</copy> 
+		<echo>项目源文件编译 成功!</echo>
+  </target-->
+	
+	<target name="test compile">
+		    <mkdir dir="${report folder}"/>	
+		<echo>创建测试报告文件夹 成功!</echo>
+			  <javac srcdir="${test folder}" destdir="${bin}" classpathref="lib.path" debug="on" source="1.6" encoding="utf-8"/>
+		<echo>项目测试文件编译 成功!</echo>
+ 
+	</target>
+	
+
+  <!--target name="deploy">
+    <antcall target="deploy.classes"/>
+    <antcall target="deploy.conf"/>  	
+    <antcall target="deploy.lib"/>  	
+  </target>
+
+	  <target name="deploy.classes">
+	  <mkdir dir="${webapp.class}"/>	
+	    <copy todir="${webapp.class}">
+	      <fileset dir="${bin}">
+	        <include name="**/*.*"/>
+	      </fileset>
+	    </copy>
+
+	  </target>
+
+	  <target name="deploy.conf">
+	    <mkdir dir="${webapp.class}"/>	
+	    <copy todir="${webapp.class}">
+	      <fileset dir="${conf}">
+	        <include name="**/*.*"/>
+	      </fileset>
+	    </copy>
+
+
+	  </target>
+	
+	  <target name="deploy.lib">
+	  	<mkdir dir="${webapp.lib}"/>	
+	    <copy todir="${webapp.lib}">
+	      <fileset dir="${lib}">
+	        <include name="**/*.*"/>
+	      </fileset>
+	    </copy>
+
+	  </target>
+
+  	
+  	<target name="all.backend">
+  		  <antcall target="backend.clean"/>
+    	  <antcall target="backend.compile"/>
+      	  <antcall target="backend.package"/>  		
+  		
+  	</target>
+	
+	<target name="backend.clean" description="Clean all backend output dirs ">
+		<delete dir="${backend}/bin"/>
+	</target>
+	<target name="backend.compile">
+	    <mkdir dir="${backend}/bin"/>	
+
+		<javac srcdir="${backend}/src" destdir="${backend}/bin" classpathref="lib.path" debug="on" source="1.6" encoding="utf-8"/>	
+
+	 	<copy todir="${backend}/bin">
+	 	   <fileset dir="${backend}/src">
+		       <include name="*.properties"/>
+		       <include name="*.xml"/>
+		       <include name="*.DTD"/>
+	 	   </fileset>
+	 	</copy> 	
+		
+	    <copy todir="${backend}/bin">
+	      <fileset dir="${backend}/conf">
+	        <include name="**/*.*"/>
+	      </fileset>
+	    </copy>		
+  </target>	
+	<target name="backend.package">
+		 	<mkdir dir="${dist}"/>			
+			<jar jarfile="${dist}/dynasty2-backend.jar" update="yes">
+				<fileset dir="${backend}/bin">
+					<include name="**/*.*"/>
+				</fileset>
+			</jar>
+	</target-->
+
+	
+	<target name="test auot junit and report">
+	      <junit printsummary="on" fork="true" showoutput="true">
+	       	<classpath>
+	       	    <fileset dir="${lib}" includes="**/*.jar"/>
+	       	    <pathelement path="${bin}"/>
+		       	    <pathelement path="${conf}"/>	       		
+	       	</classpath>
+	       	<formatter type="xml"/>
+	       	     <batchtest todir="${report folder}">
+	       	     <fileset dir="${bin}">
+	       	         <include name="**/Test*.*"/>
+	       	     </fileset>
+	       	 </batchtest>
+	      </junit>
+				<junitreport todir="${report folder}">
+				    <fileset dir="${report folder}">
+				     <include name="TEST-*.xml" />
+				    </fileset>
+				    <report format="frames" todir="${report folder}"/>
+				</junitreport>
+	  </target>
+	
+	</project>
+

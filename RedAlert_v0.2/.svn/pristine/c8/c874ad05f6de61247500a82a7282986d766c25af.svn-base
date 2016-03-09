@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+	<typeAlias alias="armyout"
+		type="com.youxigu.dynasty2.armyout.domain.Armyout" />
+	<select id="listArmyouts" resultClass="armyout">
+		SELECT * FROM armyout
+	</select>
+
+	<update id="updateArmyout" parameterClass="armyout">
+		UPDATE armyout SET
+		outType = #outType#,attackerCellId=#attackerCellId#,
+		attackerId=#attackerId#,attackerGuildId=#attackerGuildId#,
+		attackerType=#attackerType#,defenderCellId=#defenderCellId#,defenderId=#defenderId#,
+		defenderGuildId=#defenderGuildId#,defenderType=#defenderType#,troopId=
+		#troopId#,atkPower=#atkPower#,defPower=#defPower#,baseTime=#baseTime#,
+		outDttm=#outDttm#,outArriveDttm=#outArriveDttm#,outBackDttm=#outBackDttm#,
+		status=#status#,combatId=#combatId#
+		WHERE id=#id#
+	</update>
+
+	<insert id="insertArmyout" parameterClass="armyout">
+		INSERT INTO armyout
+		(id,outType,attackerCellId,
+		attackerId,attackerGuildId,attackerType,defenderCellId,defenderId,
+		defenderGuildId,defenderType,troopId,atkPower,defPower,baseTime,
+		outDttm,outArriveDttm,outBackDttm,
+		status,combatId)
+		VALUES
+		(#id#,#outType#,#attackerCellId#,
+		#attackerId#,#attackerGuildId#,#attackerType#,#defenderCellId#,#defenderId#,
+		#defenderGuildId#,#defenderType#,#troopId#,#atkPower#,#defPower#,#baseTime#,
+		#outDttm#,#outArriveDttm#,#outBackDttm#,#status#,#combatId#)
+	</insert>
+
+	<delete id="deleteArmyout" parameterClass="armyout">
+		DELETE FROM armyout
+		WHERE id = #id#
+	</delete>
+
+	<!-- 每种出征行为的配置 -->
+	<typeAlias alias="strategy"
+		type="com.youxigu.dynasty2.armyout.domain.Strategy" />
+	<select id="listStrategys" resultClass="strategy">
+		SELECT * FROM strategy
+	</select>
+
+	<!-- 出征队列 -->
+	<typeAlias alias="userArmyout"
+		type="com.youxigu.dynasty2.armyout.domain.UserArmyout" />
+	<cacheModel type="MEMCACHED" id="cache_userArmyout"
+		serialize="false" readOnly="false">
+		<flushOnExecute statement="insertUserArmyout">
+			<flushModel flushstatement="userArmyout" flushMode="insert"
+				flushpara="userId" />
+		</flushOnExecute>
+		<flushOnExecute statement="updateUserArmyout">
+			<flushModel flushstatement="userArmyout" flushMode="update"
+				flushpara="userId" />
+		</flushOnExecute>
+		<property name="class" value="userArmyout" />
+		<property name="pk" value="userId" />
+	</cacheModel>
+	<select id="getUserArmyout" resultClass="userArmyout"
+		parameterClass="Long" cacheModel="cache_userArmyout" cacheOnlyObject="true">
+		SELECT * FROM userarmyout WHERE userId = #userId#
+	</select>
+	<insert id="insertUserArmyout" parameterClass="userArmyout">
+		INSERT INTO
+		userarmyout(userId,outId1,outId2,outId3,spyNum,outNum,stayNum,togatherNum,
+		pvpNum,lastDttm,lastDeadDttm,lastMoveDttm)
+		VALUES (#userId#,#outId1#,#outId2#,#outId3#,#spyNum#,#outNum#,#stayNum#,
+		#togatherNum#,#pvpNum#,#lastDttm#,#lastDeadDttm#,#lastMoveDttm#)
+	</insert>
+	<update id="updateUserArmyout" parameterClass="userArmyout"
+		asyncUpdate="11">
+		UPDATE userarmyout SET
+		outId1=#outId1#,outId2=#outId2#,outId3=#outId3#,spyNum=#spyNum#,outNum=#outNum#,stayNum=#stayNum#,
+		togatherNum=#togatherNum#,pvpNum=#pvpNum#,lastDttm=#lastDttm#,lastDeadDttm=#lastDeadDttm#,lastMoveDttm=#lastMoveDttm#
+		WHERE
+		userId = #userId#
+	</update>
+</sqlMap>

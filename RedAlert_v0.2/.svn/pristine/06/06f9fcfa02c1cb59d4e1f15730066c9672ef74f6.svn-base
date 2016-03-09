@@ -1,0 +1,199 @@
+package dynasty;
+import "Common.proto";
+
+option java_package = "com.youxigu.dynasty2.friend.proto";
+option java_outer_classname = "FriendMsg";
+//////////////////////////////////好友//////////////////////////////////////////////////
+//好友信息
+message FriendInfo{
+   optional int64 userId = 1;//添加的好友id
+   optional string name = 2;//好友名字
+   optional int32 level = 3;//等级
+   optional SexType sex = 4;//性别
+   optional int32 vipLevel = 5;//vip等级
+   optional string icon = 6;//图像id
+   optional int32 countryId = 7;//国家id
+   optional int32 militaryRank = 8;//军衔等级
+   optional string guildName = 9;//联盟
+   optional int32 status = 10;//扩充状态信息用位表示，0位表示是否有新消息,1位表示是否在线,2位表示是否为好友,3位表示我是否赠送给他体力,4位表示是否有赠送给我体力,5是否领取赠送给我的体力
+}
+
+
+//51001获取推荐的好友列表
+message Request51001Define{
+   optional int32 cmd = 1;
+   optional string userName = 2;//查找的好友名字,可以不传值,没有则使用系统推荐好友
+}
+//51002 获取推荐好友列表信息返回
+message Response51001Define{
+   optional ResponseHead responseHead = 1;
+   repeated FriendInfo infos = 2;//推荐的好友列表
+}
+
+
+//51003申请添加好友
+message Request51003Define{
+   optional int32 cmd = 1;
+   optional int64 friendUserId = 2;//添加的好友id
+}
+//51004申请添加好友信息返回
+message Response51003Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 friendUserId = 2;//添加的好友id
+}
+
+//51005获取申请列表
+message Request51005Define{
+   optional int32 cmd = 1;
+}
+//51006获取申请列表信息返回
+message Response51005Define{
+   optional ResponseHead responseHead = 1;
+   repeated FriendInfo infos = 2;//申请的好友列表信息
+}
+
+//51007同意或拒绝好友申请
+message Request51007Define{
+   optional int32 cmd = 1;
+   repeated int64 friendUserId = 2;//申请的好友id多个
+   optional bool agree = 3;//true同意添加好友，false拒绝
+}
+
+//51008同意或拒绝好友申请信息返回
+message Response51007Define{
+   optional ResponseHead responseHead = 1;
+   repeated FriendInfo infos = 2;//同意或拒绝的好友列表，如果是同意里面会包含完整的好友信息
+   optional bool agree = 3;//true同意成功，false拒绝成功
+}
+
+//51009删除好友
+message Request51009Define{
+   optional int32 cmd = 1;
+   optional int64 friendUserId = 2;//好友id
+}
+//51010删除好友信息返回
+message Response51009Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 friendUserId = 2;//好友id
+}
+
+//分组类型
+enum GroupType {
+	NULL = 0;//占位用
+    FRIEND = 1;//好友
+    FRIEND_BLACK = 2;//黑名单
+    RECENT_FRIEND = 3;//最近联系人
+}
+  
+//51011获取列表
+message Request51011Define{
+   optional int32 cmd = 1;
+   optional GroupType group = 2;
+}
+
+//51012获取列表信息返回
+message Response51011Define{
+   optional ResponseHead responseHead = 1;
+   optional GroupType group = 2;
+   repeated FriendInfo infos = 3;//好友列表
+}
+
+//51013移出列表(最近联系人)
+message Request51013Define{
+   optional int32 cmd = 1;
+   optional int64 friendUserId = 2;//好友id
+}
+//51014移出列表信息返回
+message Response51013Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 friendUserId = 2;//好友id
+}
+
+//51015屏蔽此人(加入黑名单)
+message Request51015Define{
+   optional int32 cmd = 1;
+   optional int64 friendUserId = 2;//好友id
+}
+//51016屏蔽此人信息返回
+message Response51015Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 friendUserId = 2;//好友id
+}
+//51017移出黑名单
+message Request51017Define{
+   optional int32 cmd = 1;
+   optional int64 friendUserId = 2;//好友id
+}
+
+//51018移出黑名单信息返回
+message Response51017Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 friendUserId = 2;//好友id
+}
+
+
+
+//推送好友申请消息 4008,有好友申请（图标闪烁）
+message AppFriendSendEvent{
+   optional ResponseHead responseHead = 1;
+   optional FriendInfo friend = 2;//好友
+}
+
+//推送增加好友信息 4020
+message AddFriendSendEvent{
+   optional ResponseHead responseHead = 1;
+   optional FriendInfo friend = 2;//好友
+}
+
+//推送删除好友信息 4021
+message DelFriendSendEvent{
+   optional ResponseHead responseHead = 1;
+   optional int64 friendUserId = 2;//好友id
+}
+
+
+//////////////////////////////////好友end//////////////////////////////////////////////////
+
+
+
+
+
+//////////////////////////////////好友赠送体力//////////////////////////////////////////////////
+//51050赠送好友体力
+message Request51050Define{
+   optional int32 cmd = 1;
+   repeated int64 friendUserId = 2;//好友id 集合
+}
+
+//51051赠送好友体力返回
+message Response51050Define{
+   optional ResponseHead responseHead = 1;
+   repeated int64 friendUserId = 2;//好友id 集合
+}
+
+//51052领取体力
+message Request51052Define{
+   optional int32 cmd = 1;
+   optional int64 friendUserId = 2;//好友id 集合
+}
+
+//51053领取体力返回
+message Response51052Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 friendUserId = 2;//好友id 集合
+}
+
+
+//51054一键领取体力并且反赠
+message Request51054Define{
+   optional int32 cmd = 1;
+}
+
+//51055一键领取体力并且反赠返回
+message Response51054Define{
+   optional ResponseHead responseHead = 1;
+   repeated int64 giveMefriends = 2;//领取体力 好友id 集合
+   repeated int64 giftfriends = 3;//反赠体力 好友id 集合
+}
+
+//////////////////////////////////好友赠送体力end//////////////////////////////////////////////////

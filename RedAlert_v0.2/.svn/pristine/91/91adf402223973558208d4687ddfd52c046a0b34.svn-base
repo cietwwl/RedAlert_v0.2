@@ -1,0 +1,36 @@
+package com.youxigu.dynasty2.map.domain;
+
+import com.youxigu.dynasty2.map.service.impl.MapService;
+
+/**
+ * 加载地图action
+ * 
+ * @author LK
+ * @date 2016年2月5日
+ */
+public class LoadMapAction extends TimeAction {
+	private MapService.Worker worker;
+	private State state;
+
+	public LoadMapAction(MapService.Worker worker, State state) {
+		this.worker = worker;
+		this.state = state;
+		super.time = System.currentTimeMillis();
+	}
+
+	public MapService.Worker getWorker() {
+		return worker;
+	}
+
+	public void setWorker(MapService.Worker worker) {
+		this.worker = worker;
+	}
+
+	public State getState() {
+		return state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
+	}
+}

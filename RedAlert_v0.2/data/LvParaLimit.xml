@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+
+<LvParaLimit usrLv="1" tipTitle="0" tipContent="0" heroNumLimit="1" heroLvLimit="1" exp="20" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="2" tipTitle="0" tipContent="0" heroNumLimit="2" heroLvLimit="2" exp="80" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="3" tipTitle="0" tipContent="0" heroNumLimit="2" heroLvLimit="3" exp="180" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="4" tipTitle="0" tipContent="0" heroNumLimit="2" heroLvLimit="4" exp="320" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="5" tipTitle="等级提醒" tipContent="恭喜你升到5级" heroNumLimit="3" heroLvLimit="5" exp="500" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="6" tipTitle="0" tipContent="0" heroNumLimit="3" heroLvLimit="6" exp="720" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="7" tipTitle="0" tipContent="0" heroNumLimit="3" heroLvLimit="7" exp="980" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="8" tipTitle="0" tipContent="0" heroNumLimit="3" heroLvLimit="8" exp="1280" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="9" tipTitle="0" tipContent="0" heroNumLimit="3" heroLvLimit="9" exp="1620" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="10" tipTitle="等级提醒" tipContent="恭喜你升到10级，可以开始PVP玩法了" heroNumLimit="4" heroLvLimit="10" exp="2000" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="11" tipTitle="0" tipContent="0" heroNumLimit="4" heroLvLimit="11" exp="2420" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="12" tipTitle="0" tipContent="0" heroNumLimit="4" heroLvLimit="12" exp="2880" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="13" tipTitle="0" tipContent="0" heroNumLimit="4" heroLvLimit="13" exp="3380" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="14" tipTitle="0" tipContent="0" heroNumLimit="5" heroLvLimit="14" exp="3920" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="15" tipTitle="等级提醒" tipContent="恭喜你升到15级" heroNumLimit="5" heroLvLimit="15" exp="4500" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="16" tipTitle="0" tipContent="0" heroNumLimit="5" heroLvLimit="16" exp="5120" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="17" tipTitle="0" tipContent="0" heroNumLimit="5" heroLvLimit="17" exp="5780" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="18" tipTitle="0" tipContent="0" heroNumLimit="6" heroLvLimit="18" exp="6480" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="19" tipTitle="0" tipContent="0" heroNumLimit="6" heroLvLimit="19" exp="7220" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="20" tipTitle="等级提醒" tipContent="恭喜你升到20级，开启系统2" heroNumLimit="6" heroLvLimit="20" exp="12000" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="21" tipTitle="0" tipContent="0" heroNumLimit="6" heroLvLimit="21" exp="13230" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="22" tipTitle="0" tipContent="0" heroNumLimit="6" heroLvLimit="22" exp="14520" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="23" tipTitle="0" tipContent="0" heroNumLimit="6" heroLvLimit="23" exp="15870" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="24" tipTitle="0" tipContent="0" heroNumLimit="6" heroLvLimit="24" exp="17280" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="25" tipTitle="等级提醒" tipContent="恭喜你升到25级" heroNumLimit="6" heroLvLimit="25" exp="18750" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="26" tipTitle="0" tipContent="0" heroNumLimit="6" heroLvLimit="26" exp="20280" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="27" tipTitle="0" tipContent="0" heroNumLimit="6" heroLvLimit="27" exp="21870" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="28" tipTitle="0" tipContent="0" heroNumLimit="6" heroLvLimit="28" exp="23520" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="29" tipTitle="0" tipContent="0" heroNumLimit="6" heroLvLimit="29" exp="25230" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="30" tipTitle="等级提醒" tipContent="恭喜你升到30级，开启系统3" heroNumLimit="6" heroLvLimit="30" exp="27000" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="31" tipTitle="0" tipContent="0" heroNumLimit="12" heroLvLimit="31" exp="28830" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="32" tipTitle="0" tipContent="0" heroNumLimit="12" heroLvLimit="32" exp="30720" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="33" tipTitle="0" tipContent="0" heroNumLimit="12" heroLvLimit="33" exp="32670" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="34" tipTitle="0" tipContent="0" heroNumLimit="12" heroLvLimit="34" exp="34680" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="35" tipTitle="等级提醒" tipContent="恭喜你升到35级" heroNumLimit="12" heroLvLimit="35" exp="36750" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="36" tipTitle="0" tipContent="0" heroNumLimit="12" heroLvLimit="36" exp="38880" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="37" tipTitle="0" tipContent="0" heroNumLimit="12" heroLvLimit="37" exp="41070" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="38" tipTitle="0" tipContent="0" heroNumLimit="12" heroLvLimit="38" exp="43320" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="39" tipTitle="0" tipContent="0" heroNumLimit="12" heroLvLimit="39" exp="45630" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="40" tipTitle="等级提醒" tipContent="恭喜你升到40级，开启系统4" heroNumLimit="12" heroLvLimit="40" exp="64000" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="41" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="41" exp="147928" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="42" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="42" exp="155232" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="43" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="43" exp="162712" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="44" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="44" exp="170368" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="45" tipTitle="等级提醒" tipContent="恭喜你升到45级" heroNumLimit="18" heroLvLimit="45" exp="178200" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="46" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="46" exp="186208" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="47" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="47" exp="194392" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="48" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="48" exp="202752" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="49" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="49" exp="211288" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="50" tipTitle="等级提醒" tipContent="恭喜你升到50级，开启系统5" heroNumLimit="18" heroLvLimit="50" exp="220000" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="51" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="51" exp="228888" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="52" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="52" exp="237952" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="53" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="53" exp="247192" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="54" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="54" exp="256608" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="55" tipTitle="等级提醒" tipContent="恭喜你升到55级" heroNumLimit="18" heroLvLimit="55" exp="266200" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="56" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="56" exp="275968" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="57" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="57" exp="285912" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="58" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="58" exp="296032" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="59" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="59" exp="306328" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="60" tipTitle="等级提醒" tipContent="恭喜你升到60级，开启系统6" heroNumLimit="18" heroLvLimit="60" exp="396000" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="61" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="61" exp="409310" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="62" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="62" exp="422840" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="63" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="63" exp="436590" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="64" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="64" exp="450560" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="65" tipTitle="等级提醒" tipContent="恭喜你升到65级" heroNumLimit="18" heroLvLimit="65" exp="464750" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="66" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="66" exp="479160" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="67" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="67" exp="493790" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="68" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="68" exp="508640" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="69" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="69" exp="523710" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="70" tipTitle="等级提醒" tipContent="恭喜你升到70级，开启系统7" heroNumLimit="18" heroLvLimit="70" exp="539000" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="71" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="71" exp="554510" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="72" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="72" exp="570240" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="73" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="73" exp="586190" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="74" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="74" exp="602360" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="75" tipTitle="等级提醒" tipContent="恭喜你升到75级" heroNumLimit="18" heroLvLimit="75" exp="618750" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="76" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="76" exp="635360" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="77" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="77" exp="652190" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="78" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="78" exp="669240" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="79" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="79" exp="686510" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="80" tipTitle="等级提醒" tipContent="恭喜你升到80级，开启系统8" heroNumLimit="18" heroLvLimit="80" exp="844800" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="81" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="81" exp="1338444" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="82" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="82" exp="1371696" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="83" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="83" exp="1405356" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="84" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="84" exp="1439424" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="85" tipTitle="等级提醒" tipContent="恭喜你升到85级" heroNumLimit="18" heroLvLimit="85" exp="1473900" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="86" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="86" exp="1508784" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="87" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="87" exp="1544076" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="88" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="88" exp="1579776" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="89" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="89" exp="1615884" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="90" tipTitle="等级提醒" tipContent="恭喜你升到90级，开启系统9" heroNumLimit="18" heroLvLimit="90" exp="1652400" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="91" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="91" exp="1689324" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="92" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="92" exp="1726656" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="93" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="93" exp="1764396" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="94" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="94" exp="1802544" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="95" tipTitle="等级提醒" tipContent="恭喜你升到95级" heroNumLimit="18" heroLvLimit="95" exp="1841100" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="96" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="96" exp="1880064" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="97" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="97" exp="1919436" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="98" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="98" exp="1959216" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="99" tipTitle="0" tipContent="0" heroNumLimit="18" heroLvLimit="99" exp="1999404" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+<LvParaLimit usrLv="100" tipTitle="等级提醒" tipContent="恭喜你升到100级" heroNumLimit="18" heroLvLimit="100" exp="2380000" actionPointLimit="300" hpPointLimit="300" perHpPoint="5" perActPoint="5" />
+
+
+
+
+
+
+
+</dataset>

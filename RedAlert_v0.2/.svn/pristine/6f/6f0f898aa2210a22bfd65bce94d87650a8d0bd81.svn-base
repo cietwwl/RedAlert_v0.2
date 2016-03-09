@@ -1,0 +1,41 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+
+
+	<bean id="mapDao" class="com.youxigu.dynasty2.map.dao.impl.MapDao" >
+		<property name="sqlMapClientTemplate"><ref bean="sqlMapClientTemplate" /></property>
+	</bean>
+
+	<bean id="mapService" class="com.youxigu.dynasty2.map.service.impl.MapService" init-method="init" destroy-method="destory">
+		<property name="mapDao"><ref bean="mapDao" /></property>
+<!--		<property name="rankService"><ref bean="rankService" /></property>-->
+	</bean>
+	
+	<bean id="asyUpdateMapService" class="com.youxigu.dynasty2.map.service.impl.AsyUpdateMapService">
+		<property name="mapDao"><ref bean="mapDao" /></property>
+	</bean>
+  
+  <!--==============AMF3Action begin==============-->
+<!--  <bean id="mapAction" class="com.youxigu.dynasty2.map.web.MapAction" >-->
+<!--    <property name="mapService"><ref bean="mapService" /></property>-->
+<!--    <property name="castleService"><ref bean="castleService" /></property>-->
+<!--    <property name="userService"><ref bean="userService" /></property>-->
+<!--    <property name="rankService"><ref bean="rankService" /></property>-->
+<!--    <property name="guildService"><ref bean="guildService" /></property>-->
+<!--    <property name="combatService"><ref bean="combatService" /></property>-->
+<!--    <property name="commonService"><ref bean="commonService" /></property>-->
+<!--    <property name="userAchieveService"><ref bean="userAchieveService" /></property>-->
+<!--    <property name="vipService"><ref bean="vipService" /></property>-->
+<!--  </bean>-->
+  <!--==============AMF3Action end==============-->
+
+</beans>
+
+

@@ -1,0 +1,69 @@
+package com.youxigu.dynasty2.map.service;
+
+import java.util.List;
+
+import com.youxigu.dynasty2.map.domain.CollectPoint;
+import com.youxigu.dynasty2.map.enums.CollectType;
+
+public interface ICollectPointService {
+
+	/**
+	 * 获取所有玩家收藏的点
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public List<CollectPoint> getAllCollectPoints(long userId);
+
+	/**
+	 * 获取累计有多少收藏点
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public int getCollectPointCount(long userId);
+
+	/**
+	 * 获取制定收藏类型的点
+	 * 
+	 * @param userId
+	 * @param type
+	 * @return
+	 */
+	public List<CollectPoint> getAllCollectPointsByType(long userId,
+			CollectType type);
+
+	/**
+	 * 保存收藏点
+	 * 
+	 * @param p
+	 * @return
+	 */
+	public boolean doSaveCollectPoint(CollectPoint p);
+
+	/**
+	 * 更新收藏点
+	 * 
+	 * @param p
+	 * @return
+	 */
+	public boolean doUpdateCollectPoint(CollectPoint p);
+
+	/**
+	 * 删除收藏点
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public boolean doDeleteCollectPoint(long userId, long id);
+
+	/**
+	 * 通过id获取收藏点
+	 * 
+	 * @param userId
+	 * @param id
+	 * @return
+	 */
+	public CollectPoint getCollectPoint(long userId, long id);
+
+}

@@ -1,0 +1,706 @@
+package com.youxigu.dynasty2.map.service.impl;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.youxigu.dynasty2.armyout.service.IArmyoutService;
+import com.youxigu.dynasty2.map.dao.IMapDao;
+import com.youxigu.dynasty2.map.domain.Country;
+import com.youxigu.dynasty2.map.domain.CountryCharacter;
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.map.domain.State;
+import com.youxigu.dynasty2.map.domain.StateCache;
+import com.youxigu.dynasty2.map.domain.action.LoadMapAction;
+import com.youxigu.dynasty2.map.service.ICommandDistatcher;
+import com.youxigu.dynasty2.map.service.IMapService;
+import com.youxigu.dynasty2.user.domain.User;
+import com.youxigu.dynasty2.user.service.IUserService;
+import com.youxigu.dynasty2.util.BaseException;
+import com.youxigu.wolf.net.NodeSessionMgr;
+
+import edu.emory.mathcs.backport.java.util.Collections;
+
+/**
+ * 大地图坐标缓存类
+ * 
+ * @author LK run on mainServer
+ * @date 2016年2月17日
+ */
+public class MapService implements IMapService {
+	public static final Logger log = LoggerFactory.getLogger(MapService.class);
+	private static final long LOCK_WAIT_TIME = 10;// 坐标锁定时，等待锁的超时时间,参照MemcachedManager.lockerTimeout
+	private static final int SEARCH_MAX_RETRY = 10;
+	private static final int CELL_SEARCH_RADIUS = 1;// 随机获取单个Cell时搜索半径，只包含中心点时半径为0（半径1对应9个格子）
+	private static final int CITY_SEARCH_RADIUS = 2;// 随机获取可刷城的Cells时的搜索半径(半径2对应20个格子)
+
+	private Map<Integer, Country> countryMaps = new HashMap<Integer, Country>();// 国家
+	private Map<Integer, State> stateMaps = new HashMap<Integer, State>();// 区
+	private Map<Integer, MapCell> ALL_CELLS = new ConcurrentHashMap<Integer, MapCell>();// 所有坐标
+	private Map<Integer, StateCache> STATE_CELLS = new ConcurrentHashMap<Integer, StateCache>();// 区下的所有坐标
+	public static final MapCellComparator mapCellComparator = new MapCellComparator();// 所坐标的顺序，坐标id从小到大
+	/**记录每个国家创建角色的人数**/
+	private Map<Integer, Integer> countryUsers = new ConcurrentHashMap<Integer, Integer>();
+	private AtomicInteger allUsers = new AtomicInteger(0);
+	
+	static class MapCellComparator implements Comparator<MapCell> {
+		@Override
+		public int compare(MapCell o1, MapCell o2) {
+			return o1.getId() - o2.getId();
+		}
+	}
+
+	private IMapDao mapDao;
+	private ICommandDistatcher commandDistatcher;
+	
+	private IUserService userService = null;
+	private IArmyoutService armyoutService;
+
+	public void setUserService(IUserService userService) {
+		this.userService = userService;
+	}
+
+	public void setMapDao(IMapDao mapDao) {
+		this.mapDao = mapDao;
+	}
+
+	public void setCommandDistatcher(ICommandDistatcher commandDistatcher) {
+		this.commandDistatcher = commandDistatcher;
+	}
+
+	public void setArmyoutService(IArmyoutService armyoutService) {
+		this.armyoutService = armyoutService;
+	}
+
+	/**
+	 * 加载配数
+	 */
+	private void loadConf() {
+		// 放在前面执行。。。保证nodeserver也初始化国家信息
+		List<Country> countrys = mapDao.getCountrys();
+		if (countrys != null && countrys.size() > 0) {
+			// 加载所有国家可以创建的角色
+			List<CountryCharacter> cc = mapDao.getCountryCharacters();
+			for (Country country : countrys) {
+				// 国家
+				countryMaps.put(country.getCountryId(), country);
+
+				// 国家关联的角色创建信息
+				for (CountryCharacter c : cc) {
+					country.addCountryCharacter(c);
+				}
+
+				// 区
+				List<State> states = mapDao
+						.getStatesByCountryId(country.getCountryId());
+				if (states != null && states.size() > 0) {
+					for (State state : states) {
+						state.setCountry(country);
+						stateMaps.put(state.getStateId(), state);
+					}
+				}
+
+			}
+			
+			//关联新手村所属的区
+			for (Country country : countrys) {
+				State state = stateMaps.get(country.getStateId());
+				country.setState(state);
+				
+				if(!country.isNeutral()){
+					int num = userService.statisticsAllUsers(country.getCountryId());
+					countryUsers.put(country.getCountryId(), num);
+					allUsers.addAndGet(num);
+				}
+				
+			}
+
+		}
+
+	}
+
+	/**
+	 * 初始化service
+	 */
+	public void init() {
+		// 加载策划配数
+		this.loadConf();
+
+		// 只在mainserver上加载
+		String str = System.getProperty(NodeSessionMgr.SERVER_TYPE_KEY);
+		if (str == null) {
+			return;
+		}
+		int serverType = Integer.parseInt(str);
+		if (serverType != NodeSessionMgr.SERVER_TYPE_MAIN) {
+			return;
+		}
+
+		log.info("加载 国家、郡城数据......");
+		if (ALL_CELLS != null) {
+			ALL_CELLS.clear();
+		}
+		if (STATE_CELLS != null) {
+			STATE_CELLS.clear();
+		}
+
+		// 使用15个线程分区加载地图坐标
+		if (stateMaps != null && stateMaps.size() > 0) {
+			Iterator<Map.Entry<Integer, State>> itl = stateMaps.entrySet()
+					.iterator();
+			while (itl.hasNext()) {
+				Map.Entry<Integer, State> ent = itl.next();
+				State state = ent.getValue();
+				commandDistatcher.putCommander(state.getStateId() - 1,
+						new LoadMapAction(state, ALL_CELLS, STATE_CELLS));
+			}
+		}
+
+		// 加载出征
+		armyoutService.initService(ALL_CELLS);
+	}
+
+	@Override
+	public int convertCordToCellId(int x, int y) {
+		return x * 10000 + y;
+	}
+
+	@Override
+	public int[] convertCellIdToCord(int cellId) {
+		return new int[] { (cellId - cellId % 10000) / 10000, cellId % 10000 };
+	}
+
+	@Override
+	public State getStateById(int stateId) {
+		return stateMaps.get(stateId);
+	}
+
+	@Override
+	public Country getCountryById(int countryId) {
+		return countryMaps.get(countryId);
+	}
+
+	@Override
+	public void updateMapCell(MapCell mapCell) {
+		ThreadLocalMapCellCache.addData(ThreadLocalMapCellCache.UPDATE,
+				mapCell.getKey(), mapCell);
+	}
+
+	@Override
+	public void updateMapCell(List<MapCell> mapCells) {
+		if (mapCells != null && mapCells.size() > 0) {
+			for (MapCell mapCell : mapCells) {
+				updateMapCell(mapCell);
+			}
+		}
+	}
+
+	@Override
+	public MapCell getMapCellCache(int id) {
+		return ALL_CELLS.get(id);
+	}
+
+	@Override
+	public Map<Integer, MapCell> getMapCellsByStateId(int stateId) {
+		StateCache stateCache = STATE_CELLS.get(stateId);
+		if (stateCache != null) {
+			return stateCache.getCells();
+		}
+		return null;
+	}
+
+	@Override
+	public StateCache getStateCacheByStateId(int stateId) {
+		return STATE_CELLS.get(stateId);
+	}
+
+	@Override
+	public MapCell getMapCellForRead(int cellId) {
+		MapCell cell = ALL_CELLS.get(cellId);
+		if (cell == null) {
+			throw new BaseException("指定的坐标点不存在：" + cellId);
+		}
+		if (log.isDebugEnabled()) {
+			log.debug("get MapCell({},{}) for read", cell.getPosX(),
+					cell.getPosY());
+		}
+		// 复制一个对象并返回，避免错误修改缓存中的对象。
+		return cell.clone();
+	}
+
+	@Override
+	public MapCell getMapCellForWrite(int cellId) throws InterruptedException {
+		return getMapCellForWrite(cellId, LOCK_WAIT_TIME, TimeUnit.SECONDS);
+	}
+
+	@Override
+	public List<MapCell> getMapCellForWrite(List<Integer> cellIds)
+			throws InterruptedException {
+		List<MapCell> cells = new ArrayList<MapCell>();
+		if (cellIds != null && cellIds.size() > 0) {
+			// 从小到大排序锁定
+			Collections.sort(cellIds, mapCellComparator);
+			for (int cellId : cellIds) {
+				cells.add(this.getMapCellForWrite(cellId));
+			}
+		}
+		return cells;
+	}
+
+	@Override
+	public MapCell getMapCellForWrite(int cellId, long timeout,
+			TimeUnit timeUnit) throws InterruptedException {
+		if (!ThreadLocalMapCellCache.isInTrans()) {
+			throw new BaseException("只有在事务中才能修改MapCell");
+		}
+
+		MapCell cell = null;
+		Object obj = ThreadLocalMapCellCache
+				.getObject(MapCell.getCacheKey(cellId));
+		if (obj != null) {
+			return (MapCell) obj;
+		}
+
+		cell = ALL_CELLS.get(cellId);
+		if (cell == null) {
+			throw new BaseException("指定的坐标点不存在：" + cellId);
+		}
+		if (log.isDebugEnabled()) {
+			log.debug("try lock MapCell({},{})", cell.getPosX(),
+					cell.getPosY());
+		}
+		if (cell.getLock().tryLock(timeout, timeUnit)) {
+			ThreadLocalMapCellCache.addLockedMapCell(cell);
+			if (log.isDebugEnabled()) {
+				log.debug("MapCell({},{}) has locked", cell.getPosX(),
+						cell.getPosY());
+			}
+			// 复制一个对象并返回，避免直接修改缓存中的对象。缓存中的对象在事物结束时更新
+			return cell.clone();
+		} else {
+			log.error("lock MapCell({},{}) failed", cell.getPosX(),
+					cell.getPosY());
+			throw new BaseException("无法获取指定的坐标信息");
+		}
+	}
+
+	@Override
+	public MapCell getRandomIdleCell(int stateId, boolean lockCell) {
+		return getRandomIdleCell(stateId, lockCell, SEARCH_MAX_RETRY,
+				CELL_SEARCH_RADIUS);
+	}
+
+	@Override
+	public MapCell getRandomIdleCell(int stateId, boolean lockCell,
+			int maxRetry, int searchRadius) {
+		if (lockCell && !ThreadLocalMapCellCache.isInTrans()) {
+			throw new BaseException("只有在事务中才能修改MapCell");
+		}
+		StateCache stateCache = getStateCacheByStateId(stateId);
+		Map<Integer, MapCell> stateCells = stateCache.getCells();
+		Integer[] keys = stateCache.getAllKeys();
+
+		Random random = new Random();
+		while (maxRetry > 0) {
+			maxRetry--;
+			Integer centerKey = keys[random.nextInt(keys.length)];
+			// 按指定半径获取一个矩形区域内的所有点，增加查找点的成功率
+			List<Integer> keysInRange = getKeysInRange(centerKey, searchRadius);
+			for (Integer key : keysInRange) {
+				MapCell cell = stateCells.get(key);
+				// 获取中心点指定半径的区域内的所有点时，可能有些点不属于本区
+				if (cell == null) {
+					continue;
+				}
+				// 如果线程已经持有这个MapCell的锁，说明该点已经占用或将被占用，跳过该点查找下个点
+				// TODO 是否可以替换成 isLock()
+				if (cell.getLock().isHeldByCurrentThread()) {
+					if (log.isDebugEnabled()) {
+						log.debug("MapCell({},{}) has been locked, skip it",
+								cell.getPosX(), cell.getPosY());
+					}
+					continue;
+				}
+				if (canUse(stateCache, cell.getId())) {
+					if (lockCell) {
+						if (cell.getLock().tryLock()) {
+							// 加锁后再判断一次是否可用
+							if (!canUse(stateCache, cell.getId())) {
+								cell.getLock().unlock();
+								continue;
+							}
+							ThreadLocalMapCellCache.addLockedMapCell(cell);
+							if (log.isDebugEnabled()) {
+								log.debug("MapCell({},{}) has locked",
+										cell.getPosX(), cell.getPosY());
+							}
+							return cell.clone();
+						}
+					} else {
+						return cell.clone();
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public List<MapCell> getRandomIdleCellList(int stateId, boolean lockCell,
+			int count, int retryNum) {
+		if (count <= 0) {
+			throw new BaseException("参数错误");
+		}
+		int gotNum = 0;
+		List<MapCell> results = new ArrayList<MapCell>(count);
+		for (int i = 0; i < count + retryNum; i++) {
+			MapCell cell = getRandomIdleCell(stateId, lockCell,
+					SEARCH_MAX_RETRY, CELL_SEARCH_RADIUS);
+			if (cell != null) {
+				results.add(cell);
+				gotNum++;
+			}
+			if (gotNum >= count) {
+				return results;
+			}
+		}
+		return results;
+	}
+
+	@Override
+	public List<MapCell> getRandomIdleCityCellGroup(int stateId,
+			boolean lockCell) {
+		return getRandomIdleCityCellGroup(stateId, lockCell, SEARCH_MAX_RETRY,
+				CITY_SEARCH_RADIUS);
+	}
+
+	@Override
+	public List<MapCell> getRandomIdleCityCellGroup(int stateId,
+			boolean lockCell, int maxRetry, int searchRadius) {
+		if (lockCell && !ThreadLocalMapCellCache.isInTrans()) {
+			throw new BaseException("只有在事务中才能修改MapCell");
+		}
+		StateCache stateCache = getStateCacheByStateId(stateId);
+		Map<Integer, MapCell> stateCells = stateCache.getCells();
+		Integer[] keys = stateCache.getAllKeys();
+
+		Random random = new Random();
+		while (maxRetry > 0) {
+			maxRetry--;
+			// 随机获取一个中心点
+			Integer centerKey = keys[random.nextInt(keys.length)];
+			// 按指定半径获取一个矩形区域内的所有点，增加查找点的成功率
+			List<Integer> keysInRange = getKeysInRange(centerKey, searchRadius);
+			for (Integer key : keysInRange) {
+				int[] squareIds = getSquareCellIds(key);
+				if (canUse(stateCache, squareIds[0])
+						&& canUse(stateCache, squareIds[1])
+						&& canUse(stateCache, squareIds[2])
+						&& canUse(stateCache, squareIds[3])) {
+					List<MapCell> cells = new ArrayList<MapCell>();
+					cells.add(stateCells.get(squareIds[0]));
+					cells.add(stateCells.get(squareIds[1]));
+					cells.add(stateCells.get(squareIds[2]));
+					cells.add(stateCells.get(squareIds[3]));
+
+					if (lockCell) {
+						// 锁定cells中的每个cell，重新检查每个cell是否可用。如有cell不可用，全部放弃，执行下次查找
+						List<MapCell> lockedCells = new LinkedList<MapCell>();
+						boolean lockSuccess = tryLockCells(cells, lockedCells);
+						if (lockSuccess) {
+							if (canUse(cells.get(0)) && canUse(cells.get(1))
+									&& canUse(cells.get(2))
+									&& canUse(cells.get(3))) {
+								for (MapCell cell : lockedCells) {
+									ThreadLocalMapCellCache
+											.addLockedMapCell(cell);
+								}
+								return cloneCells(cells);
+							} else {
+								for (MapCell cell : cells) {
+									cell.getLock().unlock();
+									if (log.isDebugEnabled()) {
+										log.debug("MapCell({},{}) has locked",
+												cell.getPosX(), cell.getPosY());
+									}
+								}
+							}
+						} else {
+							for (MapCell lockedCell : lockedCells) {
+								lockedCell.getLock().unlock();
+								if (log.isDebugEnabled()) {
+									log.debug("MapCell({},{}) has locked",
+											lockedCell.getPosX(),
+											lockedCell.getPosY());
+								}
+							}
+						}
+					} else {
+						return cloneCells(cells);
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private List<MapCell> cloneCells(List<MapCell> originalCells) {
+		List<MapCell> result = new ArrayList<MapCell>(originalCells.size());
+		for (MapCell cell : originalCells) {
+			result.add(cell.clone());
+		}
+		return result;
+	}
+
+	/**
+	 * 给定中心点Id和半径，返回对应的所有点的Id集合
+	 * 
+	 * @param center
+	 * @param cellSearchRadius
+	 * @return
+	 */
+	private List<Integer> getKeysInRange(Integer center, int cellSearchRadius) {
+		if (cellSearchRadius < 0) {
+			throw new BaseException("搜索半径不能小于0");
+		}
+
+		int[] centerCord = convertCellIdToCord(center);
+		int minX = centerCord[0] - cellSearchRadius;
+		int minY = centerCord[1] - cellSearchRadius;
+		int maxX = centerCord[0] + cellSearchRadius;
+		int maxY = centerCord[1] + cellSearchRadius;
+
+		List<Integer> result = new LinkedList<Integer>();
+		for (int x = minX; x <= maxX; x++) {
+			for (int y = minY; y <= maxY; y++) {
+				result.add(convertCordToCellId(x, y));
+			}
+		}
+		return result;
+	}
+
+    /**
+     * 判断指定的格子是否可用（随机刷资源地或随机迁城）
+     *
+     * @param stateCache
+     * @param cellId
+     * @return
+     */
+    private boolean canUse(StateCache stateCache, int cellId) {
+        Map<Integer, MapCell> stateCells = stateCache.getCells();
+        MapCell cell = stateCells.get(cellId);
+        if (cell == null) {
+            return false;
+        }
+
+        return canUse(cell);
+    }
+
+    private boolean canUse(MapCell cell) {
+        if (cell == null) {
+            return false;
+        }
+
+		// if ((cell.getEarthType() == MapCell.EARTH_TYPE_GRASS ||
+		// cell.getEarthType() == MapCell.EARTH_TYPE_SAND ||
+		// cell.getEarthType() == MapCell.EARTH_TYPE_SHOAL)
+		// && cell.getCasId() == 0) {
+		// return true;
+		// }
+		// return false;
+		return cell.isEmpty(false);
+    }
+
+	/**
+	 * 对一组MapCell全部进行加锁。全部成功加锁返回true，有任意一个失败返回false。
+	 * 无论是全部加锁成功或部分加锁，lockedCells都将返回已加锁的MapCell集合
+	 * @param originCells
+	 * @param lockedCells
+	 * @return
+	 */
+	private boolean tryLockCells(List<MapCell> originCells,
+			List<MapCell> lockedCells) {
+		for (MapCell cell : originCells) {
+            //如果已经被当前线程锁定，则说明已经被取出作其它用途，不应再使用这个点
+            if(cell.getLock().isHeldByCurrentThread()){
+                return false;
+            }
+			if (cell.getLock().tryLock()) {
+				lockedCells.add(cell);
+				if (log.isDebugEnabled()) {
+					log.debug("MapCell({},{}) has locked", cell.getPosX(),
+							cell.getPosY());
+				}
+			} else {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * 给定左上角单元格id，获取组成一个2*2矩形的所有单元格的id 
+	 * 保证统一的锁顺序返回cellId从小到大的顺序
+	 * 
+	 * @param topLeftCornerId
+	 * @return 长度为4的数组，第一个元素为topLeftCornerId
+	 */
+	private int[] getSquareCellIds(int topLeftCornerId) {
+		int[] cord1 = convertCellIdToCord(topLeftCornerId);
+		int lowerLeftId = convertCordToCellId(cord1[0], cord1[1] - 1);
+		int topRightId = convertCordToCellId(cord1[0] + 1, cord1[1]);
+		int lowerRightId = convertCordToCellId(cord1[0] + 1, cord1[1] - 1);
+
+		return new int[] { lowerLeftId, topLeftCornerId, lowerRightId,
+				topRightId };
+	}
+
+	@Override
+	public List<Integer> getCityPoint(int id) {
+		int[] a = getSquareCellIds(id);
+		List<Integer> ids = new ArrayList<Integer>();
+		for(int i : a){
+			ids.add(i);
+		}
+		return ids;
+	}
+
+	@Override
+	public List<Integer> getCityPoint(int posX, int posY) {
+		return getCityPoint(convertCordToCellId(posX, posY));
+	}
+	
+	@Override
+	public boolean canSetPointUse(MapCell cell) {
+		if (cell == null) {
+            return false;
+        }
+
+        if ((cell.getEarthType() == MapCell.EARTH_TYPE_GRASS ||
+                cell.getEarthType() == MapCell.EARTH_TYPE_SAND ||
+                cell.getEarthType() == MapCell.EARTH_TYPE_SHOAL||
+                cell.getEarthType() == MapCell.EARTH_TYPE_ROAD)
+                && cell.getCasId() == 0
+                ) {
+            return true;
+        }
+        return false;
+	}
+	
+	@Override
+	public boolean canSetPointUses(List<MapCell> cells) {
+		for(MapCell c : cells){
+			boolean b = canSetPointUse(c);
+			if(!b){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public void addCountryUser(int countryId) {
+		Integer c = countryUsers.get(countryId);
+		if(c==null){
+			c=0;
+		}
+		c+=1;
+		countryUsers.put(countryId, c);
+		allUsers.addAndGet(1);
+	}
+
+	
+	@Override
+	public int getCountryUser(int countryId) {
+		return countryUsers.get(countryId);
+	}
+	
+	
+	@Override
+	public int getAllUserCount() {
+		return allUsers.get();
+	}
+	
+	@Override
+	public Set<Integer> getCountryIds() {
+		return countryUsers.keySet();
+		
+	}
+
+	@Override
+	public double getDistanceBetweenPoints(int fromX, int fromY, int toX,
+			int toY) {
+		int disX = Math.abs(fromX - toX);
+		int disY = Math.abs(fromY - toY);
+		return Math.pow(disX * disX + disY * disY, 0.5);
+	}
+
+	/**
+	 * 所有的速度加成
+	 * 
+	 * @return
+	 */
+	private double getSpeedBonus() {
+		return 1d;
+	}
+
+	public double getSpyTimeBetweenPoints(User user, MapCell fromCell,
+			MapCell toCell) {
+		return this.getBaseTimeBetweenPoints(user, fromCell, toCell) * 0.1d;
+	}
+
+	@Override
+	public double getBaseTimeBetweenPoints(User user, MapCell fromCell,
+			MapCell toCell) {
+		// 2.出征，驻守，集结时间 = 向上取整[目标与自己距离 × 15 / *速度科技参数* ×
+		// if(从13~15区出发并且目标是1~12区中和自己国家不同的地区时,1.5,1) ×
+		// if(出发地与目标的联盟资源点距离小于等于9,0.5,1)]
+		// 3.侦查时间 = 出征时间 / 10
+
+	    int fromX = fromCell.getPosX();
+		int fromY = fromCell.getPosY();
+		int fromStateId = fromCell.getStateId();
+		int toX = toCell.getPosX();
+		int toY = toCell.getPosY();
+		int toStateId = toCell.getStateId();
+		
+		//区加成
+		double stateBunus = 1d;
+		int fromCountryId = 0;
+		if(user != null && user.getCountryId() >0){
+			fromCountryId = user.getCountryId();
+		}
+		
+		// 区域加成 (从13~15区出发并且目标是1~12区中和自己国家不同的地区时,1.5,1)
+		if(fromStateId >= 13 &&fromStateId <=15 && toStateId >= 1 && toStateId <=12
+				&& toCell.getCountryId() != fromCountryId){
+			stateBunus = 1.5d;
+		}
+		
+		double dis = getDistanceBetweenPoints(fromX, fromY, toX, toY);
+		dis = dis * 15 / getSpeedBonus() * stateBunus;
+		
+		// 公路加成，出发地或是目标地是公路&&路程<=9,
+		double roadBonus = 1d;
+		if((fromCell.getEarthType() == MapCell.EARTH_TYPE_ROAD
+				|| toCell.getEarthType() == MapCell.EARTH_TYPE_ROAD) && dis <=9){
+			roadBonus = 0.5d;
+		}
+		dis = dis * roadBonus;
+
+		return dis;
+	}
+	
+}

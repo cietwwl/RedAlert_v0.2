@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ServerInfo">
+  <!-- ================================mystic start============================================-->
+	<typeAlias alias="userMysticShop" type="com.youxigu.dynasty2.activity.domain.UserMysticShop" />
+	<typeAlias alias="mysticShopItem" type="com.youxigu.dynasty2.activity.domain.MysticShopItem" />
+    <typeAlias alias="mysticShop" type="com.youxigu.dynasty2.activity.domain.MysticShop" />
+    
+    <select id="getAllMysticShop"  resultClass="mysticShop" >
+		select * from mysticshop 
+	</select>
+    
+     <select id="getAllMysticShopItem"  resultClass="mysticShopItem" >
+		select * from mysticshopitem 
+	</select>
+    
+    <cacheModel type="MEMCACHED" id="cache_userMysticShopp" serialize="false" readOnly="false">
+        <flushOnExecute statement="insertUserMysticShop">
+            <flushModel flushstatement="userMysticShop" flushMode="insert" flushpara="userId,shopId"/>
+        </flushOnExecute>
+        <flushOnExecute statement="updateUserMysticShop">
+            <flushModel flushstatement="userMysticShop" flushMode="update" flushpara="userId,shopId"/>
+        </flushOnExecute>
+        <property name="class" value="userMysticShop"/>
+        <property name="pk" value="userId,shopId"/>
+    </cacheModel>
+    
+    <insert id="insertUserMysticShop" parameterClass="userMysticShop">
+        INSERT INTO usermysticshop (userId,shopId,curShopIds,curBuyStatus,buyShopIds,freeCount,buyCount,lastTimes,cashCount) 
+        VALUES (#userId#,#shopId#,#curShopIds#,#curBuyStatus#,#buyShopIds#,#freeCount#,#buyCount#,#lastTimes#,#cashCount#)
+    </insert>
+    
+    <update id="updateUserMysticShop" parameterClass="userMysticShop" asyncUpdate="9">
+        UPDATE usermysticshop SET curShopIds = #curShopIds#,curBuyStatus = #curBuyStatus#,buyShopIds = #buyShopIds#,freeCount = #freeCount#,buyCount=#buyCount#,
+        		lastTimes = #lastTimes#,cashCount = #cashCount# 
+       WHERE userId = #userId# and shopId = #shopId#
+    </update>
+    
+    
+    <select id="getUserMysticShop" resultClass="userMysticShop" parameterClass="java.util.HashMap" cacheModel="cache_userMysticShopp" cacheOnlyObject="true">
+        SELECT * FROM usermysticshop WHERE userId = #userId# and shopId = #shopId#
+    </select>
+    
+    
+    
+    <typeAlias alias="activity" type="com.youxigu.dynasty2.activity.domain.Activity" />
+	<insert id="insertActivity" parameterClass="activity">
+		insert into
+		activity(actId,name,description,url,icon,startDttm,endDttm,timeStart,timeEnd,weekStart,weekEnd,channel,qqYellowLv,qqYellowLvYear,qqYellowLvHigh,qqBlueLv,qqBlueLvYear,qqBlueLvHigh,qqPlusLv,qqLv,qqVipLv,qqVipLvYear,qq3366Lv,qqRedLv,qqGreenLv,qqPinkLv,qqPinkLvYear,qqSuperLv,usrLv,casteLv,efId,status,relation)
+		values
+		(#actId#,#name#,#description#,#url#,#icon#,#startDttm#,#endDttm#,#timeStart#,#timeEnd#,#weekStart#,#weekEnd#,#channel#,#qqYellowLv#,#qqYellowLvYear#,#qqYellowLvHigh#,#qqBlueLv#,#qqBlueLvYear#,#qqBlueLvHigh#,#qqPlusLv#,#qqLv#,#qqVipLv#,#qqVipLvYear#,#qq3366Lv#,#qqRedLv#,#qqGreenLv#,#qqPinkLv#,#qqPinkLvYear#,#qqSuperLv#,#usrLv#,#casteLv#,#efId#,#status#,#relation#);
+	</insert>
+	<update id="updateActivity" parameterClass="activity">
+    	update activity set name=#name#,description=#description#,url=#url#,icon=#icon#,startDttm=#startDttm#,endDttm=#endDttm#,timeStart=#timeStart#,timeEnd=#timeEnd#,qqYellowLv=#qqYellowLv#,qqYellowLvYear=#qqYellowLvYear#,qqYellowLvHigh=#qqYellowLvHigh#,qqBlueLvYear=#qqBlueLvYear#,qqBlueLvHigh=#qqBlueLvHigh#, qqBlueLvHigh=#qqBlueLvHigh#,weekStart=#weekStart#,weekEnd=#weekEnd#,channel=#channel#,qqVipLvYear=#qqVipLvYear#,qqYellowLv=#qqYellowLv#,qqBlueLv=#qqBlueLv#,qqPlusLv=#qqPlusLv#,qqPinkLvYear=#qqPinkLvYear#,qqLv=#qqLv#,qqVipLv=#qqVipLv#,qq3366Lv=#qq3366Lv#,qqRedLv=#qqRedLv#,qqGreenLv=#qqGreenLv#,qqPinkLv=#qqPinkLv#,qqSuperLv=#qqSuperLv#,usrLv=#usrLv#,casteLv=#casteLv#,efId=#efId#,status=#status#,relation=#relation# where actId=#actId#
+    </update>
+
+	<delete id="deleteActivity" parameterClass="int" >
+		delete from activity where actId=#actId#
+	</delete>
+
+	<select id="getActivity"  parameterClass="int" resultClass="activity" >
+    	SELECT * from activity where actId=#actId#
+    </select>
+
+	<select id="getActivitys"  resultClass="activity" >
+    	SELECT * from activity
+    </select>
+
+
+	
+
+	<!--奖励活动-->
+	<typeAlias alias="awardActivity" type="com.youxigu.dynasty2.activity.domain.AwardActivity" />
+	<insert id="insertAwardActivity" parameterClass="awardActivity">
+		insert into awardactivity(id,actName,actDesc,type,icon,startDttm,endDttm,minUsrLv,maxUsrLv,itemId1,num1,itemId2,num2,itemId3,num3,itemId4,num4,itemId5,num5) values (#id#,#actName#,#actDesc#,#type#,#icon#,#startDttm#,#endDttm#,#minUsrLv#,#maxUsrLv#,#itemId1#,#num1#,#itemId2#,#num2#,#itemId3#,#num3#,#itemId4#,#num4#,#itemId5#,#num5#);
+	</insert>
+
+	<update id="updateAwardActivity" parameterClass="awardActivity">
+		UPDATE awardactivity SET actName=#actName#,type=#type#,actDesc=#actDesc#,icon=#icon#,startDttm=#startDttm#,endDttm=#endDttm#,minUsrLv=#minUsrLv#,maxUsrLv=#maxUsrLv#,itemId1=#itemId1#,num1=#num1#,itemId2=#itemId2#,num2=#num2#,itemId3=#itemId3#,num3=#num3#,itemId4=#itemId4#,num4=#num4#,itemId5=#itemId5#,num5=#num5# where id=#id#
+	</update>
+
+	<delete id="deleteAwardActivity" parameterClass="int" >
+		delete from awardactivity where id=#id#
+	</delete>
+
+    <select id="getAwardActivity" parameterClass="int" resultClass="awardActivity" >
+        SELECT * FROM awardactivity where id=#id#
+    </select>
+
+    <select id="getAwardActivitys" resultClass="awardActivity" >
+        SELECT * FROM awardactivity
+    </select>
+    
+    
+    <!-- 运营活动配置 -->
+	<typeAlias alias="operateActivity" type="com.youxigu.dynasty2.activity.domain.OperateActivity" />
+	
+	<select id="getOperateActivitys" resultClass="operateActivity" >
+		select * from operateactivity 
+	</select>
+	
+	<select id="getOperateActivity" resultClass="operateActivity" parameterClass="long">
+		select * from operateactivity where actId = #actId#
+	</select>
+	
+	<insert id="createOperateActivity" parameterClass="operateActivity" >
+		insert into operateactivity(actId,type,actName,startTime,endTime,maxTime,rewardContext,autoReward,status) 
+		values(#actId#,#type#,#actName#,#startTime#,#endTime#,#maxTime#,#rewardContext#,#autoReward#,#status#);
+	</insert>
+	<delete id="deleteOperateActivity" parameterClass="long">
+		delete from operateactivity where actId = #actId#
+	</delete>
+	
+	<update id="updateOperateActivity" parameterClass="operateActivity">
+		update operateactivity set
+		type=#type#,actName=#actName#,startTime=#startTime#,endTime=#endTime#,maxTime=#maxTime#,
+		rewardContext=#rewardContext#,autoReward=#autoReward#,status=#status#
+		where actId = #actId#
+	</update>
+	
+	
+	<!-- 玩家数据，暂时不配置缓存 -->
+	<typeAlias alias="userOperateActivity" type="com.youxigu.dynasty2.activity.domain.UserOperateActivity" />
+	
+	<select id="getUserOperateActivity" resultClass="userOperateActivity" parameterClass="java.util.HashMap"  >
+		select * from useroperateactivity  where userId=#userId# and type=#type#
+	</select>
+	
+	<insert id="createUserOperateActivity" parameterClass="userOperateActivity" >
+		insert into useroperateactivity(userId,actId,type,status,lastTime) values(#userId#,#actId#,#type#,#status#,#lastTime#);
+	</insert>
+	<update id="updateUserOperateActivity" parameterClass="userOperateActivity">
+		update useroperateactivity set actId=#actId#,status=#status#,lastTime=#lastTime#
+		where userId=#userId# and type=#type#
+	</update>
+</sqlMap>

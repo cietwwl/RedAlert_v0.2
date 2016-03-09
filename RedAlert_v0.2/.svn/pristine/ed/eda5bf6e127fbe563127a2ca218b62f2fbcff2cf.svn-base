@@ -1,0 +1,42 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+
+	
+	<bean id="sysParaDao" class="com.youxigu.dynasty2.common.dao.impl.SysParaDao" >
+		<property name="sqlMapClientTemplate"><ref bean="sqlMapClientTemplate" /></property>
+	</bean>
+
+	
+
+	<bean id="commonService" class="com.youxigu.dynasty2.common.service.impl.CommonService" init-method="init">
+		<property name="sysParaDao"><ref bean="sysParaDao" /></property>
+		<property name="broadcastMgr"><ref bean="broadcastMgr" /></property>
+		<property name="omsUrl" value="${oms.url:}/server/info.htm"/>
+		<property name="logOutService" ref="logOutService"/>
+	</bean>
+
+
+	<bean id="sensitiveWordService" class="com.youxigu.dynasty2.common.service.impl.SensitiveWordService" init-method="init">
+		<property name="sensitiveWordsConf" value="sensitive.properties" />
+	</bean>
+	
+	
+	<bean id="logOutDao" class="com.youxigu.dynasty2.common.dao.impl.LogOutDao">
+		<property name="sqlMapClientTemplate" ref="sqlMapClientTemplate"/>
+	</bean>
+	
+	<bean id="logOutService" class="com.youxigu.dynasty2.common.service.impl.LogOutService">
+		<property name="logOutDao" ref="logOutDao" />
+	</bean>
+
+
+
+</beans>
+

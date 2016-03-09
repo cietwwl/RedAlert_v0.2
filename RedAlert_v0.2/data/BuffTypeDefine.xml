@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<dataset>
+
+<BuffTypeDefine buffType="BF_GOLD_SPEEDUP" buffTypeName="金矿产量加速" buffTypeDesc="金矿产量加速" iconPath="buff_gold_1" />
+<BuffTypeDefine buffType="BF_IRON_SPEEDUP" buffTypeName="铁矿产量加速" buffTypeDesc="铁矿产量加速" iconPath="buff_iron_1" />
+<BuffTypeDefine buffType="BF_OIL_SPEEDUP" buffTypeName="油矿产量加速" buffTypeDesc="油矿产量加速" iconPath="buff_gold_1" />
+<BuffTypeDefine buffType="BF_URANIUM_SPEEDUP" buffTypeName="铀矿产量加速" buffTypeDesc="铀矿产量加速" iconPath="buff_iron_1" />
+
+
+
+
+
+
+</dataset>

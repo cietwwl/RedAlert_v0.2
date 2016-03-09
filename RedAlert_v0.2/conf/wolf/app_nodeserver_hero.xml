@@ -1,0 +1,235 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:flex="http://www.springframework.org/schema/flex"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+
+	<bean id="heroAction" class="com.youxigu.dynasty2.hero.web.HeroAction">
+		<property name="heroService" ref="heroService"></property>
+	</bean>
+
+	<!-- 加载所有玩家的武将 31021-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="31021" />
+		<property name="bean" ref="heroAction" />
+		<property name="methodName" value="loadHeroViewByUserId" />
+	</bean>
+
+	<!--武将升级 31025-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="31025" />
+		<property name="bean" ref="heroAction" />
+		<property name="methodName" value="heroLevelUp" />
+	</bean>
+	
+	<!--武将进阶 31027-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="31027" />
+		<property name="bean" ref="heroAction" />
+		<property name="methodName" value="relifeHero" />
+	</bean>
+	
+	<!--强化 31029-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="31029" />
+		<property name="bean" ref="heroAction" />
+		<property name="methodName" value="doHeroStrength" />
+	</bean>
+
+
+	<!--武将重生-31031 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="31031" />
+		<property name="bean" ref="heroAction" />
+		<property name="methodName" value="doHeroRebirth" />
+	</bean>
+	
+	<!--碎片兑换坦克-31035 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="31035" />
+		<property name="bean" ref="heroAction" />
+		<property name="methodName" value="doHeroSoulComposite" />
+	</bean>
+	
+	<!--分解坦克图纸-31037 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="31037" />
+		<property name="bean" ref="heroAction" />
+		<property name="methodName" value="doHeroCardDiscard" />
+	</bean>
+	
+	
+	<!--坦克维修-31039 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="31039" />
+		<property name="bean" ref="heroAction" />
+		<property name="methodName" value="changeHeroArmy" />
+	</bean>
+	
+	<!--坦克一键维修-31041 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="31041" />
+		<property name="bean" ref="heroAction" />
+		<property name="methodName" value="autoHeroArmy" />
+	</bean>
+	
+	<!--获取坦克的原始属性(客户端通过原始属性自己来计算属性)-31043 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="31043" />
+		<property name="bean" ref="heroAction" />
+		<property name="methodName" value="getHeroEffectValue" />
+	</bean>
+	
+	<!--33107获取坦克碎片和坦克图纸信息 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33107" />
+		<property name="bean" ref="heroAction" />
+		<property name="methodName" value="doHeroCardAndDebris" />
+	</bean>
+	
+
+
+	<!-- -->
+	<bean id="troopAction" class="com.youxigu.dynasty2.hero.web.TroopAction">
+		<property name="troopService" ref="troopService"></property>
+	</bean>
+	<!-- 33001坦克上阵 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33001" />
+		<property name="bean" ref="troopAction" />
+		<property name="methodName" value="upTroop" />
+	</bean>
+	<!-- 军团列表 33003 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33003" />
+		<property name="bean" ref="troopAction" />
+		<property name="methodName" value="getTroopList" />
+	</bean>
+	<!-- 获取某个军团的详细信息 33005-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33005" />
+		<property name="bean" ref="troopAction" />
+		<property name="methodName" value="getTroop" />
+	</bean>
+	
+	<!-- 33007格子交换武将-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33007" />
+		<property name="bean" ref="troopAction" />
+		<property name="methodName" value="swapTroopGrid" />
+	</bean>
+	
+	<!-- 33009获取格子里面的信息。。包括武将。。装备等.-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33009" />
+		<property name="bean" ref="troopAction" />
+		<property name="methodName" value="getTroopGrid" />
+	</bean>
+	
+	<!-- 33011设置队长-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33011" />
+		<property name="bean" ref="troopAction" />
+		<property name="methodName" value="setTeamLeader" />
+	</bean>
+	
+	<!-- 33013调整军团格子位置-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33013" />
+		<property name="bean" ref="troopAction" />
+		<property name="methodName" value="saveTroopGrid" />
+	</bean>
+	
+	<!-- ///////////////////酒馆抽奖信息/////////////////////////// -->
+	<bean id="heroDrawAction" class="com.youxigu.dynasty2.hero.web.HeroDrawAction" >
+		<property name="heroDrawService" ref="heroDrawService"></property>
+		<property name="commonService" ref="commonService"></property>
+		<property name="vipService" ref="vipService"></property>
+	</bean>
+	<!-- 酒馆视图-33101-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33101" />
+		<property name="bean" ref="heroDrawAction" />
+		<property name="methodName" value="showBar" />
+	</bean>
+	
+	<!-- 酒馆中招募武将-33103-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33103" />
+		<property name="bean" ref="heroDrawAction" />
+		<property name="methodName" value="buiBarHireHero" />
+	</bean>
+	
+	
+	<!-- ////////////////////////武将准备///////////////////////// -->
+	<bean  id="heroEquipAction" class="com.youxigu.dynasty2.hero.web.HeroEquipAction">
+		<property name="heroEquipService" ref="heroEquipService"></property>
+	</bean>
+	<!-- 换装备-33111-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33111" />
+		<property name="bean" ref="heroEquipAction" />
+		<property name="methodName" value="takeEquip" />
+	</bean>
+	<!-- 脱装备-33113-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33113" />
+		<property name="bean" ref="heroEquipAction" />
+		<property name="methodName" value="takeOffEquip" />
+	</bean>
+	<!--装备强化 33115-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33115" />
+		<property name="bean" ref="heroEquipAction" />
+		<property name="methodName" value="equipLvUp" />
+	</bean>
+	<!--武将装备合成 33117-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33117" />
+		<property name="bean" ref="heroEquipAction" />
+		<property name="methodName" value="equipCompose" />
+	</bean>
+	<!--装备分解 33119-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33119" />
+		<property name="bean" ref="heroEquipAction" />
+		<property name="methodName" value="equipDestroy" />
+	</bean>
+	<!--装备回炉 33121-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33121" />
+		<property name="bean" ref="heroEquipAction" />
+		<property name="methodName" value="equipRebirth" />
+	</bean>
+	<!--装备加锁33123-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33123" />
+		<property name="bean" ref="heroEquipAction" />
+		<property name="methodName" value="equipLock" />
+	</bean>
+	
+	<!--装备生产 33125-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33125" />
+		<property name="bean" ref="heroEquipAction" />
+		<property name="methodName" value="equipBuild" />
+	</bean>
+	
+	<!--装备图纸和碎片 33127-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33127" />
+		<property name="bean" ref="heroEquipAction" />
+		<property name="methodName" value="equipCardAndDebris" />
+	</bean>
+	
+	<!--出售装备图纸和碎片 33131-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="33131" />
+		<property name="bean" ref="heroEquipAction" />
+		<property name="methodName" value="sellItem" />
+	</bean>
+
+</beans>
+

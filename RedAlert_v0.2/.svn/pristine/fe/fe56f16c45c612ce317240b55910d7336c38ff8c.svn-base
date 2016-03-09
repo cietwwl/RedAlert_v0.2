@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+        "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+    <!--========================================================= Castle start============================================== -->
+    <typeAlias alias="castle" type="com.youxigu.dynasty2.develop.domain.Castle"/>
+
+    <cacheModel type="MEMCACHED" id="cache_castle" serialize="false" readOnly="false">
+        <flushOnExecute statement="insertCastle">
+            <flushModel flushstatement="castle" flushMode="insert" flushpara="casId"/>
+            <flushModel flushstatement="getCastleByUserId" flushMode="insert" flushpara="userId"/>
+        </flushOnExecute>
+        <flushOnExecute statement="updateCastle">
+            <flushModel flushstatement="castle" flushMode="update" flushpara="casId"/>
+        </flushOnExecute>
+
+
+        <property name="class" value="castle"/>
+        <property name="pk" value="casId"/>
+    </cacheModel>
+
+    <insert id="insertCastle" parameterClass="castle">
+        INSERT INTO castle(casId,userId, calcuDttm, quarCalcuDttm, changeCountryDttm, stateId, autoBuild, posX, posY, status,casName)
+        values(#casId#, #userId#, #calcuDttm#, #quarCalcuDttm#, #changeCountryDttm#, #stateId#, #autoBuild#, #posX#,
+        #posY#,#status#,#casName#)
+    </insert>
+
+    <update id="updateCastle" parameterClass="castle" asyncUpdate="4"><!--asyncUpdate="4"-->
+        UPDATE castle SET casId=#casId#,userId=#userId#, calcuDttm=#calcuDttm#, quarCalcuDttm=#quarCalcuDttm#,
+        changeCountryDttm=#changeCountryDttm#, stateId=#stateId#, autoBuild=#autoBuild#, posX=#posX#, posY=#posY#,status=#status#,casName=#casName# WHERE
+        casId = #casId#
+    </update>
+
+    <select id="getCastleByUserId" resultClass="castle" parameterClass="Long" cacheModel="cache_castle"
+            resultIsList="true">
+        SELECT * FROM castle WHERE userId = #userId#
+    </select>
+
+    <select id="getCastleById" resultClass="castle" parameterClass="Long" cacheModel="cache_castle"
+            cacheOnlyObject="true">
+        SELECT * FROM castle WHERE casId = #casId#
+    </select>
+
+    <!--
+        <select id="getCastleByIds" parameterClass="java.util.List" resultClass="castle" cacheModel="cache_castle"
+                cacheOnlyObject="true">
+            select * from castle where casId in
+            <iterate open="(" close=")" conjunction=",">
+                #[]#
+            </iterate>
+        </select>
+    -->
+
+    <!--========================================================= CastleRes start============================================== -->
+    <typeAlias alias="castleRes" type="com.youxigu.dynasty2.develop.domain.CastleResource"/>
+    <cacheModel type="MEMCACHED" id="cache_castleRes" serialize="false" readOnly="false">
+        <flushOnExecute statement="insertCastleRes">
+            <flushModel flushstatement="castleRes" flushMode="insert" flushpara="casId"/>
+        </flushOnExecute>
+        <flushOnExecute statement="updateCastleRes">
+            <flushModel flushstatement="castleRes" flushMode="update" flushpara="casId"/>
+        </flushOnExecute>
+        <property name="class" value="castleRes"/>
+        <property name="pk" value="casId"/>
+    </cacheModel>
+    
+    <select id="getCastleResById" resultClass="castleRes" parameterClass="Long" cacheModel="cache_castleRes"
+            cacheOnlyObject="true">
+        SELECT * FROM castleres WHERE casId = #casId#
+    </select>
+
+    <insert id="insertCastleRes" parameterClass="castleRes">
+        INSERT INTO castleres (casId, goldNum,ironNum,oilNum,uranium,casGoldNum,casIronNum,casOilNum,casUranium,cashNum,lastBuyDttm)
+        VALUES (#casId#,#goldNum#,#ironNum#,#oilNum#,#uranium#,#casGoldNum#,#casIronNum#,#casOilNum#,#casUranium#,#cashNum#,#lastBuyDttm#)
+    </insert>
+
+    <update id="updateCastleRes" parameterClass="castleRes" asyncUpdate="4">
+        UPDATE castleres SET goldNum=#goldNum#,ironNum=#ironNum#,oilNum=#oilNum#,uranium=#uranium#,casGoldNum=#casGoldNum#,
+        casIronNum=#casIronNum#,casOilNum=#casOilNum#,casUranium=#casUranium#,cashNum=#cashNum#,lastBuyDttm=#lastBuyDttm# WHERE casId = #casId#
+    </update>
+
+    <!--============================= CasBuilding start,castleBuilding is a split table============================================== -->
+
+    <typeAlias alias="casBuilding" type="com.youxigu.dynasty2.develop.domain.CastleBuilding"/>
+
+    <cacheModel type="MEMCACHED" id="cache_casBuilding" serialize="false" readOnly="false">
+        <flushOnExecute statement="insertCastleBuilding">
+            <flushModel flushstatement="getCastleBuildingsByCasId" flushMode="insert" flushpara="casId"/>
+            <flushModel flushstatement="casBuilding" flushMode="insert" flushpara="casId,casBuiId"/>
+        </flushOnExecute>
+
+        <flushOnExecute statement="updateCastleBuilding">
+            <flushModel flushstatement="casBuilding" flushMode="update" flushpara="casId,casBuiId"/>
+        </flushOnExecute>
+
+        <flushOnExecute statement="deleteCastleBuilding">
+            <flushModel flushstatement="getCastleBuildingsByCasId" flushMode="delete" flushpara="casId"/>
+            <flushModel flushstatement="casBuilding" flushMode="delete" flushpara="casId,casBuiId"/>
+        </flushOnExecute>
+
+        <property name="class" value="casBuilding"/>
+        <property name="pk" value="casId,casBuiId"/>
+    </cacheModel>
+
+    <select id="getCastleBuildingById" resultClass="casBuilding" parameterClass="java.util.Map"
+            cacheModel="cache_casBuilding" cacheOnlyObject="true"
+            shardingParams='[{"paramExpr":"casId","tableName":"castlebuilding"}]'>
+        SELECT * FROM castlebuilding WHERE casBuiId = #casBuiId#
+    </select>
+
+    <select id="getCastleBuildingsByCasId" resultClass="casBuilding" parameterClass="Long"
+            cacheModel="cache_casBuilding" resultIsList="true"
+            shardingParams='[{"paramExpr":"casId","tableName":"castlebuilding"}]'>
+        SELECT * FROM castlebuilding WHERE casId = #casId#
+    </select>
+
+    <insert id="insertCastleBuilding" parameterClass="casBuilding"
+            shardingParams='[{"paramExpr":"casId","tableName":"castlebuilding"}]'>
+        INSERT IGNORE INTO castlebuilding(casId, buiEntId, builderIndex, level, beginDttm,endDttm, autoBuild)
+        values(#casId#, #buiEntId#, #builderIndex#, #level#,#beginDttm#,#endDttm#, #autoBuild#)
+        <selectKey resultClass="int" keyProperty="casBuiId">
+            SELECT last_insert_Id()
+        </selectKey>
+    </insert>
+
+    <update id="updateCastleBuilding" parameterClass="casBuilding"
+            shardingParams='[{"paramExpr":"casId","tableName":"castlebuilding"}]' asyncUpdate="4">
+        UPDATE castlebuilding SET level = #level#, builderIndex = #builderIndex#, buiEntId =
+        #buiEntId#,beginDttm=#beginDttm#,
+        endDttm=#endDttm#, autoBuild = #autoBuild# WHERE casBuiId = #casBuiId#
+    </update>
+
+    <delete id="deleteCastleBuilding" parameterClass="casBuilding"
+            shardingParams='[{"paramExpr":"casId","tableName":"castlebuilding"}]'>
+        delete from castlebuilding where casBuiId = #casBuiId#
+    </delete>
+
+    <!-- ====================================================CastleEffect start================================================================-->
+    <typeAlias alias="castleEffect" type="com.youxigu.dynasty2.develop.domain.CastleEffect"/>
+    <cacheModel type="MEMCACHED" id="cache_castleEffect" serialize="false" readOnly="false">
+        <flushOnExecute statement="insertCastleEffect">
+            <flushModel flushstatement="castleEffect" flushMode="insert" flushpara="casId,id"/>
+            <flushModel flushstatement="getCastleEffectByCasId" flushMode="insert" flushpara="casId"/>
+        </flushOnExecute>
+        <flushOnExecute statement="updateCastleEffect">
+            <flushModel flushstatement="castleEffect" flushMode="update" flushpara="casId,id"/>
+        </flushOnExecute>
+        <flushOnExecute statement="deleteCastleEffectById">
+            <flushModel flushstatement="getCastleEffectByCasId" flushMode="delete" flushpara="casId"/>
+            <flushModel flushstatement="castleEffect" flushMode="delete" flushpara="casId,id"/>
+        </flushOnExecute>
+
+        <property name="class" value="castleEffect"/>
+        <property name="pk" value="casId,id"/>
+    </cacheModel>
+
+
+    <insert id="insertCastleEffect" parameterClass="castleEffect"
+            shardingParams='[{"paramExpr":"casId","tableName":"castleeffect"}]'>
+        INSERT INTO castleeffect (casId, entId, effTypeId, absValue, perValue, expireDttm) values( #casId#, #entId#,
+        #effTypeId#, #absValue#, #perValue#, #expireDttm#)
+        <selectKey resultClass="int" keyProperty="id">
+            SELECT last_insert_Id()
+        </selectKey>
+    </insert>
+
+    <update id="updateCastleEffect" parameterClass="castleEffect"
+            shardingParams='[{"paramExpr":"casId","tableName":"castleeffect"}]' asyncUpdate="4">
+        UPDATE castleeffect SET absValue = #absValue#, perValue = #perValue#, expireDttm = #expireDttm# WHERE id = #id#
+    </update>
+
+    <delete id="deleteCastleEffectById" parameterClass="castleEffect"
+            shardingParams='[{"paramExpr":"casId","tableName":"castleeffect"}]'>
+        DELETE FROM castleeffect WHERE id = #id#
+    </delete>
+
+    <select id="getCastleEffectByCasId" resultClass="castleEffect" parameterClass="Long" cacheModel="cache_castleEffect"
+            resultIsList="true" shardingParams='[{"paramExpr":"casId","tableName":"castleeffect"}]'>
+        SELECT * FROM castleeffect where casId = #casId#
+    </select>
+
+    <!-- ====================================================castleBuilder================================================================-->
+
+    <typeAlias alias="castleBuilder" type="com.youxigu.dynasty2.develop.domain.CastleBuilder"/>
+
+    <cacheModel type="MEMCACHED" id="cache_castleBuilder" serialize="false" readOnly="false">
+        <flushOnExecute statement="insertCastleBuilder">
+            <flushModel flushstatement="castleBuilder" flushMode="insert" flushpara="id"/>
+            <flushModel flushstatement="getCastleBuilders" flushMode="insert" flushpara="userId"/>
+        </flushOnExecute>
+
+        <flushOnExecute statement="updateCastleBuilder">
+            <flushModel flushstatement="castleBuilder" flushMode="update" flushpara="id"/>
+        </flushOnExecute>
+
+        <flushOnExecute statement="deleteCastleBuilder">
+            <flushModel flushstatement="getCastleBuilders" flushMode="delete" flushpara="userId"/>
+            <flushModel flushstatement="castleBuilder" flushMode="delete" flushpara="id"/>
+        </flushOnExecute>
+
+        <property name="class" value="castleBuilder"/>
+        <property name="pk" value="id"/>
+    </cacheModel>
+
+    <insert id="insertCastleBuilder" parameterClass="castleBuilder">
+        INSERT INTO castlebuilder(id, userId, casId, builderIndex, buiId, beginDttm, endDttm, status)
+        values(#id#, #userId#, #casId#, #builderIndex#, #buiId#, #beginDttm#, #endDttm#, #status#)
+        <selectKey resultClass="int" keyProperty="id">
+            SELECT last_insert_Id()
+        </selectKey>
+    </insert>
+
+    <update id="updateCastleBuilder" parameterClass="castleBuilder" asyncUpdate="4">
+        UPDATE castlebuilder set
+        id=#id#, userId=#userId#, casId=#casId#, buiId=#buiId#, beginDttm=#beginDttm#, endDttm=#endDttm#,
+        status=#status# WHERE id=#id#
+    </update>
+
+    <delete id="deleteCastleBuilder" parameterClass="castleBuilder">
+        delete from castlebuilder where id = #id#
+    </delete>
+
+    <select id="getCastleBuilders" resultClass="castleBuilder" parameterClass="Long" cacheModel="cache_castleBuilder"
+            resultIsList="true">
+        SELECT * FROM castlebuilder WHERE userId = #userId#
+    </select>
+
+    <select id="getCastleBuilderByIndex" resultClass="castleBuilder" parameterClass="java.util.Map"
+            cacheModel="cache_castleBuilder" cacheOnlyObject="true">
+        SELECT * FROM castlebuilder WHERE userId = #userId# and builderIndex = #builderIndex#
+    </select>
+
+
+
+
+    <!--========================================================= CastleArmy============================================== -->
+	<typeAlias alias="castleArmy" type="com.youxigu.dynasty2.develop.domain.CastleArmy"/>
+	<cacheModel type="MEMCACHED" id="cache_castleArmy" serialize="false" readOnly="false">
+		<flushOnExecute statement="insertCastleArmy">
+			<flushModel flushstatement="castleArmy" flushMode="insert" flushpara="casId"/>
+		</flushOnExecute>
+
+		<flushOnExecute statement="updateCastleArmy">
+			<flushModel flushstatement="castleArmy" flushMode="update" flushpara="casId"/>
+		</flushOnExecute>
+
+		<property name="class" value="castleArmy"/>
+		<property name="pk" value="casId"/>
+	</cacheModel>
+
+	<insert id="insertCastleArmy" parameterClass="castleArmy">
+		INSERT INTO castlearmy(casId,buildNum,refreshCD,num,status) values(#casId#,#buildNum#,#refreshCD#,#num#,#status#)
+	</insert>
+
+	<update id="updateCastleArmy" parameterClass="castleArmy" asyncUpdate="4">
+		UPDATE castlearmy SET refreshCD=#refreshCD#,buildNum=#buildNum#,num = #num#,status=#status#
+		WHERE casId = #casId#
+	</update>
+
+	<select id="getCastleArmy" resultClass="castleArmy" parameterClass="Long" cacheModel="cache_castleArmy"  cacheOnlyObject="true">
+		SELECT * FROM castlearmy where casId=#casId#
+	</select>
+
+    <!--====================================================User Tech start====================================================================-->
+
+    <typeAlias alias="userTech" type="com.youxigu.dynasty2.develop.domain.UserTechnology"/>
+
+
+    <cacheModel type="MEMCACHED" id="cache_userTech" serialize="false" readOnly="false">
+        <flushOnExecute statement="insertUserTech">
+            <flushModel flushstatement="userTech" flushMode="insert" flushpara="userId,id"/>
+            <flushModel flushstatement="getUserTechsByUserId" flushMode="insert" flushpara="userId"/>
+        </flushOnExecute>
+
+        <flushOnExecute statement="updateUserTech">
+            <flushModel flushstatement="userTech" flushMode="update" flushpara="userId,id"/>
+        </flushOnExecute>
+
+        <property name="class" value="userTech"/>
+        <property name="pk" value="userId,id"/>
+    </cacheModel>
+
+    <insert id="insertUserTech" parameterClass="userTech"
+            shardingParams='[{"paramExpr":"userId","tableName":"usertech"}]'>
+        INSERT INTO usertech(userId, entId, level, beginDttm, endDttm) values(#userId#, #entId#, #level#, #beginDttm#,
+        #endDttm#)
+        <selectKey resultClass="int" keyProperty="id">
+            SELECT last_insert_Id()
+        </selectKey>
+    </insert>
+
+    <update id="updateUserTech" parameterClass="userTech" asyncUpdate="4"
+            shardingParams='[{"paramExpr":"userId","tableName":"usertech"}]'>
+        UPDATE usertech SET level = #level#, beginDttm = #beginDttm#, endDttm = #endDttm# WHERE id = #id#
+    </update>
+
+
+    <select id="getUserTechsByUserId" resultClass="userTech" parameterClass="Long"
+            cacheModel="cache_userTech" resultIsList="true"
+            shardingParams='[{"paramExpr":"userId","tableName":"usertech"}]'>
+        SELECT * FROM usertech where userId=#userId#
+    </select>
+
+    <select id="getUserTechById" resultClass="userTech" parameterClass="java.util.Map"
+            cacheModel="cache_userTech" cacheOnlyObject="true"
+            shardingParams='[{"paramExpr":"userId","tableName":"usertech"}]'>
+        SELECT * FROM usertech where id=#id#
+    </select>
+</sqlMap>

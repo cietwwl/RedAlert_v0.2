@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+
+<!--建筑基础数据-->
+<Building entId="11001" buiName="基地" buiDesc="提高基地等级，可以提升其他建筑的等级上限" maxLevel="50" initialLevel="1" />
+<Building entId="11002" buiName="研究中心" buiDesc="提高研究中心等级，可以研究更多科技" maxLevel="50" initialLevel="1" />
+<Building entId="11003" buiName="油矿" buiDesc="升级油矿，可以增加油产量" maxLevel="50" initialLevel="1" />
+<Building entId="11004" buiName="铁矿" buiDesc="升级铁矿，可以增加铁产量" maxLevel="50" initialLevel="1" />
+<Building entId="11005" buiName="铀矿" buiDesc="升级铀矿，可以增加铀产量" maxLevel="50" initialLevel="1" />
+<Building entId="11006" buiName="金矿" buiDesc="升级金矿，可以增加金产量" maxLevel="50" initialLevel="1" />
+<Building entId="11007" buiName="维修工厂" buiDesc="升级维修工厂，可以增加维修零件储存上限" maxLevel="50" initialLevel="1" />
+<Building entId="11008" buiName="城墙" buiDesc="升级城墙，可以增加城防耐久" maxLevel="50" initialLevel="1" />
+<Building entId="11009" buiName="仓库" buiDesc="升级仓库，可以增加受保护资源量" maxLevel="50" initialLevel="1" />
+<Building entId="11010" buiName="战车工厂" buiDesc="战车工厂" maxLevel="1" initialLevel="1" />
+<Building entId="11011" buiName="作战实验室" buiDesc="作战实验室" maxLevel="1" initialLevel="1" />
+<Building entId="11012" buiName="兵器工厂" buiDesc="兵器工厂" maxLevel="1" initialLevel="1" />
+<Building entId="11013" buiName="联盟" buiDesc="联盟" maxLevel="1" initialLevel="1" />
+<Building entId="11014" buiName="雷达" buiDesc="雷达" maxLevel="1" initialLevel="1" />
+<Building entId="11015" buiName="装甲车限购商人" buiDesc="装甲车限购商人" maxLevel="1" initialLevel="1" />
+<Building entId="11016" buiName="难民营" buiDesc="难民营" maxLevel="1" initialLevel="1" />
+
+
+
+
+
+
+</dataset>

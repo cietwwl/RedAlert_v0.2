@@ -1,0 +1,52 @@
+package com.youxigu.dynasty2.armyout.dao;
+
+import java.util.List;
+
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+import com.youxigu.dynasty2.armyout.domain.Strategy;
+import com.youxigu.dynasty2.armyout.domain.UserArmyout;
+
+/** 
+ * 出征dao
+ * @author Dagangzi
+ *
+ */
+public interface IArmyoutDao {
+	/**
+	 * 取得所有出征
+	 * 
+	 * @return
+	 */
+	List<Armyout> listArmyouts();
+	
+	/**
+	 * 出征数据
+	 * 
+	 * @param armyout
+	 * @return
+	 */
+	void createArmyOut(Armyout armyout);
+
+	void updateArmyout(Armyout armyout);
+
+	void deleteArmyOut(Armyout armyout);
+
+	/**
+	 * 出征队列
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	UserArmyout getUserArmyout(long userId);
+
+	UserArmyout createUserArmyout(UserArmyout userArmyout);
+
+	void updateUserArmyout(UserArmyout userArmyout);
+
+	/**
+	 * 所有出征策略
+	 * 
+	 * @return
+	 */
+	List<Strategy> listStrategys();
+}

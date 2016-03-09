@@ -1,0 +1,52 @@
+package com.youxigu.dynasty2.map.service.impl.command;
+
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.map.domain.action.TimeAction;
+import com.youxigu.dynasty2.map.service.ICommander;
+import com.youxigu.dynasty2.map.service.IMapService;
+
+/**
+ * 加载地图数据
+ * 
+ * @author LK
+ * @date 2016年2月18日
+ */
+public class TestService implements ICommander {
+	public static final Logger log = LoggerFactory
+			.getLogger(TestService.class);
+	private IMapService mapService;
+
+	public void setMapService(IMapService mapService) {
+		this.mapService = mapService;
+	}
+
+	@Override
+	public Map<String, Object> doExcute(TimeAction action) {
+		MapCell mapCell = null;
+		try {
+			mapCell = mapService.getMapCellForWrite(7810912);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		mapCell.setCasId(1);
+		mapService.updateMapCell(mapCell);
+
+		try {
+			mapCell = mapService.getMapCellForWrite(8801070);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		mapCell.setUserId(1);
+		mapService.updateMapCell(mapCell);
+		// throw new BaseException();
+		return null;
+	}
+
+}

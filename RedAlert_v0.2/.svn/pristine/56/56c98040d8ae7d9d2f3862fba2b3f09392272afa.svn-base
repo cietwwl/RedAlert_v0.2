@@ -1,0 +1,64 @@
+package com.youxigu.dynasty2.map.service;
+
+import java.util.List;
+import java.util.Map;
+
+import com.youxigu.dynasty2.map.domain.Country;
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.map.domain.State;
+import com.youxigu.dynasty2.map.domain.StateCache;
+/*
+ * 地图数据处理接口
+ */
+public interface IMapService {
+	int MAP_MAX_WIDTH = 1200;
+	int MAP_MAX_HIGH = 1200;
+	/**
+	 * 取得区
+	 * 
+	 * @param stateId
+	 * @return
+	 */
+	State getStateById(int stateId);
+
+	/**
+	 * 按指定的国家id取国家
+	 * 
+	 * @param countryId
+	 * @return
+	 */
+	Country getCountryById(int countryId);
+
+	/**
+	 * 更新MapCell,当建城点背用户使用后，更新mapCell.casId
+	 *
+	 * @param mapCell
+	 */
+	void updateMapCell(MapCell mapCell);
+
+	void updateMapCell(List<MapCell> mapCells);
+
+	/**
+	 * 取得坐标
+	 * 
+	 * @param id
+	 * @return
+	 */
+	MapCell getMapCell(int id);
+
+	/**
+	 * 区下的所有坐标点
+	 * 
+	 * @param stateId
+	 * @return
+	 */
+	Map<Integer, MapCell> getMapCellsByStateId(int stateId);
+
+	/**
+	 * 区缓存
+	 * 
+	 * @param stateId
+	 * @return
+	 */
+	StateCache getStateCacheByStateId(int stateId);
+}

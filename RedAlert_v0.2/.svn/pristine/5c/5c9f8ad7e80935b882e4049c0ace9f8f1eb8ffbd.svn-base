@@ -1,0 +1,179 @@
+package com.youxigu.dynasty2.armyout.domain;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+
+/**
+ * 出征数据
+ * 
+ * @author LK
+ * @date 2016年2月24日
+ */
+public class Armyout implements Serializable {
+	private long id;
+	private int outType;// 战斗类型
+	private int attackerCellId;// 出征方坐标
+	private long attackerId;// 出征方userId
+	private long attackerGuildId;// 出征方所属联盟Id
+	private short attackerType;// 进攻方类型
+	private int defenderCellId;// 防守方坐标
+	private long defenderId;// 防守方userId
+	private long defenderGuildId;// 出征方所属联盟Id
+	private short defenderType;// 防守方类型
+	private long troopId;
+	private int atkPower;// 出征战斗力
+	private int defPower;// 防守战斗力
+	private int baseTime;// 单程时间,秒
+	private Timestamp outDttm; // 出征时刻
+	private Timestamp outArriveDttm; // 出征抵达的时间
+	private Timestamp outBackDttm; // 出征回来的时间
+	private short status;// 0: 正常 ,1=防守（协防） 2=战斗
+	private String combatId;// 战斗ID,战斗后回填
+
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
+	}
+	public int getOutType() {
+		return outType;
+	}
+	public void setOutType(int outType) {
+		this.outType = outType;
+	}
+	public int getAttackerCellId() {
+		return attackerCellId;
+	}
+	public void setAttackerCellId(int attackerCellId) {
+		this.attackerCellId = attackerCellId;
+	}
+	public long getAttackerId() {
+		return attackerId;
+	}
+	public void setAttackerId(long attackerId) {
+		this.attackerId = attackerId;
+	}
+	public long getAttackerGuildId() {
+		return attackerGuildId;
+	}
+	public void setAttackerGuildId(long attackerGuildId) {
+		this.attackerGuildId = attackerGuildId;
+	}
+	public short getAttackerType() {
+		return attackerType;
+	}
+	public void setAttackerType(short attackerType) {
+		this.attackerType = attackerType;
+	}
+	public int getDefenderCellId() {
+		return defenderCellId;
+	}
+	public void setDefenderCellId(int defenderCellId) {
+		this.defenderCellId = defenderCellId;
+	}
+	public long getDefenderId() {
+		return defenderId;
+	}
+	public void setDefenderId(long defenderId) {
+		this.defenderId = defenderId;
+	}
+	public long getDefenderGuildId() {
+		return defenderGuildId;
+	}
+	public void setDefenderGuildId(long defenderGuildId) {
+		this.defenderGuildId = defenderGuildId;
+	}
+	public short getDefenderType() {
+		return defenderType;
+	}
+	public void setDefenderType(short defenderType) {
+		this.defenderType = defenderType;
+	}
+	public long getTroopId() {
+		return troopId;
+	}
+	public void setTroopId(long troopId) {
+		this.troopId = troopId;
+	}
+	public int getAtkPower() {
+		return atkPower;
+	}
+	public void setAtkPower(int atkPower) {
+		this.atkPower = atkPower;
+	}
+	public int getDefPower() {
+		return defPower;
+	}
+	public void setDefPower(int defPower) {
+		this.defPower = defPower;
+	}
+	public int getBaseTime() {
+		return baseTime;
+	}
+	public void setBaseTime(int baseTime) {
+		this.baseTime = baseTime;
+	}
+	public Timestamp getOutDttm() {
+		return outDttm;
+	}
+	public void setOutDttm(Timestamp outDttm) {
+		this.outDttm = outDttm;
+	}
+	public Timestamp getOutArriveDttm() {
+		return outArriveDttm;
+	}
+	public void setOutArriveDttm(Timestamp outArriveDttm) {
+		this.outArriveDttm = outArriveDttm;
+	}
+	public Timestamp getOutBackDttm() {
+		return outBackDttm;
+	}
+	public void setOutBackDttm(Timestamp outBackDttm) {
+		this.outBackDttm = outBackDttm;
+	}
+	public short getStatus() {
+		return status;
+	}
+	public void setStatus(short status) {
+		this.status = status;
+	}
+	public String getCombatId() {
+		return combatId;
+	}
+	public void setCombatId(String combatId) {
+		this.combatId = combatId;
+	}
+
+	public String getKey() {
+		return "Armyout_" + id;
+	}
+
+	/**
+	 * 更新缓存数据
+	 * 
+	 * @param tmpMapCell
+	 * @return
+	 */
+	public Armyout copyFrom(Armyout tmpArmyout) {
+		this.outType = tmpArmyout.getOutType();// 战斗类型
+		this.attackerCellId = tmpArmyout.getAttackerCellId();// 出征方坐标
+		this.attackerId = tmpArmyout.getAttackerId();// 出征方userId
+		this.attackerGuildId= tmpArmyout.getAttackerGuildId();// 出征方所属联盟Id
+		this.attackerType = tmpArmyout.getAttackerType();// 进攻方类型
+		this.defenderCellId = tmpArmyout.getDefenderCellId();// 防守方坐标
+		this.defenderId = tmpArmyout.getDefenderId();// 防守方userId
+		this.defenderGuildId = tmpArmyout.getDefenderGuildId();// 出征方所属联盟Id
+		this.defenderType = tmpArmyout.getDefenderType();// 防守方类型
+		this.troopId = tmpArmyout.getTroopId();
+		this.atkPower = tmpArmyout.getAtkPower();// 出征战斗力
+		this.defPower = tmpArmyout.getDefPower();// 防守战斗力
+		this.baseTime = tmpArmyout.getBaseTime();// 单程时间,秒
+		this.outDttm = tmpArmyout.getOutDttm(); // 出征时刻
+		this.outArriveDttm = tmpArmyout.getOutArriveDttm(); // 出征抵达的时间
+		this.outBackDttm = tmpArmyout.getOutBackDttm(); // 出征回来的时间
+		this.status = tmpArmyout.getStatus();// 0: 正常 ,1=防守（协防） 2=战斗
+		this.combatId = tmpArmyout.getCombatId();// 战斗ID,战斗后回填
+		return this;
+	}
+}

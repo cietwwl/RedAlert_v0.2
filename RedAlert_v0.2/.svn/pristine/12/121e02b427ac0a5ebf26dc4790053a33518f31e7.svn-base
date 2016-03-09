@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+<CombatFactor formula="HARM" para1="1" para2="0" para3="0" para4="0" />
+<CombatFactor formula="HIT" para1="0.3" para2="0" para3="0" para4="0" />
+<CombatFactor formula="CRITICAL" para1="0.2" para2="0" para3="0" para4="0" />
+<CombatFactor formula="SHIELD" para1="1" para2="0" para3="0" para4="0" />
+<CombatFactor formula="CRITICAL_HARM" para1="1" para2="0" para3="0" para4="0" />
+<CombatFactor formula="F_COMBAT" para1="2" para2="0" para3="0" para4="0" />
+<CombatFactor formula="F_MORALE_MAX" para1="100" para2="0" para3="0" para4="0" />
+
+
+
+
+</dataset>

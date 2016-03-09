@@ -1,0 +1,46 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+
+	<bean id="wolf_onlineUserReport" class="com.youxigu.wolf.net.OnLineUserReportService" init-method="start" destroy-method="stop">
+		<property name="dataSource"><ref bean="dataSource" /></property>
+		<property name="logService"><ref bean="logService" /></property>
+		<property name="tlogService"><ref bean="tlogService" /></property>
+        <property name="userService"><ref bean="userService" /></property>
+	</bean>
+
+
+    <!-- 神秘洞服务端 -->
+<!--    <bean id="wolf_MagicCaveService" class="com.youxigu.dynasty2.cave.service.impl.MigicCaveService" >-->
+<!--        <property name="userService"><ref bean="userService" /></property>-->
+<!--        <property name="migicCaveClientService"><ref bean="migicCaveClientService" /></property>-->
+<!--        <property name="chatService"><ref bean="messageService" /></property>-->
+<!--        <property name="jobServerClient"><ref bean="jobServerClient" /></property>-->
+<!--        <property name="npcCombatTeamService"><ref bean="npcCombatTeamService" /></property>-->
+<!--        <property name="playerCombatTeamService"><ref bean="playerCombatTeamService" /></property>-->
+<!--        <property name="combatEngine"><ref bean="combatEngine" /></property>-->
+<!--        <property name="troopService"><ref bean="troopService" /></property>-->
+<!--        <property name="magiccaveAfterCombatService"><ref bean="magiccaveAfterCombatService" /></property>-->
+<!--        <property name="mailMessageService"><ref bean="mailMessageService" /></property>-->
+<!--        <property name="commonService"><ref bean="commonService" /></property>-->
+<!--        <property name="logService"><ref bean="logService" /></property>-->
+<!--        <property name="tlogService"><ref bean="tlogService" /></property>-->
+<!--        <property name="guildService"><ref bean="guildService" /></property>-->
+<!--        <property name="accountService"><ref bean="accountService" /></property>-->
+<!--    </bean>-->
+
+
+	<!--好友推荐缓存-->
+    <bean id="wolf_FriendRecommendCache" class="com.youxigu.dynasty2.friend.service.impl.FriendRecommendCacheService" init-method="init" >
+        <property name="friendDao"><ref bean="friendDao" /></property>
+        <property name="commonService"><ref bean="commonService" /></property>
+    </bean>
+    
+</beans>
+

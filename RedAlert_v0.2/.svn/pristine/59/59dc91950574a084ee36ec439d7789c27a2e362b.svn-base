@@ -1,0 +1,223 @@
+package com.youxigu.dynasty2.map.domain;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+/*
+ * 建城点定义
+ * 第一层 包括
+ * private int earthId;// 地表对应的配置id
+   private int earthType;// 地表类型
+   
+        第二层 包括
+    private int castType;// 城池类型
+    private long casId; // 城池编号(可能是玩家/联盟/野怪.....，通过castleType来区别)
+	private long userId;// 领地君主
+	private long guildId;// 领地联盟
+ */
+public class MapCell implements java.io.Serializable {
+	// castType; 城池类型 casId>0,对应的casId为玩家城池id或是npc和资源的配数id
+	public static final int CAS_TYPE_USER = 1;// 玩家城
+	public static final int CAS_TYPE_NPC = 2;// NPC
+	public static final int CAS_TYPE_RES = 3;// 资源
+
+	public static final int CAS_TYPE_EMPTY = 0;// 空建城点
+
+
+	private int id;// id=posX*10000+posY
+	private int posX;// 坐标
+	private int posY;
+	private int stateId;// 郡城id
+	private int castType;// 城池类型
+	private int countryId;// 国家id
+	private long casId; // 城池编号(可能是玩家/联盟/野怪.....，通过castleType来区别)
+	private long userId;// 领地君主-个人资源地
+	private long guildId;// 领地联盟-联盟资源地和国家资源地
+	private int earthId;// 地表对应的配置id
+	/**
+	 * 1 草地 1 0 2 沙地 1 0 3 浅滩 1 0 4 山峰 0 0 5 海洋 0 0 6 公路 1 0 7 个人资源 0 1 8 联盟资源 0
+	 * 1 9 国家资源 0 1
+	 */
+	private int earthType;// 地表类型
+
+	private State state;// 所属区
+	private Country country;// 所属国家
+	private AtomicInteger locker = new AtomicInteger();// 锁控制器
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getPosX() {
+		return posX;
+	}
+
+	public void setPosX(int posX) {
+		this.posX = posX;
+	}
+
+	public int getPosY() {
+		return posY;
+	}
+
+	public void setPosY(int posY) {
+		this.posY = posY;
+	}
+
+	public int getStateId() {
+		return stateId;
+	}
+
+	public void setStateId(int stateId) {
+		this.stateId = stateId;
+	}
+
+	public int getCastType() {
+		return castType;
+	}
+
+	public void setCastType(int castType) {
+		this.castType = castType;
+	}
+
+	public int getCountryId() {
+		return countryId;
+	}
+
+	public void setCountryId(int countryId) {
+		this.countryId = countryId;
+	}
+
+	public long getCasId() {
+		return casId;
+	}
+
+	public void setCasId(long casId) {
+		this.casId = casId;
+	}
+
+	public long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(long userId) {
+		this.userId = userId;
+	}
+
+	public long getGuildId() {
+		return guildId;
+	}
+
+	public void setGuildId(long guildId) {
+		this.guildId = guildId;
+	}
+
+	public int getEarthId() {
+		return earthId;
+	}
+
+	public void setEarthId(int earthId) {
+		this.earthId = earthId;
+	}
+
+	public int getEarthType() {
+		return earthType;
+	}
+
+	public void setEarthType(int earthType) {
+		this.earthType = earthType;
+	}
+
+	public State getState() {
+		return state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
+	}
+
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
+	}
+
+	/**
+	 * 锁
+	 * 
+	 * @return
+	 */
+	public int lock() {
+		int cur = locker.getAndIncrement();
+		return cur;
+	}
+
+	/**
+	 * 释放锁
+	 * 
+	 * @return
+	 */
+	public int unlock() {
+		int cur = locker.getAndDecrement();
+		return cur;
+	}
+
+	/**
+	 * 更新缓存数据
+	 * 
+	 * @param tmpMapCell
+	 * @return
+	 */
+	public MapCell copyFrom(MapCell tmpMapCell) {
+		this.id = tmpMapCell.getId();
+		this.posX = tmpMapCell.getPosX();
+		this.posY = tmpMapCell.getPosY();
+		this.stateId = tmpMapCell.getStateId();
+		this.casId = tmpMapCell.getCasId();
+		this.userId = tmpMapCell.getUserId();
+		this.guildId = tmpMapCell.getGuildId();
+		this.castType = tmpMapCell.getCastType();
+		this.countryId = tmpMapCell.getCountryId();
+		this.earthId = tmpMapCell.getEarthId();
+		this.earthType = tmpMapCell.getEarthType();
+		this.state = tmpMapCell.state;
+		this.country = tmpMapCell.country;
+		this.locker = tmpMapCell.locker;
+		return tmpMapCell;
+	}
+
+	/**
+	 * 加入到threadlocal是复制一个
+	 */
+	public MapCell clone() {
+		MapCell tmpMapCell = new MapCell();
+		tmpMapCell.setId(this.id);
+		tmpMapCell.setPosX(this.posX);
+		tmpMapCell.setPosY(this.posY);
+		tmpMapCell.setStateId(this.stateId);
+		tmpMapCell.setCasId(this.casId);
+		tmpMapCell.setUserId(this.userId);
+		tmpMapCell.setGuildId(this.guildId);
+		tmpMapCell.setCastType(this.castType);
+		tmpMapCell.setCountryId(this.countryId);
+		tmpMapCell.setEarthId(this.earthId);
+		tmpMapCell.setEarthType(this.earthType);
+		tmpMapCell.state = this.state;
+		tmpMapCell.country = this.country;
+		tmpMapCell.locker = this.locker;
+		return tmpMapCell;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (((MapCell) obj).getId() == this.id) {
+			return true;
+		}
+		return false;
+	}
+}

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN"
+    "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+
+	<settings
+		cacheModelsEnabled="true"
+		enhancementEnabled="true"
+		lazyLoadingEnabled="true"
+		useStatementNamespaces="false" 
+		statementCachingEnabled="true"
+		classInfoCacheEnabled="true" 
+		asyncUpdate="true"
+		/>
+  <!-- 分表 -->
+	<shardingConfig>
+
+    <!-- 对于Message使用默认的切分策略,默认的切分策略只是简单按数值取模生成新的表名，分10个表 -->
+        <sharding tableName="userattributes" strategyClass="com.ibatis.sqlmap.engine.sharding.impl.DefaultShardingStrategy">
+          <property name="shardingNum" value="10"/>
+        </sharding>
+        
+        <sharding tableName="message" strategyClass="com.ibatis.sqlmap.engine.sharding.impl.DefaultShardingStrategy">
+          <property name="shardingNum" value="10"/>
+        </sharding>
+        
+        <sharding tableName="treasury" strategyClass="com.ibatis.sqlmap.engine.sharding.impl.DefaultShardingStrategy">
+          <property name="shardingNum" value="10"/>
+        </sharding>
+        
+        <sharding tableName="hero" strategyClass="com.ibatis.sqlmap.engine.sharding.impl.DefaultShardingStrategy">
+          <property name="shardingNum" value="10"/>
+        </sharding>
+        
+        <sharding tableName="heroeffect" strategyClass="com.ibatis.sqlmap.engine.sharding.impl.DefaultShardingStrategy">
+          <property name="shardingNum" value="10"/>
+        </sharding>
+        
+        <sharding tableName="firedhero" strategyClass="com.ibatis.sqlmap.engine.sharding.impl.DefaultShardingStrategy">
+          <property name="shardingNum" value="10"/>
+        </sharding>
+        
+        <sharding tableName="castleeffect" strategyClass="com.ibatis.sqlmap.engine.sharding.impl.DefaultShardingStrategy">
+			<property name="shardingNum" value="10"/>
+		</sharding>
+
+        <sharding tableName="castlebuilding"
+                  strategyClass="com.ibatis.sqlmap.engine.sharding.impl.DefaultShardingStrategy">
+			<property name="shardingNum" value="10"/>
+		</sharding>
+
+		<sharding tableName="usertech" strategyClass="com.ibatis.sqlmap.engine.sharding.impl.DefaultShardingStrategy">
+			<property name="shardingNum" value="10"/>
+		</sharding>
+
+        <sharding tableName="troopgrid" strategyClass="com.ibatis.sqlmap.engine.sharding.impl.DefaultShardingStrategy">
+			<property name="shardingNum" value="10"/>
+		</sharding>
+		<sharding tableName="friend" strategyClass="com.ibatis.sqlmap.engine.sharding.impl.DefaultShardingStrategy">
+          <property name="shardingNum" value="10"/>
+        </sharding>
+		<sharding tableName="usermission" strategyClass="com.ibatis.sqlmap.engine.sharding.impl.DefaultShardingStrategy">
+			<property name="shardingNum" value="10"/>
+		</sharding>
+		<sharding tableName="userworldmission" strategyClass="com.ibatis.sqlmap.engine.sharding.impl.DefaultShardingStrategy">
+			<property name="shardingNum" value="10"/>
+		</sharding>
+		
+		<sharding tableName="userriskscene" strategyClass="com.ibatis.sqlmap.engine.sharding.impl.DefaultShardingStrategy">
+           <property name="shardingNum" value="10"/>
+        </sharding>
+	</shardingConfig>
+
+  <sqlMap resource="sql/job.xml"/>
+  <sqlMap resource="sql/common.xml"/>
+  <sqlMap resource="sql/user.xml"/>
+  <sqlMap resource="sql/map.xml"/>
+  <sqlMap resource="sql/tlogdemo.xml"/>
+  <sqlMap resource="sql/mail.xml"/>
+  <sqlMap resource="sql/entity.xml"/>
+  <sqlMap resource="sql/treasury.xml"/>
+  <sqlMap resource="sql/combat.xml"/>
+  <sqlMap resource="sql/npc.xml"/>
+  <sqlMap resource="sql/hero.xml"/>
+  <sqlMap resource="sql/develop.xml"/>
+  <sqlMap resource="sql/vip.xml"/>
+  <sqlMap resource="sql/activitys.xml"/>
+  <sqlMap resource="sql/tips.xml"/>
+  <sqlMap resource="sql/gmtool.xml"/>
+  <sqlMap resource="sql/friend.xml"/>
+  <sqlMap resource="sql/mission.xml"/>
+  <sqlMap resource="sql/risk.xml" /> 
+</sqlMapConfig>

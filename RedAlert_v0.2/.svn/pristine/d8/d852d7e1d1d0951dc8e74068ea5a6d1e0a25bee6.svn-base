@@ -1,0 +1,75 @@
+package com.youxigu.dynasty2.combat.service;
+
+import com.youxigu.dynasty2.combat.domain.CombatTeam;
+import com.youxigu.dynasty2.hero.domain.Troop;
+import com.youxigu.dynasty2.npc.domain.NPCDefine;
+import com.youxigu.dynasty2.user.domain.User;
+
+/**
+ * CombatTeam构造器
+ * 
+ * @author Administrator
+ * 
+ */
+public interface ICombatTeamService {
+	/**
+	 * 初始化成防守方：初始位置变化
+	 * @param isDefender
+	 *            是否是防守方
+	 * @param user
+	 * 
+	 * @return
+	 */
+	CombatTeam getCombatTeam(long casId);
+	CombatTeam getCombatTeam(long casId, boolean isDefender);
+	CombatTeam getCombatTeam(long casId, long troopId, boolean isDefender);
+
+	/**
+	 * 
+	 * @param user
+	 * @param troop
+	 * @param isDefender
+	 *            是否是防守方
+	 * @param fullArmy
+	 *            是否满兵战斗
+	 * @param adviser
+	 *            =0，不使用军师 ,=1使用自己的军师 ,=2使用好友军师,=3使用全部军师
+	 * @return
+	 */
+	CombatTeam getCombatTeamByUser(User user, Troop troop, boolean isDefender, boolean fullArmy);
+
+	/**
+	 * 获得战斗team
+	 * assistNpc不为null时，使用助战军团出战，assistNpc其中sysheroId=君主坦克的武将，用君主坦克替换
+	 * @param user 君主
+	 * @param troop 出战军团
+	 * @param assistNpc 助战军团 可以为null。
+	 * @param isDefender 是否是守方
+	 * @param fullArmy 是否满兵出战
+	 * @return
+	 */
+	CombatTeam getCombatTeamByUser(User user, Troop troop, NPCDefine assistNpc,
+			boolean isDefender, boolean fullArmy);
+
+	// /**
+	// * 获取过滤后的玩家team，保证所有npc都在team里面 ，多余的玩家武将可以不上阵,保证君主一定上阵
+	// * @param user
+	// * @param troop
+	// * @param npc
+	// * @param isDefender
+	// * @param fullArmy
+	// * @return
+	// */
+	// CombatTeam getCombatTeamByUserFilter(User user, Troop troop,
+	// NPCDefine assistNpc, boolean isDefender, boolean fullArmy);
+
+	/**
+	 * 得到下一个防守队伍
+	 * 
+	 * @param casId
+	 *            城池ID或者NPCId
+	 * @return
+	 */
+	CombatTeam getNextDefenceCombatTeam(long casId);
+
+}

@@ -1,0 +1,310 @@
+﻿<?xml version="1.0"  encoding="UTF-8"?>
+
+<project name="project" default="all" basedir=".">
+
+	<property name="src" value="src" />
+	<property name="bin" value="bin" />
+	<property name="shell" value="shell" />
+	<property name="lib" value="lib" />
+	<property name="conf" value="conf" />
+
+	<property name="dist" value="dist" />
+	<property name="servers" value="servers" />
+	<property name="ver" value="1.0" />
+	<property name="dbunit.operation.type" value="CLEAN_INSERT" />
+	<!--CLEAN_INSERT,REFRESH-->
+
+	<property environment="env" />
+
+	<!--
+	<property file="${conf}/application.properties" />
+	-->
+
+	<property file="${env.TX_CONF_PATH}/application.properties" />
+
+	<path id="lib.path">
+      <pathelement location="${conf}"/>
+		<fileset dir="${lib}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+
+
+	<target name="all">
+		<antcall target="compile" />
+		<antcall target="deploy" />
+	</target>
+
+	<target name="clean" description="Clean all output dirs ">
+		<delete dir="${bin}" />
+		<mkdir dir="${bin}" />
+	</target>
+
+	<target name="cleanDist" description="Clean all output dirs ">
+		<delete dir="${dist}" />
+		<mkdir dir="${dist}" />
+		<mkdir dir="${dist}/bin" />
+		<mkdir dir="${dist}/classes" />
+		<mkdir dir="${dist}/lib" />
+		<mkdir dir="${dist}/conf" />
+	</target>
+
+	<target name="compile">
+		<!--depends="clean"-->
+		<mkdir dir="${bin}" />
+		<javac srcdir="${src}" destdir="${bin}" classpathref="lib.path" debug="on" source="1.6" encoding="utf-8" />
+		<copy todir="${bin}">
+			<fileset dir="${src}">
+				<include name="*.properties" />
+				<include name="*.xml" />
+				<include name="*.DTD" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="deploy" depends="cleanDist">
+		<antcall target="deploy.shell" />
+		<antcall target="deploy.classes" />
+		<antcall target="deploy.conf" />
+		<antcall target="deploy.lib" />
+
+		<antcall target="deploy_nodeserver" />
+		<antcall target="deploy_mainserver" />
+		<antcall target="deploy_jobserver" />
+		<antcall target="deploy_asyncdbserver" />
+		<antcall target="deployDB_xmlData" />
+		<antcall target="deployDB_sql" />
+		<antcall target="deploylib" />
+		<antcall target="deploy_proto" />
+
+		<!--
+    <antcall target="deploy_mixserver"/>  
+	-->
+
+	</target>
+
+	<target name="deploy.shell">
+		<mkdir dir="${dist}/bin" />
+		<copy todir="${dist}/bin">
+			<fileset dir="${shell}">
+				<include name="*.bat" />
+				<include name="*.sh" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="deploy.classes">
+		<mkdir dir="${dist}/classes" />
+		<copy todir="${dist}/classes">
+			<fileset dir="${bin}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+
+	</target>
+
+	<target name="deploy.conf">
+		<mkdir dir="${dist}/conf" />
+		<copy todir="${dist}/conf">
+			<fileset dir="${conf}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+
+
+	</target>
+
+	<target name="deploy.lib">
+		<mkdir dir="${dist}/lib" />
+		<copy todir="${dist}/lib">
+			<fileset dir="${lib}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+
+	</target>
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${dist}" />
+		<jar jarfile="${dist}/wolf.jar" update="yes">
+			<fileset dir="${bin}">
+				<include name="com/youxigu/wolf/**" />
+			</fileset>
+		</jar>
+	</target>
+
+
+
+	<target name="deploy_nodeserver">
+		<echo message="发布gameserver 到 ${servers}/nodeserver" />
+		<delete dir="${servers}/nodeserver" />
+		<mkdir dir="${servers}/nodeserver" />
+		<copy todir="${servers}/nodeserver">
+			<fileset dir="${dist}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+		<!--
+		<delete>
+		  <fileset dir="${servers}/nodeserver/conf/wolf/" includes="*.xml" excludes="app_nodeserver*.xml"/>
+        </delete>
+        -->
+	</target>
+
+	<target name="deploy_mainserver">
+		<echo message="发布mainserver 到 ${servers}/mainserver" />
+		<delete dir="${servers}/mainserver" />
+		<mkdir dir="${servers}/mainserver" />
+		<copy todir="${servers}/mainserver">
+			<fileset dir="${dist}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+		<!--
+		<delete>
+		  <fileset dir="${servers}/mainserver/conf/wolf/" includes="*.xml" excludes="app_server*.xml,service_online.xml"/>
+        </delete>
+        -->
+	</target>
+
+
+	<target name="deploy_jobserver">
+		<echo message="发布jobserver 到 ${servers}/jobserver" />
+		<delete dir="${servers}/jobserver" />
+		<mkdir dir="${servers}/jobserver" />
+		<copy todir="${servers}/jobserver">
+			<fileset dir="${dist}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+		<!--
+		<delete>
+		  <fileset dir="${servers}/jobserver/conf/wolf/" includes="*.xml" excludes="app_server.xml,service_job.xml,service_simpleCache.xml,service_hall.xml"/>
+        </delete>
+        -->
+	</target>
+
+	<target name="deploy_asyncdbserver">
+		<echo message="发布asyncdbserver 到 ${servers}/asyncdbserver" />
+		<delete dir="${servers}/asyncdbserver" />
+		<mkdir dir="${servers}/asyncdbserver" />
+		<copy todir="${servers}/asyncdbserver">
+			<fileset dir="${dist}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+		<!--
+		<delete>
+		  <fileset dir="${servers}/asyncdbserver/conf/" includes="applicationContext_*.xml" excludes="applicationContext_common.xml,applicationContext_chat.xml"/>
+		  <fileset dir="${servers}/asyncdbserver/conf/" includes="udp.xml"/>
+        </delete>
+		<delete>
+		  <fileset dir="${servers}/asyncdbserver/conf/wolf/" includes="*.xml" excludes="app_server.xml,service_asyncdb.xml"/>
+        </delete>
+        -->
+	</target>
+
+	<target name="deploy_mixserver">
+		<echo message="发布mixserver 到 ${servers}/mixserver" />
+		<delete dir="${servers}/mixserver" />
+		<mkdir dir="${servers}/mixserver" />
+		<copy todir="${servers}/mixserver">
+			<fileset dir="${dist}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+		<delete>
+			<fileset dir="${servers}/mixserver/conf/wolf/" includes="*.xml" excludes="app_server*.xml,service_*.xml" />
+		</delete>
+	</target>
+
+	<target name="deployDB_xmlData">
+		<echo message="发布策划配数 到 ${servers}/data" />
+		<delete dir="${servers}/data" />
+		<mkdir dir="${servers}/data" />
+		<copy todir="${servers}/data">
+			<fileset dir="data">
+				<include name="**/*.xml" />
+			</fileset>
+		</copy>
+		<copyfile src="build.xml" dest="${servers}/build.xml" />
+	</target>
+
+	<target name="deploylib">
+		<echo message="发布lib 到 ${servers}/lib" />
+		<delete dir="${servers}/lib" />
+		<mkdir dir="${servers}/lib" />
+		<copy todir="${servers}/lib">
+			<fileset dir="lib">
+				<include name="**/svn*.jar" />
+				<include name="**/dbunit*.jar" />
+				<include name="**/mysql-connector-java-5.1.6-bin.jar" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="deployDB_sql">
+		<echo message="发布sql脚本 到 ${servers}/sql" />
+		<delete dir="${servers}/sql" />
+		<mkdir dir="${servers}/sql" />
+		<copy todir="${servers}/sql">
+			<fileset dir="sql">
+				<include name="**/data_*.sql" />
+				<include name="**/redalert*.sql" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="deploy_proto">
+			<echo message="发布proto文件 到 ${servers}/proto" />
+			<delete dir="${servers}/proto" />
+			<mkdir dir="${servers}/proto" />
+			<copy todir="${servers}/proto">
+				<fileset dir="proto">
+					<include name="**/*.proto" />
+				</fileset>
+			</copy>
+		</target>
+
+
+
+	<!-- load init data -->
+	<target name="load" description="load test data into db">
+		<echo message="更新数据库中的策划配数数据 到 ${env.TX_CONF_PATH}" />
+		<taskdef name="dbunit" classname="org.dbunit.ant.DbUnitTask" classpathref="lib.path">
+		</taskdef>
+		<!--REFRESH  CLEAN_INSERT-->
+		<dbunit driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${mysql.dbServer}?useUnicode=true&amp;characterEncoding=UTF-8&amp;rewriteBatchedStatements=true" userid="${mysql.user}" password="${mysql.passwd}" supportBatchStatement="true" >
+			<!-- type可选择的方式 删除、清空插入、追加   DELETE/CLEAN_INSERT/REFRESH, 默认是使用多线程执行的，useThread="false" 来控制不使用线程-->
+			<operation type="${dbunit.operation.type}" src="data/Entity.xml" />
+			<operation type="${dbunit.operation.type}" src="data/EntityConsume.xml" />
+			<operation type="${dbunit.operation.type}" src="data/EntityLimit.xml" />
+			<operation type="${dbunit.operation.type}" src="data/Effect.xml" />
+			<operation type="${dbunit.operation.type}" src="data/SysPara.xml" />
+			<operation type="${dbunit.operation.type}" src="data/DropPack.xml" />
+			<operation type="${dbunit.operation.type}" src="data/Item.xml" />
+			<operation type="${dbunit.operation.type}" src="data/Equip.xml" />
+			<operation type="${dbunit.operation.type}" src="data/Army.xml" />
+			<operation type="${dbunit.operation.type}" src="data/HeroSkill.xml" />
+			<operation type="${dbunit.operation.type}" src="data/npc.xml" />
+			<operation type="${dbunit.operation.type}" src="data/SysHero.xml" />
+			<operation type="${dbunit.operation.type}" src="data/Country.xml" />
+			<operation type="${dbunit.operation.type}" src="data/CombatFactor.xml" />
+			<operation type="${dbunit.operation.type}" src="data/HeroPub.xml" />
+			<operation type="${dbunit.operation.type}" src="data/LvParaLimit.xml" />
+			<operation type="${dbunit.operation.type}" src="data/HeroExp.xml" />
+            <operation type="${dbunit.operation.type}" src="data/Building.xml" />
+            <operation type="${dbunit.operation.type}" src="data/BuffDefine.xml" />
+            <operation type="${dbunit.operation.type}" src="data/Resource.xml" />
+			<operation type="${dbunit.operation.type}" src="data/Party.xml" />
+			<operation type="${dbunit.operation.type}" src="data/MysticShop.xml" />
+			<operation type="${dbunit.operation.type}" src="data/FriendRecommend.xml" />
+            <operation type="${dbunit.operation.type}" src="data/Technology.xml" />
+			<operation type="${dbunit.operation.type}" src="data/Mission.xml" />
+			<operation type="${dbunit.operation.type}" src="data/Risk.xml" />
+			<operation type="${dbunit.operation.type}" src="data/Achieve.xml" />
+			<operation type="DELETE" src="data/Clean.xml" useThread="false"/>
+		</dbunit>
+	</target>
+</project>

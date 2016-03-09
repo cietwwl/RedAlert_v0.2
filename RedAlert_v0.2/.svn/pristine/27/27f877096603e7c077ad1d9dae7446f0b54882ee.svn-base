@@ -1,0 +1,427 @@
+package dynasty;
+
+import "Common.proto";
+
+option java_package = "com.youxigu.dynasty2.develop.proto";
+option java_outer_classname = "DevelopMsg";
+
+//是否满足指定条件
+enum ConditionStatus{
+    SATISFIED = 1;
+    UNSATISFIED = 2;
+}
+
+//用户建筑
+message CastleBuilding{
+    required int64 building_id = 1;  //building(用户建筑)主键
+    optional int32 ent_id = 2;   //building对应的entity的ID
+    optional int32 level = 3;   //建筑当前等级
+    optional int32 builder = 4 [default = 0]; //所在建筑队列。0表示该建筑不在建造状态，1、2、3分别代表建筑在第1、第2或第3建筑队列中。
+    optional int32 begin_time = 5;   //已经开始建造的时间，单位为秒。不在建的为0。
+    optional int32 countdown = 6;   //还剩余的倒计时时间，单位为秒。不在建的为0。
+    optional int32 upgrade_time = 7; //从当前等级升级到下一等级需要的总时间（包含所有加成效果）。值应大于0，如果为0为无效值。
+    optional ConditionStatus satisfy_upgrade_condition = 8;    //当前建筑是否满足升级的所有依赖条件。当前建筑正在升级时，值一定为SATISFIED。
+    optional int32 auto_build = 9[default = 0];  //是否在自动建造列表中。0：不在自动建造列表中；1：在自动建造列表中
+}
+
+//建筑队列状态
+message BuilderInfo{
+    enum BuilderStatus{
+        IDLE = 0;   //空闲
+        WORKING = 1;    //忙碌，正在建造建筑
+        NOTOPEN = 2;    //未开放
+    }
+    required int32 builderIndex = 1; //1、2、3分别代表第1、第2、第3建筑队列
+    optional BuilderStatus builder_status = 2;
+    optional int64 building_id = 3; //当前正在建造的建筑的id(非entid)。空闲时为0。
+    optional int32 countdown = 4;   //还剩余的倒计时时间，单位为秒。建筑队列空闲时为0。
+}
+
+//20001 获取城内建筑列表(nodeserver)
+message Request20001Define{
+    required int32 cmd = 1;
+    optional int64 cas_id = 2;   //城池ID
+}
+
+//20002 获取城内建筑列表返回结果
+message Response20001Define{
+    optional ResponseHead responseHead = 1;
+    optional int64 cas_id = 2;
+    repeated CastleBuilding cas_buildings = 3;   //城内所有的已开放建筑
+    repeated BuilderInfo all_builder_info = 4;  //建造队列信息
+}
+
+//20003 建筑升级(nodeserver)
+message Request20003Define{
+    required int32 cmd = 1;
+    optional int64 cas_id = 2;
+    optional int64 building_id = 3; //需要升级的建筑的id(非entid)。
+    optional int32 builder = 4; //建筑队列。1、2、3分别代表第1、第2、第3建筑队列
+}
+
+//20004 建筑升级返回结果
+message Response20003Define{
+    optional ResponseHead responseHead = 1;
+    optional int64 cas_id = 2;
+    optional CastleBuilding cas_building = 3;   //当前正在升级建筑的信息
+    repeated BuilderInfo all_builder_info = 4;  //建造队列信息
+}
+
+//20005 取消建筑升级(nodeserver)
+message Request20005Define{
+    required int32 cmd = 1;
+    optional int64 cas_id = 2;
+    optional int64 building_id = 3;
+}
+
+//20006 取消建筑升级返回结果
+message Response20005Define{
+    optional ResponseHead responseHead = 1;
+    optional int64 cas_id = 2;
+    optional CastleBuilding cas_building = 3;   //当前正在升级建筑的信息
+    repeated BuilderInfo all_builder_info = 4;
+}
+
+//20009 获取用户当前的建筑加速道具(nodeserver)
+message Request20009Define{
+    required int32 cmd = 1;
+}
+
+//20010 获取用户当前的建筑加速道具返回结果
+message Response20009Define{
+    optional ResponseHead responseHead = 1;
+    repeated ItemInfo items = 2;    //当前用户所具有的建筑加速道具
+}
+
+//20011 加速建筑升级(免费/金币/道具)(nodeserver)
+message Request20011Define{
+    required int32 cmd = 1;
+    optional int64 cas_id = 2;
+    optional int64 building_id = 3;
+    enum SpeedUpType{
+        CASH = 0;   //金币加速
+        ITEM = 1;   //道具加速
+        FREE = 2;   //免费加速
+    }
+    optional SpeedUpType speed_up_type = 4;
+    optional int32 ent_id = 5;  //升级使用的道具的entId。金币加速时为金币的entId，道具加速时为使用道具的entId，免费加速为0。
+    optional int32 num = 6; //使用数量。免费加速时为0。
+}
+
+//20012 加速建筑升级返回结果
+message Response20011Define{
+    optional ResponseHead responseHead = 1;
+    optional int64 cas_id = 2;
+    //加速升级的建筑的信息。
+    //如果升级完毕，则level为升级后等级，builder、begin_time、countdown均为0，upgrade_time为新等级到下一等级的时间。
+    //如果是道具加速，且升级还未完成，则level仍为当前等级，countdown为加速后还剩余的时间（秒），builder、begin_time、upgrade_time不变。
+    optional CastleBuilding cas_building = 3;
+    repeated BuilderInfo all_builder_info = 4;  //建造队列信息
+}
+
+//20013 获取建筑队列状态(nodeserver)
+message Request20013Define{
+    required int32 cmd = 1;
+    optional int64 cas_id = 2;
+}
+
+//20014 获取建筑队列状态返回结果
+message Response20013Define{
+    optional ResponseHead responseHead = 1;
+    optional int64 cas_id = 2;
+    repeated BuilderInfo all_builder_info = 3;  //建造队列信息
+}
+
+//20015 自动建造(nodeserver)。如果building_ids为空，则表示要关闭自动建造功能
+message Request20015Define{
+    required int32 cmd = 1;
+    repeated int64 building_ids = 2;    //自动建造建筑列表
+}
+
+//20016 自动建造返回结果
+message Response20015Define{
+    optional ResponseHead responseHead = 1;
+    repeated CastleBuilding cas_building_list = 2;   //当前正在升级建筑的信息
+    repeated BuilderInfo all_builder_info = 3;
+}
+
+//补兵的信息
+message CastleArmy{
+	optional int32 armyNum = 1;//当前未分配的零件
+    optional int32 allNum = 2;//累计拥有的零件.包括武将身上拥有的
+    optional int32 armyLimit = 3;//可以拥有零件的上限数量
+    optional int32 refreshCD = 4;//生产的结束时间
+    optional int32 status = 5;//1表示自动维修
+    
+}
+
+//20019 打开维修工厂界面
+message Request20019Define{
+    required int32 cmd = 1;
+}
+
+//20020 打开维修工厂界面返回结果
+message Response20019Define{
+    optional ResponseHead responseHead = 1;
+    optional CastleArmy army = 2;//零件的信息
+}
+
+//20021 生产零件
+message Request20021Define{
+    required int32 cmd = 1;
+    optional int32 armyNum = 2;//生产的零件数量
+}
+
+//20022 生产零件返回结果
+message Response20021Define{
+    optional ResponseHead responseHead = 1;
+    optional CastleArmy army = 2;//补兵的信息
+}
+
+//20023 高级零件兑换
+message Request20023Define{
+    required int32 cmd = 1;
+}
+
+//20024 高级零件兑换返回结果
+message Response20023Define{
+    optional ResponseHead responseHead = 1;
+    optional CastleArmy army = 2;//补兵的信息
+}
+
+//20025 使用加速
+message Request20025Define{
+    required int32 cmd = 1;
+    optional bool diamond = 2 ;//true表示钻石加速false表示道具加速
+    optional int32 entId = 3;//道具加速的物品id
+    optional int32 num = 4;//道具加速的物品数量
+}
+
+//20026 使用加速返回结果
+message Response20026Define{
+    optional ResponseHead responseHead = 1;
+    optional CastleArmy army = 2;//零件的信息
+}
+
+//20027 客户端调用刷新请求(nodeserver),按照这个remainSecond的值主动调用相当于原先的30005
+message Request20027Define{
+    required int32 cmd = 1;
+}
+
+//20028 客户端调用刷新响应
+message Response20027Define{
+     optional ResponseHead responseHead = 1;//消息头
+     optional int32 remainSecond = 2;//客户端下次调用剩余的秒数
+     optional int64 curTime = 3;//后台系统时间(毫秒格式)
+     optional int32 goldCap = 4;//金矿存储上限(主基地的效果)
+     optional int32 ironCap = 5;//铁矿存储上限
+     optional int32 oilCap = 6;//油矿存储上限
+     optional int32 uraniumCap = 7;//铀矿存储上限
+     optional int32 goldProMax = 8;//金矿产量上限(资源建筑效果)
+     optional int32 ironProMax = 9;//铁矿产量上限
+     optional int32 oilProduceMax = 10;//油矿产量上限
+     optional int32 uraniumProMax = 11;//铀矿产量上限
+     optional int32 goldProNum = 12;//金矿每15分钟产量(资源建筑效果)
+     optional int32 ironProcNum = 13;//铁矿每15分钟产量
+     optional int32 oilProcNum = 14;//油矿每15分钟产量
+     optional int32 uraniumProcNum = 15;//铀矿每15分钟产量
+     optional int64 goldNum = 16;//金矿数(资源当前数量)
+     optional int64 ironNum = 17;//铁矿数
+     optional int64 oilNum = 18;//油矿数量
+     optional int64 uraniumNum = 19;//铀矿数量
+     optional int64 casGold = 20;//建筑内金矿数(资源当前数量)
+     optional int64 casIron = 21;//建筑内铁矿数
+     optional int64 casOil = 22;//建筑内油矿数量
+     optional int64 casUranium = 23;//建筑内铀矿数量
+     optional int32 autoBuild = 24;//是否自动建造 0：不自动 1：自动
+     optional int32 protectGold = 25;//受保护的金矿数(仓库效果)
+     optional int32 protectIron = 26;//受保护的铁矿数
+     optional int32 protectOil = 27;//受保护的油矿数
+     optional int32 protectUranium = 28;//受保护的铀矿数
+     optional int32 curActPoint = 29;//当前行动力
+   	 optional int32 hpPoint = 30;//当前体力
+}
+
+//20029 收获资源资源建筑请求(nodeserver)
+message Request20029Define{
+    required int32 cmd = 1;
+    optional int32 type = 2;//类型 1金矿 2铁矿 3油矿  4铀矿
+}
+
+//20030 收获资源建筑响应
+message Response20029Define{
+	optional ResponseHead responseHead = 1;//消息头
+    optional int32 type = 2;//类型 1金矿 2铁矿 3油矿  4铀矿
+    optional int64 curNum = 3;//已收取的资源
+    optional int64 casNum = 4;//未收取的资源
+}
+
+message BuffTipInfo{
+    required int32 buff_id = 1;   //buff的id
+    required string buff_type = 2;  //buff的大类类别
+    optional int32 buff_total_time = 3; //buff生效的总时间，单位为秒
+    optional int32 buff_countdown_time = 4;//buff还剩余的生效时间，单位为秒
+}
+
+//20031 获取主基地已启用Buff列表
+message Request20031Define{
+    required int32 cmd = 1;
+    optional int64 castle_id = 2;
+}
+
+//20032 获取主基地已启用Buff列表返回结果
+message Response20031Define{
+    optional ResponseHead responseHead = 1;
+    optional int64 castle_id = 2;
+    repeated BuffTipInfo buff_info_list = 4;    //当前已启用的所有主基地Buff。如果没有启用任何Buff，则为空
+}
+
+//20033 启用主基地Buff
+message Request20033Define{
+    required int32 cmd = 1;
+    optional int64 castle_id = 2;
+    optional int32 buff_id = 3;
+    optional int32 use_cash = 4;//服务器默认使用道具，如果没有道具，是否使用元宝替代道具来激活效果。使用元宝为1，不使用元宝为0
+}
+
+//20034 启用主基地Buff返回结果
+message Response20033Define{
+    optional ResponseHead responseHead = 1;
+    optional int64 castle_id = 2;
+    repeated BuffTipInfo buff_info_list = 3;    //当前已启用的所有主基地Buff
+}
+
+
+//20035 取消主基地Buff
+message Request20035Define{
+    required int32 cmd = 1;
+    optional int64 castle_id = 2;
+    optional int32 buff_id = 3; //要取消的Buff的Id
+}
+
+//20036 取消主基地Buff返回结果
+message Response20035Define{
+    optional ResponseHead responseHead = 1;
+    optional int64 castle_id = 2;
+    repeated BuffTipInfo buff_info_list = 3;    //当前已启用的所有主基地Buff
+}
+
+//20037 钻石购买资源
+message Request20037Define{
+    required int32 cmd = 1;
+    optional int32 res_ent_id = 2; //资源的entId
+    optional int32 cash_num = 3; //要花费的钻石数量，应大于0；
+}
+
+//20038 钻石购买资源返回结果。购买成功后会推送4001资源变化事件
+message Response20037Define{
+    optional ResponseHead responseHead = 1;
+}
+
+// =========================  科技 =========================
+
+//用户科技
+message UserTech{
+    required int64 tech_id = 1;  //主键
+    optional int32 ent_id = 2;   //对应的科技entityID
+    optional int32 level = 3;   //科技当前等级
+    optional int32 begin_time = 4;  //已经开始升级的时间，单位为秒。不在升级状态的为0。
+    optional int32 countdown = 5;   //距升级完成的倒计时时间，单位为秒。不在升级状态的为0。
+    optional int32 upgrade_time = 6; //从当前等级升级到下一等级需要的总时间（包含所有加成效果），单位秒。值应大于0，如果为0为无效值。
+}
+
+//20041 获取已解锁科技
+message Request20041Define{
+    required int32 cmd = 1;
+}
+
+//20042 获取已解锁科技返回结果
+message Response20041Define{
+    optional ResponseHead responseHead = 1;
+    repeated UserTech user_tech_list = 2;   //已解锁科技
+}
+
+//20043 升级科技
+message Request20043Define{
+    required int32 cmd = 1;
+    optional int32 tech_ent_id = 2; //科技的entityId
+}
+
+//20044 升级科技返回结果
+message Response20043Define{
+    optional ResponseHead responseHead = 1;
+    optional UserTech user_tech = 2;   //申请升级的科技的信息
+}
+
+//20045 加速科技升级
+message Request20045Define{
+    required int32 cmd = 1;
+    optional int32 tech_ent_id = 2;
+    optional int32 speed_up_type = 3; //0->钻石加速；1->道具加速；2->免费加速
+    optional int32 ent_id = 4;  //升级使用的道具的entId。钻石加速时可为0，道具加速时为使用道具的entId，免费加速为0。
+    optional int32 num = 5; //使用数量。免费加速时为0。
+}
+
+//20046 加速科技升级返回结果
+message Response20045Define{
+    optional ResponseHead responseHead = 1;
+    optional UserTech user_tech = 2;   //申请升级的科技的信息
+}
+
+//20047 取消科技升级
+message Request20047Define{
+    required int32 cmd = 1;
+    optional int32 tech_ent_id = 2; //科技的entityId
+}
+
+//20048 取消科技升级返回结果
+message Response20047Define{
+    optional ResponseHead responseHead = 1;
+    optional UserTech user_tech = 2;   //取消升级的科技的信息
+}
+
+// ========================= 推送消息 =======================
+
+//4001 推送事件资源发生变化
+message ResourceSendEvent{
+   optional ResponseHead responseHead = 1;//命令头
+   optional int64 goldNum = 2;//金矿数(资源当前数量)
+   optional int64 ironNum = 3;//铁矿数
+   optional int64 oilNum = 4;//油矿数量
+   optional int64 uraniumNum = 5;//铀矿数量
+   optional int64 casGold = 6;//建筑内金矿数(资源当前数量)
+   optional int64 casIron = 7;//建筑内铁矿数
+   optional int64 casOil = 8;//建筑内油矿数量
+   optional int64 casUranium = 9;//建筑内铀矿数量
+}
+
+//3999 推送城池效果发生变化
+message CastleEffSendEvent{
+   optional ResponseHead responseHead = 1;//命令头
+   optional string fieldName = 2;//字段名
+   optional int32 fieldValue = 3;//字段值
+}
+
+//4004 推送建筑队列状态变化
+message BuilderSendEvent{
+    optional ResponseHead responseHead = 1;//命令头
+    repeated BuilderInfo builder_info_list = 2;  //建造队列信息
+}
+
+//4005 推送建筑建造状态变化
+message CastleBuilderSendEvent{
+    optional ResponseHead responseHead = 1;//命令头
+    optional CastleBuilding castle_building = 2;  //状态变化的建筑
+}
+
+//4006 推送BuffTip的变化
+message BuffTipSendEvent{
+    optional ResponseHead responseHead = 1;//命令头
+    optional BuffTipInfo buff_info = 2;  //状态变化的buffTip
+}
+
+//4007 推送BuffTip的变化
+message UserTechSendEvent{
+    optional ResponseHead responseHead = 1;//命令头
+    optional UserTech user_tech = 2;  //状态变化的userTech
+}

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+
+<Tower stageId="1" name="实验室1层" npcId="31000001" additionEffect="N_ALL,0,-900" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="2" name="实验室2层" npcId="31000002" additionEffect="N_ALL,0,-800" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="3" name="实验室3层" npcId="31000003" additionEffect="N_ALL,0,-700" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="4" name="实验室4层" npcId="31000004" additionEffect="N_ALL,0,-600" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="5" name="实验室5层" npcId="31000005" additionEffect="N_ALL,0,-500" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="6" name="实验室6层" npcId="31000006" additionEffect="N_ALL,0,-400" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="7" name="实验室7层" npcId="31000007" additionEffect="N_ALL,0,-300" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="8" name="实验室8层" npcId="31000008" additionEffect="N_ALL,0,-200" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="9" name="实验室9层" npcId="31000009" additionEffect="N_ALL,0,-100" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="10" name="实验室10层" npcId="31000010" additionEffect="0" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="11" name="实验室11层" npcId="31000001" additionEffect="N_ALL,0,-900" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="12" name="实验室12层" npcId="31000002" additionEffect="N_ALL,0,-800" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="13" name="实验室13层" npcId="31000003" additionEffect="N_ALL,0,-700" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="14" name="实验室14层" npcId="31000004" additionEffect="N_ALL,0,-600" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="15" name="实验室15层" npcId="31000005" additionEffect="N_ALL,0,-500" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="16" name="实验室16层" npcId="31000006" additionEffect="N_ALL,0,-400" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="17" name="实验室17层" npcId="31000007" additionEffect="N_ALL,0,-300" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="18" name="实验室18层" npcId="31000008" additionEffect="N_ALL,0,-200" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="19" name="实验室19层" npcId="31000009" additionEffect="N_ALL,0,-100" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="20" name="实验室20层" npcId="31000010" additionEffect="0" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="21" name="实验室21层" npcId="31000001" additionEffect="N_ALL,0,10" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="22" name="实验室22层" npcId="31000002" additionEffect="N_ALL,0,20" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="23" name="实验室23层" npcId="31000003" additionEffect="N_ALL,0,30" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="24" name="实验室24层" npcId="31000004" additionEffect="N_ALL,0,40" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="25" name="实验室25层" npcId="31000005" additionEffect="N_ALL,0,50" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="26" name="实验室26层" npcId="31000006" additionEffect="N_ALL,0,60" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="27" name="实验室27层" npcId="31000007" additionEffect="N_ALL,0,70" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="28" name="实验室28层" npcId="31000008" additionEffect="N_ALL,0,80" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="29" name="实验室29层" npcId="31000009" additionEffect="N_ALL,0,90" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="30" name="实验室30层" npcId="31000010" additionEffect="N_ALL,0,100" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="31" name="实验室31层" npcId="31000001" additionEffect="N_PHYSICALATTACK,100,0" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="32" name="实验室32层" npcId="31000002" additionEffect="N_PHYSICALATTACK,150,0" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="33" name="实验室33层" npcId="31000003" additionEffect="N_PHYSICALATTACK,200,0" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="34" name="实验室34层" npcId="31000004" additionEffect="N_PHYSICALATTACK,250,0" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="35" name="实验室35层" npcId="31000005" additionEffect="N_PHYSICALATTACK,300,0" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="36" name="实验室36层" npcId="31000006" additionEffect="N_PHYSICALATTACK,350,0" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="37" name="实验室37层" npcId="31000007" additionEffect="N_PHYSICALATTACK,400,0" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="38" name="实验室38层" npcId="31000008" additionEffect="N_PHYSICALATTACK,450,0" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="39" name="实验室39层" npcId="31000009" additionEffect="N_PHYSICALATTACK,500,0" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+<Tower stageId="40" name="实验室40层" npcId="31000010" additionEffect="N_PHYSICALATTACK,550,0" firstBonusId="3000001" bonusId="3400009" description="这是一个疯狂的实验室，只要通关你就能获得爱因斯坦" />
+
+
+
+
+
+<TowerSectionBonus id="1" startStage="1" endStage="10" dropEntId="3300001" />
+<TowerSectionBonus id="2" startStage="11" endStage="20" dropEntId="3300002" />
+<TowerSectionBonus id="3" startStage="21" endStage="30" dropEntId="3300001" />
+<TowerSectionBonus id="4" startStage="31" endStage="40" dropEntId="3300002" />
+
+
+
+
+</dataset>

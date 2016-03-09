@@ -1,0 +1,163 @@
+package com.youxigu.dynasty2.map.service.impl.command;
+
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+import com.youxigu.dynasty2.armyout.domain.Strategy;
+import com.youxigu.dynasty2.armyout.domain.UserArmyout;
+import com.youxigu.dynasty2.armyout.service.IArmyoutService;
+import com.youxigu.dynasty2.develop.service.ICastleResService;
+import com.youxigu.dynasty2.develop.service.ICastleService;
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.map.domain.action.TimeAction;
+import com.youxigu.dynasty2.map.service.ICommandDistatcher;
+import com.youxigu.dynasty2.map.service.ICommander;
+import com.youxigu.dynasty2.map.service.IMapService;
+import com.youxigu.dynasty2.treasury.service.ITreasuryService;
+import com.youxigu.dynasty2.user.domain.User;
+import com.youxigu.dynasty2.user.service.IUserService;
+import com.youxigu.dynasty2.util.BaseException;
+
+/**
+ * 加载地图数据
+ * 
+ * @author LK
+ * @date 2016年2月18日
+ */
+public class StrategyCommander implements ICommander {
+	public static final Logger log = LoggerFactory
+			.getLogger(StrategyCommander.class);
+	protected ICommandDistatcher commandDistatcher;
+	protected IMapService mapService;
+	protected IArmyoutService armyoutService;
+	protected IUserService userService;
+	protected ICastleResService castleResService;
+	protected ITreasuryService treasuryService;
+	protected ICastleService castleService;
+
+	public void setCommandDistatcher(ICommandDistatcher commandDistatcher) {
+		this.commandDistatcher = commandDistatcher;
+	}
+
+	public void setMapService(IMapService mapService) {
+		this.mapService = mapService;
+	}
+
+	public void setArmyoutService(IArmyoutService armyoutService) {
+		this.armyoutService = armyoutService;
+	}
+
+	public void setUserService(IUserService userService) {
+		this.userService = userService;
+	}
+
+	public void setCastleResService(ICastleResService castleResService) {
+		this.castleResService = castleResService;
+	}
+
+	public void setTreasuryService(ITreasuryService treasuryService) {
+		this.treasuryService = treasuryService;
+	}
+
+	public void setCastleService(ICastleService castleService) {
+		this.castleService = castleService;
+	}
+
+	@Override
+	public Map<String, Object> doExcute(TimeAction action) {
+		// MapCell mapCell = null;
+		// try {
+		// mapCell = mapService.getMapCellForWrite(7810912);
+		// } catch (InterruptedException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// mapCell.setCasId(0);
+		// mapService.updateMapCell(mapCell);
+		//
+		// try {
+		// mapCell = mapService.getMapCellForWrite(7810912);
+		// } catch (InterruptedException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// mapCell.setUserId(0);
+		// mapService.updateMapCell(mapCell);
+		// throw new BaseException();
+		Armyout armyout = armyoutService.getArmyoutForWrite(101L);
+		// armyout.setAtkPower(3);
+		// armyoutService.updateArmyout(armyout);
+		//
+		// armyout = armyoutService.getArmyoutForWrite(101L);
+		// armyout.setDefPower(1);
+		// armyoutService.updateArmyout(armyout);
+		// armyoutService.createArmyOut(new Armyout());
+		// Armyout armyout = armyoutService.getArmyoutForWrite(101L);
+		// armyout.setOutType(1);
+		// armyoutService.updateArmyout(armyout);
+		// armyoutService.deleteArmyOut(armyout);
+		return null;
+	}
+
+	@Override
+	public void doCheak(Map<String, Object> params) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * 校验出征队列
+	 * 
+	 * @param userId
+	 * @param strategy
+	 * @return
+	 */
+	public UserArmyout doCheakArmyoutQueue(long userId, Strategy strategy) {
+		UserArmyout userArmyout = armyoutService.doGetUserArmyout(userId);
+		if (strategy.getConsumeTimes() > 0
+				&& userArmyout.getPvpNum() >= armyoutService.getMaxPvpTimes()) {
+			throw new BaseException("每日出征次数已用尽");
+		}
+
+		if (userArmyout.getNumByOutType(strategy.getId()) >= strategy
+				.getMaxTimes()) {
+			throw new BaseException("每日侦查次数已用尽");
+		}
+
+		if (userArmyout.isQueueFull()) {
+			throw new BaseException("出征队列已满");
+		}
+		return userArmyout;
+	}
+
+	/**
+	 * 消耗
+	 * 
+	 * @param user
+	 * @param strategy
+	 * @param fromCell
+	 * @param toCell
+	 */
+	public void doConsume(User user, Strategy strategy, MapCell fromCell,
+			MapCell toCell) {
+		// 消耗资源
+		if (strategy.getResEntId() > 0) {
+			double resNum = armyoutService.getBaseResConsume(strategy, fromCell,
+					toCell);
+			if (resNum > 0) {
+				castleResService.doDelRes(user.getMainCastleId(),
+						strategy.getResEntId(), (int) resNum, true, true);
+			}
+		}
+
+		// 消耗道具
+		if (strategy.getEntId2() > 0 && strategy.getEntNum2() > 0) {
+			treasuryService.deleteItemFromTreasury(user.getUserId(),
+					strategy.getEntId2(), strategy.getEntNum2(), true,
+					com.youxigu.dynasty2.log.imp.LogItemAct.LOGITEMACT_301);
+		}
+	}
+}

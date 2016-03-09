@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+<Resource entId="59901" resName="石油" resDesc="油" iconPath="oil" />
+<Resource entId="59902" resName="铁矿" resDesc="铁" iconPath="iron" />
+<Resource entId="59903" resName="铀块" resDesc="铀" iconPath="uranium" />
+<Resource entId="59904" resName="黄金" resDesc="金" iconPath="gold" />
+
+
+
+
+
+</dataset>

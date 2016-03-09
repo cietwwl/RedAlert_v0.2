@@ -1,0 +1,201 @@
+package com.youxigu.dynasty2.map.service;
+
+import com.youxigu.dynasty2.map.domain.Country;
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.map.domain.State;
+/*
+ * 地图数据处理接口
+ */
+public interface IMapService {
+	/**
+	 * 取得区
+	 * 
+	 * @param stateId
+	 * @return
+	 */
+	State getStateById(int stateId);
+
+	/**
+	 * 按指定的国家id取国家
+	 * 
+	 * @param countryId
+	 * @return
+	 */
+	Country getCountryById(int countryId);
+
+	/**
+	 * 更新MapCell,当建城点背用户使用后，更新mapCell.casId
+	 *
+	 * @param mapCell
+	 */
+	void updateMapCell(MapCell mapCell);
+
+	/**
+	 * 取得坐标
+	 * 
+	 * @param id
+	 * @return
+	 */
+	MapCell getMapCell(int id);
+
+	// /**
+	// * 初始化缓存map
+	// */
+	// void loadMap(int minStateId, int maxStateId);
+	//
+	// // /**
+	// // * 生成MApCell数据
+	// // */
+	// // void generateMapDatas();
+	//
+	// /**
+	// * 初始化缓存每个国家每个郡城的城池数量的统计，系统job调用，每小时运行一次
+	// */
+	// void loadCastleNum();
+	//
+	// /**
+	// * 在一个郡中随机选择一个未用的建城点
+	// *
+	// * @param stateId
+	// * @param count
+	// * @return
+	// */
+	// MapCell getAvialbleMapCell(int stateId);
+	// MapCell getAvialbleMapCellNoLock(int stateId);
+	//
+	// /**
+	// * 在一个国家中找到可用的郡
+	// *
+	// * @param countryId
+	// * @return
+	// */
+	// public State getAvialbleState(int countryId);
+	//
+
+	// /**
+	// * 根据给定的坐标点及范围，获取范围内建城点的坐标
+	// *
+	// * x,y可以不是建城点的坐标，这种情况下会找最小的比x,y大的建城点坐标
+	// *
+	// * range如果不是3的整数倍，取最小的>range的3的整数倍
+	// *
+	// * @param x
+	// * @param y
+	// * @param range
+	// * @return
+	// */
+	// List<MapCell> getMapCells(int x, int y, int range);
+	//
+	//
+	// /**
+	// * 根据给定的举行的左上角、右下角坐标
+	// * 获取范围内建城点的坐标
+	// * @param x1
+	// * @param y1
+	// * @param x2
+	// * @param y2
+	// * @return
+	// */
+	// List<MapCell> getMapCells(int x1, int y1, int x2,int y2);
+	//
+	//// int getCountryIdByStateId(int stateId);
+	// /**
+	// *
+	// * x,y必须是建城点的坐标
+	// *
+	// * 找到周边的8个建城点+本身，最多共9个建城点（边缘不会有9个建城点） 在计算城池势力范围与周边城池是否有冲突时使用
+	// *
+	// * @param x
+	// * @param y
+	// * @return
+	// */
+	// List<MapCell> getNearMapCells(int x, int y);
+	//
+	// List<MapCell> getNearMapCells(int x, int y,boolean includeOwn);
+	//
+	// /**
+	// * 得到当前国家的总城池数
+	// *
+	// * @param countryId
+	// * @return
+	// */
+	// int getCasNumByCountryId(int countryId);
+	//
+	// /**
+	// * 取人数最少的国家
+	// * -1 目前没有人数最少的
+	// * >0 相应的国家id
+	// * @return
+	// */
+	// int getCountryIdByMinUsernum();
+	//
+	// /**
+	// * 得到当前郡的总城池数
+	// *
+	// * @param countryId
+	// * @return
+	// */
+	// int getCasNumByStateId(int countryId);
+	//
+	// /**
+	// * 按坐标取某个坐标点
+	// * @param posX
+	// * @param posY
+	// * @return
+	// */
+	// public MapCell getMapCellByPos(int posX, int posY);
+	//
+	// /**
+	// * 按指定的id取郡
+	// * @param stateId 郡id
+	// * @return
+	// */
+	// public State getStateById(int stateId);
+	//
+	// /**
+	// * 得到指定国家的郡
+	// * @param countryId
+	// * @return
+	// */
+	// public List<State> getStatesByCountryId(int countryId);
+	//
+	//
+	// public Collection<Country> getCountrys();
+	//
+	// Map<Integer, Country> getCountryMaps();
+	//
+	// /**
+	// * 计算两个坐标点的距离
+	// * （1） x1=x2且|y1-y2|=1的两个格距离为1（直线）。
+	// （2） y1=y2且|x1-x2|=1的两个格距离为1（直线）。
+	// （3） |x1-x2|=|y1-y2|=1的两个格距离为1.5（斜线）。
+	// （4） 其他情况按照“先斜后直”的原则累加。
+	//
+	//
+	// 正方形的情况下=边长*1.5
+	// 长方形的情况下=短边的正方形*1.5+(长短边的差)
+	// * @param fromX
+	// * @param fromY
+	// * @param toX
+	// * @param toY
+	// * @return
+	// */
+	// double getDistanceBetweenPoints(int fromX, int fromY, int toX, int toY);
+	//
+	// /**
+	// * 根据距离计算时间
+	// * @param fromX
+	// * @param fromY
+	// * @param toX
+	// * @param toY
+	// * @return
+	// */
+	// @Deprecated
+	// int getBaseTimeBetweenPoints(int fromX, int fromY, int toX, int toY) ;
+	//
+	// /**
+	// * 锁坐标
+	// * @param mapCell
+	// */
+	// void lockMapCell(MapCell mapCell);
+}

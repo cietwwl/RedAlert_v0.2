@@ -1,0 +1,21 @@
+package com.youxigu.dynasty2.armyout.service;
+
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+
+public interface IArmyoutService {
+	Armyout getArmyout(long armyoutId);
+
+	/**
+	 * 添加armyout缓存
+	 * 
+	 * @param armyout
+	 */
+	void addArmyoutCache(Armyout armyout);
+
+	/**
+	 * 删除armyout缓存
+	 * 
+	 * @param armyout
+	 */
+	void removeArmyoutCache(Armyout armyout);
+}

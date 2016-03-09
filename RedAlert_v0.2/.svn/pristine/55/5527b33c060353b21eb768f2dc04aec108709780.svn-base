@@ -1,0 +1,69 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+	   
+  
+    <bean id="riskAction" class="com.youxigu.dynasty2.risk.web.RiskAction">
+        <property name="riskService"><ref bean="riskService"/></property>
+		<property name="commonService"><ref bean="commonService" /></property>
+    </bean>
+  
+  	<!-- 54001获取某个章节下的信息-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="54001"/>
+	   <property name="bean" ref="riskAction"/>
+	   <property name="methodName" value="getOneRiskScene"/>
+	</bean>
+	
+	
+	<!-- 54003挑战关卡-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="54003"/>
+	   <property name="bean" ref="riskAction"/>
+	   <property name="methodName" value="doCombat"/>
+	</bean>
+	
+	<!-- 54005扫荡关卡-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="54005"/>
+	   <property name="bean" ref="riskAction"/>
+	   <property name="methodName" value="doAutoCombat"/>
+	</bean>
+	
+	<!-- 54007领取星级级奖励-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="54007"/>
+	   <property name="bean" ref="riskAction"/>
+	   <property name="methodName" value="gainStarAward"/>
+	</bean>
+	
+	<!--  54009领取首通奖励-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="54009"/>
+	   <property name="bean" ref="riskAction"/>
+	   <property name="methodName" value="firstBonus"/>
+	</bean>
+	
+	<!--   54011重置次数-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="54011"/>
+	   <property name="bean" ref="riskAction"/>
+	   <property name="methodName" value="clearJoinNum"/>
+	</bean>
+	
+	<!-- 54013获取当前已打的章节-->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+	   <property name="cmd" value="54013"/>
+	   <property name="bean" ref="riskAction"/>
+	   <property name="methodName" value="getUserRiskScenes"/>
+	</bean>
+	
+	
+</beans>
+

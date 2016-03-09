@@ -1,0 +1,31 @@
+package com.youxigu.dynasty2.map.dao.impl;
+
+import java.util.List;
+
+import com.youxigu.dynasty2.map.dao.ICollectPointDao;
+import com.youxigu.dynasty2.map.domain.CollectPoint;
+
+public class CollectPointDao implements ICollectPointDao {
+
+	@Override
+	public List<CollectPoint> getAllCollectPoints(long userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void insertCollectPoint(CollectPoint p) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void updateCollectPoint(CollectPoint p) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void deleteCollectPoint(String id) {
+		// TODO Auto-generated method stub
+	}
+
+}

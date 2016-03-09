@@ -1,0 +1,298 @@
+package com.youxigu.dynasty2.combat.service.impl;
+
+import java.sql.Timestamp;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.ibatis.sqlmap.engine.cache.CacheModel;
+import com.ibatis.sqlmap.engine.cache.memcached.MemcachedManager;
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+import com.youxigu.dynasty2.combat.dao.ICombatDao;
+import com.youxigu.dynasty2.combat.domain.Combat;
+import com.youxigu.dynasty2.combat.domain.CombatConstants;
+import com.youxigu.dynasty2.combat.domain.CombatDB;
+import com.youxigu.dynasty2.combat.domain.CombatTeam;
+import com.youxigu.dynasty2.combat.proto.CombatMsg;
+import com.youxigu.dynasty2.combat.service.IAtferCombatService;
+import com.youxigu.dynasty2.combat.service.ICombatEngine;
+import com.youxigu.dynasty2.combat.service.ICombatService;
+import com.youxigu.dynasty2.combat.service.ICombatTeamService;
+import com.youxigu.dynasty2.util.CompressUtils;
+
+public class CombatService implements ICombatService {
+	public static final Logger log = LoggerFactory
+			.getLogger(CombatService.class);
+
+	// 战斗对象在缓存中保存的时间
+	protected int cacheSeconds = 60 * 60;// 10分钟
+	// 战斗对象在数据库中保存的天数
+	protected int cacheDays = 7;// 7天
+
+	/**
+	 * CombatTeam构造工厂
+	 */
+	private Map<Short, ICombatTeamService> teamFactorys;
+
+	/**
+	 * 战斗后处理器
+	 */
+	private Map<Short, IAtferCombatService> atferCombatFactorys;
+
+	private ICombatDao combatDao;
+	ICombatEngine combatEngine;
+
+	public void setCombatDao(ICombatDao combatDao) {
+		this.combatDao = combatDao;
+	}
+
+	public void setCacheSeconds(int cacheSeconds) {
+		this.cacheSeconds = cacheSeconds;
+	}
+
+	public void setCacheDays(int cacheDays) {
+		this.cacheDays = cacheDays;
+	}
+
+	public void setCombatEngine(ICombatEngine combatEngine) {
+		this.combatEngine = combatEngine;
+	}
+
+	@Override
+	public Combat getCombat(String combatId) {
+		return getCombat(combatId, false);
+	}
+
+	@Override
+	public CombatMsg.Combat getCombatPf(String combatId) {
+		return getCombatPf(combatId, false);
+	}
+
+	public void setTeamFactorys(Map<Short, ICombatTeamService> teamFactorys) {
+		this.teamFactorys = teamFactorys;
+	}
+
+	public void setAtferCombatFactorys(
+			Map<Short, IAtferCombatService> atferCombatFactorys) {
+		this.atferCombatFactorys = atferCombatFactorys;
+	}
+
+	@Override
+	public Combat getCombat(String combatId, boolean db) {
+		Combat combat = (Combat) MemcachedManager.get(combatId,
+				CacheModel.CACHE_REMOTE);
+		if (combat == null && db) {
+			CombatDB cb = combatDao.getCombatDB(combatId);
+			if (cb != null) {
+				combat = (Combat) CompressUtils
+						.decompressAndDeSerialize(cb.getCombatData());
+				if (combat != null) {
+					MemcachedManager.set(combatId, combat,
+							CacheModel.CACHE_REMOTE, cacheSeconds);
+				}
+			}
+		}
+		return combat;
+
+	}
+
+	@Override
+	public CombatMsg.Combat getCombatPf(String combatId, boolean db) {
+		byte[] datas = (byte[]) MemcachedManager.get(combatId,
+				CacheModel.CACHE_REMOTE);
+		if (datas == null && db) {
+			CombatDB cb = combatDao.getCombatDB(combatId);
+			if (cb != null) {
+				datas = cb.getCombatData();
+				if (datas != null) {
+					MemcachedManager.set(combatId, datas,
+							CacheModel.CACHE_REMOTE, cacheSeconds);
+				}
+			}
+		}
+
+		CombatMsg.Combat combat = null;
+		if (datas != null) {
+			try {
+				combat = CombatMsg.Combat.parseFrom(datas);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return combat;
+	}
+
+	@Override
+	public void saveCombat(Combat combat) {
+		saveCombat(combat, false);
+	}
+
+	@Override
+	public void saveCombatPf(Combat combat) {
+		saveCombatPf(combat, false);
+	}
+
+	@Override
+	public void saveCombat(Combat combat, boolean db) {
+		MemcachedManager.set(combat.getCombatId(), combat,
+				CacheModel.CACHE_REMOTE, cacheSeconds);
+		if (db) {
+			byte[] datas = CompressUtils.serializeAndCompress(combat);
+			CombatDB cb = new CombatDB();
+			cb.setCombatId(combat.getCombatId());
+			cb.setCombatDt(new Timestamp(System.currentTimeMillis()));
+			cb.setCombatData(datas);
+
+			combatDao.saveCombatDB(cb);
+		}
+	}
+
+	@Override
+	public void saveCombatPf(Combat combat, boolean db) {
+		if (combat == null) {
+			return;
+		}
+		byte[] datas = combat.toCombat().toByteArray();
+		MemcachedManager.set(combat.getCombatId(), datas,
+				CacheModel.CACHE_REMOTE, cacheSeconds);
+		if (db) {
+			CombatDB cb = new CombatDB();
+			cb.setCombatId(combat.getCombatId());
+			cb.setCombatDt(new Timestamp(System.currentTimeMillis()));
+			cb.setCombatData(datas);
+			combatDao.saveCombatDB(cb);
+		}
+	}
+
+	@Override
+	public void deleteCombat(String combatId, boolean onlyDB) {
+		if (!onlyDB) {
+			MemcachedManager.delete(combatId, CacheModel.CACHE_REMOTE);
+		}
+		combatDao.deleteCombatDBById(combatId);
+	}
+
+	@Override
+	public void cleanCombat() {
+		combatDao.deleteCombatDBByDate(cacheDays);
+	}
+
+	@Override
+	public void execCombat(Armyout armyout) {
+		Combat combat = null;
+		// 判断类型
+		short combatType = 0;
+		if (armyout.getAttackerType() == Armyout.PLAER_TYPE
+				&& armyout.getDefenderType() == Armyout.PLAER_TYPE) {
+			combatType = CombatConstants.COMBAT_TYPE_PVP_ROB;
+		} else if (armyout.getAttackerType() == Armyout.PLAER_TYPE
+				&& armyout.getDefenderType() == Armyout.ENVIRONMENT_TYPE) {
+			combatType = CombatConstants.COMBAT_TYPE_PVE_ROB;
+		} else if (armyout.getAttackerType() == Armyout.ENVIRONMENT_TYPE
+				&& armyout.getDefenderType() == Armyout.PLAER_TYPE) {
+			combatType = CombatConstants.COMBAT_TYPE_EVP_ROB;
+		}
+
+		if (combatType == 0) {
+			log.error("不支持的战斗类型");
+			return;
+		}
+
+		// 进攻方队伍factory
+		ICombatTeamService attackFactory = teamFactorys
+				.get(armyout.getAttackerType());
+		if (attackFactory == null) {
+			log.error("数据错误，不能获取进攻方战斗方信息");
+			return;
+		}
+
+		// 防守方factory
+		CombatTeam defenceTeam = null;
+		ICombatTeamService defenderFactory = teamFactorys
+				.get(armyout.getDefenderType());
+		if (defenderFactory == null) {
+			log.error("数据错误，不能获取防守方战斗方信息");
+			return;
+		}
+
+		// String lockKey = COMBAT_LOCKER + armyOut.getDefenderId();
+		try {
+			// TODO 没想好要不要锁
+			defenceTeam = defenderFactory
+					.getNextDefenceCombatTeam(armyout.getDefenderCasId());
+
+			if (defenceTeam == null) {
+				log.error("没有防守队伍");
+				return;
+			}
+
+			IAtferCombatService afterService = atferCombatFactorys
+					.get(combatType);
+			boolean allEnd = false;
+			// 获得有效的防守团队，直到没有下一个防守团队
+			while (!allEnd) {
+				long time = System.currentTimeMillis();
+
+				CombatTeam attackTeam = null;
+				// 攻击方 TODO:这里不要循环取attackTeam,似乎做一个clone更好
+
+				attackTeam = attackFactory.getCombatTeam(
+						armyout.getAttackerCasId(), armyout.getTroopId(),
+						false);
+				if (attackTeam == null) {
+					log.debug("没有进攻队伍");
+					return;
+				}
+				attackTeam.setPosX(armyout.parent.fromCell.getPosX());
+				attackTeam.setPosY(armyout.parent.fromCell.getPosY());
+
+				combat = new Combat(combatType, CombatConstants.SCORETYPE_HP,
+						attackTeam, defenceTeam);
+
+				combatEngine.execCombat(combat);
+
+				if (log.isDebugEnabled()) {
+
+					log.debug("一场战斗{}的战斗时间:{}", combat.getCombatId(),
+							(System.currentTimeMillis() - time));
+					// log.debug(combat.showLog());
+				}
+
+				if (combat.getWinType() == CombatConstants.WIN_DEF) {// 进攻方失败，终止
+					allEnd = true;
+				} else if (defenceTeam
+						.getTeamType() == CombatTeam.TEAM_TYPE_PLAYERHERO
+						|| defenceTeam
+								.getTeamType() == CombatTeam.TEAM_TYPE_NPCHERO) {
+					// 最后一轮战斗，退出
+					allEnd = true;
+				}
+
+				if (afterService != null) {
+					// 单场战斗结束
+					afterService.doSaveAfterCombat(combat, allEnd, null);
+					if (log.isDebugEnabled()) {
+						log.debug("一场战斗总时间:"
+								+ (System.currentTimeMillis() - time));
+					}
+
+				}
+				// 没终止,找下一个防守队伍
+				if (!allEnd) {
+					defenceTeam = defenderFactory
+							.getNextDefenceCombatTeam(armyout.getDefenderCasId());
+					if (defenceTeam == null) {
+						allEnd = true;
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("exception:", e);
+		} /*
+			 * finally { MemcachedManager.releaseLock(lockKey); }
+			 */
+	}
+}

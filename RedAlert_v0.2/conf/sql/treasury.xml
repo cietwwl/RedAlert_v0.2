@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+<sqlMap namespace="ServerInfo">
+	<typeAlias alias="treasury" type="com.youxigu.dynasty2.treasury.domain.Treasury" />
+
+
+	<cacheModel type="MEMCACHED" id="cache_treasury" serialize="false" readOnly="false">
+		<flushOnExecute statement="insertTreasury">
+            <flushModel flushstatement="getTreasurysByUserId" flushMode="insert" flushpara="userId"/>
+			<flushModel flushstatement="treasury" flushMode="insert" flushpara="userId,id"/>
+            <flushModel flushstatement="getTreasurysByEntId" flushMode="insert" flushpara="userId,entId"/>
+		</flushOnExecute>
+		<flushOnExecute statement="updateTreasury">
+			<flushModel flushstatement="treasury" flushMode="update" flushpara="userId,id"/>
+		</flushOnExecute>
+
+	
+		<flushOnExecute statement="deleteTreasury">
+            <flushModel flushstatement="getTreasurysByUserId" flushMode="delete" flushpara="userId"/>
+			<flushModel flushstatement="getTreasurysByEntId" flushMode="delete" flushpara="userId,entId"/>
+			<flushModel flushstatement="treasury" flushMode="delete" flushpara="userId,id"/>
+		</flushOnExecute>
+		<property name="class" value="treasury"/>
+		<property name="pk" value="userId,id"/>
+	</cacheModel>
+
+	<insert id="insertTreasury" parameterClass="treasury" shardingParams='[{"paramExpr":"userId","tableName":"treasury"}]'>
+		insert into treasury (id,userId,entId,entType,itemCount,useCount,band,equip,
+				throwAble,childType,isGift,existEndTime,level,holeNum,gemIds,
+				randomProp,randomPropTmp,gemExp,specialAttr) 
+		values (#id#,#userId#,#entId#,#entType#,#itemCount#,#useCount#,#band#,#equip#,
+				#throwAble#,#childType#,#isGift#,#existEndTime#,#level#,#holeNum#,#gemIds#,
+				#randomProp#,#randomPropTmp#,#gemExp#,#specialAttr#) 
+	</insert>
+
+	<select id="getTreasuryById" resultClass="treasury" parameterClass="java.util.HashMap" cacheModel="cache_treasury" cacheOnlyObject="true"  shardingParams='[{"paramExpr":"userId","tableName":"treasury"}]'>
+		SELECT * FROM treasury WHERE id = #id# and userId=#userId#
+	</select>
+	<select id="getTreasurysByEntId" resultClass="treasury" parameterClass="java.util.HashMap" cacheModel="cache_treasury" resultIsList="true" shardingParams='[{"paramExpr":"userId","tableName":"treasury"}]'>
+		SELECT * FROM treasury WHERE userId=#userId# and entId = #entId#
+	</select>
+
+	<select id="getTreasurysByUserId" resultClass="treasury" parameterClass="long"   cacheModel="cache_treasury" resultIsList="true" shardingParams='[{"paramExpr":"userId","tableName":"treasury"}]'>
+		SELECT * FROM treasury WHERE userId = #userId#
+	</select>
+
+	<update id="updateTreasury" parameterClass="treasury" asyncUpdate="1" shardingParams='[{"paramExpr":"userId","tableName":"treasury"}]'>
+		update treasury set entId=#entId#,entType=#entType#, itemCount=#itemCount#,useCount=#useCount#,band=#band#,equip=#equip#,throwAble=#throwAble#,
+				childType=#childType#,isGift=#isGift#,existEndTime=#existEndTime#,level=#level#,holeNum=#holeNum#,gemIds=#gemIds#,
+				randomProp=#randomProp#,randomPropTmp=#randomPropTmp#,gemExp=#gemExp#,isLock=#isLock#,specialAttr=#specialAttr# 
+		where id=#id#
+	</update>
+
+	<delete id="deleteTreasury" parameterClass="treasury" shardingParams='[{"paramExpr":"userId","tableName":"treasury"}]'>
+		delete from treasury where id = #id# and userId=#userId#
+	</delete>
+	
+	
+	 <!-- 装备碎片 -->
+ 	 <typeAlias alias="heroEquipDebris" type="com.youxigu.dynasty2.hero.domain.HeroEquipDebris"/>
+	<cacheModel type="MEMCACHED" id="cache_heroEquipDebris" serialize="false" readOnly="false" >
+		<flushOnExecute statement="insertHeroEquipDebris">
+			<flushModel flushstatement="heroEquipDebris" flushMode="insert" flushpara="userId"/>
+		</flushOnExecute>
+		<flushOnExecute statement="updateHeroEquipDebris">
+			<flushModel flushstatement="heroEquipDebris" flushMode="update" flushpara="userId"/>
+		</flushOnExecute>
+		<property name="class" value="heroEquipDebris"/>
+		<property name="pk" value="userId"/>
+	</cacheModel>
+
+	<insert id="insertHeroEquipDebris" parameterClass="heroEquipDebris">
+        INSERT IGNORE INTO heroequipdebris (userId,debris,cards) 
+        VALUES (#userId#,#debris#,#cards#)
+    </insert>
+
+	<update id="updateHeroEquipDebris" parameterClass="heroEquipDebris" asyncUpdate="5">
+		UPDATE heroequipdebris SET debris=#debris#,cards=#cards# 
+		WHERE userId = #userId#
+	</update>
+
+	<select id="geHeroEquipDebris" parameterClass="long" resultClass="heroEquipDebris" cacheModel="cache_heroEquipDebris" cacheOnlyObject="true">
+		SELECT * FROM heroequipdebris WHERE userId = #userId#
+	</select>
+	
+</sqlMap>
+
+
+
+
+

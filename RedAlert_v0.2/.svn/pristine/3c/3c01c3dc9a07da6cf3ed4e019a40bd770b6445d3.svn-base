@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+<DropPack Id="100001" entId="3000001" dropentId="1001001" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100002" entId="3000001" dropentId="1001002" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100003" entId="3000001" dropentId="1001003" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100004" entId="3000001" dropentId="1001004" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100005" entId="3000001" dropentId="1001005" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100006" entId="3000001" dropentId="1001006" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100007" entId="3000001" dropentId="1001007" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100008" entId="3000001" dropentId="1001008" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+
+<DropPack Id="100009" entId="3010001" dropentId="3010002" dropPercent="10000000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100010" entId="3010001" dropentId="3000098" dropPercent="10000000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100011" entId="3010002" dropentId="3010003" dropPercent="10000000" minValue="1" maxValue2="1" weight="45" />
+<DropPack Id="100012" entId="3010002" dropentId="3010004" dropPercent="10000000" minValue="1" maxValue2="1" weight="45" />
+<DropPack Id="100013" entId="3010002" dropentId="3010005" dropPercent="10000000" minValue="1" maxValue2="1" weight="10" />
+<DropPack Id="100014" entId="3010007" dropentId="3010008" dropPercent="10000000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100015" entId="3010007" dropentId="3000099" dropPercent="10000000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100016" entId="3010008" dropentId="3010003" dropPercent="10000000" minValue="1" maxValue2="1" weight="40" />
+<DropPack Id="100017" entId="3010008" dropentId="3010004" dropPercent="10000000" minValue="1" maxValue2="1" weight="40" />
+<DropPack Id="100018" entId="3010008" dropentId="3010005" dropPercent="10000000" minValue="1" maxValue2="1" weight="15" />
+<DropPack Id="100019" entId="3010008" dropentId="3010006" dropPercent="10000000" minValue="1" maxValue2="1" weight="5" />
+<DropPack Id="100020" entId="3010009" dropentId="3020005" dropPercent="10000000" minValue="1" maxValue2="1" weight="15" />
+<DropPack Id="100021" entId="3010009" dropentId="3020006" dropPercent="10000000" minValue="1" maxValue2="1" weight="5" />
+
+<DropPack Id="100022" entId="3010003" dropentId="100000001" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100023" entId="3010003" dropentId="100000002" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100024" entId="3010003" dropentId="100000003" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100025" entId="3010003" dropentId="100000004" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100026" entId="3010003" dropentId="100000005" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100027" entId="3010003" dropentId="100000007" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100028" entId="3010003" dropentId="100000008" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100029" entId="3010003" dropentId="100000009" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100030" entId="3010003" dropentId="100000010" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100031" entId="3010003" dropentId="100000011" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100032" entId="3010003" dropentId="100000013" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100033" entId="3010003" dropentId="100000014" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100034" entId="3010003" dropentId="100000015" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100035" entId="3010003" dropentId="100000016" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100036" entId="3010003" dropentId="100000017" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100037" entId="3010003" dropentId="100000019" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100038" entId="3010003" dropentId="100000020" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100039" entId="3010003" dropentId="100000021" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100040" entId="3010003" dropentId="100000022" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100041" entId="3010003" dropentId="100000023" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100042" entId="3010004" dropentId="100000025" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100043" entId="3010004" dropentId="100000026" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100044" entId="3010004" dropentId="100000027" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100045" entId="3010004" dropentId="100000028" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100046" entId="3010004" dropentId="100000029" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100047" entId="3010004" dropentId="100000031" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100048" entId="3010004" dropentId="100000032" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100049" entId="3010004" dropentId="100000033" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100050" entId="3010004" dropentId="100000034" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100051" entId="3010004" dropentId="100000035" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100052" entId="3010004" dropentId="100000037" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100053" entId="3010004" dropentId="100000038" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100054" entId="3010004" dropentId="100000039" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100055" entId="3010004" dropentId="100000040" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100056" entId="3010004" dropentId="100000041" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100057" entId="3010004" dropentId="100000043" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100058" entId="3010004" dropentId="100000044" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100059" entId="3010004" dropentId="100000045" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100060" entId="3010004" dropentId="100000046" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100061" entId="3010004" dropentId="100000047" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100062" entId="3010005" dropentId="100000049" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100063" entId="3010005" dropentId="100000050" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100064" entId="3010005" dropentId="100000051" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100065" entId="3010005" dropentId="100000052" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100066" entId="3010005" dropentId="100000053" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100067" entId="3010005" dropentId="100000055" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100068" entId="3010005" dropentId="100000056" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100069" entId="3010005" dropentId="100000057" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100070" entId="3010005" dropentId="100000058" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100071" entId="3010005" dropentId="100000059" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100072" entId="3010005" dropentId="100000061" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100073" entId="3010005" dropentId="100000062" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100074" entId="3010005" dropentId="100000063" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100075" entId="3010005" dropentId="100000064" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100076" entId="3010005" dropentId="100000065" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100077" entId="3010005" dropentId="100000067" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100078" entId="3010005" dropentId="100000068" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100079" entId="3010005" dropentId="100000069" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100080" entId="3010005" dropentId="100000070" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100081" entId="3010005" dropentId="100000071" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100082" entId="3010005" dropentId="100000073" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100083" entId="3010005" dropentId="100000074" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100084" entId="3010005" dropentId="100000075" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100085" entId="3010005" dropentId="100000076" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100086" entId="3010005" dropentId="100000077" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100087" entId="3010005" dropentId="100000078" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100088" entId="3010005" dropentId="100000079" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100089" entId="3010005" dropentId="100000080" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100090" entId="3010005" dropentId="100000081" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100091" entId="3010005" dropentId="100000082" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100092" entId="3010005" dropentId="100000083" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100093" entId="3010005" dropentId="100000084" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100094" entId="3010005" dropentId="100000085" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100095" entId="3010005" dropentId="100000086" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100096" entId="3010005" dropentId="100000087" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100097" entId="3010005" dropentId="100000088" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100098" entId="3010005" dropentId="100000089" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100099" entId="3010005" dropentId="100000090" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100100" entId="3010005" dropentId="100000091" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100101" entId="3010005" dropentId="100000092" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100102" entId="3020006" dropentId="100000093" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100103" entId="3020006" dropentId="100000094" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100104" entId="3020006" dropentId="100000095" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100105" entId="3020006" dropentId="100000096" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100106" entId="3020006" dropentId="100000097" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100107" entId="3020006" dropentId="100000099" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100108" entId="3020006" dropentId="100000100" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100109" entId="3020006" dropentId="100000101" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100110" entId="3020006" dropentId="100000102" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100111" entId="3020006" dropentId="100000103" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100112" entId="3020006" dropentId="100000105" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100113" entId="3020006" dropentId="100000106" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100114" entId="3020006" dropentId="100000107" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100115" entId="3020006" dropentId="100000108" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100116" entId="3020006" dropentId="100000109" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100117" entId="3020006" dropentId="100000111" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100118" entId="3020006" dropentId="100000112" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100119" entId="3020006" dropentId="100000113" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100120" entId="3020006" dropentId="100000114" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100121" entId="3020006" dropentId="100000115" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100122" entId="3020006" dropentId="100000117" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100123" entId="3020006" dropentId="100000118" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100124" entId="3020006" dropentId="100000119" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100125" entId="3020006" dropentId="100000120" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100126" entId="3020006" dropentId="100000121" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100127" entId="3020006" dropentId="100000122" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100128" entId="3020006" dropentId="100000123" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100129" entId="3020006" dropentId="100000124" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100130" entId="3020006" dropentId="100000125" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100131" entId="3020006" dropentId="100000126" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100132" entId="3020006" dropentId="100000127" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100133" entId="3020006" dropentId="100000128" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100134" entId="3020006" dropentId="100000129" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100135" entId="3020006" dropentId="100000130" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100136" entId="3020006" dropentId="100000131" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100137" entId="3020006" dropentId="100000132" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100138" entId="3020006" dropentId="100000133" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100139" entId="3020006" dropentId="100000134" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100140" entId="3020006" dropentId="100000135" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+<DropPack Id="100141" entId="3020006" dropentId="100000136" dropPercent="10000000" minValue="1" maxValue2="1" weight="20" />
+
+<DropPack Id="100142" entId="3000098" dropentId="59904" dropPercent="10000000" minValue="1000" maxValue2="1000" weight="0" />
+<DropPack Id="100143" entId="3000099" dropentId="59904" dropPercent="10000000" minValue="5000" maxValue2="5000" weight="0" />
+
+<DropPack Id="100182" entId="3300001" dropentId="59801" dropPercent="10000000" minValue="100" maxValue2="100" weight="0" />
+<DropPack Id="100183" entId="3300002" dropentId="59801" dropPercent="10000000" minValue="1000" maxValue2="1000" weight="0" />
+
+<DropPack Id="100185" entId="3400001" dropentId="1020141" dropPercent="10000000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100186" entId="3400002" dropentId="1020142" dropPercent="10000000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100187" entId="3400003" dropentId="1020143" dropPercent="10000000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100188" entId="3400004" dropentId="1020151" dropPercent="10000000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100189" entId="3400005" dropentId="1020152" dropPercent="10000000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100190" entId="3400006" dropentId="1020153" dropPercent="10000000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100191" entId="3400007" dropentId="1020161" dropPercent="10000000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100192" entId="3400008" dropentId="1030104" dropPercent="10000000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100193" entId="3400008" dropentId="1003001" dropPercent="10000000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100194" entId="3400008" dropentId="1001026" dropPercent="100000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100195" entId="3400008" dropentId="1001027" dropPercent="10000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100196" entId="3400008" dropentId="1001028" dropPercent="50000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100197" entId="3400008" dropentId="1001029" dropPercent="50000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100198" entId="3400008" dropentId="1001030" dropPercent="50000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100199" entId="3400009" dropentId="1005001" dropPercent="100000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100200" entId="3400009" dropentId="1005002" dropPercent="10000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100201" entId="3400009" dropentId="1005003" dropPercent="50000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100202" entId="3400009" dropentId="1010025" dropPercent="100000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100203" entId="3400009" dropentId="1010026" dropPercent="10000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100204" entId="3400009" dropentId="1010027" dropPercent="50000" minValue="1" maxValue2="1" weight="0" />
+<DropPack Id="100205" entId="3400009" dropentId="1003001" dropPercent="10000000" minValue="1" maxValue2="1" weight="0" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+</dataset>

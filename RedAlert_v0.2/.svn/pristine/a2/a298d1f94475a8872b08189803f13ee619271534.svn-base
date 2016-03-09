@@ -1,0 +1,73 @@
+package com.youxigu.dynasty2.map.service.impl.command;
+
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.youxigu.dynasty2.map.dao.IMapDao;
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.map.domain.State;
+import com.youxigu.dynasty2.map.domain.StateCache;
+import com.youxigu.dynasty2.map.domain.action.LoadMapAction;
+import com.youxigu.dynasty2.map.domain.action.TimeAction;
+import com.youxigu.dynasty2.map.service.ICommander;
+import com.youxigu.dynasty2.map.service.IMapService;
+
+/**
+ * 加载地图数据
+ * 
+ * @author LK
+ * @date 2016年2月18日
+ */
+public class LoadMapDataService implements ICommander {
+	public static final Logger log = LoggerFactory
+			.getLogger(LoadMapDataService.class);
+	private IMapDao mapDao;
+	private IMapService mapService;
+
+	public void setMapDao(IMapDao mapDao) {
+		this.mapDao = mapDao;
+	}
+
+	public void setMapService(IMapService mapService) {
+		this.mapService = mapService;
+	}
+
+	@Override
+	public Map<String, Object> doExcute(TimeAction action) {
+		LoadMapAction loadMapAction = (LoadMapAction) action;
+		State state = loadMapAction.getState();
+		int stateId = state.getStateId();
+		int countryId = state.getCountryId();
+		Map<Integer, MapCell> ALL_CELLS = loadMapAction.getALL_CELLS();
+		Map<Integer, StateCache> STATE_CELLS = loadMapAction.getSTATE_CELLS();
+
+		List<MapCell> mapcells = mapDao.getMapCellsByStateId(stateId);// 起一个线程初始化这个郡的地图
+		if (mapcells != null && mapcells.size() > 0) {
+			StateCache stateCache = STATE_CELLS.get(stateId);
+			if (stateCache == null) {
+				stateCache = new StateCache(/* worker, */state);
+				STATE_CELLS.put(stateId, stateCache);
+			}
+
+			for (MapCell mapcell : mapcells) {
+				mapcell.setState(state);
+				mapcell.setCountry(mapService.getCountryById(countryId));
+				// 缓存所有坐标点
+				ALL_CELLS.put(mapcell.getId(), mapcell);
+
+				// 初始化区缓存
+				stateCache.addCell(mapcell);
+			}
+
+			log.info(
+					"[" + Thread.currentThread().getName()
+							+ "]加载郡：{}的MapCell，数量{}完成......",
+					stateCache.getStateId(), mapcells.size());
+		}
+		return null;
+	}
+
+}

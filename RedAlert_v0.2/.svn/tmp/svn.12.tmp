@@ -1,0 +1,273 @@
+package com.youxigu.dynasty2.map.domain;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
+
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+
+/*
+ * 建城点定义
+ * 第一层 包括
+ * private int earthId;// 地表对应的配置id
+   private int earthType;// 地表类型
+   
+        第二层 包括
+    private int castType;// 城池类型
+    private long casId; // 城池编号(可能是玩家/联盟/野怪.....，通过castleType来区别)
+	private long userId;// 领地君主
+	private long guildId;// 领地联盟
+ */
+public class MapCell implements java.io.Serializable {
+	private static final long serialVersionUID = 3471639234846446891L;
+
+	public static final String KEY = "MapCell_";
+
+	// castType; 城池类型 casId>0,对应的casId为玩家城池id或是npc和资源的配数id
+	public static final int CAS_TYPE_USER = 1;// 玩家城
+	public static final int CAS_TYPE_NPC = 2;// NPC
+	public static final int CAS_TYPE_RES = 3;// 资源
+
+    public static final int EARTH_TYPE_GRASS = 1;//草地
+    public static final int EARTH_TYPE_SAND = 2;//沙地
+    public static final int EARTH_TYPE_SHOAL = 3;//浅滩
+    public static final int EARTH_TYPE_MOUNTAIN = 4;//山峰
+    public static final int EARTH_TYPE_OCEAN = 5;//海洋
+    public static final int EARTH_TYPE_ROAD = 6;//公路
+    public static final int EARTH_TYPE_USER_RES = 7;//个人资源点
+    public static final int EARTH_TYPE_LEAGUE_RES = 8;//联盟资源点
+    public static final int EARTH_TYPE_COUNTRY_RES = 9;//国家资源点
+
+	// public static final int CAS_TYPE_EMPTY = 0;// 空建城点
+
+	private int id;// id=posX*10000+posY
+	private int posX;// 坐标
+	private int posY;
+	private int stateId;// 郡城id
+	private int castType;// 城池类型
+	private int countryId;// 国家id
+	private long casId; // 城池编号(可能是玩家/联盟/野怪.....，通过castleType来区别)
+	private long userId;// 领地君主-个人资源地
+	private long guildId;// 领地联盟-联盟资源地和国家资源地
+	private int earthId;// 地表对应的配置id
+	private int earthType;// 地表类型
+
+	private State state;// 所属区
+	private Country country;// 所属国家
+	private Map<String, Armyout> fromArmyouts = new HashMap<String, Armyout>();// 从该坐标发出的出征
+	private Map<String, Armyout> toArmyouts = new HashMap<String, Armyout>();// 发往该坐标的出征
+	private Map<String, Armyout> stayArmyouts = new HashMap<String, Armyout>();// 停留在改坐标的出征
+
+    private ReentrantLock lock = new ReentrantLock();
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getPosX() {
+		return posX;
+	}
+
+	public void setPosX(int posX) {
+		this.posX = posX;
+	}
+
+	public int getPosY() {
+		return posY;
+	}
+
+	public void setPosY(int posY) {
+		this.posY = posY;
+	}
+
+	public int getStateId() {
+		return stateId;
+	}
+
+	public void setStateId(int stateId) {
+		this.stateId = stateId;
+	}
+
+	public int getCastType() {
+		return castType;
+	}
+
+	public void setCastType(int castType) {
+		this.castType = castType;
+	}
+
+	public int getCountryId() {
+		return countryId;
+	}
+
+	public void setCountryId(int countryId) {
+		this.countryId = countryId;
+	}
+
+	public long getCasId() {
+		return casId;
+	}
+
+	public void setCasId(long casId) {
+		this.casId = casId;
+	}
+
+	public long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(long userId) {
+		this.userId = userId;
+	}
+
+	public long getGuildId() {
+		return guildId;
+	}
+
+	public void setGuildId(long guildId) {
+		this.guildId = guildId;
+	}
+
+	public int getEarthId() {
+		return earthId;
+	}
+
+	public void setEarthId(int earthId) {
+		this.earthId = earthId;
+	}
+
+	public int getEarthType() {
+		return earthType;
+	}
+
+	public void setEarthType(int earthType) {
+		this.earthType = earthType;
+	}
+
+	public State getState() {
+		return state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
+	}
+
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
+	}
+
+	/**
+	 * 更新缓存数据
+	 * 
+	 * @param tmpMapCell
+	 * @return
+	 */
+	public MapCell copyFrom(MapCell tmpMapCell) {
+		this.casId = tmpMapCell.getCasId();
+		this.userId = tmpMapCell.getUserId();
+		this.guildId = tmpMapCell.getGuildId();
+		this.castType = tmpMapCell.getCastType();
+		return this;
+	}
+
+	/**
+	 * 加入到threadlocal是复制一个
+	 */
+	public MapCell clone() {
+		MapCell tmpMapCell = new MapCell();
+		tmpMapCell.setId(this.id);
+		tmpMapCell.setPosX(this.posX);
+		tmpMapCell.setPosY(this.posY);
+		tmpMapCell.setStateId(this.stateId);
+		tmpMapCell.setCasId(this.casId);
+		tmpMapCell.setUserId(this.userId);
+		tmpMapCell.setGuildId(this.guildId);
+		tmpMapCell.setCastType(this.castType);
+		tmpMapCell.setCountryId(this.countryId);
+		tmpMapCell.setEarthId(this.earthId);
+		tmpMapCell.setEarthType(this.earthType);
+		tmpMapCell.state = this.state;
+		tmpMapCell.country = this.country;
+		tmpMapCell.lock = this.lock;
+		tmpMapCell.fromArmyouts = this.fromArmyouts;
+		tmpMapCell.toArmyouts = this.toArmyouts;
+		tmpMapCell.stayArmyouts = this.stayArmyouts;
+		return tmpMapCell;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (((MapCell) obj).getId() == this.id) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 计算id
+	 * @param posX
+	 * @param posY
+	 * @return
+	 */
+	public static int calculateId(int posX,int posY){
+		return posX*10000+posY;
+	}
+
+    public ReentrantLock getLock() {
+        return lock;
+    }
+
+    public void setLock(ReentrantLock lock) {
+        this.lock = lock;
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("MapCell id:").append(id).append("; countryId:").append(countryId).append("; stateId:").append(stateId)
+                .append("; earthType:").append(earthType).append("; earthId:").append(earthId)
+                .append("; castType:").append(castType).append("; casId:").append(casId)
+                .append("; userId:").append(userId).append("; guildId:").append(guildId);
+        return sb.toString();
+    }
+
+	public String getKey() {
+		return KEY + id;
+	}
+
+	public static String getCacheKey(int id) {
+		return KEY + id;
+	}
+
+	public Map<String, Armyout> getFromArmyouts() {
+		return fromArmyouts;
+	}
+
+	public void setFromArmyouts(Map<String, Armyout> fromArmyouts) {
+		this.fromArmyouts = fromArmyouts;
+	}
+
+	public Map<String, Armyout> getToArmyouts() {
+		return toArmyouts;
+	}
+
+	public void setToArmyouts(Map<String, Armyout> toArmyouts) {
+		this.toArmyouts = toArmyouts;
+	}
+
+	public Map<String, Armyout> getStayArmyouts() {
+		return stayArmyouts;
+	}
+
+	public void setStayArmyouts(Map<String, Armyout> stayArmyouts) {
+		this.stayArmyouts = stayArmyouts;
+	}
+}

@@ -1,0 +1,32 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+
+
+
+
+	
+	<bean id="chatService" class="com.youxigu.dynasty2.chat.ChatService" init-method="init" destroy-method="destroy">
+	</bean>
+	
+	<bean id="chatAction" class="com.youxigu.dynasty2.chat.ChatAction">
+		<property name="chatService"><ref bean="chatService" /></property>
+		<property name="sensitiveWordService"><ref bean="sensitiveWordService" /></property>
+<!--		<property name="entityService"><ref bean="entityService" /></property>-->
+<!--		<property name="guildService"><ref bean="guildService" /></property>-->
+		<property name="commonService"><ref bean="commonService" /></property>
+<!--        <property name="userDailyActivityService"><ref bean="userDailyActivityService" /></property>-->
+		<property name="logService"><ref bean="tlogService" /></property>
+		<property name="userService"><ref bean="userService" /></property>
+		<property name="friendService"><ref bean="friendService" /></property>
+		<property name="logOutService"><ref bean="logOutService" /></property>
+	</bean>
+  
+</beans>
+

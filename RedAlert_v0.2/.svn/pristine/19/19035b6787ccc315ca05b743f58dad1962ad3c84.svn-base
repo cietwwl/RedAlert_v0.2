@@ -1,0 +1,109 @@
+package com.youxigu.dynasty2.map.service.impl;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.youxigu.dynasty2.map.domain.MapCell;
+
+/**
+ * 坐标点threadlocal缓存
+ * 
+ * @author LK
+ * @date 2016年2月18日
+ */
+public class ThreadLocalMapCellCache {
+	private static ThreadLocal<Boolean> inTrans = new ThreadLocal<Boolean>() {
+		protected Boolean initialValue() {
+			return Boolean.FALSE;
+		}
+
+	};
+
+    private static final Logger log = LoggerFactory.getLogger(ThreadLocalMapCellCache.class);
+
+	private static ThreadLocal<List<MapCell>> messages = new ThreadLocal<List<MapCell>>() {
+		// protected List<MapCell> initialValue() {
+		// return new ArrayList<MapCell>();
+		// }
+	};
+
+	private static ThreadLocal<List<MapCell>> lockedMapCells = new ThreadLocal<List<MapCell>>() {
+		// protected List<MapCell> initialValue() {
+		// return new ArrayList<MapCell>();
+		// }
+	};
+
+	public static void clean() {
+		messages.remove();
+		inTrans.set(false);
+        lockedMapCells.remove();
+	}
+
+	public static void commit() {
+		// do nothing
+	}
+
+	public static List<MapCell> getData() {
+		return messages.get();
+	}
+
+	/**
+	 * 从threadlocal里取已经修改的mapcell
+	 * 
+	 * @param cellId
+	 * @return
+	 */
+	public static MapCell getMapCellInData(int cellId) {
+		List<MapCell> cells = messages.get();
+		if (cells != null && cells.size() > 0) {
+			for (MapCell mapCell : cells) {
+				if (mapCell.getId() == cellId) {
+					return mapCell;
+				}
+			}
+		}
+		return null;
+	}
+
+	public static void addData(MapCell msg) {
+		List<MapCell> datas = messages.get();
+		if (datas == null) {
+			datas = new LinkedList<MapCell>();
+			messages.set(datas);
+		}
+		datas.add(msg);
+	}
+
+	public static void addAll(List<MapCell> objs) {
+		List<MapCell> datas = messages.get();
+		datas.addAll(objs);
+	}
+
+	public static List<MapCell> getLockedMapCells() {
+		return lockedMapCells.get();
+	}
+
+	public static void addLockedMapCell(MapCell cell) {
+		List<MapCell> cells = lockedMapCells.get();
+		if (cells == null) {
+			cells = new LinkedList<MapCell>();
+			lockedMapCells.set(cells);
+		}
+		cells.add(cell);
+        if (log.isDebugEnabled()) {
+            log.debug("add MapCell({},{}) to ThreadLocalMapCellCache", cell.getPosX(), cell.getPosY());
+        }
+    }
+
+	public static void setInTrans(boolean trans) {
+		inTrans.set(trans);
+	}
+
+	public static boolean isInTrans() {
+		return inTrans.get();
+	}
+
+}

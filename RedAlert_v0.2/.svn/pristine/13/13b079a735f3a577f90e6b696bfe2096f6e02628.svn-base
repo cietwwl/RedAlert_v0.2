@@ -1,0 +1,99 @@
+package com.youxigu.dynasty2.map.service.impl.command;
+
+import com.manu.util.UtilDate;
+import com.youxigu.dynasty2.common.AppConstants;
+import com.youxigu.dynasty2.common.service.ICommonService;
+import com.youxigu.dynasty2.map.domain.action.TimeAction;
+import com.youxigu.dynasty2.map.service.ICommandDistatcher;
+import com.youxigu.dynasty2.map.service.ICommander;
+import com.youxigu.dynasty2.map.service.IMapService;
+import com.youxigu.dynasty2.map.service.IResCasService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
+
+public class RefreshDynResCasCommand implements ICommander{
+    private Logger log = LoggerFactory.getLogger(RefreshDynResCasCommand.class);
+
+    private ICommandDistatcher commandDistatcher;
+    private IResCasService resCasService;
+    private ICommonService commonService;
+    private IMapService mapService;
+
+    @Override
+    public void doCheck(Map<String, Object> params) {
+
+    }
+
+    @Override
+    public Map<String, Object> doExcute(TimeAction action) {
+        try{
+            if (log.isDebugEnabled()) {
+                log.debug("开始执行刷新动态资源点任务");
+            }
+
+            List<Integer> stateIdList = mapService.getAllStateIds();
+            for(Integer stateId : stateIdList) {
+                try {
+                    if(log.isDebugEnabled()){
+                        log.debug("刷新{}区的动态资源点", stateId);
+                    }
+                    resCasService.refreshDynResCas(stateId);
+                }
+                catch (Exception e){
+                    log.error("刷新资源点异常", e);
+                }
+            }
+        }
+        finally {
+            TimeAction cmd = new TimeAction();
+            cmd.setCmd(COMMAND_2);
+            int interval = commonService.getSysParaIntValue(
+                    AppConstants.DYN_RES_CAS_REFRESH_INTERVAL_SECONDS,
+//                    AppConstants.DYN_RES_CAS_REFRESH_INTERVAL_SECONDS_DEFAULT_VALUE);
+                    10);
+            cmd.setTime(UtilDate.moveSecond(interval).getTime());
+            commandDistatcher.putCommander(0, cmd);
+
+            if (log.isDebugEnabled()) {
+                log.debug("新增动态刷资源点任务，将在{}秒后执行",
+                        AppConstants.DYN_RES_CAS_REFRESH_INTERVAL_SECONDS_DEFAULT_VALUE);
+            }
+        }
+        return null;
+    }
+
+    public ICommandDistatcher getCommandDistatcher() {
+        return commandDistatcher;
+    }
+
+    public void setCommandDistatcher(ICommandDistatcher commandDistatcher) {
+        this.commandDistatcher = commandDistatcher;
+    }
+
+    public IResCasService getResCasService() {
+        return resCasService;
+    }
+
+    public void setResCasService(IResCasService resCasService) {
+        this.resCasService = resCasService;
+    }
+
+    public ICommonService getCommonService() {
+        return commonService;
+    }
+
+    public void setCommonService(ICommonService commonService) {
+        this.commonService = commonService;
+    }
+
+    public IMapService getMapService() {
+        return mapService;
+    }
+
+    public void setMapService(IMapService mapService) {
+        this.mapService = mapService;
+    }
+}

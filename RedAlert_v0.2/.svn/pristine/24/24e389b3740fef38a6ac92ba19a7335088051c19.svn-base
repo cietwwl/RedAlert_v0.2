@@ -1,0 +1,22 @@
+package com.youxigu.dynasty2.armyout.domain.action;
+
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+import com.youxigu.dynasty2.armyout.domain.Strategy;
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.user.domain.User;
+
+/**
+ * 回城
+ * 
+ * @author LK
+ * @date 2016年3月4日
+ */
+public class BackAction extends PVPOutAction {
+
+	public BackAction(MapCell fromCell, MapCell toCell, Armyout armyout,
+			User fromUser, Strategy strategy,
+			long time) {
+		super(fromCell, toCell, armyout, fromUser, strategy, time);
+		this.armyout.parent = this;// 设置所属的行为
+	}
+}

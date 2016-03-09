@@ -1,0 +1,220 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+    <bean id="castleService" class="com.youxigu.dynasty2.develop.service.impl.CastleService" init-method="init">
+        <property name="castleDao"><ref bean="castleDao" /></property>
+        <property name="entityService"><ref bean="entityService" /></property>
+        <property name="castleEffectService"><ref bean="castleEffectService" /></property>
+        <property name="entityDao"><ref bean="entityDao" /></property>
+        <property name="jobServerClient"><ref bean="jobServerClient" /></property>
+        <property name="commonService"><ref bean="commonService" /></property>
+        <property name="castleResDao"><ref bean="castleResDao" /></property>
+        <property name="castleBuilderDao"><ref bean="castleBuilderDao" /></property>
+        <property name="flushCastleService"><ref bean="flushCastleService" /></property>
+        <property name="messageService"><ref bean="messageService" /></property>
+        <property name="logService"><ref bean="logService" /></property>
+        <property name="tlogService"><ref bean="tlogService" /></property>
+        <property name="userService"><ref bean="userService" /></property>
+        <property name="treasuryService"><ref bean="treasuryService" /></property>
+        <property name="vipService"><ref bean="vipService" /></property>
+        <property name="castleResService"><ref bean="castleResService" /></property>
+        <property name="buffTipService"><ref bean="buffTipService" /></property>
+        <property name="speedService"><ref bean="speedService" /></property>
+        <property name="missionService"><ref bean="missionService" /></property>
+        <property name="userAchieveService"><ref bean="userAchieveService" /></property>
+    </bean>
+
+    <bean id="buffTipDao" class="com.youxigu.dynasty2.tips.dao.impl.BuffTipDao" >
+        <property name="sqlMapClientTemplate"><ref bean="sqlMapClientTemplate" /></property>
+    </bean>
+
+    <bean id="buffTipService" class="com.youxigu.dynasty2.tips.service.impl.BuffTipService" init-method="init" >
+        <property name="buffTipDao"><ref bean="buffTipDao" /></property>
+        <property name="messageService"><ref bean="messageService" /></property>
+    </bean>
+
+	<bean id="castleDao" class="com.youxigu.dynasty2.develop.dao.impl.CastleDao" >
+		<property name="sqlMapClientTemplate"><ref bean="sqlMapClientTemplate" /></property>
+	</bean>
+
+	<bean id="castleBuilderDao" class="com.youxigu.dynasty2.develop.dao.impl.CastleBuilderDao" >
+		<property name="sqlMapClientTemplate"><ref bean="sqlMapClientTemplate" /></property>
+	</bean>
+
+	<bean id="castleEffectDao" class="com.youxigu.dynasty2.develop.dao.impl.CastleEffectDao" >
+		<property name="sqlMapClientTemplate"><ref bean="sqlMapClientTemplate" /></property>
+	</bean>
+
+    <bean id="castleTechnologyEffectRender" class="com.youxigu.dynasty2.develop.service.impl.CastleTechnologyEffectRender" >
+        <property name="castleEffectService"><ref bean="castleEffectService" /></property>
+    </bean>
+  
+    <bean id="castleBuildingEffectRender" class="com.youxigu.dynasty2.develop.service.impl.CastleBuildingEffectRender" >
+        <property name="castleEffectService"><ref bean="castleEffectService" /></property>
+        <property name="userEffectService"><ref bean="userEffectService" /></property>
+    </bean>
+    
+    <!-- effect listener -->
+    <bean id="goldCapacityEffectChangedListener" class="com.youxigu.dynasty2.develop.service.listener.GoldCapacityEffectChangedListener" >
+        <property name="castleResService"><ref bean="castleResService" /></property>
+        <property name="flushCastleService"><ref bean="flushCastleService" /></property>
+        <property name="castleService"><ref bean="castleService" /></property>
+    </bean>
+    
+    <bean id="goldProduceLimitEffectChangedListener" class="com.youxigu.dynasty2.develop.service.listener.GoldProduceLimitEffectChangedListener" >
+        <property name="castleResService"><ref bean="castleResService" /></property>
+        <property name="flushCastleService"><ref bean="flushCastleService" /></property>
+        <property name="castleService"><ref bean="castleService" /></property>
+    </bean>
+    
+    <bean id="goldProduceNumEffectChangedListener" class="com.youxigu.dynasty2.develop.service.listener.GoldProduceNumEffectChangedListener" >
+        <property name="castleResService"><ref bean="castleResService" /></property>
+        <property name="flushCastleService"><ref bean="flushCastleService" /></property>
+        <property name="castleService"><ref bean="castleService" /></property>
+    </bean>
+    
+    <bean id="ironCapacityEffectChangedListener" class="com.youxigu.dynasty2.develop.service.listener.IronCapacityEffectChangedListener" >
+        <property name="castleResService"><ref bean="castleResService" /></property>
+        <property name="flushCastleService"><ref bean="flushCastleService" /></property>
+        <property name="castleService"><ref bean="castleService" /></property>
+    </bean>
+    
+    <bean id="ironProduceLimitEffectChangedListener" class="com.youxigu.dynasty2.develop.service.listener.IronProduceLimitEffectChangedListener" >
+        <property name="castleResService"><ref bean="castleResService" /></property>
+        <property name="flushCastleService"><ref bean="flushCastleService" /></property>
+        <property name="castleService"><ref bean="castleService" /></property>
+    </bean>
+    
+    <bean id="ironProduceNumEffectChangedListener" class="com.youxigu.dynasty2.develop.service.listener.IronProduceNumEffectChangedListener" >
+        <property name="castleResService"><ref bean="castleResService" /></property>
+        <property name="flushCastleService"><ref bean="flushCastleService" /></property>
+        <property name="castleService"><ref bean="castleService" /></property>
+    </bean>
+    
+    <bean id="oilCapacityEffectChangedListener" class="com.youxigu.dynasty2.develop.service.listener.OilCapacityEffectChangedListener" >
+        <property name="castleResService"><ref bean="castleResService" /></property>
+        <property name="flushCastleService"><ref bean="flushCastleService" /></property>
+        <property name="castleService"><ref bean="castleService" /></property>
+    </bean>
+    
+    <bean id="oilProduceLimitEffectChangedListener" class="com.youxigu.dynasty2.develop.service.listener.OilProduceLimitEffectChangedListener" >
+        <property name="castleResService"><ref bean="castleResService" /></property>
+        <property name="flushCastleService"><ref bean="flushCastleService" /></property>
+        <property name="castleService"><ref bean="castleService" /></property>
+    </bean>
+    
+    <bean id="oilProduceNumEffectChangedListener" class="com.youxigu.dynasty2.develop.service.listener.OilProduceNumEffectChangedListener" >
+        <property name="castleResService"><ref bean="castleResService" /></property>
+        <property name="flushCastleService"><ref bean="flushCastleService" /></property>
+        <property name="castleService"><ref bean="castleService" /></property>
+    </bean>
+    
+    <bean id="uraniumCapacityEffectChangedListener" class="com.youxigu.dynasty2.develop.service.listener.UraniumCapacityEffectChangedListener" >
+        <property name="castleResService"><ref bean="castleResService" /></property>
+        <property name="flushCastleService"><ref bean="flushCastleService" /></property>
+        <property name="castleService"><ref bean="castleService" /></property>
+    </bean>
+    
+    <bean id="uraniumProduceLimitEffectChangedListener" class="com.youxigu.dynasty2.develop.service.listener.UraniumProduceLimitEffectChangedListener" >
+        <property name="castleResService"><ref bean="castleResService" /></property>
+        <property name="flushCastleService"><ref bean="flushCastleService" /></property>
+        <property name="castleService"><ref bean="castleService" /></property>
+    </bean>
+    
+    <bean id="uraniumProduceNumEffectChangedListener" class="com.youxigu.dynasty2.develop.service.listener.UraniumProduceNumEffectChangedListener" >
+        <property name="castleResService"><ref bean="castleResService" /></property>
+        <property name="flushCastleService"><ref bean="flushCastleService" /></property>
+        <property name="castleService"><ref bean="castleService" /></property>
+    </bean>
+
+	<bean id="castleEffectService" class="com.youxigu.dynasty2.develop.service.impl.CastleEffectService" >
+		<property name="castleEffectDao"><ref bean="castleEffectDao" /></property>
+		<property name="listeners">
+			<map>
+				<entry key="B_GOLD_CAP" value-ref="goldCapacityEffectChangedListener" />
+                <entry key="B_GOLD_LIMIT" value-ref="goldProduceLimitEffectChangedListener" />
+                <!-- B_GOLD_YIELD 和  B_GOLD_SKILL 同时影响每15分钟的产量-->
+                <entry key="B_GOLD_YIELD" value-ref="goldProduceNumEffectChangedListener" />
+                <entry key="B_GOLD_SKILL" value-ref="goldProduceNumEffectChangedListener" />
+                
+                <entry key="B_IRON_CAP" value-ref="ironCapacityEffectChangedListener" />
+                <entry key="B_IRON_LIMIT" value-ref="ironProduceLimitEffectChangedListener" />
+                <entry key="B_IRON_YIELD" value-ref="ironProduceNumEffectChangedListener" />
+                <entry key="B_IRON_SKILL" value-ref="ironProduceNumEffectChangedListener" />
+                
+                <entry key="B_OIL_CAP" value-ref="oilCapacityEffectChangedListener" />
+                <entry key="B_OIL_LIMIT" value-ref="oilProduceLimitEffectChangedListener" />
+                <entry key="B_OIL_YIELD" value-ref="oilProduceNumEffectChangedListener" />
+                <entry key="B_OIL_SKILL" value-ref="oilProduceNumEffectChangedListener" />
+                
+                <entry key="B_URANIUM_CAP" value-ref="uraniumCapacityEffectChangedListener" />
+                <entry key="B_URANIUM_LIMIT" value-ref="uraniumProduceLimitEffectChangedListener" />
+                <entry key="B_URANIUM_YIELD" value-ref="uraniumProduceNumEffectChangedListener" />
+                <entry key="B_URANIUM_SKILL" value-ref="uraniumProduceNumEffectChangedListener" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="speedService" class="com.youxigu.dynasty2.develop.service.impl.SpeedService">
+        <property name="commonService"><ref bean="commonService" /></property>
+        <property name="treasuryService"><ref bean="treasuryService" /></property>
+        <property name="entityService"><ref bean="entityService" /></property>
+        <property name="userService"><ref bean="userService" /></property>
+    </bean>
+    
+	
+	<bean id="castleArmyDao" class="com.youxigu.dynasty2.develop.dao.impl.CastleArmyDao" >
+		<property name="sqlMapClientTemplate"><ref bean="sqlMapClientTemplate" /></property>
+	</bean>
+	
+	<bean id="castleArmyService" class="com.youxigu.dynasty2.develop.service.impl.CastleArmyService">
+        <property name="castleArmyDao"><ref bean="castleArmyDao" /></property>
+        <property name="castleEffectService"><ref bean="castleEffectService" /></property>
+        <property name="commonService"><ref bean="commonService" /></property>
+        <property name="heroService"><ref bean="heroService" /></property>
+        <property name="treasuryService"><ref bean="treasuryService" /></property>
+        <property name="castleResService"><ref bean="castleResService" /></property>
+        <property name="speedService"><ref bean="speedService" /></property>
+    </bean>
+    
+    <!-- casRes -->
+    <bean id="castleResDao" class="com.youxigu.dynasty2.develop.dao.impl.CastleResDao" >
+        <property name="sqlMapClientTemplate"><ref bean="sqlMapClientTemplate" /></property>
+    </bean>
+    <bean id="castleResService" class="com.youxigu.dynasty2.develop.service.impl.CastleResService">
+        <property name="castleResDao"><ref bean="castleResDao" /></property>
+        <property name="castleEffectService"><ref bean="castleEffectService" /></property>
+        <property name="castleService"><ref bean="castleService" /></property>
+        <property name="messageService"><ref bean="messageService" /></property>
+        <property name="missionService"><ref bean="missionService" /></property>
+        <property name="userService"><ref bean="userService" /></property>
+        <property name="userAchieveService"><ref bean="userAchieveService" /></property>
+    </bean>
+    
+    <!-- flushCastle -->
+    <bean id="flushCastleService" class="com.youxigu.dynasty2.develop.service.impl.FlushCastleService">
+        <property name="castleDao"><ref bean="castleDao" /></property>
+        <property name="castleService"><ref bean="castleService" /></property>
+        <property name="castleEffectService"><ref bean="castleEffectService" /></property>
+        <property name="userEffectService"><ref bean="userEffectService" /></property>
+        <property name="castleResService"><ref bean="castleResService" /></property>
+        <property name="troopService"><ref bean="troopService" /></property>
+        <property name="messageService"><ref bean="messageService" /></property>
+        <property name="userService"><ref bean="userService" /></property>
+    </bean>
+    <bean id="flushCastleAction" class="com.youxigu.dynasty2.develop.web.FlushCastleAction">
+        <property name="userService"><ref bean="userService" /></property>
+        <property name="flushCastleService"><ref bean="flushCastleService" /></property>
+        <property name="castleEffectService"><ref bean="castleEffectService" /></property>
+        <property name="castleResService"><ref bean="castleResService" /></property>
+        <property name="tlogService"><ref bean="tlogService" /></property>
+    </bean>
+
+</beans>
+

@@ -1,0 +1,196 @@
+package com.youxigu.dynasty2.map.service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import com.youxigu.dynasty2.map.domain.Country;
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.map.domain.State;
+import com.youxigu.dynasty2.map.domain.StateCache;
+
+/*
+ * 地图数据处理接口
+ */
+public interface IMapService {
+	int MAP_MAX_WIDTH = 1200;
+	int MAP_MAX_HIGH = 1200;
+	/**
+
+    /**
+     * 将一个点的X、Y坐标转为MapCell的Id
+     * @param x
+     * @param y
+     * @return
+     */
+    int convertCordToCellId(int x, int y);
+
+    /**
+     * 将MapCellId坐标转为点的X、Y坐标
+     * @param cellId
+     * @return index 0为X坐标，index 1为Y坐标
+     */
+    int[] convertCellIdToCord(int cellId);
+
+    /**
+	 * 取得区
+	 * 
+	 * @param stateId
+	 * @return
+	 */
+	State getStateById(int stateId);
+
+	/**
+	 * 按指定的国家id取国家
+	 * 
+	 * @param countryId
+	 * @return
+	 */
+	Country getCountryById(int countryId);
+
+	/**
+	 * 更新MapCell,当建城点背用户使用后，更新mapCell.casId
+	 *
+	 * @param mapCell
+	 */
+	void updateMapCell(MapCell mapCell);
+
+	void updateMapCell(List<MapCell> mapCells);
+
+	/**
+	 * 取得内部存储的原始MapCell，不加锁。仅供特殊情况需要取得原始MapCell时使用，一般不应调用这个方法
+	 * @param id
+	 * @return
+	 */
+	MapCell getMapCellCache(int id);
+
+	/**
+	 * 区下的所有坐标点
+	 * 
+	 * @param stateId
+	 * @return
+	 */
+	Map<Integer, MapCell> getMapCellsByStateId(int stateId);
+
+	/**
+	 * 区缓存
+	 * @param stateId
+	 * @return
+	 */
+	StateCache getStateCacheByStateId(int stateId);
+
+    /**
+     * 根据Id取得MapCell，MapCell不加锁，只能用于读数据
+     * @param cellId
+     * @return
+     */
+    MapCell getMapCellForRead(int cellId);
+
+    /**
+     * 根据Id取得MapCell，MapCell加锁，并加入了事物完成后自动解锁的逻辑。只能在事物方法里调用
+     * @param cellId
+     * @return
+     * @throws InterruptedException
+     */
+    MapCell getMapCellForWrite(int cellId) throws InterruptedException;
+
+	/**
+	 * 根据cellIds锁多个坐标点
+	 * 
+	 * @param cellIds
+	 * @return
+	 * @throws InterruptedException
+	 */
+	List<MapCell> getMapCellForWrite(List<Integer> cellIds)
+			throws InterruptedException;
+
+    /**
+	 * 根据Id取得MapCell，MapCell加锁，并加入了事物完成后自动解锁的逻辑。只能在事物方法里调用。可指定锁等待的超时时间
+	 * 同事务内可以重复调用
+	 * 
+	 * @param cellId
+	 *            MapCell的Id
+	 * @param timeout
+	 *            锁等待超时时长
+	 * @param timeUnit
+	 *            锁等待超时单位
+	 * @return
+	 * @throws InterruptedException
+	 */
+    MapCell getMapCellForWrite(int cellId, long timeout, TimeUnit timeUnit) throws InterruptedException;
+
+    /**
+     * 查找一个随机可用的空白坐标点
+     * @param stateId 区Id
+     * @param lockCell 是否锁定返回的MapCell
+     * @return
+     */
+    MapCell getRandomIdleCell(int stateId, boolean lockCell);
+
+    /**
+     * 查找一个随机可用的空白坐标点
+     * @param stateId 区Id
+     * @param lockCell 是否锁定返回的MapCell
+     * @param maxRetry 为了找到可用的坐标点，可最大重试次数
+     * @param searchRadius 随机到一个坐标值后，在其周围搜索的范围的半径。0表示不扩展搜索
+     * @return
+     */
+    MapCell getRandomIdleCell(int stateId, boolean lockCell, int maxRetry, int searchRadius);
+
+    /**
+     * 查找指定个数的可用的空白坐标点
+     * @param stateId 区Id
+     * @param lockCell 是否锁定返回的MapCell
+     * @param count 需要查找并返回的MapCell的个数
+     * @param retryNum 为了找到指定个数的MapCell，最大可重试次数。
+     * @return
+     */
+    List<MapCell> getRandomIdleCellList(int stateId, boolean lockCell, int count, int retryNum);
+
+    /**
+     * 查找可用于刷城和随机迁城的可用的坐标点。返回值为2*2范围的所有MapCell，集合中的第一个MapCell为左上角对应的MapCell
+     * @param stateId 区Id
+     * @param lockCell 是否锁定返回的MapCell
+     * @return
+     */
+    List<MapCell> getRandomIdleCityCellGroup(int stateId, boolean lockCell);
+
+    /**
+     * 查找可用于刷城和随机迁城的可用的坐标点。返回值为2*2范围的所有MapCell，集合中的第一个MapCell为左上角对应的MapCell
+     * @param stateId 区Id
+     * @param lockCell 是否锁定返回的MapCell
+     * @param maxRetry 为了找到可用的坐标点，可最大重试次数
+     * @param searchRadius 随机到一个坐标值后，在其周围搜索的范围的半径。0表示不扩展搜索
+     * @return
+     */
+    List<MapCell> getRandomIdleCityCellGroup(int stateId, boolean lockCell, int maxRetry, int searchRadius);
+    
+    /**
+     * 通过建城点的左上角坐标获取完整的建城点坐标 4个坐标id
+     * @param posX
+     * @param posY
+     * @return
+     */
+    List<Integer> getCityPoint(int id);
+    
+    /**
+     * 通过建城点的左上角坐标获取完整的建城点坐标 4个坐标id
+     * @param posX
+     * @param posY
+     * @return
+     */
+    List<Integer> getCityPoint(int posX,int posY);
+    
+    /**
+     * 判断这个点是否可以定点迁城,有一个特别条件是公路也可以
+     * @param cell
+     * @return
+     */
+    public boolean canSetPointUse(MapCell cell);
+    /**
+     * 判断这个点是否可以定点迁城,有一个特别条件是公路也可以
+     * @param cell
+     * @return
+     */
+    public boolean canSetPointUses(List<MapCell> cells);
+}

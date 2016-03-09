@@ -1,0 +1,74 @@
+package com.youxigu.dynasty2.armyout.service.impl;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.youxigu.dynasty2.armyout.dao.IArmyoutDao;
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+import com.youxigu.dynasty2.armyout.service.IArmyoutService;
+import com.youxigu.dynasty2.map.service.impl.ThreadLocalMapCellCache;
+import com.youxigu.dynasty2.util.BaseException;
+
+public class ArmyoutService implements IArmyoutService {
+	public static final Logger log = LoggerFactory
+			.getLogger(ArmyoutService.class);
+
+	private Map<Long, Armyout> ARMYOUTS = new ConcurrentHashMap<Long, Armyout>();
+	private IArmyoutDao armyoutDao;
+
+	public void setArmyoutDao(IArmyoutDao armyoutDao) {
+		this.armyoutDao = armyoutDao;
+	}
+
+	@Override
+	public Armyout getArmyoutCache(long armyoutId) {
+		return ARMYOUTS.get(armyoutId);
+	}
+
+	@Override
+	public Armyout getArmyoutForRead(long armyoutId) {
+		Armyout armyout = ARMYOUTS.get(armyoutId);
+		if (armyout == null) {
+			throw new BaseException("指定的armyout不存在：" + armyoutId);
+		}
+		if (log.isDebugEnabled()) {
+			log.debug("get Armyout({}) for read", armyoutId);
+		}
+		// 复制一个对象并返回，避免错误修改缓存中的对象。
+		return armyout.clone();
+	}
+
+	@Override
+	public Armyout getArmyoutForWrite(long armyoutId) {
+		if (!ThreadLocalMapCellCache.isInTrans()) {
+			throw new BaseException("只有在事务中才能修改Armyout");
+		}
+
+		Armyout armyout = null;
+		Object obj = ThreadLocalMapCellCache
+				.getObject(Armyout.getCacheKey(armyoutId));
+		if (obj != null) {
+			return (Armyout) obj;
+		}
+
+		armyout = ARMYOUTS.get(armyoutId);
+		if (armyout == null) {
+			throw new BaseException("指定的armyout不存在：" + armyoutId);
+		}
+		// 复制一个对象并返回，避免错误修改缓存中的对象。
+		return armyout.clone();
+	}
+
+	@Override
+	public void addArmyoutCache(Armyout armyout) {
+		ARMYOUTS.put(armyout.getId(), armyout);
+	}
+
+	@Override
+	public void removeArmyoutCache(Armyout armyout) {
+		ARMYOUTS.remove(armyout.getId());
+	}
+}

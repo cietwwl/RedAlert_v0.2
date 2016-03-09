@@ -1,0 +1,288 @@
+package dynasty;
+import "Common.proto";
+
+option java_package = "com.youxigu.dynasty2.user.proto";
+option java_outer_classname = "UserMsg";
+
+message MobileClient{
+	optional string vClientVersion = 1;//客户端版本号，三段格式，每段为数字1.0.13 
+	optional string vSystemSoftware = 2;
+	optional string vSystemHardware = 3;
+	optional string vTelecomOper = 4;
+	optional string vNetwork = 5;
+	optional int32 iScreenWidth = 6;
+	optional int32 iScreenHight = 7;
+	optional float Density = 8;
+	optional int32 iRegChannel = 9;
+	optional string vCpuHardware = 10;
+	optional int32 iMemory = 11;
+	optional string vGLRender = 12;
+	optional string vGLVersion = 13;
+	optional string vDeviceId = 14;
+}
+
+//10001 登录请求(mainserver)
+message Request10001Define{
+   optional int32 cmd = 1;
+   optional string aid = 2;//用户的账号，内网测试用
+   optional string openid = 3;//开放平台的openid
+   optional string openkey = 4;//开放平台的openkey就是accesstoken
+   optional string pType = 5;//登录平台类型1 手Q2 微信3.iTools4访客5 联运
+   optional string dType = 6;//设备类型1 andriod2 ios 
+   optional string pf = 7;//开放平台的pf,后台支付类的接口会用
+   optional string pfkey = 8;//开放平台的pfkey, 后台支付类的接口会用
+   optional string pay_token = 9;//开放平台的支付用的pay_token
+   optional string refreshToken = 10;//如果后台不用主动刷新accesstoken,可能不需要这个
+   optional string serverId = 11;//区服Id
+   optional string serverName = 12;//区服名称，联运平台必须有
+   optional string dInfo = 13;//联运平台必须有，联运平台的p_device_info上报数据（其中包含用户上传信息,这个数据是登录时候平台客户端传回的）
+   optional string iRegChannel = 14;//渠道号，联运平台必须有联运平台的 g_cid
+   optional MobileClient mobileClient = 15;//手机参数
+   optional SyncStat syncstat = 16;//后台测试使用，前台可以忽略
+   optional string vProtocalVersion = 17[default="v0.1"];//协议版本号
+}
+
+//10002 登录返回
+message Response10002Define{
+   optional ResponseHead responseHead = 1;
+   optional string aId = 2;//内网环境的accname
+   optional string sid = 3;//sessionId,（对于外网环境，等于openkey）在给游戏服发送的第一个请求需要带上这个sid,后台会到登陆服上检查sid
+   optional string gip = 4;//分配的gameserver的IP
+   optional int32 gport = 5;//分配的gameserver的port
+   optional string pf = 6;//开放平台的pf
+   optional string appId = 7;//开放平台的appId,内网测试环境=null
+   optional string zoneid = 8;//开放平台的大区Id目前不考虑合服
+   optional int32 queue = 9;//出现下面两个参数，则进入登录队列界面  小于0:出现异常  0：正常返回 
+   optional int32 my = 10;//小于0:出现异常  0：正常返回 
+   optional int32 pType = 11;//服务器的平台类型0 测试环境，不区分平台1 手Q2 微信3.iTools4访客5 联运
+   optional string accId = 12;//内网环境的account中accId
+   optional SyncStat syncstat = 13;//后台测试使用，前台可以忽略
+}
+
+//10003取得角色信息(nodeserver)
+message Request10003Define{
+   optional int32 cmd = 1;
+   optional string sid = 2;//sessionId
+   optional SyncStat syncstat = 3;//后台测试使用，前台可以忽略
+}
+
+//10004 取得角色信息的返回
+message Response10003Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 userId = 2;//君主id:-1 代表没有创建角色， >0已经创建角色
+   optional int32 usrLv = 3;//君主等级
+   optional string userName=4;//君主名
+   optional string nickName=5;//Qq或者微信昵称
+   optional string picture=6;//Qq或者微信头像(qq的大小100的头像)
+   optional int64 casId=7;//城池id
+   optional string icon=8;//君主头像
+   optional int64 curTime=9;//后台系统时间（秒）
+   repeated int32 stageIds=10;//已经完成的新手指引Id列表如果一个新手指引都没完成，则没有该参数
+   optional int32 defCountryId=11;//userId=-1的时候有效，表示创建时默认选中的国家，值为-1前台随机选中  >0默认选中的国家id
+   optional int64 createDttm=12;//创建角色的时间点（毫秒）
+   optional int32 cash=13;//玩家帐户的元宝数
+   optional int32 onlineDttm=14;//在线总时长（秒）
+   optional int32 offlineDttm=15;//离线总时长（秒）
+   optional SyncStat syncstat = 16;//后台测试使用，前台可以忽略
+   optional int32 countryId = 17;//国家编号, userId不等于-1的时候有效
+   optional int32 honor = 18;//君主经验
+   optional int64 guildId = 19;//联盟id, 没有加入联盟则为0或-1
+   optional string guildName = 20;//联盟名
+   optional SexType sex = 21;//性别
+   optional int32 title = 22;//军衔id
+   optional int32 vip = 23;//vip等级
+   optional string selfSignature = 24;//个性签名
+   optional string number = 25;//学号
+}
+
+//10005创建角色(nodeserver)
+message Request10005Define{
+   optional int32 cmd = 1;
+   optional string userName = 2;//用户名称（2-7个汉字或3-14个英文，不包含敏感词汇）
+   optional int32 countryId = 3;//国家编号
+   optional int32 charId = 4;//选择的人物id //三个国家，18个人物，每个国家3男3女
+   optional SyncStat syncstat = 5;//后台测试使用，前台可以忽略
+}
+
+//10006 创建角色返回
+message Response10005Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 userId=2;//君主id(未创建角色时取不到)
+   optional string userName=3;//君主名
+   optional int64 casId=4;//城池id
+   optional string icon=5;//头像
+   optional int32 stepId=6;//新手指引中当前指引的Id
+   optional int64 curTime=7;//后台系统时间（秒）
+   optional int32 countryId=8;//国家id
+   optional SyncStat syncstat = 9;//后台测试使用，前台可以忽略
+   optional int32 usrLv = 10;//君主等级
+   optional int32 cash = 11; //玩家帐户的元宝数
+   optional int32 honor = 12; //君主经验
+   optional int64 guildId = 13; //联盟id, 没有加入联盟则为0或-1
+   optional string guildName = 14;//联盟名
+   optional SexType sex = 15;//性别
+   optional int32 title = 16;//军衔id
+   optional int32 vip = 17;//vip等级
+   optional string selfSignature = 18;//个性签名
+   optional string number = 19;//学号
+}
+
+//10007登出--没有返回(nodeserver)
+message Request10007Define{
+   optional int32 cmd = 1;
+   optional string userName = 2;//用户名称（2-7个汉字或3-14个英文，不包含敏感词汇）
+   optional int32 countryId = 3;//国家编号
+   optional int32 sex = 4;//性别（0女，1男）
+   optional string icon = 5;//图片
+   optional SyncStat syncstat = 6;//后台测试使用，前台可以忽略
+}
+
+
+
+
+//10030设置签名(nodeserver)
+message Request10030Define{
+   optional int32 cmd = 1;
+   optional string selfSignature = 2;//签名内容
+}
+
+//10031 设置签名返回
+message Response10030Define{
+   optional ResponseHead responseHead = 1;
+   optional string selfSignature = 2;//签名内容
+}
+
+//10032改名(nodeserver)
+message Request10032Define{
+   optional int32 cmd = 1;
+   optional string newName = 2;//新名字
+}
+
+//10033 改名返回
+message Response10032Define{
+   optional ResponseHead responseHead = 1;
+   optional string newName = 2;//新名字
+}
+
+
+
+//前台君主缓存中频繁变化的值，后台推送的内容
+message UserEvent{
+   optional string icon = 1;//头像-可能有buf改变头像
+   optional int32 usrLv = 2;//君主等级
+   optional int32 cash = 3;//元宝数
+   optional int32 honor = 4;//君主经验
+   optional int32 countryId = 5;//国家id-转国
+   optional int64 guildId = 6;//联盟id, 没有加入联盟则为0或-1
+   optional string guildName = 7;//联盟名
+}
+
+//4002 推送君主信息变化
+message UserSendEvent{
+   optional ResponseHead responseHead = 1;//命令头
+   optional UserEvent userEvent = 2;//推送内容
+}
+
+//4010 推送行动力变化
+message ActPointSendEvent{
+   optional ResponseHead responseHead = 1;//命令头
+   optional int32 actionPoint = 2;//当前行动力
+   optional int32 actionLimit = 3;//行动力上限
+}
+
+//4011 体力变化
+message HpPointSendEvent{
+   optional ResponseHead responseHead = 1;//命令头
+   optional int32 hpPoint = 2;//当前体力
+   optional int32 hpLimit = 3;//体力上限
+}
+
+//10034 取得成就界面请求 (nodeserver)
+message Request10034Define{
+   optional int32 cmd = 1;
+   optional int32 type = 2;//type=-1总览 >0特定类的成就,类型id
+}
+
+//单个成就的完成信息
+message AchieveInfo{
+   optional int32 achieveId = 1;//成就ID
+   optional int32 entId = 2;//成就实体id
+   optional int32 entNum = 3;//成就实体数量
+   optional bool finish = 4;//完成状态 true完成
+   optional int32 type = 5;//大类型
+}
+
+//10035 取得成就界面响应
+message Response10034Define{
+   optional ResponseHead responseHead = 1;
+   optional int32 total = 2;//总成就个数
+   optional int32 finishNum = 3;//总完成个数
+   optional int32 junGong = 4;//拥有的军功
+   repeated AchieveInfo infos = 5;//成绩列表
+}
+
+//10036 领取勋章请求 (nodeserver)
+message Request10036Define{
+   optional int32 cmd = 1;
+   optional int32 awardId = 2;//勋章id[必须]
+}
+
+//10037 领取勋章响应
+message Response10036Define{
+   optional ResponseHead responseHead = 1;
+   optional int32 color = 2;//品质[可选]
+   optional int32 upTitleId = 3;//晋升后的新军衔id[可选]
+   repeated ItemInfo items = 4;//晋升后道具奖励[可选]
+   optional int32 junGong = 5;//当前军功
+   repeated TitleStatus list = 6;//所有勋章的状态
+   optional int32 awardId = 7;//领取的勋章id[必须]
+}
+
+//10038 取得军衔详情请求 (nodeserver)
+message Request10038Define{
+   optional int32 cmd = 1;
+   optional int32 titleId = 2;//军衔id，>0返回上次查看的军衔 不传为当前军衔
+}
+
+message TitleStatus{
+	optional int32 awardId = 1;//勋章id
+	optional int32 status = 2;//状态 1已经领取了 2可领取  3条件不满足  4锁定
+}
+   
+//10039 取得军衔详情响应
+message Response10038Define{
+   optional ResponseHead responseHead = 1;
+   optional int32 junGong = 2;//当前军功
+   repeated TitleStatus list = 3;//所有勋章的状态
+}
+
+//10040 取当前军衔请求,登陆时调用，初始化军衔 (nodeserver)
+message Request10040Define{
+   optional int32 cmd = 1;
+}
+
+//10041 取当前军衔响应
+message Response10040Define{
+   optional ResponseHead responseHead = 1;
+   optional bool red = 2;//是否有小红点[可选]
+   optional int32 titleId = 3;//当前的军衔id
+}
+
+//4012 推送军衔小红点
+message UserTitleEvent{
+   optional ResponseHead responseHead = 1;//命令头
+   optional int32 titleId = 2;//军衔id
+}
+
+
+//10042 转国 (nodeserver)
+message Request10042Define{
+   optional int32 cmd = 1;
+   optional int32 countryId=2;//国家id
+}
+
+//10043 转国响应
+message Response10042Define{
+   optional ResponseHead responseHead = 1;
+   optional int32 countryId=2;//新的国家id
+}

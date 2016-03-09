@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+	<typeAlias alias="buffDefine" type="com.youxigu.dynasty2.tips.domain.BuffDefine" />
+
+	<select id="getBuffDefines" resultClass="buffDefine">
+		select * from buffdefine
+	</select>
+
+	<typeAlias alias="buffTip" type="com.youxigu.dynasty2.tips.domain.BuffTip" />
+
+	<cacheModel type="MEMCACHED" id="cache_buffTip" serialize="false" readOnly="false" ><!--broadcast="false"-->
+		<flushOnExecute statement="insertBuffTip">
+		  <flushModel flushstatement="buffTip" flushMode="insert" flushpara="id"/>
+		  <flushModel flushstatement="getBuffTipsByUserId" flushMode="insert" flushpara="userId"/>
+		</flushOnExecute>
+		<flushOnExecute statement="updateBuffTip">
+		  <flushModel flushstatement="buffTip" flushMode="update" flushpara="id"/>
+		</flushOnExecute>
+		<flushOnExecute statement="deleteBuffTipById">
+		  <flushModel flushstatement="getBuffTipsByUserId" flushMode="delete" flushpara="userId"/>
+		  <flushModel flushstatement="buffTip" flushMode="delete" flushpara="id"/>
+		</flushOnExecute>
+		<property name="class" value="buffTip"/>
+		<property name="pk" value="id"/>
+	</cacheModel>
+
+
+
+	<insert id="insertBuffTip" parameterClass="buffTip">
+		insert into bufftip (userId, buffId, effId, buffName, startTime, endTime) values
+        (#userId#,#buffId#,#effId#,#buffName#,#startTime#,#endTime#)
+		<selectKey resultClass="int" keyProperty="id">
+			SELECT last_insert_Id() 
+		</selectKey>
+	</insert>
+
+	<delete id="deleteBuffTipById" parameterClass="buffTip">
+		delete from bufftip where id=#id#
+	</delete>
+
+	<select id="getBuffTipsByUserId" resultClass="buffTip" parameterClass="long" cacheModel="cache_buffTip" resultIsList="true" >
+		select * from bufftip where userId=#userId#
+	</select>
+<!--
+	<select id="getBuffTipsByBuffName" resultClass="buffTip" parameterClass="java.util.HashMap" cacheModel="cache_buffTip" >
+		select * from BuffTip where userId=#userId# and buffName=#buffName#
+	</select>
+-->
+	<update id="updateBuffTip" parameterClass="buffTip" asyncUpdate="10">
+		update bufftip set buffId=#buffId#,effId=#effId#,buffName=#buffName#,startTime=#startTime#,endTime =
+        #endTime# where id = #id#
+	</update>
+
+</sqlMap>

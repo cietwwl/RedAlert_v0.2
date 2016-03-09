@@ -1,0 +1,79 @@
+package dynasty;
+import "Common.proto";
+
+option java_package = "com.youxigu.dynasty2.treasury.proto";
+option java_outer_classname = "TreasuryMsg";
+
+//前台道具缓存的内容，后台返回和推送的内容
+message TreasuryEvent{
+   optional int64 id = 1;//主键
+   optional int64 userId = 2;//君主id
+   optional int32 entId = 3;//实体id
+   optional int32 itemCount = 4;//数量
+   optional int64 equip = 5;//所在的武将或是军团格子id
+   optional int32 level = 6;//等级
+   optional int32 isLock = 7;//锁定
+   optional bool isNew = 8;//是否为新物品目前默认是false为了客户端的结构完整加的，服务器没使用
+   optional OnlinePack onlinePack = 9;//非null时为运营礼包，运营礼包信息
+   optional EquipInfo equipInfo = 10;//null表示物品不是装备里面没有装备信息
+}
+
+//推送刷新物品缓存-7001
+message SendTreasuryEvent{
+   optional ResponseHead responseHead = 1;//命令头
+   optional TreasuryEvent treasuryEvent = 2;//缓存内容
+}
+
+//61001 [前台缓存用]显示背包道具列表请求(nodeserver)
+message Request61001Define{
+   optional int32 cmd = 1;
+}
+
+//61002 [前台缓存用]显示背包道具列表响应
+message Response61001Define{
+   optional ResponseHead responseHead = 1;
+   repeated TreasuryEvent treasuryList = 2;//背包中的物品列表
+}
+
+//61003 丢弃道具请求(nodeserver)
+message Request61003Define{
+   optional int32 cmd = 1;
+   optional int64 id = 2;//主键
+   optional int32 itemCount = 3;//数量
+}
+
+//61004 丢弃道具响应
+message Response61003Define{
+   optional ResponseHead responseHead = 1;//命令头
+}
+
+//61005 使用道具请求(nodeserver)
+message Request61005Define{
+   optional int32 cmd = 1;
+   optional int64 id = 2;//主键-按主键使用
+   optional int32 itemCount = 3;//数量
+   optional int32 itemId = 4;//支持按道具entId使用,如果id没有提供，则itemId有效否则itemId无效   
+}
+
+//61006 使用道具响应
+message Response61005Define{
+   optional ResponseHead responseHead = 1;
+   optional int64 id = 2;//主键-按主键使用
+   optional int32 itemCount = 3;//数量
+   optional int32 itemId = 4;//支持按道具entId使用,如果id没有提供，则itemId有效否则itemId无效   
+   repeated ItemInfo items = 5;//当使用掉落包的时候有效返回掉落包中掉落的各种实体
+}
+
+//61007 查看道具： 用在聊天频道显示某个人发送的道具信息请求(nodeserver)
+message Request61007Define{
+   optional int32 cmd = 1;
+   optional int64 uId = 2;//发送道具信息的玩家ID(uId与uName二选一)
+   optional string uName = 3;//发送道具信息的玩家名称
+   optional int64 tId = 4;//道具主键(不是道具EntID) 〉0
+}
+
+//61008 查看道具： 用在聊天频道显示某个人发送的道具信息响应
+message Response61007Define{
+   optional ResponseHead responseHead = 1;
+   optional TreasuryEvent treasuryEvent = 2;//道具信息
+}

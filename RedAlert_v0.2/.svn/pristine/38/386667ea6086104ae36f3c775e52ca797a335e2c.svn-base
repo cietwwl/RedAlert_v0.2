@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<dataset>
+<NPCDefine npcId="31000001" level="1" npcType="1" npcName="npc1" npcDesc="npc1" iconPath="npc1" heroId1="61000001" heroId2="61000002" heroId3="61000003" heroId4="61000004" heroId5="61000005" heroId6="61000006" combatPower="162" leaderPos="1" />
+<NPCDefine npcId="31000002" level="1" npcType="1" npcName="npc2" npcDesc="npc2" iconPath="npc2" heroId1="61000001" heroId2="61000001" heroId3="61000001" heroId4="61000001" heroId5="61000001" heroId6="61000001" combatPower="162" leaderPos="2" />
+<NPCDefine npcId="31000003" level="1" npcType="1" npcName="npc3" npcDesc="npc3" iconPath="npc3" heroId1="61000002" heroId2="61000002" heroId3="61000002" heroId4="61000002" heroId5="61000002" heroId6="61000002" combatPower="162" leaderPos="3" />
+<NPCDefine npcId="31000004" level="1" npcType="1" npcName="npc4" npcDesc="npc4" iconPath="npc4" heroId1="61000003" heroId2="61000003" heroId3="61000003" heroId4="61000003" heroId5="61000003" heroId6="61000003" combatPower="162" leaderPos="4" />
+<NPCDefine npcId="31000005" level="1" npcType="1" npcName="npc5" npcDesc="npc5" iconPath="npc5" heroId1="61000004" heroId2="61000004" heroId3="61000004" heroId4="61000004" heroId5="61000004" heroId6="61000004" combatPower="162" leaderPos="5" />
+<NPCDefine npcId="31000006" level="1" npcType="1" npcName="npc6" npcDesc="npc6" iconPath="npc6" heroId1="61000005" heroId2="61000005" heroId3="61000005" heroId4="61000005" heroId5="61000005" heroId6="61000005" combatPower="161" leaderPos="6" />
+<NPCDefine npcId="31000007" level="1" npcType="1" npcName="npc7" npcDesc="npc7" iconPath="npc7" heroId1="61000006" heroId2="61000006" heroId3="61000006" heroId4="61000006" heroId5="61000006" heroId6="61000006" combatPower="162" leaderPos="1" />
+<NPCDefine npcId="31000008" level="1" npcType="1" npcName="npc8" npcDesc="npc8" iconPath="npc8" heroId1="61000001" heroId2="61000007" heroId3="61000008" heroId4="61000009" heroId5="61000010" heroId6="61000011" combatPower="162" leaderPos="2" />
+<NPCDefine npcId="31000009" level="1" npcType="1" npcName="npc9" npcDesc="npc9" iconPath="npc9" heroId1="61000007" heroId2="61000007" heroId3="61000007" heroId4="61000007" heroId5="61000007" heroId6="61000007" combatPower="172" leaderPos="3" />
+<NPCDefine npcId="31000010" level="1" npcType="1" npcName="npc10" npcDesc="npc10" iconPath="npc10" heroId1="61000008" heroId2="61000009" heroId3="61000010" heroId4="61000011" heroId5="61000010" heroId6="61000011" combatPower="183" leaderPos="4" />
+<NPCDefine npcId="31000011" level="1" npcType="1" npcName="npc11" npcDesc="npc11" iconPath="npc11" heroId1="61000010" heroId2="61000011" heroId3="61000010" heroId4="61000011" heroId5="61000010" heroId6="61000011" combatPower="223" leaderPos="5" />
+<NPCDefine npcId="31000012" level="1" npcType="1" npcName="npc12" npcDesc="npc12" iconPath="npc12" heroId1="61000007" heroId2="61000008" heroId3="61000007" heroId4="61000008" heroId5="61000007" heroId6="61000008" combatPower="172" leaderPos="6" />
+<NPCDefine npcId="31000013" level="1" npcType="1" npcName="npc13" npcDesc="npc13" iconPath="npc13" heroId1="61000005" heroId2="61000005" heroId3="61000005" heroId4="61000005" heroId5="61000005" heroId6="61000011" combatPower="161" leaderPos="1" />
+
+<NPCHero heroId="61000001" name="npc1" sysheroId="100000001" level="1" />
+<NPCHero heroId="61000002" name="npc2" sysheroId="100000002" level="1" />
+<NPCHero heroId="61000003" name="npc3" sysheroId="100000003" level="1" />
+<NPCHero heroId="61000004" name="npc4" sysheroId="100000004" level="1" />
+<NPCHero heroId="61000005" name="npc5" sysheroId="100000005" level="1" />
+<NPCHero heroId="61000006" name="npc6" sysheroId="100000006" level="1" />
+<NPCHero heroId="61000007" name="npc7" sysheroId="100000025" level="1" />
+<NPCHero heroId="61000008" name="npc8" sysheroId="100000049" level="1" />
+<NPCHero heroId="61000009" name="npc9" sysheroId="100000085" level="1" />
+<NPCHero heroId="61000010" name="npc10" sysheroId="100000121" level="1" />
+<NPCHero heroId="61000011" name="npc11" sysheroId="100000145" level="1" />
+
+</dataset>

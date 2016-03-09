@@ -1,0 +1,48 @@
+package com.youxigu.dynasty2.combat.service;
+
+import com.youxigu.dynasty2.combat.domain.Combat;
+import com.youxigu.dynasty2.combat.proto.CombatMsg;
+
+/**
+ * 出征接口
+ * @author Dagangzi
+ *
+ */
+public interface ICombatService {
+	/**
+	 * 取得战斗
+	 * @param combatId
+	 * @return
+	 */
+	@Deprecated
+	Combat getCombat(String combatId);
+	CombatMsg.Combat getCombatPf(String combatId);
+
+	@Deprecated
+	Combat getCombat(String combatId, boolean db);
+	CombatMsg.Combat getCombatPf(String combatId, boolean db);
+
+	/**
+	 * 保存战斗对象
+	 * @param combat
+	 * @return
+	 */
+	@Deprecated
+	void saveCombat(Combat combat);
+	void saveCombatPf(Combat combat);
+
+	@Deprecated
+	void saveCombat(Combat combat, boolean db);
+	void saveCombatPf(Combat combat, boolean db);
+
+	/**
+	 * 删除一场战斗
+	 * @param combatId
+	 */
+	void deleteCombat(String combatId, boolean onlyDB);
+
+	/**
+	 * 每天执行的删除过期的战斗数据
+	 */
+	void cleanCombat();
+}

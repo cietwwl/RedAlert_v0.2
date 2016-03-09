@@ -1,0 +1,113 @@
+package com.youxigu.dynasty2.combat.domain;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.youxigu.dynasty2.entity.domain.HeroSkill;
+
+public class CombatConstants {
+	public static final short ACTION_INIT = 10;// 初始化战斗单元的位置
+	public static final short ACTION_ROUNDCHANGE = 11;// 回合变化
+	public static final short ACTION_ATTACK = 12;// 普通攻击
+	public static final short ACTION_ATTACK_GEN = 110;// 普通攻击
+	public static final short ACTION_ATTACK_DODGE = 111;// 闪避
+	public static final short ACTION_ATTACK_CRITICAL = 112;// 暴击
+	public static final short ACTION_SHIELD_ATTACK = 113;// 护盾攻击
+	public static final short ACTION_ATTACK_HIT = 114;// 命中
+	public static final short ACTION_EFFECT = 115;//效果
+	public static final short ACTION_LOST_ARMYNUM = 210;// 伤血
+	public static final short ACTION_ADD_SHIELD = 211;// 加护盾
+	public static final short ACTION_ADD_MORALE = 212;// 加士气
+	public static final short ACTION_DEC_MORALE = 213;// 减士气
+	public static final short ACTION_STORY = 214;// 剧情对话
+	public static final short ACTION_FIRE_SKILL = 310;// 施放技能
+	public static final short ACTION_FIRE_EFFECT = 311;// 施放效果
+	public static final short ACTION_ADD_UNIT_SKILL_EFFECT = 312;// 增加技能效果到战斗单元
+	public static final short ACTION_REMOVE_UNIT_SKILL_EFFECT = 313;// 删除战斗单元身上的技能效果
+	public static final short ACTION_SKILL_EFFECT_TRIGERED = 314;// 技能效果生效：对于dot类的技能
+	public static final short ACTION_DOT_LOST_ARMYNUM = 315;// DOT伤血
+	public static final short ACTION_DOT_ADD_SHIELD = 316;// DOT加护盾
+
+	public static final String DOT_EFFECT_TRIGERED = "DOT_EFFECT_TRIGERED";// Dot效果触发
+
+	//评分方式
+	public static final short SCORETYPE_ROUND = 1;// 回合数
+	public static final short SCORETYPE_HP = 2;// 耐久
+	public static final short SCORETYPE_UNITLIVE = 3;// 存活数
+	
+	// //////////出征类型
+	public static final short COMBAT_TYPE_PVP_ROB = 10; // PVP讨伐(掠夺)
+	public static final short COMBAT_TYPE_PVE_ROB = 11; // PVE讨伐(掠夺)
+	public static final short COMBAT_TYPE_EVP_ROB = 12; // EVP讨伐(掠夺)
+	public static final short COMBAT_TYPE_RISK = 4;// 冒险场景中的战斗
+    public static final short COMBAT_TYPE_TOWER = 5;// 打塔战斗
+
+	/**
+	 * 是否被攻击
+	 * @param attackType
+	 * @return
+	 */
+	public static boolean isAttacked(String attackType) {
+		return attackType.equals(""+ACTION_ATTACK_CRITICAL) || attackType.equals(""+ACTION_ATTACK_GEN)
+				|| attackType.equals(""+ACTION_SHIELD_ATTACK);
+	}
+
+
+	public static final byte WIN_ATK = 1;// 进攻方赢
+	public static final byte WIN_DEF = 2;// 防守方赢
+
+	/**
+	 * 战斗单元类型
+	 */
+	public static final int COMBATUNIT_TYPE_PLAYERHERO = 1;// 玩家英雄
+	public static final int COMBATUNIT_TYPE_NPCHERO = 2;// NPC英雄
+	public static final int COMBATUNIT_TYPE_WALL = 3;// 城墙
+
+	// public static final int ENEMY_MAX_NUM = 100;// 保留仇人的最大数量
+	/**
+	 * 最大回合数，到此回合还没结束，则守方胜利
+	 */
+	public static int MAX_ROUND = 30;
+
+	// ///这个是测试用的
+	public static final Map<Short, String> actionDescMap = new HashMap<Short, String>();
+
+	//技能触发时机按描述
+	public static final Map<Short, String> skillTypeMap = new HashMap<Short, String>();
+	
+	//攻击方式
+	public static final Map<Short, String> attackTypeMap = new HashMap<Short, String>();
+
+	static {
+		//行为描述
+		actionDescMap.put(ACTION_FIRE_SKILL, "施放技能");
+		actionDescMap.put(ACTION_LOST_ARMYNUM, "伤血");
+		actionDescMap.put(ACTION_ADD_MORALE, "加士气");
+		actionDescMap.put(ACTION_DEC_MORALE, "减士气");
+		actionDescMap.put(ACTION_ADD_UNIT_SKILL_EFFECT, "增加技能效果到战斗单元");
+		actionDescMap.put(ACTION_REMOVE_UNIT_SKILL_EFFECT, "删除战斗单元身上的技能效果");
+		actionDescMap.put(ACTION_ROUNDCHANGE, "回合变化");
+		actionDescMap.put(ACTION_FIRE_EFFECT, "施放效果");
+		actionDescMap.put(ACTION_ADD_SHIELD, "加护盾");
+		actionDescMap.put(ACTION_INIT, "初始化战斗单元的位置");
+		actionDescMap.put(ACTION_SKILL_EFFECT_TRIGERED, "技能效果生效：对于dot类的技能");
+		actionDescMap.put(ACTION_STORY, "剧情对话");
+		actionDescMap.put(ACTION_DOT_LOST_ARMYNUM, "DOT伤血");
+		actionDescMap.put(ACTION_DOT_ADD_SHIELD, "DOT加护盾");
+
+		//技能释放时机描述
+		skillTypeMap.put(HeroSkill.FIRED_AT_AFTERATK, "回合中技能");
+		skillTypeMap.put(HeroSkill.FIRED_AT_ATTACKED, "被动技能");
+		skillTypeMap.put(HeroSkill.FIRED_AT_ROUNDBEGIN, "回合前技能");
+		skillTypeMap.put(HeroSkill.FIRED_AT_BEGIN, "开战前技能");
+		
+		attackTypeMap.put(ACTION_ATTACK_GEN, "普通攻击");
+		attackTypeMap.put(ACTION_ATTACK_DODGE, "目标闪避");
+		attackTypeMap.put(ACTION_ATTACK_CRITICAL, "暴击");
+		attackTypeMap.put(ACTION_SHIELD_ATTACK, "护盾攻击");
+	}
+
+	static {
+
+	}
+}

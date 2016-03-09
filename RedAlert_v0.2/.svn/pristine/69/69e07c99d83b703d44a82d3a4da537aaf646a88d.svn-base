@@ -1,0 +1,43 @@
+package com.youxigu.dynasty2.armyout.service;
+
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+
+public interface IArmyoutService {
+	/**
+	 * 取得内部存储的原始Armyout,仅供特殊情况需要取得原始Armyout时使用，一般不应调用这个方法
+	 * -专为事务提交时同步缓存使用
+	 * @param armyoutId
+	 * @return
+	 */
+	Armyout getArmyoutCache(long armyoutId);
+
+	/**
+	 * 添加armyout缓存-专为事务提交时同步缓存使用
+	 * 
+	 * @param armyout
+	 */
+	void addArmyoutCache(Armyout armyout);
+
+	/**
+	 * 删除armyout缓存-专为事务提交时同步缓存使用
+	 * 
+	 * @param armyout
+	 */
+	void removeArmyoutCache(Armyout armyout);
+
+	/**
+	 * 取得armyout
+	 * 
+	 * @param armyoutId
+	 * @return
+	 */
+	Armyout getArmyoutForRead(long armyoutId);
+
+	/**
+	 * 取得armyout
+	 * 
+	 * @param armyoutId
+	 * @return
+	 */
+	Armyout getArmyoutForWrite(long armyoutId);
+}

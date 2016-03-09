@@ -1,0 +1,27 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+
+	
+	<bean id="friendDao" class="com.youxigu.dynasty2.friend.dao.impl.FriendDao" >
+		<property name="sqlMapClientTemplate"><ref bean="sqlMapClientTemplate" /></property>
+	</bean>
+  
+	<bean id="friendService" class="com.youxigu.dynasty2.friend.service.impl.FriendService" init-method="init">
+		<property name="friendDao"><ref bean="friendDao" /></property>
+        <property name="sensitiveWordService"><ref bean="sensitiveWordService" /></property>
+        <property name="userService"><ref bean="userService" /></property>
+        <property name="commonService"><ref bean="commonService" /></property>
+        <property name="mainServerClient"><ref bean="mainServerClient" /></property>
+        <property name="messageService"><ref bean="messageService" /></property>
+		<property name="logService"><ref bean="tlogService" /></property>
+		<property name="vipService"><ref bean="vipService" /></property>
+	</bean>
+</beans>
+

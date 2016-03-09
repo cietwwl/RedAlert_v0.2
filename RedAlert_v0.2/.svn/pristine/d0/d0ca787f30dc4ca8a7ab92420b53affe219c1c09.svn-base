@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<dataset>
+
+<HeroPub id="101" type="2" vipLv="0" item="0" itemCount="0" itemCount10="0" cash="100" cash10="950" dropPackId="3010007" freePeriod="86400" freeDropPackId="3010007" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010009" freetimes="1" firstDropPackId="3010009" />
+<HeroPub id="102" type="2" vipLv="1" item="0" itemCount="0" itemCount10="0" cash="100" cash10="950" dropPackId="3010007" freePeriod="86400" freeDropPackId="3010007" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010009" freetimes="1" firstDropPackId="3010009" />
+<HeroPub id="103" type="2" vipLv="2" item="0" itemCount="0" itemCount10="0" cash="100" cash10="950" dropPackId="3010007" freePeriod="86400" freeDropPackId="3010007" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010009" freetimes="1" firstDropPackId="3010009" />
+<HeroPub id="104" type="2" vipLv="3" item="0" itemCount="0" itemCount10="0" cash="100" cash10="950" dropPackId="3010007" freePeriod="86400" freeDropPackId="3010007" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010009" freetimes="1" firstDropPackId="3010009" />
+<HeroPub id="105" type="2" vipLv="4" item="0" itemCount="0" itemCount10="0" cash="100" cash10="950" dropPackId="3010007" freePeriod="86400" freeDropPackId="3010007" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010009" freetimes="1" firstDropPackId="3010009" />
+<HeroPub id="106" type="2" vipLv="5" item="0" itemCount="0" itemCount10="0" cash="100" cash10="950" dropPackId="3010007" freePeriod="86400" freeDropPackId="3010007" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010009" freetimes="1" firstDropPackId="3010009" />
+<HeroPub id="107" type="2" vipLv="6" item="0" itemCount="0" itemCount10="0" cash="100" cash10="950" dropPackId="3010007" freePeriod="86400" freeDropPackId="3010007" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010009" freetimes="1" firstDropPackId="3010009" />
+<HeroPub id="108" type="2" vipLv="7" item="0" itemCount="0" itemCount10="0" cash="100" cash10="950" dropPackId="3010007" freePeriod="86400" freeDropPackId="3010007" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010009" freetimes="1" firstDropPackId="3010009" />
+<HeroPub id="109" type="2" vipLv="8" item="0" itemCount="0" itemCount10="0" cash="100" cash10="950" dropPackId="3010007" freePeriod="86400" freeDropPackId="3010007" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010009" freetimes="1" firstDropPackId="3010009" />
+<HeroPub id="110" type="2" vipLv="9" item="0" itemCount="0" itemCount10="0" cash="100" cash10="950" dropPackId="3010007" freePeriod="86400" freeDropPackId="3010007" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010009" freetimes="1" firstDropPackId="3010009" />
+<HeroPub id="111" type="2" vipLv="10" item="0" itemCount="0" itemCount10="0" cash="100" cash10="950" dropPackId="3010007" freePeriod="86400" freeDropPackId="3010007" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010009" freetimes="1" firstDropPackId="3010009" />
+<HeroPub id="112" type="2" vipLv="11" item="0" itemCount="0" itemCount10="0" cash="100" cash10="950" dropPackId="3010007" freePeriod="86400" freeDropPackId="3010007" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010009" freetimes="1" firstDropPackId="3010009" />
+<HeroPub id="113" type="2" vipLv="12" item="0" itemCount="0" itemCount10="0" cash="100" cash10="950" dropPackId="3010007" freePeriod="86400" freeDropPackId="3010007" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010009" freetimes="1" firstDropPackId="3010009" />
+<HeroPub id="201" type="1" vipLv="0" item="2001001" itemCount="1" itemCount10="10" cash="0" cash10="0" dropPackId="3010001" freePeriod="600" freeDropPackId="3010001" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010001" freetimes="5" firstDropPackId="3010001" />
+<HeroPub id="202" type="1" vipLv="1" item="2001001" itemCount="1" itemCount10="10" cash="0" cash10="0" dropPackId="3010001" freePeriod="600" freeDropPackId="3010001" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010001" freetimes="5" firstDropPackId="3010001" />
+<HeroPub id="203" type="1" vipLv="2" item="2001001" itemCount="1" itemCount10="10" cash="0" cash10="0" dropPackId="3010001" freePeriod="600" freeDropPackId="3010001" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010001" freetimes="5" firstDropPackId="3010001" />
+<HeroPub id="204" type="1" vipLv="3" item="2001001" itemCount="1" itemCount10="10" cash="0" cash10="0" dropPackId="3010001" freePeriod="600" freeDropPackId="3010001" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010001" freetimes="5" firstDropPackId="3010001" />
+<HeroPub id="205" type="1" vipLv="4" item="2001001" itemCount="1" itemCount10="10" cash="0" cash10="0" dropPackId="3010001" freePeriod="600" freeDropPackId="3010001" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010001" freetimes="5" firstDropPackId="3010001" />
+<HeroPub id="206" type="1" vipLv="5" item="2001001" itemCount="1" itemCount10="10" cash="0" cash10="0" dropPackId="3010001" freePeriod="600" freeDropPackId="3010001" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010001" freetimes="5" firstDropPackId="3010001" />
+<HeroPub id="207" type="1" vipLv="6" item="2001001" itemCount="1" itemCount10="10" cash="0" cash10="0" dropPackId="3010001" freePeriod="600" freeDropPackId="3010001" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010001" freetimes="5" firstDropPackId="3010001" />
+<HeroPub id="208" type="1" vipLv="7" item="2001001" itemCount="1" itemCount10="10" cash="0" cash10="0" dropPackId="3010001" freePeriod="600" freeDropPackId="3010001" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010001" freetimes="5" firstDropPackId="3010001" />
+<HeroPub id="209" type="1" vipLv="8" item="2001001" itemCount="1" itemCount10="10" cash="0" cash10="0" dropPackId="3010001" freePeriod="600" freeDropPackId="3010001" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010001" freetimes="5" firstDropPackId="3010001" />
+<HeroPub id="210" type="1" vipLv="9" item="2001001" itemCount="1" itemCount10="10" cash="0" cash10="0" dropPackId="3010001" freePeriod="600" freeDropPackId="3010001" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010001" freetimes="5" firstDropPackId="3010001" />
+<HeroPub id="211" type="1" vipLv="10" item="2001001" itemCount="1" itemCount10="10" cash="0" cash10="0" dropPackId="3010001" freePeriod="600" freeDropPackId="3010001" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010001" freetimes="5" firstDropPackId="3010001" />
+<HeroPub id="212" type="1" vipLv="11" item="2001001" itemCount="1" itemCount10="10" cash="0" cash10="0" dropPackId="3010001" freePeriod="600" freeDropPackId="3010001" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010001" freetimes="5" firstDropPackId="3010001" />
+<HeroPub id="213" type="1" vipLv="12" item="2001001" itemCount="1" itemCount10="10" cash="0" cash10="0" dropPackId="3010001" freePeriod="600" freeDropPackId="3010001" luckNum="10,20,30,40" luckNum2="10" luckDropPackId="3010001" freetimes="5" firstDropPackId="3010001" />
+
+
+
+
+
+
+
+
+
+
+</dataset>

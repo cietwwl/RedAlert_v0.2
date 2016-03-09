@@ -1,0 +1,59 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:flex="http://www.springframework.org/schema/flex"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+	
+    <!--用户发邮件-11001 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="11001" />
+		<property name="bean" ref="mailMessageAction" />
+		<property name="methodName" value="sendMail" />
+	</bean>
+  
+    <!--用户获取自己的邮件-11003 -->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+      <property name="cmd" value="11003" />
+      <property name="bean" ref="mailMessageAction" />
+      <property name="methodName" value="getUserMails" />
+    </bean>
+    
+    <!--标记邮件已读-11005 -->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+      <property name="cmd" value="11005" />
+      <property name="bean" ref="mailMessageAction" />
+      <property name="methodName" value="setMailRead" />
+    </bean>
+    
+    <!--获取用户邮件附件-11007 -->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+      <property name="cmd" value="11007" />
+      <property name="bean" ref="mailMessageAction" />
+      <property name="methodName" value="getMailAppendix" />
+    </bean>
+    
+    <!--删除邮件-11009 -->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+      <property name="cmd" value="11009" />
+      <property name="bean" ref="mailMessageAction" />
+      <property name="methodName" value="deleteMessages" />
+    </bean>
+
+    <!--批量提取邮件附件-11011 -->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+      <property name="cmd" value="11011" />
+      <property name="bean" ref="mailMessageAction" />
+      <property name="methodName" value="batchExtractMailAppendix" />
+    </bean>
+
+    <!--删除全部邮件-11013 -->
+    <bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+      <property name="cmd" value="11013" />
+      <property name="bean" ref="mailMessageAction" />
+      <property name="methodName" value="deleteAllMessages" />
+    </bean>
+
+</beans>
+

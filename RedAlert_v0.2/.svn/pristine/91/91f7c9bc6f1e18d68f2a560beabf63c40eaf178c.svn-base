@@ -1,0 +1,114 @@
+package com.youxigu.dynasty2.backend.map.service;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.ibatis.sqlmap.engine.cache.memcached.MemcachedManager;
+import com.youxigu.wolf.net.NodeSessionMgr;
+
+/**
+ * 放到wolfserver端，远程启动地图初始化
+ * 
+ * 
+ * qixiong1's InitMapThread的改装版
+ * 
+ * @author Administrator
+ * 
+ */
+public class InitMapService {
+
+	public static final Logger log = LoggerFactory
+			.getLogger(InitMapService.class);
+
+	private static final String INITMAPKEY = "wolfInitMap";// 初始化标识符在缓存中的key
+	private int allNum = 15;// 加载的郡城数
+	public boolean isSend = false;// 地图初始化标识符
+
+	private boolean shutdown;
+
+	public void setAllNum(int allNum) {
+		this.allNum = allNum;
+	}
+
+	public void init() {
+
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				initMap();
+
+			}
+		},"initMapThread").start();
+
+	}
+
+	public void destory(){
+		shutdown = true;
+	}
+	/*
+	 * 按照tomcat的连接数分配每个tomcat需要初始化的郡
+	 */
+	public void initMap() {
+		if (isSend) {// 是否已完成初始化
+			return;
+		}
+		// Cache cache = CacheFactory.createCache();
+		Object obj = MemcachedManager.get(INITMAPKEY);
+		if (obj != null) {// 缓冲中是否有初始化的状态
+			isSend = true;
+			// // cache.set(INITMAPKEY, "sendMark");
+			return;
+		}
+
+		int size = NodeSessionMgr.getGameNodeCount();// 初始化客户端tomcat链接
+		while (size <= 0 && !shutdown) {
+			log.info("初始化缓存地图，等待Nodeserver.........");
+			this.waitConn(10);
+			size = NodeSessionMgr.getGameNodeCount();
+		}
+		if (shutdown) {
+			return;
+		}
+		log.info("初始化缓存地图,begin........");
+		int single = allNum / size;// 初始化每个tomcat需要初始化的郡个数
+		if (single <= 0)
+			single = 1;
+
+		int i = 0;
+		while (i < allNum) {
+			int minStateId = i + 1;// 初始化起始的郡id
+			i = i + single;
+			int maxStateId = i;// 初始化结束的郡id
+			if (maxStateId > allNum) {
+				maxStateId = allNum;
+			}
+
+			Object[] params = new Object[] { minStateId, maxStateId };
+
+			String isend = null;
+			try {
+				isend = NodeSessionMgr.sendMessage2Node(null, "mapService",
+						"loadMap", params);// 分配给每个tomcat执行
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if (isend == null) {
+				log.error("not found client,maybe exception........");
+			}
+		}
+		// 初始化结束
+
+		MemcachedManager.set(INITMAPKEY, "sendMark");// 缓存中记录初始化状态
+		isSend = true;// 记录完成初始化的标识符
+
+	}
+
+	public void waitConn(int second) {
+		try {
+			Thread.sleep(second * 1000);// 延迟second秒加载
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+}

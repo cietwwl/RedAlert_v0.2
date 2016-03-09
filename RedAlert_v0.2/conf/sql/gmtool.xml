@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis-with-memcached.googlecode.com/files/sql-map-config-2.dtd">
+
+
+<sqlMap namespace="ServerInfo">
+	<typeAlias alias="userCashBonus" type="com.youxigu.dynasty2.gmtool.domain.UserCashBonus" />
+
+	<cacheModel type="MEMCACHED" id="cache_userCashBonus" serialize="false" readOnly="false" ><!--broadcast="false"-->
+		<flushOnExecute statement="insertUserCashBonus">
+		  <flushModel flushstatement="userCashBonus" flushMode="insert" flushpara="openId"/>
+		  <flushModel flushstatement="getAllUserCashBonus" flushMode="insert" flushpara=""/>
+		</flushOnExecute>
+		<flushOnExecute statement="updateUserCashBonus">
+		  <flushModel flushstatement="userCashBonus" flushMode="update" flushpara="openId"/>
+		  <flushModel flushstatement="getAllUserCashBonus" flushMode="update" flushpara=""/>
+		</flushOnExecute>
+		<property name="class" value="userCashBonus"/>
+		<property name="pk" value="openId"/>
+	</cacheModel>
+
+
+
+	<insert id="insertUserCashBonus" parameterClass="userCashBonus">
+		insert into usercashbonus (openId, num, status,total,dttm) values (#openId#, #num#, #status#,#total#,#dttm#)
+	</insert>
+
+
+
+	<select id="getUserCashBonus" resultClass="userCashBonus" parameterClass="string" cacheModel="cache_userCashBonus" cacheOnlyObject="true" >
+		select * from usercashbonus where openId=#openId#
+	</select>
+
+	<select id="getAllUserCashBonus" resultClass="userCashBonus" cacheModel="cache_userCashBonus" >
+		select * from usercashbonus 
+	</select>
+
+	<update id="updateUserCashBonus" parameterClass="userCashBonus">
+		update usercashbonus set num = #num# ,status=#status#,dttm=#dttm#,total=#total# where openId = #openId#
+	</update>
+</sqlMap>

@@ -1,0 +1,60 @@
+package dynasty;
+import "Common.proto";
+
+option java_package = "com.youxigu.dynasty2.activity.proto";
+option java_outer_classname = "ActivityMsg";
+//////////////////////////////////神秘商店 开始//////////////////////////////////////////////////
+//11021打开神秘商店面板
+message Request11021Define{
+   optional int32 cmd = 1;
+   optional int32 shopId = 2;//1表示战车工厂里面的神秘商店
+}
+//用户的神秘商店信息
+message UserMysticShop{
+   optional int32 shopItemId = 1;//物品唯一id
+   optional int32 status = 2;//1，购买，0.未购买
+}
+
+message MysticShopInfo{
+   optional int32 shopId = 1;//商店类型1表示战车工厂里面的神秘商店
+   optional int32 freeNum = 2;//剩余免费次数
+   optional int32 buyNum = 3;//剩余收费刷新次数
+   optional int32 itemCnt = 4;//剩余道具数量
+   optional int32 cash = 5;//消耗元宝数量
+   optional int64 nextTime = 6;//下次刷新时间戳单位毫秒
+   optional int32 itemNum = 7;//剩余的坦克币物品数量
+   repeated UserMysticShop shopItems=8;//物品列表
+}
+
+//11022 打开神秘商店面板返回
+message Response11022Define{
+   optional ResponseHead responseHead = 1;
+   optional MysticShopInfo shopInfo = 2;//商店信息
+   
+}
+
+//11023刷新神秘商店
+message Request11023Define{
+   optional int32 cmd = 1;
+   optional int32 shopId = 2;//1表示战车工厂里面的神秘商店
+}
+//11024 刷新神秘商店返回
+message Response11024Define{
+   optional ResponseHead responseHead = 1;
+   optional MysticShopInfo shopInfo = 2;//商店信息
+}
+
+//11025购买神秘商店道具
+message Request11025Define{
+   optional int32 cmd = 1;
+   optional int32 shopId = 2;//1表示战车工厂里面的神秘商店
+   optional int32 pos = 3;//购买商店物品的索引从0开始
+}
+
+//11026 购买神秘商店道具返回
+message Response11026Define{
+   optional ResponseHead responseHead = 1;
+   optional int32 shopId = 2;//商店类型1表示战车工厂里面的神秘商店
+   optional int32 pos = 3;//成功购买的位置
+}
+//////////////////////////////////酒馆抽坦克 结束//////////////////////////////////////////////////

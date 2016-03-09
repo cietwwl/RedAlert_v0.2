@@ -1,0 +1,98 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:flex="http://www.springframework.org/schema/flex"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+	<!-- 用户模块 -->
+
+    <!-- 取得角色信息(10003) -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="10003" />
+		<property name="bean" ref="userAction" />
+		<property name="methodName" value="getUser" />
+	</bean>
+
+	<!-- 创建角色(10005) -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="10005" />
+		<property name="bean" ref="userAction" />
+		<property name="methodName" value="createUser" />
+        <property name="filterEventTypes" value="6002,4202"/><!-- 创建君主时不需要推刷新任务消息 -->
+	</bean>
+	
+	<!-- 10030设置签名 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="10030" />
+		<property name="bean" ref="userAction" />
+		<property name="methodName" value="changeSignature" />
+	</bean>
+	
+	<!-- 10032改名 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="10032" />
+		<property name="bean" ref="userAction" />
+		<property name="methodName" value="changeUserName" />
+	</bean>
+	
+	<!-- 取得成就界面 type=-1总览 >0特定类的成就  -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="10034" />
+		<property name="bean" ref="userAchieveAction" />
+		<property name="methodName" value="getUserAchieveByType" />
+	</bean>
+	
+	<!-- 领取勋章-10036 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="10036" />
+		<property name="bean" ref="userTitleAction" />
+		<property name="methodName" value="clickMedal" />
+	</bean>
+	<!-- 取得军衔详情-10038 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="10038" />
+		<property name="bean" ref="userTitleAction" />
+		<property name="methodName" value="showTitleInfo" />
+	</bean>
+	<!-- 取当前军衔-10040 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="10040" />
+		<property name="bean" ref="userTitleAction" />
+		<property name="methodName" value="getRedPoint" />
+	</bean>
+	
+    
+    <!-- 二级密码 start -->
+<!--     <bean class="com.youxigu.dynasty2.core.flex.ActionDefine"> -->
+<!--        <property name="cmd" value="23001"/> -->
+<!--        <property name="bean" ref="operPasswordAction"/> -->
+<!--        <property name="methodName" value="setPassword"/> -->
+<!--     </bean> -->
+    
+<!--     <bean class="com.youxigu.dynasty2.core.flex.ActionDefine"> -->
+<!--        <property name="cmd" value="23002"/> -->
+<!--        <property name="bean" ref="operPasswordAction"/> -->
+<!--        <property name="methodName" value="updatePassword"/> -->
+<!--     </bean> -->
+    
+<!--     <bean class="com.youxigu.dynasty2.core.flex.ActionDefine"> -->
+<!--        <property name="cmd" value="23003"/> -->
+<!--        <property name="bean" ref="operPasswordAction"/> -->
+<!--        <property name="methodName" value="delPassword"/> -->
+<!--     </bean> -->
+    
+<!--     <bean class="com.youxigu.dynasty2.core.flex.ActionDefine"> -->
+<!--        <property name="cmd" value="23004"/> -->
+<!--        <property name="bean" ref="operPasswordAction"/> -->
+<!--        <property name="methodName" value="cheakPassword"/> -->
+<!--     </bean> -->
+    
+<!--     <bean class="com.youxigu.dynasty2.core.flex.ActionDefine"> -->
+<!--        <property name="cmd" value="23005"/> -->
+<!--        <property name="bean" ref="operPasswordAction"/> -->
+<!--        <property name="methodName" value="getPasswordInfo"/> -->
+<!--     </bean> -->
+    <!-- 二级密码 end -->
+</beans>
+

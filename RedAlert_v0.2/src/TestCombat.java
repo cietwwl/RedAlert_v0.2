@@ -1,0 +1,104 @@
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.youxigu.dynasty2.combat.domain.Combat;
+import com.youxigu.dynasty2.combat.domain.CombatConstants;
+import com.youxigu.dynasty2.combat.domain.CombatTeam;
+import com.youxigu.dynasty2.combat.service.ICombatEngine;
+import com.youxigu.dynasty2.combat.service.ICombatService;
+import com.youxigu.dynasty2.combat.service.ICombatTeamService;
+import com.youxigu.dynasty2.npc.domain.NPCDefine;
+import com.youxigu.dynasty2.npc.service.INPCService;
+import com.youxigu.dynasty2.user.domain.User;
+import com.youxigu.dynasty2.user.service.IUserService;
+
+public class TestCombat {
+
+	public static void main(String[] args) {
+		//		String ip = args[0];// s7.app100656690.qqopenapp.com
+		//		int port = Integer.parseInt(args[1]);// 8010
+		//		String usr = args[2];// admin
+		//		String pwd = args[3];
+		//		GMSocketClient client = new GMSocketClient("192.168.0.49", 8739, "admin", "123456");
+
+		//		GMSocketClient client = new GMSocketClient(ip, port, usr, pwd);
+
+		String conPath = System.getProperty("TX_CONF_PATH");
+		if (conPath == null) {
+			conPath = System.getenv("TX_CONF_PATH");
+		}
+		if (conPath == null) {
+
+			System.setProperty("TX_CONF_PATH", "");
+		}
+
+		ApplicationContext ctx = null;
+
+		try {
+			ctx = new ClassPathXmlApplicationContext(
+					new String[] { "applicationContext.xml", "wolf/app_nodeserver.xml" });
+			IUserService userService = (IUserService) ctx.getBean("userService");
+			User user = userService.getUserById(4301L);
+
+			INPCService npcService = (INPCService) ctx.getBean("npcService");
+			NPCDefine npc = npcService.getNPCDefine(31000001);
+
+			ICombatTeamService playerCombatTeamService = (ICombatTeamService) ctx.getBean("playerCombatTeamService");
+			CombatTeam atkTeam = playerCombatTeamService.getCombatTeamByUser(user, null, npc, false, true);
+
+			ICombatTeamService npcCombatTeamService = (ICombatTeamService) ctx.getBean("npcCombatTeamService");
+			CombatTeam defTeam = npcCombatTeamService.getCombatTeam(31000010L);
+
+			Combat combat = new Combat(CombatConstants.COMBAT_TYPE_PVP_ROB,
+					CombatConstants.SCORETYPE_ROUND, atkTeam,
+					defTeam, null);
+			
+//			List<CombatMsg.Combat.RoundAction> list = tmp.getActionsList();
+//			for(CombatMsg.Combat.RoundAction r : list) {
+//				List<CombatMsg.AbstractCombatAction> list2 = r.getRoundactionList();
+//				for(CombatMsg.AbstractCombatAction ra : list2) {
+//					if(ra.getActionId() == 310) {
+//						try {
+//							CombatMsg.FireSkillAction skill= CombatMsg.FireSkillAction.parseFrom(ra.getActionBytes().toByteArray());
+//							CombatMsg.AttackAction aa = skill.getParent();
+//							List<CombatMsg.AbstractCombatAction> list3 = aa.getResultsList();
+//							for(CombatMsg.AbstractCombatAction rb : list3) {
+//								System.out.println(rb.getActionId());
+//							}
+//						} catch (InvalidProtocolBufferException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//					}
+//				}
+//			}
+
+			ICombatEngine combatEngine = (ICombatEngine) ctx
+					.getBean("combatEngine");
+			combatEngine.execCombat(combat);
+
+			ICombatService combatService = (ICombatService) ctx.getBean("combatService");
+			combatService.saveCombatPf(combat, true);
+			
+			
+//			IEntityService entityService = (IEntityService) ctx.getBean("entityService");
+//			Entity entity = entityService.getEntity(3300001);
+//			Map<String, Object> params = new HashMap<String, Object>();
+//			params.put("user", user);
+//			params.put("iAction",com.youxigu.dynasty2.log.imp.LogItemAct.LOGITEMACT_35);
+//			params.put("num", 1);
+//			entityService.doAction(entity, Entity.ACTION_USE, params);
+
+			System.out.println("==================");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+//			if(ctx != null) {
+//				ctx.
+//			}
+		}
+		System.out.println("==================");
+
+	}
+}

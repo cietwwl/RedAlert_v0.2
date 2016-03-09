@@ -1,0 +1,1049 @@
+package com.youxigu.dynasty2.hero.service.impl;
+
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.youxigu.dynasty2.common.AppConstants;
+import com.youxigu.dynasty2.common.service.ICommonService;
+import com.youxigu.dynasty2.core.event.Event;
+import com.youxigu.dynasty2.core.event.EventDispatcher;
+import com.youxigu.dynasty2.core.event.EventTypeConstants;
+import com.youxigu.dynasty2.core.event.IEventListener;
+import com.youxigu.dynasty2.entity.domain.SysHero;
+import com.youxigu.dynasty2.entity.service.IEntityService;
+import com.youxigu.dynasty2.hero.dao.ITroopDao;
+import com.youxigu.dynasty2.hero.domain.Hero;
+import com.youxigu.dynasty2.hero.domain.HeroFate;
+import com.youxigu.dynasty2.hero.domain.HeroView;
+import com.youxigu.dynasty2.hero.domain.Troop;
+import com.youxigu.dynasty2.hero.domain.TroopGrid;
+import com.youxigu.dynasty2.hero.domain.TroopGridView;
+import com.youxigu.dynasty2.hero.enums.HeroIdle;
+import com.youxigu.dynasty2.hero.enums.HeroTroopIng;
+import com.youxigu.dynasty2.hero.enums.TeamLeaderType;
+import com.youxigu.dynasty2.hero.enums.TroopGridPosition;
+import com.youxigu.dynasty2.hero.enums.TroopIdle;
+import com.youxigu.dynasty2.hero.enums.TroopType;
+import com.youxigu.dynasty2.hero.proto.HeroMsg.TroopInfo;
+import com.youxigu.dynasty2.hero.proto.HeroUpTroop;
+import com.youxigu.dynasty2.hero.service.IHeroService;
+import com.youxigu.dynasty2.hero.service.ITroopGridService;
+import com.youxigu.dynasty2.hero.service.ITroopService;
+import com.youxigu.dynasty2.mission.domain.Mission;
+import com.youxigu.dynasty2.mission.service.IMissionService;
+import com.youxigu.dynasty2.user.domain.User;
+import com.youxigu.dynasty2.user.service.IUserService;
+import com.youxigu.dynasty2.util.BaseException;
+
+/**
+ * 军团
+ * 
+ * @author fengfeng
+ *
+ */
+public class TroopService implements ITroopService, IEventListener {
+	public static final Logger log = LoggerFactory
+			.getLogger(TroopService.class);
+
+	private IHeroService heroService;
+	private ITroopDao troopDao;
+	private IMissionService missionService;
+	private IUserService userService;
+	private ICommonService commonService;
+	private IEntityService entityService;
+	private ITroopGridService troopGridService = null;
+
+	// 默认创建军团的武将上阵位置
+	private static TroopGridPosition defaultTroopGridPosition = null;
+
+	// private IChatClientService messageService;
+
+	public void setUserService(IUserService userService) {
+		this.userService = userService;
+	}
+
+	public void setMissionService(IMissionService missionService) {
+		this.missionService = missionService;
+	}
+
+	public void setHeroService(IHeroService heroService) {
+		this.heroService = heroService;
+	}
+
+	public void setTroopDao(ITroopDao troopDao) {
+		this.troopDao = troopDao;
+	}
+
+	public void setCommonService(ICommonService commonService) {
+		this.commonService = commonService;
+	}
+
+	public void setEntityService(IEntityService entityService) {
+		this.entityService = entityService;
+	}
+
+	public void init() {
+		EventDispatcher.registerListener(EventTypeConstants.EVT_USER_LEVEL_UP,
+				this);
+
+		int p = commonService.getSysParaIntValue(
+				AppConstants.TROOP_GRID_POSITION,
+				TroopGridPosition.GRID_POSITION_0.getIndex());
+		defaultTroopGridPosition = TroopGridPosition.valueOf(p);
+		if (defaultTroopGridPosition == null) {
+			throw new IllegalArgumentException("默认配置的武将上阵位置不存在");
+		}
+	}
+
+	/**
+	 * 判断一个军团里面是否绑定了相同的格子id
+	 * 
+	 * @param troop
+	 */
+	// private void checkHasSameTroopGridInTroop(Troop troop) {
+	// Map<Long, TroopGridPosition> hasTGs = new HashMap<Long,
+	// TroopGridPosition>();
+	// TroopGridPosition[] tps = TroopGridPosition.values();
+	// for (TroopGridPosition p : tps) {
+	// long id = p.getTroopGridId(troop);
+	// if (id <= 0) {
+	// continue;
+	// }
+	// Long d = Long.valueOf(id);
+	// if (hasTGs.containsKey(d)) {
+	// throw new BaseException("军团里面绑定了相同的格子" + id + ",userId="
+	// + troop.getUserId());
+	// }
+	// hasTGs.put(d, p);
+	// }
+	// }
+
+	@Override
+	public HeroUpTroop doUpTroop(long userId, long troopId, long heroId,
+			long troopGridId) {
+		lockTroop(userId);
+		heroService.lockHero(userId);
+		Troop troop = getTroopById(userId, troopId);
+		if (troop == null) {
+			throw new BaseException("设置的军团不存在");
+		}
+		Hero hero = heroService.getHeroByHeroId(userId, heroId);
+		if (hero == null) {
+			throw new BaseException("上阵的武将不存在");
+		}
+		if (!hero.isHero()) {
+			throw new BaseException("不是武将");
+		}
+		if (!troop.canArmyOut()) {
+			throw new BaseException("军团不是空闲状态");
+		}
+		User user = userService.getUserById(userId);
+		if (hero.isInTroop()) {
+			if (hero.getTroopGridId() == troopGridId) {
+				throw new BaseException("武将已经在这个格子上面了" + troopGridId);
+			}
+
+			if (hero.isCommander()) {
+				throw new BaseException("君主坦克不能下阵");
+			}
+
+			if (troopGridId > 0) {
+				// 不应该进入这个方法.应该在其他方法执行逻辑
+				throw new BaseException("格子id错误" + troopGridId);
+			}
+
+			if (troop.hasTroopGrid(hero.getTroopGridId())) {
+				throw new BaseException("武将已经在这个军团里面了");
+			}
+
+			TroopGridPosition p = troop.getEmptyTroopGridPosition();
+			if (p == null) {
+				throw new BaseException("军团已经上阵满了坦克");
+			}
+			// 解除格子原来绑定的军团
+			TroopGrid grid = troopGridService.getTroopGrid(userId,
+					hero.getTroopGridId());
+			Troop srcTroop = getTroopById(userId, grid.getTroopId());
+			TroopGridPosition sp = srcTroop.getTroopGridPosition(hero
+					.getTroopGridId());
+			srcTroop.setTroopGridId(sp, 0);
+			troopDao.updateTroop(srcTroop);
+
+			// 设置新的位置
+			troop.setTroopGridId(p, hero.getTroopGridId());
+			troopDao.updateTroop(troop);
+
+			grid.setTroopId(troopId);
+			troopGridService.updateTroopGrid(grid);
+
+			HeroUpTroop res = new HeroUpTroop(troopId, grid.getTroopGridId(),
+					p.getPosition());
+			return res;
+		}
+
+		// 两种情况。。一种是格子是空的。。 一种是格子上面有武将
+		TroopGrid grid = null;
+		if (troopGridId > 0) {
+			grid = troopGridService.getTroopGrid(userId, troopGridId);
+			if (grid == null) {
+				throw new BaseException("格子不存在" + troopGridId);
+			}
+
+			if (grid.getTroopId() != troopId) {
+				throw new BaseException("上阵的不是自己军团里面的格子");
+			}
+		}
+		if (grid != null) {// 格子上面有武将,替换这个武将
+			if (grid.getHeroId() == troop.getMainHeroId()) {
+				throw new BaseException("君主坦克不能下阵");
+			}
+
+			// 军团里面的武将下阵
+			heroService.lockHero(grid.getHeroId());
+			Hero hr = heroService.getHeroByHeroId(userId, grid.getHeroId());
+			if (hr == null) {
+				log.error("数据异常 格子里面判断有武将。但是通过格子id缺获取不到武将{}", troopGridId);
+				throw new BaseException("获取不到格子里面的武将");
+			}
+
+			if (troop.getMainHeroId() == hr.getHeroId()) {
+				throw new BaseException("君主坦克不能下阵");
+			}
+
+			heroService.doHeroDownTroop(hr);
+			heroService.updateHero(hr, true);
+		} else {
+			int heroNum = troop.getHeroNum();// 获取已经上阵的武将数量
+			heroNum += 1;
+			int minUsrLv = commonService.getSysParaIntValue(
+					AppConstants.ENUMER_TROOP_POS_NUM + heroNum, 1);
+			if (user.getUsrLv() < minUsrLv) {
+				throw new BaseException("君主等级必须达到" + minUsrLv + "级才能上阵"
+						+ heroNum + "个武将");
+			}
+		}
+
+		TroopGridPosition p = null;
+		if (grid == null) {
+			// 获取一个空格子上阵武将
+			p = troop.getEmptyTroopGridPosition();
+			if (p == null) {
+				throw new BaseException("军团已经上阵满了坦克");
+			}
+			// 创建军团格子
+			grid = new TroopGrid(userId, troopId, heroId, hero.getSysHeroId());
+			troopGridService.doCreateTroopGrid(grid);
+		} else {
+			p = troop.getTroopGridPosition(grid.getTroopGridId());
+			grid.setHeroId(heroId);
+			grid.setSysHeroId(hero.getSysHeroId());
+			grid.setTroopId(troopId);
+			troopGridService.updateTroopGrid(grid);
+		}
+		// 武将绑定格子id
+		hero.setTroopGridId(grid.getTroopGridId());
+		hero.setStatus(HeroTroopIng.HERO_TROOP_ING.getIndex());
+		heroService.updateHero(hero, false);
+
+		// 绑定格子到军团上面去
+		troop.setTroopGridId(p, grid.getTroopGridId());
+
+		doUpdateTroopAndFate(troop);
+
+		// 设置队长
+		doAutoSetTeamLeader(userId, troopId);
+
+		heroService.sendFlushHeroEvent(hero);
+
+		// checkHasSameTroopGridInTroop(troop);
+		troopTaskEvent(user, troop);
+
+		HeroUpTroop res = new HeroUpTroop(troopId, grid.getTroopGridId(),
+				p.getPosition());
+
+		return res;
+	}
+
+	@Override
+	public HeroUpTroop doSwapTroopGrid(long userId, long troopId1,
+			long troopGridId1, long troopId2, long troopGridId2) {
+		if (troopGridId1 == troopGridId2) {
+			throw new BaseException("军团两个格子id一样");
+		}
+
+		lockTroop(userId);
+		troopGridService.lockTroopGrid(userId);
+		Troop troop1 = getTroopById(userId, troopId1);
+		if (troop1 == null) {
+			throw new BaseException("军团不存在");
+		}
+		if (!troop1.canArmyOut()) {
+			throw new BaseException("军团不是空闲状态");
+		}
+		Troop troop2 = getTroopById(userId, troopId2);
+		if (troop2 == null) {
+			throw new BaseException("军团不存在");
+		}
+		if (!troop2.canArmyOut()) {
+			throw new BaseException("军团不是空闲状态");
+		}
+		TroopGrid tg1 = troopGridService.getTroopGrid(userId, troopGridId1);
+		if (tg1 == null) {
+			throw new BaseException("换阵的格子不存在");
+		}
+
+		if (tg1.getTroopId() != troopId1) {
+			throw new BaseException("格子不属于这个军团");
+		}
+
+		TroopGrid tg2 = troopGridService.getTroopGrid(userId, troopGridId2);
+		if (tg2 == null) {
+			throw new BaseException("换阵的格子不存在");
+		}
+
+		if (tg2.getTroopId() != troopId2) {
+			throw new BaseException("格子不属于这个军团");
+		}
+
+		Hero hr1 = heroService.getHeroByHeroId(userId, tg1.getHeroId());
+		if (hr1 == null) {
+			throw new BaseException("换阵的武将不存在");
+		}
+		if (!hr1.isInTroop()) {
+			throw new BaseException("换阵的武将不在军团中");
+		}
+		if (hr1.isCommander()) {
+			throw new BaseException("君主坦克不能交换");
+		}
+
+		Hero hr2 = heroService.getHeroByHeroId(userId, tg2.getHeroId());
+		if (hr2 == null) {
+			throw new BaseException("换阵的武将不存在");
+		}
+		if (!hr2.isInTroop()) {
+			throw new BaseException("换阵的武将不在军团中");
+		}
+
+		if (hr2.isCommander()) {
+			throw new BaseException("君主坦克不能交换");
+		}
+
+		// TODO 交换格子的时候记得把 格子绑定的军团id也交换下
+
+		// 开始交换武将
+
+		long tgrid1 = hr1.getTroopGridId();
+		long tgrid2 = hr2.getTroopGridId();
+
+		TroopGridPosition position1 = TroopGridPosition.getTroopGridPosition(
+				troop1, tgrid1);
+		TroopGridPosition position2 = TroopGridPosition.getTroopGridPosition(
+				troop2, tgrid2);
+
+		tg2.setTroopId(troop1.getTroopId());// 把格子2原来绑定的军团换成新的
+		troopGridService.updateTroopGrid(tg2);
+		troop1.setTroopGridId(position1, tgrid2);// 军团1原来的格子换成军团2的
+		doUpdateTroopAndFate(troop1);
+
+		tg1.setTroopId(troop2.getTroopId());// 把格子原来绑定的军团换成新的
+		troopGridService.updateTroopGrid(tg1);
+		troop2.setTroopGridId(position2, tgrid1);// 军团2原来的格子换成军团1的
+		doUpdateTroopAndFate(troop2);
+
+		// TODO 队长记得交换
+		// 1.队长和队长交换格子
+		// 2.队长和普通队员交换格子
+		// 3.普通队员交换格子
+		boolean change = false;
+		if (hr1.isTeamLeader() && !hr2.isTeamLeader()) {
+			hr1.setTeamLeader(TeamLeaderType.HERO_COMMON.getIndex());
+			hr2.setTeamLeader(TeamLeaderType.HERO_TEAM_LEADER.getIndex());
+			change = true;
+		} else if (!hr1.isTeamLeader() && hr2.isTeamLeader()) {
+			hr1.setTeamLeader(TeamLeaderType.HERO_TEAM_LEADER.getIndex());
+			hr2.setTeamLeader(TeamLeaderType.HERO_COMMON.getIndex());
+			change = true;
+		}
+		if (change) {
+			heroService.updateHero(hr1, true);
+			heroService.updateHero(hr2, true);
+		}
+
+		troopTaskEvent(userService.getUserById(userId), troop1);
+		troopTaskEvent(userService.getUserById(userId), troop2);
+
+		HeroUpTroop res = new HeroUpTroop(troopId1, troopGridId1,
+				position1.getPosition(), troopId2, troopGridId2,
+				position2.getPosition());
+		return res;
+	}
+
+	@Override
+	public HeroUpTroop doSwapSameTroopGrid(long userId, long troopId,
+			long troopGridId1, long troopGridId2) {
+		lockTroop(userId);
+		heroService.lockHero(userId);
+		troopGridService.lockTroopGrid(userId);
+
+		User user = userService.getUserById(userId);
+
+		Troop troop = getTroopById(userId, troopId);
+		if (troopGridId1 == troopGridId2) {
+			throw new BaseException("军团两个格子id一样");
+		}
+
+		if (troop == null) {
+			throw new BaseException("设置的军团不存在");
+		}
+
+		if (!troop.canArmyOut()) {
+			throw new BaseException("军团不是空闲状态");
+		}
+
+		if (troop.getUserId() != userId) {
+			throw new BaseException("不是自己的军团");
+		}
+		TroopGrid tg1 = troopGridService.getTroopGrid(userId, troopGridId1);
+		if (tg1 == null) {
+			throw new BaseException("交换的格子不能为null");
+		}
+		if (tg1.getTroopId() != troop.getTroopId()) {
+			throw new BaseException("格子不属于这个军团");
+		}
+		Hero hero = heroService.getHeroByHeroId(userId, tg1.getHeroId());
+		if (hero == null) {
+			throw new BaseException("上阵的武将不存在");
+		}
+		TroopGrid tg2 = troopGridService.getTroopGrid(userId, troopGridId2);
+		if (tg2 == null) {
+			throw new BaseException("交换的格子不能为null");
+		}
+
+		if (tg2.getTroopId() != troop.getTroopId()) {
+			throw new BaseException("格子不属于这个军团");
+		}
+
+		Hero hero2 = heroService.getHeroByHeroId(userId, tg2.getHeroId());
+		if (hero2 == null) {
+			throw new BaseException("上阵的武将不存在");
+		}
+
+		// 格子上面有武将,两个格子交换
+		TroopGridPosition position1 = TroopGridPosition.getTroopGridPosition(
+				troop, troopGridId1);
+		TroopGridPosition position2 = TroopGridPosition.getTroopGridPosition(
+				troop, troopGridId2);
+
+		// 换格子
+		position1.setTroopGridId(troop, troopGridId2);
+		position2.setTroopGridId(troop, troopGridId1);
+
+		doUpdateTroop(troop);
+
+		// heroService.sendFlushHeroEvent(hero);
+		// heroService.sendFlushHeroEvent(hero2);
+
+		troopTaskEvent(user, troop);
+
+		HeroUpTroop res = new HeroUpTroop(troop.getTroopId(),
+				tg1.getTroopGridId(), position2.getIndex(), troop.getTroopId(),
+				tg2.getTroopGridId(), position1.getIndex());
+		return res;
+	}
+
+	@Override
+	public void doUpdateTroop(Troop troop) {
+		troopDao.updateTroop(troop);
+	}
+
+	/**
+	 * 获取军团的队长
+	 * 
+	 * @param userId
+	 * @param tp1
+	 */
+	private Hero getTroopTeamLeader(long userId, Troop tp1) {
+		Hero teamLeader = null;
+		TroopGridPosition[] tps = TroopGridPosition.values();
+		for (TroopGridPosition tp : tps) {
+			long troopGridId = tp.getTroopGridId(tp1);
+			if (troopGridId <= 0) {
+				continue;
+			}
+			TroopGrid tg = troopGridService.getTroopGrid(userId, troopGridId);
+			if (tg == null) {
+				continue;
+			}
+			if (tg.getHeroId() <= 0) {
+				continue;
+			}
+			Hero hero = heroService.getHeroByHeroId(userId, tg.getHeroId());
+			if (hero == null) {
+				continue;
+			}
+			if (hero.isTeamLeader()) {
+				teamLeader = hero;
+				break;
+			}
+		}
+		return teamLeader;
+	}
+
+	@Override
+	public TroopGridView getTroopGrid(long userId, long troopGridId) {
+		TroopGrid tg = troopGridService.getTroopGrid(userId, troopGridId);
+		if (tg == null) {
+			throw new BaseException("格子id不存在");
+		}
+
+		TroopGridView view = new TroopGridView();
+
+		Hero hero = heroService.getHeroByHeroId(userId, tg.getHeroId());
+		if (hero != null) {
+			HeroView hv = new HeroView(hero.toView());
+			view.setHeroView(hv);
+		}
+		view.setEquipId(tg.getEquip());
+		return view;
+	}
+
+	@Override
+	public void doUpdateTroopAndFate(Troop troop) {
+		doUpdateTroop(troop);
+		HashMap<Integer, Integer> heros = new HashMap<Integer, Integer>();
+		long userId = troop.getUserId();
+		// 更新情缘
+		for (TroopGridPosition tgp : TroopGridPosition.values()) {
+			long troopGridId = tgp.getTroopGridId(troop);
+			if (troopGridId <= 0) {
+				continue;
+			}
+			TroopGrid tg = troopGridService.getTroopGrid(userId, troopGridId);
+			if (tg == null) {
+				continue;
+			}
+			if (tg.getHeroId() <= 0) {
+				continue;
+			}
+			Hero hero = heroService.getHeroByHeroId(userId, tg.getHeroId());
+			if (hero == null) {
+				log.error("updateTroop error武将不存在...troopId={},troopGridId{}",
+						new Object[] { troop.getTroopId(), troopGridId });
+				throw new BaseException("武将不存在错误..");
+			}
+			if (!hero.isInTroop()) {
+				log.error(
+						"updateTroop error武将不在军团里面关联关系错误...troopId={},troopGridId{},heroId={}",
+						new Object[] { troop.getTroopId(), troopGridId,
+								hero.getHeroId() });
+				throw new BaseException("武将关系错误..");
+			}
+			heros.put(hero.getSysHeroId(), hero.getSysHeroId());
+		}
+		if (!heros.isEmpty()) {
+			updateHeroFate(troop.getUserId(), heros);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void doEvent(Event event) {
+		if (event.getEventType() == EventTypeConstants.EVT_USER_LEVEL_UP) {
+			Map<String, Object> params = (Map<String, Object>) event
+					.getParams();
+			User user = (User) params.get("user");
+			doCreateTroopByLevelUp(user.getUserId());
+		}
+	}
+
+	@Override
+	public void doCreateTroopByLevelUp(long userId) {
+		lockTroop(userId);
+		User user = userService.getUserById(userId);
+		// 判断用户当前可以创建几个军团
+		List<Troop> troops = getTroopsByUserId(userId);
+		int size = troops.size();
+		if (size >= TroopType.getMaxTroop()) {
+			return;
+		}
+
+		for (int i = size + 1; i <= TroopType.getMaxTroop(); i++) {
+			int minUsrLv = commonService.getSysParaIntValue(
+					AppConstants.ENUMER_TROOP_NUM + i, 1);
+			if (user.getUsrLv() < minUsrLv) {
+				// 没有解锁
+				return;
+			}
+			TroopType tp = TroopType.valueOf(i);
+			// 开始创建军团
+			Troop troop = new Troop(tp.getDesc(), userId, 0, tp);
+			troopDao.createTroop(troop);
+		}
+	}
+
+	@Override
+	public Troop doCreateTroop(long userId, long heroId, boolean first) {
+		// 用来计算武将情缘的sysHeroId
+		Map<Integer, Integer> sysHeroIds = new HashMap<Integer, Integer>();
+		lockTroop(userId);
+		Hero hero = heroService.getHeroByHeroId(userId, heroId);
+		if (hero == null || hero.getUserId() != userId) {
+			throw new BaseException("武将不存在或者已经解雇");
+		}
+		if (hero.isInTroop()) {
+			throw new BaseException("武将已经配置在其他军团中");
+		}
+		Integer sysHeroId = hero.getSysHeroId();
+		sysHeroIds.put(sysHeroId, sysHeroId);
+		int troopNum = 0;
+		// 检查是否在其他军团中
+		List<Troop> troops = this.getTroopsByUserId(userId);
+		if (troops != null) {
+			troopNum = troops.size();
+		}
+		// 校验军团数量上限
+		if ((troopNum + 1) > TroopType.getMaxTroop()) {
+			throw new BaseException("军团数量达到上限");
+		}
+
+		TroopGrid grid = new TroopGrid(userId, 0, heroId, sysHeroId);
+		troopGridService.doCreateTroopGrid(grid);
+
+		// 更新武将里面绑定 的格子id
+		hero.setTroopGridId(grid.getTroopGridId());
+		hero.setStatus(HeroTroopIng.HERO_TROOP_ING.getIndex());
+		heroService.updateHero(hero, false);
+
+		// 设置目前创建的第几个军团
+		TroopType type = TroopType.valueOf(troopNum + 1);
+		Troop troop = new Troop(type.getDesc(), userId, heroId, type);
+		troop.setTroopGridId(defaultTroopGridPosition, grid.getTroopGridId());
+		// troop.setTroopGridId1(grid.getTroopGridId());
+		troopDao.createTroop(troop);
+
+		// 更新下格子 绑定下军团id
+		TroopGrid upgrid = troopGridService.getTroopGrid(userId,
+				grid.getTroopGridId());
+		upgrid.setTroopId(troop.getTroopId());
+		troopGridService.updateTroopGrid(upgrid);
+
+		// 设置队长
+		doAutoSetTeamLeader(userId, troop.getTroopId());
+
+		troopNum++;
+		// /更新武将情缘
+		updateHeroFate(userId, sysHeroIds);
+		return troop;
+	}
+
+	private void updateHeroFate(long userId, Map<Integer, Integer> sysHeroIds) {
+		for (Integer id : sysHeroIds.values()) {
+			SysHero sysHero = (SysHero) entityService.getEntity(id);
+			boolean update = false;
+			List<HeroFate> fates = sysHero.getHeroFates();
+			Hero hero = heroService.getHeroBySysHeroId(userId, id);
+			if (fates != null) {
+				StringBuilder sb = new StringBuilder();
+				for (HeroFate fate : fates) {
+					boolean match = true;
+					int[] reqSysHeroIds = fate.getReqEntIds();
+					for (Integer sysHeroId : reqSysHeroIds) {
+						if (!sysHeroIds.containsKey(sysHeroId)) {
+							match = false;
+							break;
+						}
+					}
+					// 有情缘
+					if (match) {
+						if (sb.length() > 0) {
+							sb.append(",");
+						}
+						sb.append(fate.getFateId());
+					}
+				}
+				String fateStr = sb.toString();
+				if (!fateStr.equals(hero.getHeroFate())) {
+					hero.setHeroFate(fateStr);
+					update = true;
+				}
+			}
+			if (update) {
+				heroService.updateHero(hero, true);
+			}
+		}
+	}
+
+	/**
+	 * 触发主力军团任务
+	 * 
+	 * @param user
+	 * @param troop
+	 */
+	private void troopTaskEvent(User user, Troop troop) {
+		if (troop.getTroopType().isMainTroop()) {
+			// 主力军团位置上有N个武将：0/武将数量
+			missionService.notifyMissionModule(user,
+					Mission.QCT_TYPE_MAINTROOPHERONUM, 0, troop.getHeroNum());
+		}
+	}
+
+	@Override
+	public void updateTroopStatus(long userId, long troopId, TroopIdle status,
+			Timestamp freeDttm) {
+		this.lockTroop(userId);
+		Troop troop = this.getTroopById(userId, troopId);
+		if (troop != null) {
+			updateTroopStatus(troop, status, freeDttm);
+		}
+	}
+
+	/**
+	 * 需要外部加锁
+	 */
+	@Override
+	public void updateTroopStatus(Troop troop, TroopIdle status,
+			Timestamp freeDttm) {
+		troop.setStatus(status.getIndex());
+		troop.setFreeDttm(freeDttm);
+		troopDao.updateTroop(troop);
+	}
+
+	@Override
+	public List<Troop> doRefreshTroop(long userId) {
+		long time = System.currentTimeMillis();
+		List<Troop> troops = getTroopsByUserId(userId);
+
+		for (Troop troop : troops) {
+			if (!troop.getStatusEnum().isCombat()) {
+				// 不能出征
+				if (troop.getFreeDttm() != null) {
+					if (troop.getFreeDttm().getTime() < time) {
+						this.lockTroop(userId);
+						heroService.lockHero(userId);
+						Hero[] heros = troop.getHeros();
+						for (Hero hero : heros) {
+							heroService.updateHeroActionStatus(hero,
+									HeroIdle.STATUS_IDLE, null);
+						}
+						this.updateTroopStatus(troop, TroopIdle.STATUS_IDLE,
+								null);
+
+					}
+				}
+			} else {
+				// 防止troop是空闲,hero状态被锁住的bug
+				Hero[] heros = troop.getHeros();
+				for (Hero hero : heros) {
+					if (hero != null && !hero.getActionStatusEnum().isCombat()) {
+						log.error("武将状态不正确，修改成空闲状态:{}.{}", hero.getUserId(),
+								hero.getName());
+						heroService.lockHero(userId);
+						heroService.updateHeroActionStatus(hero,
+								HeroIdle.STATUS_IDLE, null);
+					}
+				}
+			}
+		}
+		return troops;
+
+	}
+
+	@Override
+	public Troop getTroopById(long userId, long troopId) {
+		Troop troop = troopDao.getTroopById(troopId);
+		if (troop != null && troop.getUserId() == userId) {
+			return troop;
+		} else {
+			return null;
+		}
+	}
+
+	// public Troop getTroopRandom(long userId, long troopId) {
+	// Troop troop = null;
+	// if (troopId > 0) {
+	// troop = troopDao.getTroopById(userId, troopId);
+	// }
+	// if (troop == null) {
+	// // /先找冒险军团
+	// User uo = userService.getUserById(userId);
+	// if (uo != null) {
+	// troopId = uo.getTroopId();
+	// troop = troopDao.getTroopById(userId, troopId);
+	// if (troop == null) {
+	// List<Troop> troops = troopDao.getTroopsByUserId(userId);
+	// if (troops != null && troops.size() > 0) {
+	// troop = troops.get(0);
+	// }
+	// }
+	// }
+	// }
+	//
+	// if (troop != null && troop.getUserId() == userId) {
+	// return troop;
+	// } else {
+	// return null;
+	// }
+	// }
+
+	// @Override
+	// public long getRiskTroop(long userId) {
+	// // /先找冒险军团
+	// User uo = userService.getUserById(userId);
+	// if (uo != null) {
+	// return uo.getTroopId();
+	// }
+	//
+	// return 0;
+	// }
+
+	@Override
+	public List<Troop> getTroopsByUserId(long userId) {
+		return troopDao.getTroopsByUserId(userId);
+	}
+
+	@Override
+	public Troop getMainTroop(long userId) {
+		return getTroopByType(userId, TroopType.TROOP_MAIN);
+	}
+
+	@Override
+	public long getMainHero(long userId) {
+		Troop tp = getMainTroop(userId);
+		if (tp == null) {
+			return 0;
+		}
+		return tp.getMainHeroId();
+	}
+
+	@Override
+	public Troop getTroopByType(long userId, TroopType type) {
+		if (type == null) {
+			throw new BaseException("军团类型错误");
+		}
+		List<Troop> tps = getTroopsByUserId(userId);
+		if (tps != null && !tps.isEmpty()) {
+			for (Troop tp : tps) {
+				if (type.equals(tp.getTroopType())) {
+					return tp;
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public int getTroopsNum(long userId) {
+		List<Troop> troops = this.getTroopsByUserId(userId);
+		if (troops == null || troops.isEmpty()) {
+			return 0;
+		}
+		return troops.size();
+	}
+
+	@Override
+	public int getTroopCombatPower(Troop troop, boolean fullArmy) {
+		return getTroopCombatPower(troop);
+	}
+
+	@Override
+	public int getTroopCombatPower(Troop troop) {
+		int sum = 0;
+		if (troop != null) {
+			Hero[] heros = troop.getHeros();
+			for (Hero hero : heros) {
+				if (hero != null) {
+					sum = sum + hero.getCombatPower();
+				}
+			}
+		}
+		return sum;
+	}
+
+	public TroopInfo getTroopMap(Troop troop, long userId) {
+		TroopInfo.Builder info = TroopInfo.newBuilder();
+		info.setTroopId(troop.getTroopId());
+		info.setName(troop.getName());
+		info.setIndex(troop.getIndexs());
+		info.setPower(getTroopCombatPower(troop));
+
+		info.addTroopGridIds(troop.getTroopGridId1());
+		info.addTroopGridIds(troop.getTroopGridId2());
+		info.addTroopGridIds(troop.getTroopGridId3());
+		info.addTroopGridIds(troop.getTroopGridId4());
+		info.addTroopGridIds(troop.getTroopGridId5());
+		info.addTroopGridIds(troop.getTroopGridId6());
+
+		info.setStatus(troop.getStatusEnum().getIndex());
+		Timestamp tp = troop.getFreeDttm();
+		if (tp != null) {
+			info.setFreeDttm(tp.getTime());
+		}
+		info.setMainHeroId(troop.getMainHeroId());
+		return info.build();
+	}
+
+	@Override
+	public void doSetTeamLeader(long userId, long troopId, long heroId) {
+		lockTroop(userId);
+
+		Hero hero = heroService.getHeroByHeroId(userId, heroId);
+		if (hero == null) {
+			throw new BaseException("武将不存在");
+		}
+
+		if (!hero.idle()) {
+			throw new BaseException("武将不是空闲状态");
+		}
+
+		if (!hero.isHero()) {
+			throw new BaseException("不是武将");
+		}
+
+		if (!hero.isInTroop()) {
+			throw new BaseException("武将不在军团里面");
+		}
+
+		if (hero.isTeamLeader()) {
+			throw new BaseException("武将已经是队长了");
+		}
+		Troop troop = getTroopById(userId, troopId);
+		if (troop == null) {
+			log.error(
+					"doSetTeamLeader error Troop not exit userId={},troopId={}",
+					userId, troopId);
+			return;
+		}
+		// 获取已经是队长的武将
+		Hero leader = getTroopTeamLeader(userId, troop);
+		if (leader != null) {
+			leader.setTeamLeader(TeamLeaderType.HERO_COMMON.getIndex());
+			heroService.updateHero(leader, true);
+		}
+		hero.setTeamLeader(TeamLeaderType.HERO_TEAM_LEADER.getIndex());
+		heroService.updateHero(hero, true);
+	}
+
+	@Override
+	public void doAutoSetTeamLeader(long userId, long troopId) {
+		Troop troop = getTroopById(userId, troopId);
+		if (troop == null) {
+			log.error(
+					"doAutoSetTeamLeader error Troop not exit userId={},troopId={}",
+					userId, troopId);
+			return;
+		}
+		Hero teamLeader = getTroopTeamLeader(userId, troop);
+		if (teamLeader != null) {// 有队长了
+			return;
+		}
+		// 顺序迭代。。设置队长
+		TroopGridPosition[] tps = TroopGridPosition.values();
+		for (TroopGridPosition tp : tps) {
+			long troopGridId = tp.getTroopGridId(troop);
+			if (troopGridId <= 0) {
+				continue;
+			}
+			TroopGrid tg = troopGridService.getTroopGrid(userId, troopGridId);
+			if (tg == null) {
+				continue;
+			}
+			if (tg.getHeroId() <= 0) {
+				continue;
+			}
+			Hero hero = heroService.getHeroByHeroId(userId, tg.getHeroId());
+			if (hero == null) {
+				continue;
+			}
+			hero.setTeamLeader(TeamLeaderType.HERO_TEAM_LEADER.getIndex());
+			heroService.updateHero(hero, false);
+			break;
+		}
+
+	}
+
+	@Override
+	public Troop doSaveTroopGrid(long userId, long troopId,
+			List<Long> troopGrids) {
+		// log.error("doSaveTroopGrid{}", troopGrids.toString());
+		lockTroop(userId);
+		troopGridService.lockTroopGrid(userId);
+		Troop troop = getTroopById(userId, troopId);
+		if (troop == null) {
+			throw new BaseException("军团不存在");
+		}
+
+		if (troopGrids.isEmpty()
+				|| troopGrids.size() != TroopGridPosition.MAX_TROOP_GRID) {
+			throw new BaseException("客户端传格子数据不为6");
+		}
+
+		Map<Long, TroopGridPosition> hasTGs = new HashMap<Long, TroopGridPosition>();
+		TroopGridPosition[] tps = TroopGridPosition.values();
+		for (TroopGridPosition p : tps) {
+			long id = p.getTroopGridId(troop);
+			if (id <= 0) {
+				continue;
+			}
+			hasTGs.put(Long.valueOf(id), p);
+		}
+
+		List<TroopGrid> tgs = new java.util.ArrayList<TroopGrid>(
+				troopGrids.size());
+		for (Long l : troopGrids) {
+			if (l <= 0) {
+				tgs.add(null);
+				continue;
+			}
+			TroopGrid t = troopGridService.getTroopGrid(userId, l);
+			if (t == null || t.getTroopId() != troopId) {
+				throw new BaseException("格子布属于此军团" + l);
+			}
+			Long d = Long.valueOf(l);
+			TroopGridPosition tp = hasTGs.remove(d);
+			if (tp == null) {
+				throw new BaseException("格子数据不存在");
+			}
+			tgs.add(t);
+		}
+
+		// 校验数据是否合法
+		if (hasTGs.size() > 0) {
+			throw new BaseException("格子数据异常");
+		}
+		// 重置军团里面绑定的所有格子数据
+		troop.restTroopGrids();
+
+		int size = tgs.size();
+		for (int p = 0; p < size; p++) {
+			TroopGrid tg = tgs.get(p);
+			if (tg == null) {
+				continue;
+			}
+			TroopGridPosition tgp = TroopGridPosition.valueOf(p);
+
+			// tg.setPosition(p);
+			tgp.setTroopGridId(troop, tg.getTroopGridId());
+
+			// 保存数据
+			// troopGridService.updateTroopGrid(tg);
+		}
+		doUpdateTroop(troop);
+		// checkHasSameTroopGridInTroop(troop);
+		return troop;
+	}
+
+	@Override
+	public void lockTroop(long userId) {
+		heroService.lockHero(userId);
+	}
+
+	public void setTroopGridService(ITroopGridService troopGridService) {
+		this.troopGridService = troopGridService;
+	}
+
+}

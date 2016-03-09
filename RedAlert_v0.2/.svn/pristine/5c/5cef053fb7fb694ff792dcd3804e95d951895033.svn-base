@@ -1,0 +1,51 @@
+package com.youxigu.dynasty2.armyout.domain.action;
+
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.map.domain.action.TimeAction;
+import com.youxigu.dynasty2.map.service.ICommander;
+
+/**
+ * 侦查
+ * 
+ * @author LK
+ * @date 2016年2月29日
+ */
+public class SpyAction extends TimeAction {
+	private MapCell fromMapCell;
+	private MapCell toMapCell;
+	private Armyout armyout;
+
+	public SpyAction(MapCell fromMapCell, MapCell toMapCell, Armyout armyout,
+			long time) {
+		super.time = time;
+		super.cmd = ICommander.COMMAND_201;
+		this.fromMapCell = fromMapCell;
+		this.toMapCell = toMapCell;
+		this.armyout = armyout;
+	}
+
+	public MapCell getFromMapCell() {
+		return fromMapCell;
+	}
+
+	public void setFromMapCell(MapCell fromMapCell) {
+		this.fromMapCell = fromMapCell;
+	}
+
+	public MapCell getToMapCell() {
+		return toMapCell;
+	}
+
+	public void setToMapCell(MapCell toMapCell) {
+		this.toMapCell = toMapCell;
+	}
+
+	public Armyout getArmyout() {
+		return armyout;
+	}
+
+	public void setArmyout(Armyout armyout) {
+		this.armyout = armyout;
+	}
+}

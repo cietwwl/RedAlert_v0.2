@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+
+<Party entId="59899" partyName="君主等级" iconPath="level" />
+<Party entId="59900" partyName="时间" iconPath="time" />
+<Party entId="59801" partyName="钻石" iconPath="cash" />
+
+<Party entId="59702" partyName="行动力" iconPath="actionPoint" />
+<Party entId="59603" partyName="君主经验" iconPath="userHonor" />
+<Party entId="59504" partyName="体力" iconPath="userHp" />
+
+<Party entId="59505" partyName="军功" iconPath="junGong" />
+
+
+</dataset>

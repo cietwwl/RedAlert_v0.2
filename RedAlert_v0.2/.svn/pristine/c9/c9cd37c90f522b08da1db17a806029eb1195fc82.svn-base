@@ -1,0 +1,63 @@
+package com.youxigu.dynasty2.map.service.impl;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import com.youxigu.dynasty2.map.domain.MapCell;
+
+/**
+ * 坐标点threadlocal缓存
+ * 
+ * @author LK
+ * @date 2016年2月18日
+ */
+public class ThreadLocalMapCellCache {
+	private static ThreadLocal<Boolean> inTrans = new ThreadLocal<Boolean>() {
+		protected Boolean initialValue() {
+			return Boolean.FALSE;
+		}
+
+	};
+
+	private static ThreadLocal<List<MapCell>> messages = new ThreadLocal<List<MapCell>>() {
+		// protected List<MapCell> initialValue() {
+		// return new ArrayList<MapCell>();
+		// }
+	};
+
+	public static void clean() {
+		messages.remove();
+		inTrans.set(false);
+	}
+
+	public static void commit() {
+		// do nothing
+	}
+
+	public static List<MapCell> getData() {
+		return messages.get();
+	}
+
+	public static void addData(MapCell msg) {
+		List<MapCell> datas = messages.get();
+		if (datas == null) {
+			datas = new LinkedList<MapCell>();
+			messages.set(datas);
+		}
+		datas.add(msg);
+	}
+
+	public static void addAll(List<MapCell> objs) {
+		List<MapCell> datas = messages.get();
+		datas.addAll(objs);
+	}
+
+	public static void setInTrans(boolean trans) {
+		inTrans.set(trans);
+	}
+
+	public static boolean isInTrans() {
+		return inTrans.get();
+	}
+
+}

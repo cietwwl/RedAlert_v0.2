@@ -1,0 +1,97 @@
+package com.youxigu.dynasty2.armyout.domain.action;
+
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+import com.youxigu.dynasty2.armyout.domain.Strategy;
+import com.youxigu.dynasty2.develop.domain.CastleBuilding;
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.map.domain.action.TimeAction;
+import com.youxigu.dynasty2.map.service.ICommander;
+import com.youxigu.dynasty2.user.domain.User;
+
+/**
+ * 侦查
+ * 
+ * @author LK
+ * @date 2016年2月29日
+ */
+public class SpyAction extends TimeAction {
+	private MapCell fromMapCell;
+	private MapCell toMapCell;
+	private Armyout armyout;
+	private User fromUser;
+	private User toUser;
+	private Strategy strategy;
+	private CastleBuilding casBui;
+
+	public SpyAction(MapCell fromMapCell, MapCell toMapCell, Armyout armyout,
+			User fromUser, User toUser, Strategy strategy,
+			CastleBuilding casBui,
+			long time) {
+		super.time = time;
+		super.cmd = ICommander.COMMAND_201;
+		this.fromMapCell = fromMapCell;
+		this.toMapCell = toMapCell;
+		this.fromUser = fromUser;
+		this.toUser = toUser;
+		this.strategy = strategy;
+		this.armyout = armyout;
+		this.casBui = casBui;
+	}
+
+	public MapCell getFromMapCell() {
+		return fromMapCell;
+	}
+
+	public void setFromMapCell(MapCell fromMapCell) {
+		this.fromMapCell = fromMapCell;
+	}
+
+	public MapCell getToMapCell() {
+		return toMapCell;
+	}
+
+	public void setToMapCell(MapCell toMapCell) {
+		this.toMapCell = toMapCell;
+	}
+
+	public Armyout getArmyout() {
+		return armyout;
+	}
+
+	public void setArmyout(Armyout armyout) {
+		this.armyout = armyout;
+	}
+
+	public User getFromUser() {
+		return fromUser;
+	}
+
+	public void setFromUser(User fromUser) {
+		this.fromUser = fromUser;
+	}
+
+	public User getToUser() {
+		return toUser;
+	}
+
+	public void setToUser(User toUser) {
+		this.toUser = toUser;
+	}
+
+	public Strategy getStrategy() {
+		return strategy;
+	}
+
+	public void setStrategy(Strategy strategy) {
+		this.strategy = strategy;
+	}
+
+	public CastleBuilding getCasBui() {
+		return casBui;
+	}
+
+	public void setCasBui(CastleBuilding casBui) {
+		this.casBui = casBui;
+	}
+
+}

@@ -1,0 +1,514 @@
+package com.youxigu.dynasty2.map.service.impl;
+
+import com.ibatis.sqlmap.engine.cache.memcached.MemcachedManager;
+import com.manu.core.ServiceLocator;
+import com.manu.util.UtilDate;
+import com.youxigu.dynasty2.combat.domain.CombatTeam;
+import com.youxigu.dynasty2.common.AppConstants;
+import com.youxigu.dynasty2.common.service.ICommonService;
+import com.youxigu.dynasty2.hero.service.ITroopService;
+import com.youxigu.dynasty2.map.dao.IResCasDao;
+import com.youxigu.dynasty2.map.domain.*;
+import com.youxigu.dynasty2.map.domain.action.RefreshAction;
+import com.youxigu.dynasty2.map.service.ICommandDistatcher;
+import com.youxigu.dynasty2.map.service.ICommander;
+import com.youxigu.dynasty2.map.service.IMapService;
+import com.youxigu.dynasty2.map.service.IResCasService;
+import com.youxigu.dynasty2.map.service.impl.command.RefreshDynResCasCommand;
+import com.youxigu.dynasty2.user.service.IUserService;
+import com.youxigu.dynasty2.util.BaseException;
+import com.youxigu.wolf.net.NodeSessionMgr;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
+
+import java.sql.Timestamp;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+public class ResCasService implements IResCasService, ApplicationListener {
+    private Logger log = LoggerFactory.getLogger(ResCasService.class);
+    private static final String RES_CAS_LOCK_PREFIX = "RES_CAS_LOCK_";
+    private static final String DYN_RES_CAS_LOCK_PREFIX = "DYN_RES_CAS_LOCK_";
+    private Map<Integer, List<DynResCasRule>> dynResCasRuleMap = new ConcurrentHashMap<Integer, List<DynResCasRule>>();
+    private Map<Integer, List<ResCas>> resCasMapByCasType = new ConcurrentHashMap<Integer, List<ResCas>>();
+    private Map<Integer, ResCas> resCasMap = new ConcurrentHashMap<Integer, ResCas>();
+
+    private IResCasDao resCasDao;
+    private IMapService mapService;
+    private ICommonService commonService;
+    private ITroopService troopService;
+    private IUserService userService;
+    private ICommandDistatcher commandDistatcher;
+
+    private void init(){
+        if(!isMainServer()){
+            return;
+        }
+
+        List<ResCas> resCasList = resCasDao.getAllResCas();
+        for (ResCas resCas : resCasList){
+            int casType = resCas.getCasType();
+            if(!resCasMapByCasType.containsKey(casType)){
+                resCasMapByCasType.put(casType, new LinkedList<ResCas>());
+            }
+            resCasMapByCasType.get(casType).add(resCas);
+
+            resCasMap.put(resCas.getId(), resCas);
+        }
+
+        List<DynResCasRule> allRules = resCasDao.getDynResCasRules();
+        for(DynResCasRule rule : allRules){
+            if(!dynResCasRuleMap.containsKey(rule.getStateId())){
+                dynResCasRuleMap.put(rule.getStateId(), new LinkedList<DynResCasRule>());
+            }
+            dynResCasRuleMap.get(rule.getStateId()).add(rule);
+        }
+    }
+
+    @Override
+    public void lockResCas(int mapCellId) {
+        try {
+            MemcachedManager.lock(RES_CAS_LOCK_PREFIX + mapCellId);
+        } catch (TimeoutException e) {
+            throw new BaseException(e);
+        }
+    }
+
+    @Override
+    public UserResCas lockAndGetUserResCas(int mapCellId) {
+        try {
+            MemcachedManager.lock(RES_CAS_LOCK_PREFIX + mapCellId);
+            return resCasDao.getUserResCas(mapCellId);
+        } catch (TimeoutException e) {
+            throw new BaseException(e);
+        }
+    }
+
+    @Override
+    public GuildResCas lockAndGetGuildResCasByMapCellId(int mapCellId) {
+        try {
+            MemcachedManager.lock(RES_CAS_LOCK_PREFIX+mapCellId);
+            return resCasDao.getGuildResCasByMapCellId(mapCellId);
+        } catch (TimeoutException e) {
+            throw new BaseException(e);
+        }
+    }
+
+    @Override
+    public CountryResCas lockAndGetCountryResCasByMapCellId(int mapCellId) {
+        try {
+            MemcachedManager.lock(RES_CAS_LOCK_PREFIX+mapCellId);
+            return resCasDao.getCountryResCasByMapCellId(mapCellId);
+        } catch (TimeoutException e) {
+            throw new BaseException(e);
+        }
+    }
+
+    @Override
+    public void doOccupyUserResCas(long userId, int mapCellId) {
+        UserResCas userResCas = lockAndGetUserResCas(mapCellId);
+        MapCell mapCell = mapService.getMapCellForRead(mapCellId);
+        if (userResCas == null) { //如果该资源点还没有被占领过
+            //查找该资源点的ResCas定义
+            int resCasId;
+            if (mapCell.getEarthType() == MapCell.CAS_TYPE_USER) {
+                resCasId = mapCell.getEarthId();
+            } else if (mapCell.getCastType() == MapCell.CAS_TYPE_RES) {
+                resCasId = (int) mapCell.getCasId();
+            } else {
+                throw new BaseException("MapCell{" + mapCellId + "}不是个人资源点");
+            }
+            ResCas resCas = resCasMap.get(resCasId);
+            if (resCas == null) {
+                throw new BaseException("指定的ResCas不存在：" + resCasId);
+            }
+
+            //创建userResCas并初始化相关的字段
+            userResCas = new UserResCas();
+            userResCas.setUserId(userId);
+            userResCas.setMapCellId(mapCellId);
+            userResCas.setResCasId(resCasId);
+            userResCas.setCasHp(resCas.getCasHp());
+
+            int mianzhanSeconds = commonService.getSysParaIntValue(
+                    AppConstants.MIANZHAN_TIME_SECONDS,
+                    AppConstants.MIANZHAN_TIME_SECONDS_DEFAULT_VALUE
+            );
+            userResCas.setMianzhanExpireTime(UtilDate.moveSecond(mianzhanSeconds));
+
+            long now = System.currentTimeMillis();
+            userResCas.setOccupyTime(new Timestamp(now));
+
+            if (isDynamicResCas(mapCell) && resCas.getTimeSpan() > 0) {
+                userResCas.setExpireTime(UtilDate.moveSecond(resCas.getTimeSpan()));
+            } else {
+                userResCas.setExpireTime(new Timestamp(Long.MAX_VALUE));
+            }
+
+            resCasDao.createUserResCas(userResCas);
+        } else {
+            //如果该资源点已经被占领过，则只是更新
+
+            //如果是动态刷新的个人资源点且资源点已超时，退出
+            if (isDynamicResCas(mapCell) && userResCas.getExpireTime().before(UtilDate.nowTimestamp())) {
+                throw new BaseException("资源地{" + mapCellId + "}已超期");
+            }
+            userResCas.setUserId(userId);
+            userResCas.setOccupyTime(UtilDate.nowTimestamp());
+            int mianzhanSeconds = commonService.getSysParaIntValue(
+                    AppConstants.MIANZHAN_TIME_SECONDS,
+                    AppConstants.MIANZHAN_TIME_SECONDS_DEFAULT_VALUE
+            );
+            userResCas.setMianzhanExpireTime(UtilDate.moveSecond(mianzhanSeconds));
+
+            resCasDao.updateUserResCas(userResCas);
+        }
+    }
+
+    private boolean isDynamicResCas(MapCell mapCell){
+        if (mapCell.getCastType() == MapCell.CAS_TYPE_RES) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void doOccupyGuildResCas(long guildId, int mapCellId) {
+
+    }
+
+    @Override
+    public void doOccupyCountryResCas(long guildId, int mapCellId) {
+
+    }
+
+    @Override
+    public void refreshDynResCas(int stateId) {
+        cleanDynResCas(stateId);
+
+        newDynResCas(stateId);
+    }
+
+    @Override
+    public void cleanDynResCas(int stateId) {
+        List<DynResCas> resCases = resCasDao.getDynResCasOfState(stateId);
+        log.debug("start clean idle dynrescas ");
+        for (DynResCas resCas : resCases) {
+            ((IResCasService)ServiceLocator.getSpringBean("resCasService")).
+                    doResetIdleDynResCas(resCas, false);
+        }
+    }
+
+    @Override
+    public void doResetIdleDynResCas(DynResCas resCas, boolean throwException) {
+        if(log.isDebugEnabled()) {
+            log.debug("reset idle dynrescas " + resCas.getMapCellId());
+        }
+        try {
+            if (resCas.getUserId() == 0) {
+                MapCell mapCell = mapService.getMapCellForWrite(resCas.getMapCellId());
+                if (mapCell.getToArmyouts().size() == 0) {
+                    resCasDao.deleteDynResCas(resCas.getMapCellId());
+                    resetMapCell(mapCell);
+                }
+            } else if (resCas.getExpireTime().before(UtilDate.nowTimestamp())) {
+                resCasDao.deleteDynResCas(resCas.getMapCellId());
+                MapCell mapCell = mapService.getMapCellForWrite(resCas.getMapCellId());
+                resetMapCell(mapCell);
+            }
+        } catch (Exception e) {
+            String s = "重置动态资源点[" + resCas.getMapCellId() + "]出错";
+            log.error(s, e);
+            if(throwException){
+                throw new BaseException(s);
+            }
+        }
+    }
+
+    @Override
+    public void deleteDynResCas(int mapCellId) throws InterruptedException {
+        resCasDao.deleteDynResCas(mapCellId);
+        MapCell mapCell = mapService.getMapCellForWrite(mapCellId);
+        resetMapCell(mapCell);
+   }
+
+    @Override
+    public void newDynResCas(int stateId) {
+        //统计每个等级的资源点的现有数量
+        Map<Integer, Integer> currResNum = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> currNpcNum = new HashMap<Integer, Integer>();
+
+        List<DynResCas> resCases = resCasDao.getDynResCasOfState(stateId);
+        for (DynResCas resCas : resCases) {
+            int level = resCas.getCasLevel();
+            if(resCas.getCasType() == ResCas.CAS_TYPE_PERSONAL){
+                if(currResNum.get(level) == null){
+                    currResNum.put(level, 0);
+                }
+                currResNum.put(level, currResNum.get(level)+1);
+            }
+            if(resCas.getCasType() == ResCas.CAS_TYPE_NPC){
+                if(currNpcNum.get(level) == null){
+                    currNpcNum.put(level, 0);
+                }
+                currNpcNum.put(level, currNpcNum.get(level)+1);
+            }
+        }
+
+        //统计各个级别个人资源点对应的ResCas定义
+        List<ResCas> personalResCasList = resCasMapByCasType.get(ResCas.CAS_TYPE_PERSONAL);
+        if(personalResCasList == null || personalResCasList.size()==0){
+            throw new BaseException("个人资源点元数据未定义");
+        }
+        Map<Integer, List<ResCas>> personalResCasMapByLevel = new HashMap<Integer, List<ResCas>>();
+        for(ResCas resCas : personalResCasList){
+            int level = resCas.getCasLevel();
+            if(personalResCasMapByLevel.get(level) == null){
+                personalResCasMapByLevel.put(level, new ArrayList<ResCas>());
+            }
+            personalResCasMapByLevel.get(level).add(resCas);
+        }
+
+        //统计各个级别野怪NPC对应的ResCas定义
+        List<ResCas> npcResCasList = resCasMapByCasType.get(ResCas.CAS_TYPE_NPC);
+        if(personalResCasList == null || personalResCasList.size()==0){
+            throw new BaseException("野怪NPC元数据未定义");
+        }
+        Map<Integer, List<ResCas>> npcResCasMapByLevel = new HashMap<Integer, List<ResCas>>();
+        for(ResCas resCas : npcResCasList){
+            int level = resCas.getCasLevel();
+            if(npcResCasMapByLevel.get(level) == null){
+                npcResCasMapByLevel.put(level, new ArrayList<ResCas>());
+            }
+            npcResCasMapByLevel.get(level).add(resCas);
+        }
+
+        //按需要刷新的数量创建各个等级的个人资源点和野怪资源点
+        List<DynResCasRule> dynResCasRules = getDynResCasRuleOfState(stateId);
+        if(dynResCasRules == null || dynResCasRules.size() == 0){
+//            throw new BaseException("区("+stateId+")动态资源点刷新规则未定义");
+            log.warn("区("+stateId+")动态资源点刷新规则未定义");
+            return;
+        }
+        for(DynResCasRule rule : dynResCasRules){
+            if(rule.getType() == DynResCasRule.TYPE_PERSONAL_RES_CAS){
+                int newCount = calcCount(rule.getCount(), currResNum.get(rule.getLevel()));
+                for(int i=0;i<newCount;i++) {
+                    Random random = new Random();
+                    ((IResCasService)ServiceLocator.getSpringBean("resCasService")).
+                    doCreateRandomResCas(personalResCasMapByLevel.get(rule.getLevel()), stateId, random);
+                }
+            }
+            if(rule.getType() == DynResCasRule.TYPE_NPC_RES_CAS){
+                int newCount = calcCount(rule.getCount(), currNpcNum.get(rule.getLevel()));
+                for(int i=0;i<newCount;i++) {
+                    Random random = new Random();
+                    ((IResCasService)ServiceLocator.getSpringBean("resCasService")).
+                    doCreateRandomNpcCas(npcResCasMapByLevel.get(rule.getLevel()), stateId, random);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void doCreateRandomResCas(List<ResCas> resCasDefines, int stateId, Random random) {
+        if(log.isDebugEnabled()) {
+            log.debug("start doCreateRandomResCas");
+        }
+
+        if(resCasDefines.size()==0){
+            log.warn("随机刷新个人资源点，未找到资源点定义");
+        }
+        MapCell mapCell = mapService.getRandomIdleCell(stateId, true);
+        if(mapCell == null){
+            log.warn("随机刷新个人资源点，尝试多次后未找到空闲点");
+            return;
+        }
+
+        int index = random.nextInt(resCasDefines.size())-1;
+        index = index < 0 ? 0 : index;
+        ResCas resCas = resCasDefines.get(index);
+
+        mapCell.setCastType(MapCell.CAS_TYPE_RES);
+        mapCell.setCasId(resCas.getId());
+        mapService.updateMapCell(mapCell);
+
+        DynResCas dynResCas = new DynResCas();
+        dynResCas.setCasHp(resCas.getCasHp());
+        dynResCas.setCasLevel(resCas.getCasLevel());
+        dynResCas.setResCasId(resCas.getId());
+        dynResCas.setMapCellId(mapCell.getId());
+        dynResCas.setStateId(stateId);
+        dynResCas.setCasType(ResCas.CAS_TYPE_PERSONAL);
+
+        //todo: modify
+//        String[] npcIdArray = resCas.getNpcIds().split(",");
+//        if(npcIdArray.length>0) {
+//            dynResCas.setNpcId(Integer.parseInt(npcIdArray[0]));
+//        }
+
+        resCasDao.createDynResCas(dynResCas);
+    }
+
+    @Override
+    public void doCreateRandomNpcCas(List<ResCas> npcCasDefines, int stateId, Random random) {
+        if(log.isDebugEnabled()) {
+            log.debug("start doCreateRandomNpcCas");
+        }
+
+        if(npcCasDefines.size()==0){
+            log.warn("随机刷新个人资源点，未找到资源点定义");
+        }
+        MapCell mapCell = mapService.getRandomIdleCell(stateId, true);
+        if(mapCell == null){
+            log.warn("随机刷新个人资源点，尝试多次后未找到空闲点");
+            return;
+        }
+
+        int index = random.nextInt(npcCasDefines.size())-1;
+        index = index < 0 ? 0 : index;
+        ResCas resCas = npcCasDefines.get(index);
+
+        mapCell.setCastType(MapCell.CAS_TYPE_NPC);
+        mapCell.setCasId(resCas.getId());
+        mapService.updateMapCell(mapCell);
+
+        DynResCas dynResCas = new DynResCas();
+        dynResCas.setCasHp(resCas.getCasHp());
+        dynResCas.setCasLevel(resCas.getCasLevel());
+        dynResCas.setResCasId(resCas.getId());
+        dynResCas.setMapCellId(mapCell.getId());
+        dynResCas.setStateId(stateId);
+        dynResCas.setCasType(ResCas.CAS_TYPE_NPC);
+
+        //todo: modify
+//        String[] npcIdArray = resCas.getNpcIds().split(",");
+//        if(npcIdArray.length>0) {
+//            dynResCas.setNpcId(Integer.parseInt(npcIdArray[0]));
+//        }
+
+        resCasDao.createDynResCas(dynResCas);
+    }
+
+    public List<DynResCasRule> getDynResCasRuleOfState(int stateId){
+        return dynResCasRuleMap.get(stateId);
+    }
+
+    /**
+     * 根据配置的总数量和当前数量计算应该刷新的数量
+     * @param count
+     * @param currNum
+     * @return
+     */
+    private int calcCount(int configCount, Integer currCount) {
+        int curr = currCount == null ? 0 : currCount;
+        int newCount = configCount - curr;
+        return newCount > 0 ? newCount : 0;
+    }
+
+    private void resetMapCell(MapCell mapCell) throws InterruptedException {
+        mapCell.setCastType(MapCell.CAS_TYPE_UNDEFINE);
+        mapCell.setCasId(0);
+        mapCell.setUserId(0);
+        mapCell.setGuildId(0);
+        mapService.updateMapCell(mapCell);
+    }
+
+    @Override
+    public boolean isGuildOrCountryResCasOpen(int mapCellId) {
+        return false;
+    }
+
+
+    @Override
+    public void doSetMirrorCombatTeam(int mapCellId, CombatTeam combatTeam, int time, TimeUnit timeUnit) {
+
+    }
+
+    @Override
+    public CombatTeam doGetMirrorCombatTeam(int mapCellId) {
+        return null;
+    }
+
+    @Override
+    public void onApplicationEvent(ApplicationEvent applicationEvent) {
+        //启动后5分钟，执行刷新动态资源地任务
+        if(applicationEvent instanceof ContextRefreshedEvent){
+            if(!isMainServer()){
+                return;
+            }
+
+            RefreshAction cmd = new RefreshAction();
+            cmd.setCmd(ICommander.COMMAND_2);
+            cmd.setTime(UtilDate.moveSecond(5*60).getTime());
+//            cmd.setTime(UtilDate.moveSecond(10).getTime());
+            cmd.setAct(RefreshDynResCasCommand.ACTION_START_DYN_RES_CAS);
+            commandDistatcher.putCommander(0, cmd);
+        }
+    }
+
+    private boolean isMainServer(){
+        String str = System.getProperty(NodeSessionMgr.SERVER_TYPE_KEY);
+        if (str == null) {
+            return false;
+        }
+        int serverType = Integer.parseInt(str);
+        if (serverType == NodeSessionMgr.SERVER_TYPE_MAIN) {
+            return true;
+        }
+        return false;
+    }
+
+    public IResCasDao getResCasDao() {
+        return resCasDao;
+    }
+
+    public void setResCasDao(IResCasDao resCasDao) {
+        this.resCasDao = resCasDao;
+    }
+
+    public IMapService getMapService() {
+        return mapService;
+    }
+
+    public void setMapService(IMapService mapService) {
+        this.mapService = mapService;
+    }
+
+    public ICommonService getCommonService() {
+        return commonService;
+    }
+
+    public void setCommonService(ICommonService commonService) {
+        this.commonService = commonService;
+    }
+
+    public ITroopService getTroopService() {
+        return troopService;
+    }
+
+    public void setTroopService(ITroopService troopService) {
+        this.troopService = troopService;
+    }
+
+    public IUserService getUserService() {
+        return userService;
+    }
+
+    public void setUserService(IUserService userService) {
+        this.userService = userService;
+    }
+
+    public ICommandDistatcher getCommandDistatcher() {
+        return commandDistatcher;
+    }
+
+    public void setCommandDistatcher(ICommandDistatcher commandDistatcher) {
+        this.commandDistatcher = commandDistatcher;
+    }
+}

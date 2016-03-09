@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<dataset>
+
+<BuffDefine BuffId="10001001" BuffName="BF_GOLD_SPEEDUP" itemId="1020141" />
+<BuffDefine BuffId="10001002" BuffName="BF_GOLD_SPEEDUP" itemId="1020142" />
+<BuffDefine BuffId="10001003" BuffName="BF_GOLD_SPEEDUP" itemId="1020143" />
+<BuffDefine BuffId="10002001" BuffName="BF_IRON_SPEEDUP" itemId="1020151" />
+<BuffDefine BuffId="10002002" BuffName="BF_IRON_SPEEDUP" itemId="1020152" />
+<BuffDefine BuffId="10002003" BuffName="BF_IRON_SPEEDUP" itemId="1020153" />
+<BuffDefine BuffId="10003001" BuffName="BF_OIL_SPEEDUP" itemId="1020161" />
+<BuffDefine BuffId="10003002" BuffName="BF_OIL_SPEEDUP" itemId="1020162" />
+<BuffDefine BuffId="10003003" BuffName="BF_OIL_SPEEDUP" itemId="1020163" />
+<BuffDefine BuffId="10004001" BuffName="BF_URANIUM_SPEEDUP" itemId="1020171" />
+<BuffDefine BuffId="10004002" BuffName="BF_URANIUM_SPEEDUP" itemId="1020172" />
+<BuffDefine BuffId="10004003" BuffName="BF_URANIUM_SPEEDUP" itemId="1020173" />
+
+
+
+
+</dataset>

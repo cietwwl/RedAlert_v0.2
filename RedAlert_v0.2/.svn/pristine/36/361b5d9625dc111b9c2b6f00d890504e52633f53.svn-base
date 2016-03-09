@@ -1,0 +1,33 @@
+package com.youxigu.dynasty2.map.service;
+
+import java.io.Serializable;
+import java.util.Map;
+
+import com.youxigu.dynasty2.map.domain.action.TimeAction;
+
+/**
+ * 地图任务执行器接口
+ * 
+ * @author LK
+ * @date 2016年2月18日
+ */
+public interface ICommander extends Serializable{
+	public static final int COMMAND_1 = 1;// load地图坐标
+
+	// 出征
+	public static final int COMMAND_201 = 201;// 侦查
+	public static final int COMMAND_202 = 202;// 出征
+	public static final int COMMAND_203 = 203;// 驻守
+	public static final int COMMAND_204 = 204;// 集结
+	public static final int COMMAND_205 = 205;// 返回
+	public static final int COMMAND_206 = 206;// 遣返
+	public static final int COMMAND_207 = 207;// 撤退
+
+	/**
+	 * 执行行为
+	 * 
+	 * @param action
+	 * @return
+	 */
+	Map<String, Object> doExcute(TimeAction action);
+}

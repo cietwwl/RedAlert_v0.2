@@ -1,0 +1,78 @@
+package dynasty;
+
+import "Common.proto";
+import "CombatMsg.proto";
+
+option java_package = "com.youxigu.dynasty2.tower.proto";
+option java_outer_classname = "TowerMsg";
+
+//排行信息
+message TowerRankingItem{
+    required int64 userId = 1;//用户id[必须]
+    optional int32 order = 2;//排行名次，第一名为0，第二名为1，依次类推
+    optional string userName = 3;//用户名[必须]
+    optional int32 maxStage = 4;//该用户打塔到达的最高层[必须]
+}
+
+//52001 获取重楼信息（nodeserver）
+message Request52001Define{
+    required int32 cmd = 1;
+}
+
+//52002 获取重楼信息返回结果
+message Response52001Define{
+    optional ResponseHead responseHead = 1;
+    repeated TowerRankingItem ranking = 2;
+    optional int32 myMaxStage = 3;//用户楼层最高纪录
+    optional int32 myOrder = 4;//用户排名。0：未上榜; 大于0：排名
+    optional int32 freeJoinLimit = 5;//每日免费进入次数上限
+    optional int32 freeJoinTimes = 6;//当日剩余的免费进入次数
+    optional int32 itemJoinLimit = 7;//每日道具进入次数上限
+    optional int32 itemJoinTimes = 8;//当日剩余的道具进入次数
+    optional int32 currentStatus = 9;//当前是否在重楼里。0：未进入重楼；1：已进入重楼且未退出
+}
+
+//52003 进入挑战界面（nodeserver）
+message Request52003Define{
+    required int32 cmd = 1;
+}
+
+//52004 进入挑战界面返回结果
+message Response52003Define{
+    optional ResponseHead responseHead = 1;
+    optional int32 userPower = 2;//用户战力
+    optional string npcName = 3;//npc名称
+    optional int32 npcPower = 4;//npc战力
+    optional int32 stage = 5;//当前楼层
+    optional int32 firstBonusId = 6;//首通奖励entityId
+    optional int32 nextKeyStageBonusId = 7;//下一个关键关卡奖励entityId
+    optional int32 reliveLimit = 8;//复活次数上限
+    optional int32 reliveTimes = 9;//剩余复活次数
+    repeated ItemInfo wipeOutBonus = 10;//清剿奖励
+}
+
+//52005 挑战（nodeserver）
+message Request52005Define{
+    required int32 cmd = 1;
+}
+
+//52006 挑战返回结果
+message Response52005Define{
+    optional ResponseHead responseHead = 1;
+    optional int32 combatId = 2;
+    optional int32 stageId = 3;
+    optional int32 score = 4;
+    repeated int32 winItemId = 5;
+    optional Combat combat = 6;
+}
+
+//52007 放弃当前挑战（nodeserver）
+message Request52007Define{
+    required int32 cmd = 1;
+}
+
+//52008 放弃当前挑战返回结果
+message Response52007Define{
+    optional ResponseHead responseHead = 1;
+}
+

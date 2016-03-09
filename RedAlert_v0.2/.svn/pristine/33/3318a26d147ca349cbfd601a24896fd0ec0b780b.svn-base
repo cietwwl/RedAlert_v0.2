@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+
+<Country countryId="1" countryName="苏" neutral="1" stateId="0"/>
+<Country countryId="2" countryName="法" neutral="1" stateId="0"/>
+<Country countryId="3" countryName="德" neutral="1" stateId="0"/>
+<Country countryId="4" countryName="美" neutral="0" stateId="0"/>
+
+</dataset>

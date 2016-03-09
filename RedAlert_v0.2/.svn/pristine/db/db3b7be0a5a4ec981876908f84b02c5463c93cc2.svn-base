@@ -1,0 +1,365 @@
+package com.youxigu.dynasty2.common;
+
+/**
+ * 系统常量定义
+ * 
+ * @author Administrator
+ * 
+ */
+public class AppConstants {
+	// 时间
+	public final static int MINUTE_15_SECONDS = 900;
+	public final static int MINUTE_15_MILLS = MINUTE_15_SECONDS * 1000;
+	public final static int MINUTE_MILLS = 1000 * 60;
+	public final static int SECONDS_5 = 5;
+	public final static int HOUR_MILLS = MINUTE_MILLS * 60;
+	public final static int DATE_MILLS = HOUR_MILLS * 24;
+	public final static int HOUR_SECONDS = 3600;
+	public final static int CAS_FRESH_QUARCALCU_GAP = MINUTE_15_SECONDS;// 15分钟计算一次
+	public final static int CAS_FRESH_HOURCALCU_GAP = HOUR_SECONDS;// 1小时计算一次
+
+	// 初始资源
+	public final static String INIT_GOLD_NUM = "INIT_GOLD_NUM";
+	public final static String INIT_OIL_NUM = "INIT_OIL_NUM";
+	public final static String INIT_IRON_NUM = "INIT_IRON_NUM";
+	public final static String INIT_URANIUM_NUM = "INIT_URANIUM_NUM";
+	// 初始可收获的资源
+	public final static String INIT_GOLD_IN_BUILDING = "INIT_GOLD_IN_BUILDING";
+	public final static String INIT_OIL_IN_BUILDING = "INIT_OIL_IN_BUILDING";
+	public final static String INIT_IRON_IN_BUILDING = "INIT_IRON_IN_BUILDING";
+	public final static String INIT_URANIUM_IN_BUILDING = "INIT_URANIUM_IN_BUILDING";
+	// 资源实体ID
+	public final static int ENT_RES_OIL = 59901; // 油矿
+	public final static int ENT_RES_IRON = 59902; // 铁矿
+	public final static int ENT_RES_URANIUM = 59903; // 铀矿
+	public final static int ENT_RES_GOLD = 59904; // 金矿
+
+	// 颜色
+	public static final String FONT_COLOR_WHITE = "<color='#ffffffff'>";// 白色
+	// 重楼复活次数
+	public static final String SYS_TOWER_RELIVE_TIME = "SYS_TOWER_RELIVE_TIME";
+	public static final int SYS_TOWER_RELIVE_TIME_DEFVALUE = 3;
+	// 重楼开关
+	public static final String SYS_TOWER_OPEN_STATUS = "SYS_TOWER_OPEN_STATUS";
+	// 重楼用户等级限制
+	public static final String SYS_TOWER_USER_LEVEL_LIMIT = "SYS_TOWER_USER_LEVEL_LIMIT";
+	public static final int SYS_TOWER_USER_LEVEL_LIMIT_DEFVALUE = 1;
+
+	// 参加打塔免费进入的次数
+	public final static String SYS_TOWER_FREE_JOIN_TIME = "TOWER_FREE_JOIN_TIME";
+	public final static int SYS_TOWER_FREE_JOIN_TIME_DEFVALUE = 2;
+
+	// 参加打塔道具进入的次数
+	public final static String SYS_TOWER_ITEM_JOIN_TIME = "TOWER_ITEM_JOIN_TIME";
+	public final static int SYS_TOWER_ITEM_JOIN_TIME_DEFVALUE = 1;
+	public static final String SYS_TOWER_ITEM_FACTOR = "1,2,4";
+	// 作战实验室保底奖励配置关卡的跨度
+	public static final String SYS_TOWER_KEY_STAGE_SPAN = "SYS_TOWER_KEY_STAGE_SPAN";
+	public static final int SYS_TOWER_KEY_STAGE_SPAN_DEFAULT_VALUE = 5;
+
+	// 君主头像
+	// public static String USER_ICON[][] = null;
+
+	// public static void setUSER_ICON(String[][] uSER_ICON) {
+	// USER_ICON = uSER_ICON;
+	// }
+	// 抽象实体的entId
+	public static final int ENT_PARTY_TIME = 59900; // 时间
+	public static final int ENT_USER_LV = 59899;// 君主等级
+	public static final int ENT_DROP_CASH = 59801;// 掉落钻石
+
+	public static final int ENT_PARTY_POPU = 10301002; // 人口
+	public static final int ENT_PARTY_AREA = 10301003; // 面积
+	public static final int ENT_PARTY_CAS = 10301004; // 主城
+	public static final int ENT_CASH_CAS = 10301007; // 元宝
+	public static final int ENT_GUILD_POINT = 10301005;// 联盟贡献
+	public static final int ENT_PAY_POINT = 10301006;// 点卷
+	public static final int ENT_USER_EXP = 10302001;// 君主经验
+	public static final int ENT_HERO_EXP = 10303001;// 武将经验
+	public static final int ENT_HERO_POOLEXP = 10302004;// 武将经验池经验
+	public static final int ENT_HERO_MERIT = 10303002;// 武将功勋
+	public static final int ENT_HUFU = 10610179;// 虎符
+
+	// 建筑实体
+
+	// 礼包 运营动态配置的道具的ID范围
+	public static final int ENT_DYNAMIC_ID_MIN = 96000000;
+	public static final int ENT_DYNAMIC_ID_MAX = 96999999;
+
+	public static final int ENT_BUILDING_OIL = 11003;
+	public static final int ENT_BUILDING_IRON = 11004;
+	public static final int ENT_BUILDING_URANIUM = 11005;
+	public static final int ENT_BUILDING_GOLD = 11006;
+	public static final int ENT_BUILDING_RADAR = 11014;// 雷达
+
+	// 酒馆模块
+	public static final int PUB_REFRESH_MODE_AUTO = 1; // 普通招募
+	public static final int PUB_REFRESH_MODE_FAME = 2; // 中级招募
+	public static final int PUB_REFRESH_MODE_ITEM = 3; // 高级招募
+
+	// 创建角色时，系统赠送的系统武将id
+	public static final String ENUMER_FIRST_SYS_HEROID = "FIRST_SYS_HEROID";
+	public static final int INIT_TITLEID = 1;// 初始的军衔id-一等兵
+	public static final int INIT_COLOR = 2;// 初始品质-一等兵
+
+	// 开关
+	public static final int SYS_OPNE_STATUS_DEFAULTVALUE = 1;// 默认开放
+	public static final String SYS_USERPUBATTR_OPEN_STATUS = "USERPUBATTR_OPEN_STATUS";// 酒馆开关
+	public static final String SYS_TECHNOLOGY_OPEN_STATUS = "SYS_TECHNOLOGY_OPEN_STATUS";// 研发中心开关
+	/*** 冒险 */
+	public static String SYS_RISK_COMBAT_OPEN_STATUS = "RISK_COMBAT_OPEN_STATUS";
+
+	// 武将强化消耗道具Id
+	public final static String SYS_HERO_GROWING_CONSUME_ITEM = "HERO_GROWING_CONSUME_ITEM";
+	// 武将强化基础消耗道具数量
+	public final static String SYS_HERO_GROWING_CONSUME_BASE = "HERO_GROWING_CONSUME_BASE";
+	// 武将强化增量消耗道具数量
+	public final static String SYS_HERO_GROWING_CONSUME_INCR = "HERO_GROWING_CONSUME_INCR";
+	// 每次强化增加的成长值，是*10的
+	public final static String SYS_HERO_GROWING_ADD = "HERO_GROWING_ADD";
+	// 武将回炉(重生)需要消耗的元宝数安装武将的品质来"1:10;2:20;3:40;4:80;5:120;6:200;7:300"
+	public final static String SYS_HERO_REBIRTH_CASH = "HERO_REBIRTH_CASH";
+	// 经验卡"id:经验;id:经验"
+	public final static String SYS_HERO_REBIRTH_EXP_CARD = "SYS_HERO_REBIRTH_EXP_CARD";
+
+	// 解锁上阵武将数量
+	public static final String ENUMER_TROOP_POS_NUM = "TROOP_POS_NUM_";
+	// 解锁军团数量
+	public static final String ENUMER_TROOP_NUM = "ENUMER_TROOP_NUM_";
+	// 默认创建角色的时候武将上阵的位置
+	public static final String TROOP_GRID_POSITION = "TROOP_GRID_POSITION";
+
+	// 装备强化默认最大是玩家等级多少倍 系数
+	public static final String HERO_EQUIP_LEVEL_UP = "HERO_EQUIP_LEVEL_UP";
+	// 装备回炉的开放等级
+	// public static final String HERO_EQUIP_EQUIP_REBIRTH =
+	// "HERO_EQUIP_EQUIP_REBIRTH";
+	// 装备分解的开放等级
+	// public static final String HERO_EQUIP_EQUIP_DESTROY =
+	// "HERO_EQUIP_EQUIP_DESTROY";
+	// 装备分解一次消耗多少元宝。。按照品质来
+	public static final String HERO_EQUIP_EQUIP_REBIRTH_COST = "HERO_EQUIP_EQUIP_REBIRTH_COST_";
+
+	// 武将图纸分解的道具id
+	public static final String HERO_CARD_DISCARD_ENTID = "HERO_CARD_DISCARD_ENTID";
+	// 武将图纸分解按照品质来获取分解的物品数量
+	public static final String HERO_CARD_DISCARD_ENTID_COLOR = "HERO_CARD_DISCARD_ENTID_COLOR_";
+
+	// 打造装备每级加的属性百分百值 配置10 就表示是 10%
+	public static final String HERO_EQUIP_BUILD_ADD_ATTR = "HERO_EQUIP_BUILD_ADD_ATTR";
+
+	/**
+	 * 抽将开关
+	 */
+	public static final String SYS_HERO_HIRE_OPEN_STATUS = "HERO_HIRE_OPEN_STATUS";
+	/**
+	 * 装备强化
+	 */
+	// public static final String SYS_EQUIPLEVELUP_OPEN_STATUS =
+	// "EQUIPLEVELUP_OPEN_STATUS";
+
+	/** 兵器工厂的开放等级 */
+	public static final String SYS_EQUIP_FACTORY_OPEN_STATUS = "SYS_EQUIP_FACTORY_OPEN_STATUS";
+
+	/**
+	 * 邮件
+	 */
+	public static final String SYS_MAIL_OPEN_STATUS = "MAIL_OPEN_STATUS";
+
+	public static final String MAIL_BATCH_PROCESS_UPPER_LIMIT = "MAIL_BATCH_PROCESS_UPPER_LIMIT";
+	public static final int MAIL_BATCH_PROCESS_UPPER_LIMIT_DEFAULT = 100;
+
+	/**
+	 * 任务
+	 */
+	public static final int MISSION_SPEND_FINISH_DEFAULT = 10;
+	public static final String MISSION_SPEND_FINISH = "MISSION_SPEND_FINISH";// 直接完成声望任务所需的元宝数
+	public static final int MISSION_SPEND_CASH_DEFAULT = 5;
+	public static final String MISSION_SPEND_CASH = "MISSION_SPEND_CASH"; // 更换随机任务消耗的元宝/点券数量
+	public static final int MISSION_EVPMISSION_ID = 10195;// 特殊的EVP任务
+	public static final int MISSION_EVPMISSION_NPC_ID = 2001;// 特殊的EVP任务对应的NPC的ID
+	public static final String MISSION_HONOR_OPEN_USERLV = "MISSION_HONOR_OPEN_USERLV";// 威望任务开启的君主等级
+
+	/**
+	 * 背包
+	 */
+	public static final int TREASURY_LIMIT = 300;// 背包大小上限
+
+	// 镶嵌宝石消耗铜币的Enumer参数前缀
+	public static final String ENUMER_GEM_ADD_COPPER = "GEM_ADD_COPPER_";
+
+	public static final String USER_GUIDELINES = "USER_GUIDELINES";// 新手指引执行步骤
+
+	/**
+	 * 分享
+	 */
+	public static final String USERATTR_LAST_SHARE_TIME = "LAST_SHARE_TIME";// 上次分享的时间
+	// 君主属性表的键
+	public static final String USERATTR_HEROINHERIT_NUM = "HEROINHERIT_NUM";// 武将传承次数
+	public static final String USERATTR_USED_FIGHT_NPC_NUM = "USED_FIGHT_NPC_NUM";// 已经挑战城池NPC的次数
+	public static final String USERATTR_HOTEL_HERO_NUM = "HOTEL_HERO_NUM";// 酒馆武将容量
+	public static final int INIT_HOTEL_HERO_NUM = 50;// 初始酒馆武将数
+	// 获取君主经验的类型
+	// public final static String GET_USERTASK_EXP = "GET_USERTASK_EXP";//
+	// 军机阁获取经验
+
+	/**
+	 * 建城点坐标最大(x,y)
+	 */
+	public static final int MAP_DEFINE_MAPCELL_MAX_X = 720;
+	public static final int MAP_DEFINE_MAPCELL_MAX_Y = 480;
+
+	/**
+	 * 建城点坐标最小(x,y)
+	 */
+	public static final int MAP_DEFINE_MAPCELL_MIN_X = 3;
+	public static final int MAP_DEFINE_MAPCELL_MIN_Y = 3;
+
+	/**
+	 * 每个郡允许的最大城池数
+	 */
+	public static final int CASTLE_MAX_PER_STATE = 7081;
+	public static int ENUMER_VALUE_RETAIN_CITY_SPOT_NUM = 1400;
+
+	/**
+	 * 建筑最小升级时间
+	 */
+	public final static int MIN_BUILD_SECONDS = 5;
+	/**
+	 * 自动建造开启开关
+	 */
+	public final static String AUTO_BUILD_OPEN_VIP_LEVEL = "AUTO_BUILD_OPEN_VIP_LEVEL";
+	/**
+	 * 第二建造队列开启的用户等级
+	 */
+	public final static String SECOND_BUILDER_OPEN_USER_LEVEL = "SECOND_BUILDER_OPEN_USER_LEVEL";
+	/**
+	 * 第三建造队列开启的VIP等级
+	 */
+	public final static String THIRD_BUILDER_OPEN_VIP_LEVEL = "THIRD_BUILDER_OPEN_VIP_LEVEL";
+	/**
+	 * 建筑当前是否满足升级条件
+	 */
+	public static final int UPGRADE_SATISFIED = 1;
+	public static final int UPGRADE_UNSATISFIED = 2;
+
+	/**
+	 * 建筑加速类型
+	 */
+	public static final int BUILD_SPEED_UP_CASH = 0;
+	public static final int BUILD_SPEED_UP_ITEM = 1;
+	public static final int BUILD_SPEED_UP_FREE = 2;
+
+	/**
+	 * 科技最小升级时间
+	 */
+	public static final int MIN_TECH_UPGRADE_SECONDS = 5;
+	/**
+	 * 科技升级的免费时间配置项
+	 */
+	public static final String TECH_UPGRADE_FREE_SECONDS = "TECH_UPGRADE_FREE_SECONDS";
+	/**
+	 * 科技升级的免费时间默认值
+	 */
+	public static final int TECH_UPGRADE_FREE_SECONDS_DEFAULT = 300;
+	/**
+	 * 科技加速类型
+	 */
+	public static final int TECH_SPEED_UP_CASH = 0;
+	public static final int TECH_SPEED_UP_ITEM = 1;
+	public static final int TECH_SPEED_UP_FREE = 2;
+
+	/*** 维修工厂的开启开关 1表示开启 */
+	public static final String SYS_BARRACK_OPEN_STATUS = "BARRACK_OPEN_STATUS";
+	/*** 维修工厂生产一个零件要多久时间 单位 秒 */
+	public static final String SYS_BARRACK_ONE_ARMY = "SYS_BARRACK_ONE_ARMY";
+	/*** 维修工厂高级零件的物品id */
+	public static final String SYS_BARRACK_ONE_ARMY_ITEM = "SYS_BARRACK_ONE_ARMY_ITEM";
+	/*** 维修工厂1个高级零件可以兑换的普通零件数量 */
+	public static final String SYS_BARRACK_ONE_ARMY_EXCHANGE_COUNT = "SYS_BARRACK_ONE_ARMY_EXCHANGE_COUNT";
+	/*** 维修工厂生产一个零件消耗的油矿数量 */
+	public static final String SYS_BARRACK_ONE_ARMY_OIL_NUM = "SYS_BARRACK_ONE_ARMY_OIL_NUM";
+	/*** 元宝加速1颗元宝可以抵消多少秒零件生产时间 */
+	public static final String SYS_BARRACK_ONE_ARMY_DIAMOND_NUM = "SYS_BARRACK_ONE_ARMY_DIAMOND_NUM";
+
+	/*** 钻石购买油矿价格，一个钻石购买多少个油矿 */
+	public static final String SYS_OIL_RES_NUM_PER_DIAMOND = "SYS_OIL_RES_NUM_PER_DIAMOND";
+	/*** 钻石购买铁矿价格，一个钻石购买多少个铁矿 */
+	public static final String SYS_IRON_RES_NUM_PER_DIAMOND = "SYS_IRON_RES_NUM_PER_DIAMOND";
+	/*** 钻石购买铀矿价格，一个钻石购买多少个铀矿 */
+	public static final String SYS_URANIUM_RES_NUM_PER_DIAMOND = "SYS_URANIUM_RES_NUM_PER_DIAMOND";
+	/*** 钻石购买金矿价格，一个钻石购买多少个金矿 */
+	public static final String SYS_GOLD_RES_NUM_PER_DIAMOND = "SYS_GOLD_RES_NUM_PER_DIAMOND";
+
+	/**
+	 * 神秘商店功能开关 1开启 其他关闭
+	 */
+	public final static String MYSTICSHOP_OPEN_STATUS = "MYSTICSHOP_OPEN_STATUS";
+
+	/**
+	 * 二级密码
+	 */
+	public final static String SYS_PASSWORD_UPDATE_TIMES = "SYS_PASSWORD_UPDATE_TIMES";// 二级密码每日修改次数
+	public final static String SYS_PASSWORD_DEL_TIMES = "SYS_PASSWORD_DEL_TIMES";// 二级密码每日删除次数
+	public final static String SYS_PASSWORD_OPEN_VIPLV = "SYS_PASSWORD_OPEN_VIPLV";// 开放所需的vip等级
+
+	// 最大好友数量
+	public static final String SYS_CASTLE_FRIEND_MAXNUM = "CASTLE_FRIEND_MAXNUM";
+	// 最大黑名单数量
+	public static final String SYS_CASTLE_BLACK_MAXNUM = "CASTLE_BLACK_MAXNUM";
+	// 最大发出申请数量
+	public static final String SYS_CASTLE_APPFRIEND_MAXNUM = "CASTLE_APPFRIEND_MAXNUM";
+	// 最大收到申请数量
+	public static final String SYS_CASTLE_ACCFRIEND_MAXNUM = "CASTLE_ACCFRIEND_MAXNUM";
+	// 最大最近联系人数量
+	public static final String SYS_CASTLE_RECENT_FRIEND_MAX = "SYS_CASTLE_RECENT_FRIEND_MAX";
+	// 好友搜索的cd时间
+	public static final String FRIEND_SEARCH_CD_TIME = "FRIEND_SEARCH_CD_TIME";
+	// 清除好友申请过期天 默认1天
+	public static final String FRIEND_APP_VALID_DAYS = "FRIEND_APP_VALID_DAYS";
+	// 好友功能开启等级
+	public static final String FRIEND_OPEN_LEVEL = "FRIEND_OPEN_LEVEL";
+	// 每日领取体力的次数
+	public static final String FRIEND_RECEIVE_HP = "FRIEND_RECEIVE_HP";
+	// 赠送获得的体力点数默认30
+	public static final String FRIEND_RECEIVE_HP_POINT = "FRIEND_RECEIVE_HP_POINT";
+
+	// 改名消耗的道具id
+	public static final String CHANGE_USERNAME_ITEM_ITEM = "CHANGE_USERNAME_ITEM_ITEM";
+
+	// 体力最大上限值
+	public static final String USER_MAX_HP_POINT = "USER_MAX_HP_POINT";
+
+	// 行动力最大上限值
+	public static final String USER_MAX_ACT_POINT = "USER_MAX_ACT_POINT";
+
+	// 系统设置的每天最大挑战次数
+	public static final String SYS_RISK_JOIN_NUM = "SYS_RISK_JOIN_NUM";
+	// QQ的冒险奖励君经验加成
+	public final static String SYS_RISK_USEREXP_QQ_EFFECT = "RISK_USEREXP_QQ_PERCENT";
+	// 冒险清除某一小关当天已经挑战次数消耗的元宝
+	public final static String SYS_RISK_CLEAR_CASH = "RISK_CLEAR_CASH";
+	// 冒险精英关卡开启等级
+	public final static String SYS_RISK_OPEN_LEVEL = "SYS_RISK_OPEN_LEVEL";
+	// 冒险关卡重置失败次数时间点，需要配置全天的时间点";"符合隔开 如 2;6;10;
+	public final static String SYS_RISK_REST_FAIL_NUM_TIME = "SYS_RISK_REST_FAIL_NUM_TIME";
+	// 冒险关卡物品多少次未掉落后必然掉落
+	public final static String SYS_RISK_DROP_MAX_NUM = "SYS_RISK_DROP_MAX_NUM";
+
+	// 系统内的广播消息
+	public static final String ENUMER_BROADCAST_TOWER = "BROADCAST_TOWER";// 千重楼广播
+	public static final String ENUMER_BROADCAST_CASTLE_LVUP = "BROADCAST_CASTLE_LVUP";// 城池升级广播
+	public static final String ENUMER_BROADCAST_HIRE_HERO = "BROADCAST_HIRE_HERO";// 雇佣高兴星武将广播
+	public static final String ENUMER_BROADCAST_GUILD_LVUP = "BROADCAST_GUILD_LVUP";// 联盟升级广播
+	public static final String ENUMER_BROADCAST_EQUIP_STRONG = "BROADCAST_EQUIP_STRONG";// 装备强化广播
+
+	// 国家限制人数注册的开关默认2000人
+	public static final String COUNTRY_CREATE_USER_NUM = "COUNTRY_CREATE_USER_NUM";
+	// 国家注册人数占总人数的百分比默认40 表示百分之四十
+	public static final String COUNTRY_CREATE_USER_NUM_PERCENTAGE = "COUNTRY_CREATE_USER_NUM_PERCENTAGE";
+	// 最多收藏坐标数 默认100
+	public static final String COLLECT_POINT_MAX = "COLLECT_POINT_MAX";
+
+	// 出征
+	public static final String MAX_PVP_TIMES = "MAX_PVP_TIMES";// 每日最大的pvp出征次数
+}

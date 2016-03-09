@@ -1,0 +1,150 @@
+package com.youxigu.dynasty2.armyout.service;
+
+import java.util.List;
+import java.util.Map;
+
+import com.youxigu.dynasty2.armyout.domain.Armyout;
+import com.youxigu.dynasty2.armyout.domain.Strategy;
+import com.youxigu.dynasty2.armyout.domain.UserArmyout;
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.user.domain.User;
+
+/**
+ * 出征
+ * 
+ * @author LK
+ * @date 2016年2月25日
+ */
+public interface IArmyoutService {
+	/**
+	 * 初始化service 同步mapService调用
+	 * @param ALL_CELLS
+	 */
+	void initService(Map<Integer, MapCell> ALL_CELLS);
+
+	/**
+	 * 出征初始化到坐标下
+	 * 
+	 * @param cellIds
+	 * @param armyout
+	 */
+	void addArmyoutToCell(List<Integer> cellIds, Armyout armyout);
+
+	/**
+	 * 清除坐标下的出征
+	 * 
+	 * @param cellIds
+	 * @param armyout
+	 */
+	void removeArmyoutFromCell(List<Integer> cellIds, Armyout armyout);
+
+	/**
+	 * 取得内部存储的原始Armyout,仅供特殊情况需要取得原始Armyout时使用，一般不应调用这个方法
+	 * -专为事务提交时同步缓存使用
+	 * @param armyoutId
+	 * @return
+	 */
+	Armyout getArmyoutCache(long armyoutId);
+
+	/**
+	 * 添加armyout缓存-专为事务提交时同步缓存使用
+	 * 
+	 * @param armyout
+	 */
+	void addArmyoutCache(Armyout armyout);
+
+	/**
+	 * 删除armyout缓存-专为事务提交时同步缓存使用
+	 * 
+	 * @param armyout
+	 */
+	void removeArmyoutCache(Armyout armyout);
+
+	/**
+	 * 取得armyout
+	 * 
+	 * @param armyoutId
+	 * @return
+	 */
+	Armyout getArmyoutForRead(long armyoutId);
+
+	/**
+	 * 取得armyout
+	 * 
+	 * @param armyoutId
+	 * @return
+	 */
+	Armyout getArmyoutForWrite(long armyoutId);
+
+	Armyout createArmyOut(Armyout armyout);
+
+	void updateArmyout(Armyout armyout);
+
+	void deleteArmyOut(Armyout armyout);
+
+	/**
+	 * 取得每日最大的PVP次数
+	 * 
+	 * @return
+	 */
+	int getMaxPvpTimes();
+
+	/**
+	 * 取得出征队列
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	UserArmyout doGetUserArmyout(long userId);
+
+	/**
+	 * 更新出征队列
+	 * 
+	 * @param userArmyout
+	 */
+	void updateUserArmyout(UserArmyout userArmyout);
+
+	/**
+	 * 两点间距离
+	 * 
+	 * @param fromX
+	 * @param fromY
+	 * @param toX
+	 * @param toY
+	 * @return
+	 */
+	double getDistanceBetweenPoints(int fromX, int fromY, int toX, int toY);
+
+	/**
+	 * 侦查时间(秒)
+	 * 
+	 * @param user
+	 * @param fromCell
+	 * @param toCell
+	 * @return
+	 */
+	double getSpyTimeBetweenPoints(User user, MapCell fromCell, MapCell toCell);
+
+	/**
+	 * 总的基础时间(秒)
+	 * 
+	 * @param user
+	 * @param fromCell
+	 * @param toCell
+	 * @return
+	 */
+	double getBaseTimeBetweenPoints(User user, MapCell fromCell,
+			MapCell toCell);
+
+	/**
+	 * 基础资源消耗
+	 * 
+	 * @param strategy
+	 * @param distance
+	 * @return
+	 */
+	double getBaseResConsume(Strategy strategy, double distance);
+
+	double getBaseResConsume(Strategy strategy, MapCell fromCell,
+			MapCell toCell);
+}

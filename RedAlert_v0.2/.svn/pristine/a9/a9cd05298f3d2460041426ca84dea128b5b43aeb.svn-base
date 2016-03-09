@@ -1,0 +1,14 @@
+package com.youxigu.dynasty2.map.service;
+
+import com.youxigu.dynasty2.map.domain.action.TimeAction;
+
+public interface ICommandDistatcher {
+	/**
+	 * 投递消息
+	 * 
+	 * @param thread
+	 * @param action
+	 */
+	void putCommander(TimeAction action);
+	void putCommander(int thread, TimeAction action);
+}

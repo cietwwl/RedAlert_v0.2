@@ -1,0 +1,25 @@
+package com.youxigu.dynasty2.map.service;
+
+import java.util.Map;
+
+import com.youxigu.dynasty2.map.domain.MapCell;
+import com.youxigu.dynasty2.map.domain.StateCache;
+import com.youxigu.dynasty2.map.domain.action.LoadMapAction;
+
+/**
+ * 加载地图数据
+ * 
+ * @author LK
+ * @date 2016年2月18日
+ */
+public interface ILoadMapDataService {
+	/**
+	 * 加载地图数据
+	 * 
+	 * @param STATE_CELLS
+	 * @param ALL_CELLS
+	 * @param loadMapAction
+	 */
+	void loadMapData(Map<Integer, StateCache> STATE_CELLS,
+			Map<Integer, MapCell> ALL_CELLS, LoadMapAction loadMapAction);
+}

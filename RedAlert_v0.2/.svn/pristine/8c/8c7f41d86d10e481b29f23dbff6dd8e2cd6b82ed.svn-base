@@ -1,0 +1,734 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+		 xmlns:flex="http://www.springframework.org/schema/flex"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreResourceNotFound"><value>true</value></property>
+	
+        <property name="locations">
+        	<list>
+        		<value>classpath:application.properties</value>
+        		<value>file:${TX_CONF_PATH}/application.properties</value>
+        	</list>
+        </property>
+        <property name="fileEncoding" value="utf-8"/>
+
+    </bean>
+
+	<bean id="app_properties" class="org.springframework.beans.factory.config.PropertiesFactoryBean"  parent="propertyConfigurer" />
+
+
+<!--系统常量,静态的-->
+    <bean class="com.youxigu.dynasty2.openapi.Constant">
+		<property name="iosPayId" value="${openplatform.ios.payId:1450001227}"/>
+		<property name="qqAppId" value="${openplatform.qq.appId:}"/>
+		<property name="qqAppKey" value="${openplatform.qq.appKey:}"/>
+		<property name="wxAppId" value="${openplatform.wx.appId:}"/>
+		<property name="wxAppKey" value="${openplatform.wx.appKey:}"/>
+		<property name="unionAppId" value="${openplatform.union.appId:}"/>
+		<property name="unionAppKey" value="${openplatform.union.appKey:}"/>
+
+		<property name="platformType" value="${openplatform.type:1}"/>
+		<property name="deviceType" value="${device.type:1}"/>
+		<property name="areaId" value="${openplatform.areaId}"/>
+        <property name="allAreaId" value="${openplatform.allAreaId}"/>
+		<property name="faceBookKey" value="${openplatform.facebook.appKey}"/>
+		<!--
+		<property name="zoneId" value="${openplatform.zoneId}"/>
+		-->
+		<property name="svrIp" value="${mainserver.ip}"/>
+		<property name="useOpenPlatformTrans">
+			<value>${openplatform.trans:false}</value>
+		</property>
+
+		<!--
+		<property name="serverName" value="${openplatform.pay.domain}"/>
+		<property name="goodsServerName" value="${openplatform.goodsServer}"/>
+		<property name="goodsPicType" value="${openplatform.goodsPicType}"/>
+		<property name="report">
+			<value>${openplatform.report:false}</value>
+		</property>
+
+
+		<property name="firstRechargeDiscountId" value="${openplatform.firstrecharge.discountId:UM130313111902624}"/>
+		<property name="blueYearId" value="${openplatform.qqblue.discountId.year:2014}"/>
+		<property name="blueMonthId" value="${openplatform.qqblue.discountId.month:08}"/>
+		<property name="qqBlueOpenId" value="${openplatform.qqblue.discountId:test01}"/>
+		<property name="qqYellowOpenId" value="${openplatform.yellow.discountId:test02}"/>
+		<property name="qqVipOpenId" value="${openplatform.vip.discountId:test03}"/>
+		-->
+	</bean>
+    
+    <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+    
+	<!--邮件 战斗结果等使用模板-->	
+	<bean id="velocityEngine"
+        class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+        <property name="velocityProperties">
+              <props>
+                  <prop key="resource.loader">class</prop>
+                  <prop key="class.resource.loader.class">
+                      org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+                  </prop>
+                  <prop key="class.resource.loader.cache">true</prop>
+                  <prop key="class.resource.loader.modificationCheckInterval">-1</prop>
+                  <prop key="velocimacro.library"></prop>
+                  <prop key="input.encoding">UTF-8</prop>
+                  <prop key="output.encoding">UTF-8</prop>
+              </props>
+        </property>
+    </bean>
+
+
+	<bean id="serviceLocator" class="com.manu.core.ServiceLocator" factory-method="createInstance" />
+
+
+	<!--tlog-->
+	<!--
+	<bean id="logService" class="com.youxigu.dynasty2.log.TlogService" init-method="init" destroy-method="destroy" >
+		<property name="broadcastMgr"><ref bean="broadcastMgr" /></property>
+	</bean>
+	<bean id="tlogDemoDao" class="com.youxigu.dynasty2.log.TlogDemoDao" >
+		<property name="sqlMapClientTemplate"><ref bean="sqlMapClientTemplate" /></property>
+	</bean>
+	-->
+	<bean id="tlogDemoDao" class="com.youxigu.dynasty2.log.TLogReport" init-method="init">
+		<property name="tlogUrl" value="${log.mylog.url:http://qx2sqlapi.app100667751.twsapp.com/index.php}"/>
+		<property name="tlogKey" value="${log.mylog.key:qx2gb8u4dg}"/>
+	</bean>
+
+	<!--自定义log-->
+	<bean id="logService" class="com.youxigu.dynasty2.log.TlogServiceDemo" init-method="init" destroy-method="destroy" >
+		<property name="open" value="${log.mylog.open:0}"/>
+		<!--
+		<property name="areaId" value="${openplatform.areaId}"/>
+		-->
+		<property name="logClient"><ref bean="logServerClient" /></property>
+		<property name="broadcastMgr"><ref bean="broadcastMgr" /></property>
+	</bean>
+
+	<!--腾讯tlog-->
+	<bean id="tlogService" class="com.youxigu.dynasty2.log.TlogService" init-method="init" destroy-method="destroy" >
+		<property name="open" value="${log.tlog.open:0}"/>
+		<property name="tlogIp" value="${log.tlog.ip:}"/>
+		<property name="tlogPort" value="${log.tlog.port:0}"/>
+		<property name="broadcastMgr"><ref bean="broadcastMgr" /></property>
+		<property name="dataSource"><ref bean="tlog_dataSource" /></property>
+	</bean>
+	
+
+
+	<!--client,连接主wolfServer-->
+	<bean id="mainServerClient_remoteService" class="com.youxigu.wolf.net.RemoteWolfService">
+    </bean>
+	<bean id="mainServerClient" class="com.youxigu.dynasty2.core.wolf.WolfClientService" > 
+		<property name="adminUser" value="${mainserver.usr}"/>
+		<property name="adminPwd" value="${mainserver.pwd}"/>
+		<property name="wolfClient">
+			<bean class="com.youxigu.wolf.net.WolfClient" init-method="init" destroy-method="stop">
+				<property name="clientName" value="mainServerClient"/>
+				<property name="serverIp" value="${mainserver.localip:${mainserver.ip}}"/>
+				<property name="serverPort" value="${mainserver.port}"/>
+				<property name="handler">
+					<bean class="com.youxigu.wolf.net.WolfMessageChain" >
+						<!--<property name="threadNum" value="5"/>--><!--配置handler的线程池大小-->
+						<property name="services">
+							<list>
+								<ref bean="mainServerClient_remoteService" />
+								<bean class="com.youxigu.wolf.net.WolfHandler"/>
+							</list>
+						</property>
+						<property name="sessionListeners">
+							<list>
+								<bean class="com.youxigu.wolf.net.Reconnect"/>
+								<ref bean="mainServerClient_remoteService" />
+							</list>
+						</property>
+					</bean>
+
+				</property>
+				<property name="codecFactory">
+				<!--
+					<bean class="com.youxigu.wolf.net.codec.AMF3CodecFactory"/>
+			-->
+					<bean class="com.youxigu.wolf.net.codec.NewMutilCodecFactory">
+							<property name="compressLen" value="${mina.encoder.compressLen:5120}"/>
+					</bean>
+					<!--
+					<bean class="com.youxigu.wolf.net.codec.AMF3CompressCodecFactory"/>
+				-->	
+
+				<!--
+					<ref bean="protobufCodecFactory"/>
+				-->
+				</property>	
+			</bean>
+		</property>
+	</bean>
+
+	<!--如果jobserver与mainserver相同，可以用alias来定义-->
+	<!--<alias name="mainServerClient" alias="jobServerClient"/> -->
+	<bean id="jobServerClient_remoteService" class="com.youxigu.wolf.net.RemoteWolfService">
+    </bean>
+	<bean id="jobServerClient" class="com.youxigu.dynasty2.core.wolf.WolfClientService" > 
+		<property name="adminUser" value="${jobserver.usr}"/>
+		<property name="adminPwd" value="${jobserver.pwd}"/>
+		<property name="wolfClient">
+			<bean class="com.youxigu.wolf.net.WolfClient" init-method="init" destroy-method="stop">
+				<property name="clientName" value="jobServerClient"/>
+				<property name="serverIp" value="${jobserver.ip}"/>
+				<property name="serverPort" value="${jobserver.port}"/>
+				<property name="handler">
+					<bean class="com.youxigu.wolf.net.WolfMessageChain" >
+						<property name="services">
+							<list>
+								
+								<ref bean="jobServerClient_remoteService" />
+								<bean class="com.youxigu.wolf.net.WolfHandler"/>
+							</list>
+						</property>
+						<property name="sessionListeners">
+							<list>
+								<bean class="com.youxigu.wolf.net.Reconnect"/>
+								<ref bean="jobServerClient_remoteService" />
+							</list>
+						</property>
+					</bean>
+
+				</property>
+				<property name="codecFactory">
+				<!--
+					<bean class="com.youxigu.wolf.net.codec.AMF3CodecFactory"/>
+				-->	
+					<bean class="com.youxigu.wolf.net.codec.NewMutilCodecFactory">
+							<property name="compressLen" value="${mina.encoder.compressLen:5120}"/>
+					</bean>
+
+				<!--
+					<bean class="com.youxigu.wolf.net.codec.AMF3CompressCodecFactory"/>
+				-->	
+				<!--
+					<ref bean="protobufCodecFactory"/>
+				-->
+				</property>	
+			</bean>
+		</property>
+	</bean>
+
+
+	<!--如果异步dbserver与mainserver是同一socketServer,可以用alias来定义-->
+	<!--<alias name="mainServerClient" alias="asyncDBServerClient"/> -->
+
+	<bean id="asyncDBServerClient_remoteService" class="com.youxigu.wolf.net.RemoteWolfService">
+    </bean>
+	<bean id="asyncDBServerClient" class="com.youxigu.dynasty2.core.wolf.WolfClientService" > 
+		<property name="adminUser" value="${asyncdbserver.usr}"/>
+		<property name="adminPwd" value="${asyncdbserver.pwd}"/>
+		<property name="wolfClient">
+			<bean class="com.youxigu.wolf.net.WolfClient" init-method="init" destroy-method="stop">
+				<property name="clientName" value="asycdbServerClient"/>
+				<property name="serverIp" value="${asyncdbserver.ip}"/>
+				<property name="serverPort" value="${asyncdbserver.port}"/>
+				<property name="handler">
+					<bean class="com.youxigu.wolf.net.WolfMessageChain" >
+
+						<property name="services">
+							<list>
+								<ref bean="asyncDBServerClient_remoteService" />
+								<bean class="com.youxigu.wolf.net.WolfHandler"/>
+							</list>
+						</property>
+						<property name="sessionListeners">
+							<list>
+								<bean class="com.youxigu.wolf.net.Reconnect"/>
+								<ref bean="asyncDBServerClient_remoteService" />
+							</list>
+						</property>
+					</bean>
+
+				</property>
+				<property name="codecFactory">
+
+				<!--
+					<bean class="com.youxigu.wolf.net.codec.AMF3CodecFactory"/>
+				-->	
+					<bean class="com.youxigu.wolf.net.codec.NewMutilCodecFactory">
+							<property name="compressLen" value="${mina.encoder.compressLen:5120}"/>
+					</bean>
+
+				<!--
+					<bean class="com.youxigu.wolf.net.codec.AMF3CompressCodecFactory"/>
+				-->	
+				<!--
+					<ref bean="protobufCodecFactory"/>
+				-->
+				</property>	
+			</bean>
+		</property>
+	</bean>
+
+
+	<bean id="logServerClient_remoteService" class="com.youxigu.wolf.net.RemoteWolfService">
+    </bean>
+	<bean id="logServerClient" class="com.youxigu.dynasty2.core.wolf.WolfClientService" > 
+		<property name="adminUser" value="${log.mylog.server.usr}"/>
+		<property name="adminPwd" value="${log.mylog.server.pwd}"/>
+		<property name="wolfClient">
+			<bean class="com.youxigu.wolf.net.WolfClient" init-method="init" destroy-method="stop">
+				<property name="clientName" value="logServerClient"/>
+				<property name="serverIp" value="${log.mylog.server.ip}"/>
+				<property name="serverPort" value="${log.mylog.server.port}"/>
+				<property name="processorNum" value="4"/>
+				<property name="corePoolSize" value="4"/>
+				<property name="maxPoolSize" value="4"/>
+
+				<property name="handler">
+					<bean class="com.youxigu.wolf.net.WolfMessageChain" >
+						<property name="services">
+							<list>
+							   <ref bean="logServerClient_remoteService" />
+								<bean class="com.youxigu.wolf.net.WolfHandler"/>
+							</list>
+						</property>
+						<property name="sessionListeners">
+							<list>
+								<bean class="com.youxigu.wolf.net.Reconnect"/>
+								 <ref bean="logServerClient_remoteService" />
+							</list>
+						</property>
+					</bean>
+				</property>
+				<property name="codecFactory">
+					<bean class="com.youxigu.wolf.net.codec.NewMutilCodecFactory">
+							<property name="compressLen" value="${mina.encoder.compressLen:5120}"/>
+					</bean>
+				</property>	
+			</bean>
+		</property>
+	</bean>
+  
+    <!--全区活动服-->
+    <bean id="activityServerClient_remoteService" class="com.youxigu.wolf.net.RemoteWolfService">
+      </bean>
+    <bean id="activityServerClient" class="com.youxigu.dynasty2.common.service.impl.AllServerClientService" > 
+      <property name="adminUser" value="${activityserver.usr:}"/>
+      <property name="adminPwd" value="${activityserver.pwd:}"/>
+      <property name="wolfClient">
+        <bean class="com.youxigu.wolf.net.WolfClient" init-method="init" destroy-method="stop">
+          <property name="clientName" value="activityClient"/>
+          <property name="serverIp" value="${activityserver.ip:}"/>
+          <property name="serverPort" value="${activityserver.port:0}"/>
+          <property name="handler">
+            <bean class="com.youxigu.wolf.net.WolfMessageChain" >
+              <property name="services">
+                <list>
+                  
+                  <ref bean="activityServerClient_remoteService" />
+                  <bean class="com.youxigu.wolf.net.WolfHandler"/>
+                </list>
+              </property>
+              <property name="sessionListeners">
+                <list>
+                  <bean class="com.youxigu.wolf.net.Reconnect"/>
+                  <ref bean="activityServerClient_remoteService" />
+                </list>
+              </property>
+            </bean>
+  
+          </property>
+          <property name="codecFactory">
+          <!--
+            <bean class="com.youxigu.wolf.net.codec.AMF3CodecFactory"/>
+          --> 
+            <bean class="com.youxigu.wolf.net.codec.NewMutilCodecFactory">
+                <property name="compressLen" value="${mina.encoder.compressLen:5120}"/>
+            </bean>
+  
+          <!--
+            <bean class="com.youxigu.wolf.net.codec.AMF3CompressCodecFactory"/>
+          --> 
+          <!--
+            <ref bean="protobufCodecFactory"/>
+          -->
+          </property> 
+        </bean>
+      </property>
+    </bean>
+  
+<!--ibatis cache setting begin-->
+
+
+	<!--本地缓存-->
+<!--
+	<bean id="ibatisLocalCache" class="com.ibatis.sqlmap.engine.cache.memcached.DefaultLocalCache" init-method="init">
+		<property name="maxCapacity" value="20000" />
+	</bean>
+-->
+	<bean id="ibatisLocalCache" class="com.ibatis.sqlmap.engine.cache.memcached.ConcurrentLocalCache" init-method="init">
+	</bean>
+
+	<!--cluster的本地缓存的广播接收器-->
+	<bean id="broadcastListener" class="com.ibatis.sqlmap.engine.cache.memcached.broadcast.jgroup.LocalCacheJGroupBroadcastingListener" >
+		<property name="localCache" ref="ibatisLocalCache"/>
+	</bean>
+
+	<!--异步方法调用广播，用于在server之间同时执行某个方法，主要是为了一些策划配数数据的动态更新-->
+	<bean id="asyncTaskBroascastingListener" class="com.youxigu.dynasty2.core.jgroup.AsyncTaskBroascastingListener" destroy-method="shutdown">
+	</bean>
+
+	<!--cluster环境下的本地缓存的广播同步机制-->
+	<bean id="broadcastMgr" class="com.ibatis.sqlmap.engine.cache.memcached.broadcast.jgroup.JGroupBroadcastingManager" lazy-init="false"  init-method="init" destroy-method="stop">
+		<property name="busName" value="${udp.groupName}"/>
+		<property name="channelProp" value="${udp.xml}"/>
+		<property name="initialHosts" value="${udp.initialHosts}"/>
+		<property name="bindAddr" value="${udp.bindaddr:}"/>
+        <property name="listeners">
+        	<list>
+				<ref bean="broadcastListener" />
+				<ref bean="asyncTaskBroascastingListener" />
+        	</list>
+        </property>
+	</bean>
+
+<!--
+	<bean id="remoteCache" class="com.ibatis.sqlmap.engine.cache.memcached.SpyMemcached"  >
+		<property name="serverlist">
+			<value>${cacheServers}</value>
+		</property>
+		<property name="readBufSize" value="65535" />
+		<property name="opTimeout" value="5000" />
+		<property name="monitor" value="true" />
+		<property name="monitorPeriod" value="300000" />
+	</bean>
+-->
+
+	<bean id="remoteCache" class="com.ibatis.sqlmap.engine.cache.memcached.XMemCached"  >
+		<property name="serverlist">
+			<value>${cacheServers}</value>
+		</property>
+		<property name="opTimeout" value="5000" />
+		<!--
+		<property name="connectionPoolSize" value="2" />
+		-->
+		<property name="readBufSize" value="65535" />
+		
+		<property name="transcoder">
+		<!--
+				<bean class="com.ibatis.sqlmap.engine.cache.memcached.XSerializingTranscoderEx">
+		  -->
+			
+			<bean class="com.ibatis.sqlmap.engine.cache.memcached.XSerializingTranscoderPf">
+				<property name="compressionThreshold" value="10240" />
+				<property name="maxSize" value="10485760" />
+				<property name="notUsrProtoClasses">
+					<list>
+						<!--所有的Collection,Map强制使用java serial 所有的pojo中的属性包括抽象类或者接口的，建议不用protobuf-->
+<!--		        		<value>com.youxigu.dynasty2.combat.domain.Combat</value>-->
+					</list>
+				</property >
+			</bean>
+		</property>
+
+
+	</bean>
+
+	<!--cache管理器，基于memoryCache-->
+	<bean id="memcachedManager" class="com.ibatis.sqlmap.engine.cache.memcached.MemcachedManager" lazy-init="false" init-method="init" ><!--destroy-method="close" -->
+		<property name="waitTimeout" value="30"/>
+		<property name="lockerTimeout" value="35"/>
+		<property name="remoteCache" ref="remoteCache"/>
+		<property name="localCache" ref="ibatisLocalCache"/>
+		<property name="broadcast" ref="broadcastMgr"/>	
+	</bean>
+
+
+
+
+<!--ibatis cache setting end-->
+
+
+	<!-- 数据源 -->
+
+	
+
+
+   <bean id="tlog_dataSource" class="org.logicalcobwebs.proxool.ProxoolDataSource">
+        <property name="driver">
+          <value>com.mysql.jdbc.Driver</value>
+        </property>
+        <property name="driverUrl">
+          <value>jdbc:mysql://${tlog2.mysql.dbServer}?useUnicode=true&amp;characterEncoding=UTF-8&amp;useReadAheadInput=false&amp;useUnbufferedInput=false&amp;connectTimeout=6000&amp;socketTimeout=120000&amp;useOldAliasMetadataBehavior=true&amp;</value>
+        </property>
+        <property name="user">
+          <value>${tlog2.mysql.user}</value>
+        </property>
+        <property name="password">
+          <value>${tlog2.mysql.passwd}</value>
+        </property>
+        <property name="alias">
+          <value>DBPool_1</value>
+        </property>
+        <!-- proxool自动侦察各个连接状态的时间间隔(毫秒):1.如果是idle的链接，则执行houseKeepingTestSql，异常则扔掉该连接 2.如果是活动连接，并且持续活动超过maximumActiveTime，则强制关闭（默认30秒）-->
+        <property name="houseKeepingSleepTime">  
+            <value>1800000</value>  
+        </property>
+        <!-- 用来指定测试连接所使用的SQL语句。 如果测试发现连接已经close，那么将自动重建连接。-->
+        <property name="houseKeepingTestSql">
+          <value>select 1 from dual</value>
+        </property>
+        <!-- 连接最大时间活动 默认5分钟，设定30分钟，比如跑batch的时候，时间会很长1800000(默认为5分钟) -->
+        <property name="maximumActiveTime">
+          <value>1800000</value>
+        </property>
+        <!-- 最少保持的空闲连接数,主要用于突发访问的控制（默认5个）-->
+        <property name="prototypeCount">
+          <value>1</value>
+        </property>
+        <!-- 允许最大连接数,超过了这个连接，再有请求时，就排在队列中等候,连接数设置过多，服务器CPU和内存性能消耗很大。（默认15个）-->  
+        <property name="maximumConnectionCount">
+          <value>20</value>
+        </property>
+        <!-- 最小连接数,主要用于突发访问的控制 （默认5个） -->  
+        <property name="minimumConnectionCount">
+          <value>1</value>
+        </property>
+        <!-- 如果为true,那么每个被执行的SQL语句将会在执行期被log记录(DEBUG LEVEL).
+                        你也可以注册一个ConnectionListener (参看ProxoolFacade)得到这些信息 -->
+        <property name="trace">
+          <value>false</value>
+        </property>
+        <!-- 打印些多余的信息 -->
+        <property name="verbose">
+          <value>true</value>
+        </property>
+        <!-- 最大的等待请求数,即因没有空闲连接可以分配而在队列中等候的最大请求数,超过这个请求数的用户连接就不会被接受-->
+        <property name="simultaneousBuildThrottle">
+          <value>50</value>
+        </property>
+        <property name="fatalSqlExceptionsAsString">
+          <value>Fatal error,CommunicationsException,SocketTimeoutException</value>
+        </property>
+        <property name="fatalSqlExceptionWrapperClass">
+          <value>org.logicalcobwebs.proxool.FatalRuntimeException</value>
+        </property>
+    </bean>
+
+    <!-- Druid数据源 begin druid-1.0.9.jar      监控地址   http://127.0.0.1:9001/druid/sql.html-->
+	<bean id="pooledDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+	    <!-- 基本属性 url、user、password -->
+        <property name="url">
+          <!-- autoReconnect=true断线重连,useOldAliasMetadataBehavior=true 对ibatis的查询id有影响,mysql>5.1以上的版本支持 -->
+          <value>jdbc:mysql://${mysql.dbServer}?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;useReadAheadInput=false&amp;useUnbufferedInput=false&amp;connectTimeout=6000&amp;socketTimeout=120000&amp;useOldAliasMetadataBehavior=true&amp;</value>
+        </property>
+		<property name="username" value="${mysql.user}"/>
+		<property name="password" value="${mysql.passwd}"/>
+		<property name="defaultAutoCommit" value="true"/>
+		<property name="defaultTransactionIsolation" value="2"/>
+		
+		<!-- 配置初始化大小、最小、最大 -->
+		<property name="initialSize" value="20"/>
+		<property name="maxActive" value="250"/><!-- 相当于maxPoolSize -->
+<!-- 		<property name="maxIdle" value="50"/> 【作废】-->
+		<property name="minIdle" value="15"/><!-- 相当于minPoolSize -->
+		
+		<!-- 配置获取连接等待超时的时间 set:1分钟超时 -->
+		<property name="maxWait" value="60000"/>
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒  set:5分钟检查一次 -->
+		<property name="timeBetweenEvictionRunsMillis" value="300000"/>
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 set:15分钟的生存期-->
+		<property name="minEvictableIdleTimeMillis" value="900000"/>
+		
+		<property name="validationQuery" value="select 1 from dual"/>
+		<property name="testWhileIdle" value="true"/>
+		<property name="testOnBorrow" value="false" />
+      	<property name="testOnReturn" value="false" />
+		
+		<!--<property name="numTestsPerEvictionRun" value="2000"/> 【作废】大于连接池最大连接数，表示每次检查都检查连接池所有连接 -->
+        <!-- 配置监控统计拦截的filters -->
+        <property name="filters" value="stat" />
+	</bean>
+  
+  <!-- Proxool数据源 begin -->
+  <!--   <bean id="pooledDataSource" class="org.logicalcobwebs.proxool.ProxoolDataSource">-->
+  <!--        <property name="driver">-->
+  <!--          <value>com.mysql.jdbc.Driver</value>-->
+  <!--        </property>-->
+  <!--        <property name="driverUrl">-->
+  <!--          <value>jdbc:mysql://${mysql.dbServer}?useUnicode=true&amp;characterEncoding=UTF-8&amp;useReadAheadInput=false&amp;useUnbufferedInput=false&amp;connectTimeout=6000&amp;socketTimeout=120000&amp;useOldAliasMetadataBehavior=true&amp;</value>-->
+  <!--        </property>-->
+  <!--        <property name="user">-->
+  <!--          <value>${mysql.user}</value>-->
+  <!--        </property>-->
+  <!--        <property name="password">-->
+  <!--          <value>${mysql.passwd}</value>-->
+  <!--        </property>-->
+  <!--        <property name="alias">-->
+  <!--          <value>DBPool</value>-->
+  <!--        </property>-->
+  <!--        <property name="houseKeepingSleepTime">  -->
+  <!--            <value>600000</value>  -->
+  <!--        </property>-->
+  <!--        <property name="houseKeepingTestSql">-->
+  <!--          <value>select 1 from dual</value>-->
+  <!--        </property>-->
+  <!--        <property name="maximumActiveTime">-->
+  <!--          <value>1800000</value>-->
+  <!--        </property>-->
+  <!--        <property name="prototypeCount">-->
+  <!--          <value>16</value>-->
+  <!--        </property>-->
+  <!--        <property name="maximumConnectionCount">-->
+  <!--          <value>250</value>-->
+  <!--        </property>-->
+  <!--        <property name="minimumConnectionCount">-->
+  <!--          <value>20</value>-->
+  <!--        </property>-->
+  <!--        <property name="simultaneousBuildThrottle">-->
+  <!--          <value>50</value>-->
+  <!--        </property>-->
+  <!--        <property name="fatalSqlExceptionsAsString">-->
+  <!--          <value>Fatal error,CommunicationsException,SocketTimeoutException</value>-->
+  <!--        </property>-->
+  <!--        <property name="fatalSqlExceptionWrapperClass">-->
+  <!--          <value>org.logicalcobwebs.proxool.FatalRuntimeException</value>-->
+  <!--        </property>-->
+  <!--    </bean>-->
+  
+    <!-- 这个conn 代理的作用就是，只有当确实有必要时，他它向DB发出查询。一切没有必要的 set autocommit=0 commit语句都不会发向数据库。-->
+    <bean id="dataSource"
+      class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy">
+      <property name="targetDataSource">
+        <ref local="pooledDataSource"/>
+      </property>
+    </bean>
+    <!-- 数据源 end -->
+    
+
+	<!-- ibatis -->
+	<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="configLocation" value="classpath:sql/sqlmap-config.xml"/>
+		<property name="dataSource" ref="dataSource"/>
+	</bean>	
+
+	 <bean id="sqlMapClientTemplate" class="org.springframework.orm.ibatis.SqlMapClientTemplate">
+		  <property name="sqlMapClient" ref="sqlMapClient" />
+	  </bean>
+
+	<bean id="asyncDBServiceClient" class="com.youxigu.dynasty2.asyncdb.service.impl.AsyncDBServiceClient" >
+		<property name="asyncDBServerClient" ref="asyncDBServerClient"/>
+		<property name="sqlMapClientTemplate" ref="sqlMapClientTemplate" />
+	</bean>
+
+<!--
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+-->
+<!--用于处理背包满了，将各种获得的道具放入邮件-->
+	<bean id="treasuryFullListener" class="com.youxigu.dynasty2.treasury.service.impl.TreasuryFullListener"/>
+
+	<!--加入缓存处理:缓存在事物提交后更新-->
+	<bean id="txManager" class="org.shardbatis.spring.jdbc.transaction.MemCacheDataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="globalRollbackOnParticipationFailure" value="false"/>
+        <property name="listeners">
+        	<list>
+
+					<ref bean="treasuryFullListener" />
+
+					<bean class="org.shardbatis.spring.jdbc.transaction.MemCachedDataTransactionListener">
+						<property name="dbUpdater" ref="asyncDBServiceClient" />
+					</bean>
+
+					<bean class="com.youxigu.dynasty2.chat.client.impl.MessageTransactionListener">
+						<property name="messageService" ref="messageService" />
+					</bean>
+<!--
+					<ref bean="tecentPayService" />
+-->
+					<ref bean="logService" />
+					<ref bean="tlogService" />
+
+					<ref bean="broadcastMgr" />
+					
+        	</list>
+        </property>
+	</bean>
+
+
+
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+<!--
+isolation="DEFAULT/READ_COMMITTED/READ_UNCOMMITTED/REPEATABLE_READ/SERIALIZABLE"
+
+PROPAGATION_REQUIRED ,PROPAGATION_SUPPORTS,PROPAGATION_MANDATORY ,PROPAGATION_REQUIRES_NEW ,PROPAGATION_NOT_SUPPORTED,PROPAGATION_NEVER,PROPAGATION_NESTED timeout="20"-->
+			<tx:method name="insert*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+			<tx:method name="create*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+			<tx:method name="add*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+			<tx:method name="save*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+			<tx:method name="update*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+			<tx:method name="delete*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+			<tx:method name="destroy*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+			<tx:method name="remove*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+			<tx:method name="upgrade*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+			<tx:method name="demote*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+			<tx:method name="login*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+			<tx:method name="logout*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+			<tx:method name="finish*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+			<tx:method name="cancel*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+			<tx:method name="do*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+			<tx:method name="compose*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+			<tx:method name="fast*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+			<tx:method name="notify*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+			
+            <tx:method name="*" propagation="SUPPORTS"/>
+
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config proxy-target-class="true" />
+	<aop:config>
+		<aop:advisor pointcut="execution(* com.youxigu.dynasty2..*.service.*.*(..))" advice-ref="txAdvice"/>
+
+	</aop:config>
+
+
+	<bean id="remoteMapCacheServiceClient" class="com.youxigu.wolf.minicache.client.RemoteMapCacheServiceClient" >
+		<property name="wolfService" ref="jobServerClient"/>
+	</bean>
+
+	<bean id="remoteLRUCacheServiceClient" class="com.youxigu.wolf.minicache.client.RemoteLRUQueueCacheServiceClient" >
+		<property name="wolfService" ref="jobServerClient"/>
+	</bean>
+
+	<bean id="messageService" class="com.youxigu.dynasty2.chat.client.impl.ChatClientService" >
+		<property name="wolfService" ref="mainServerClient"/>
+	</bean>
+	
+
+<!--测试 用的拦截器-->
+<!--
+	<bean id="timeLogInterceptor" class="com.youxigu.dynasty2.util.MyPerformanceMonitorInterceptor">
+        <property name="logTime">
+          <value>5</value>
+        </property>
+	
+	</bean>
+	<aop:config>
+			<aop:advisor pointcut="execution(* com.youxigu.dynasty2..*.service.*.*(..))" advice-ref="timeLogInterceptor"/>
+	</aop:config>
+-->
+
+
+    <import resource="applicationContext_*.xml"/>
+
+	
+</beans>
+

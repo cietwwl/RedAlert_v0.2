@@ -1,0 +1,19 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:flex="http://www.springframework.org/schema/flex"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+		   http://www.springframework.org/schema/flex http://www.springframework.org/schema/flex/spring-flex-1.0.xsd">
+	
+  <!--获取战斗结结果70101 -->
+	<bean class="com.youxigu.dynasty2.core.flex.ActionDefine">
+		<property name="cmd" value="70101" />
+		<property name="secCheck" value="false" /><!--这个接口不做安全检查，为了他人能够看到战斗过程 -->
+		<property name="frequency" value="false"/>
+		<property name="bean" ref="combatAction" />
+		<property name="methodName" value="getCombat" />
+	</bean>
+   
+</beans>
+
